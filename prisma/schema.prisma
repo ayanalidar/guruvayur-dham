@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Guruvayur Dham — Prisma schema
+// Learn more: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +10,121 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/* ============ ROOMS ============ */
+model Room {
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  name          String
+  type          String       // AC | Non-AC | Family | Deluxe
+  price         Int
+  originalPrice Int?
+  rating        Float        @default(4.7)
+  reviews       Int          @default(0)
+  capacity      Int
+  size          String
+  bedType       String
+  image         String
+  gallery       String       // JSON array of URLs
+  badge         String?
+  description   String
+  shortDesc     String
+  amenities     String       // JSON array of strings
+  totalUnits    Int          @default(1) // how many physical rooms of this type
+  active        Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  bookings      Booking[]
+  rates         RatePlan[]
+  availability  Availability[]
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+/* ============ BOOKINGS ============ */
+model Booking {
+  id              String          @id @default(cuid())
+  reference       String          @unique // GD-XXXXXX
+  roomId          String
+  room            Room            @relation(fields: [roomId], references: [id])
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  checkIn         DateTime
+  checkOut        DateTime
+  nights          Int
+  guests          Int             @default(2)
+  amount          Int             // total in INR
+  status          String          @default("CONFIRMED") // CONFIRMED | CHECKED_IN | CHECKED_OUT | CANCELLED
+  source          String          @default("DIRECT") // DIRECT | WALKIN | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+  channelBookingId String?        // booking id from channel partner
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  syncLogs        SyncLog[]
+}
+
+/* ============ RATE PLANS (per room, per channel) ============ */
+model RatePlan {
+  id              String         @id @default(cuid())
+  roomId          String
+  room            Room           @relation(fields: [roomId], references: [id])
+  channelPartner  String         // DIRECT | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+  priceModifier   Float          @default(1.0) // multiplier on room.price
+  active          Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([roomId, channelPartner])
+}
+
+/* ============ CHANNEL PARTNERS ============ */
+model ChannelPartner {
+  id              String         @id @default(cuid())
+  code            String         @unique // BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+  name            String
+  logo            String
+  webhookUrl      String         // where we POST block/unblock events
+  apiEndpoint     String         // where we receive their bookings
+  connected       Boolean        @default(true)
+  lastSyncAt      DateTime?
+  totalBookings   Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+/* ============ SYNC LOG (audit trail of all channel syncs) ============ */
+model SyncLog {
+  id              String         @id @default(cuid())
+  bookingId       String?
+  booking         Booking?       @relation(fields: [bookingId], references: [id])
+  channel         String         // BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA | DIRECT
+  action          String         // BLOCK | UNBLOCK | BOOKING_RECEIVED | SYNC_ERROR
+  status          String         // SUCCESS | FAILED | PENDING
+  message         String
+  payload         String?        // JSON
+  createdAt       DateTime       @default(now())
+}
+
+/* ============ CONTENT BLOCKS (CMS) ============ */
+// Every editable piece of text on the site has a unique key.
+// Admin edits the value; frontend reads from here.
+model ContentBlock {
+  id              String         @id @default(cuid())
+  key             String         @unique // e.g. "hero.headline", "about.story"
+  value           String         // text content (can be multi-line / JSON)
+  category        String         @default("general") // hero | about | rooms | pooja | contact | nav | footer
+  label           String?        // human-readable label for admin UI
+  updatedAt       DateTime       @updatedAt
+}
+
+/* ============ AVAILABILITY CACHE (per room per day) ============ */
+model Availability {
+  id              String         @id @default(cuid())
+  roomId          String
+  room            Room           @relation(fields: [roomId], references: [id])
+  date            DateTime       // the specific night
+  available       Int            // units still bookable
+  lockedBy        String?        // comma-separated booking refs that hold this date
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([roomId, date])
 }

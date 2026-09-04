@@ -21,6 +21,11 @@ import FAQPage from "@/pages/FAQPage";
 import ContactPage from "@/pages/ContactPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminBookings from "@/pages/admin/AdminBookings";
+import AdminContent from "@/pages/admin/AdminContent";
+import AdminRooms from "@/pages/admin/AdminRooms";
+import AdminChannels from "@/pages/admin/AdminChannels";
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -68,6 +73,11 @@ export default function Home() {
     if (path === "/contact") return <ContactPage />;
     if (path === "/privacy") return <PrivacyPage />;
     if (path === "/terms") return <TermsPage />;
+    if (path === "/admin") return <AdminDashboard />;
+    if (path === "/admin/bookings") return <AdminBookings />;
+    if (path === "/admin/content") return <AdminContent />;
+    if (path === "/admin/rooms") return <AdminRooms />;
+    if (path === "/admin/channels") return <AdminChannels />;
     return <NotFound />;
   };
 

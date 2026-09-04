@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import ServiceWorkerRegister from "@/components/site/ServiceWorkerRegister";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -81,8 +82,34 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "Guruvayur Dham",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: true,
+    address: true,
+    email: true,
+  },
   category: "travel",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0F0A08",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -135,6 +162,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${manrope.variable} antialiased bg-background text-foreground`}
       >
+        <ServiceWorkerRegister />
         {children}
         <Toaster />
         <SonnerToaster position="top-center" richColors />

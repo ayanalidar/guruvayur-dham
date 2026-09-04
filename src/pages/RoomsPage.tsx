@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Users, Maximize, Bed, MessageCircle, Eye, Check } from "lucide-react";
+import { Star, Users, Maximize, Bed, MessageCircle, Eye, Check, Radio } from "lucide-react";
 import {
   ROOMS,
   formatINR,
@@ -35,6 +35,23 @@ export default function RoomsPage() {
   const [typeF, setTypeF] = useState<RoomType | "All">("All");
   const [budgetF, setBudgetF] = useState(0);
   const [occF, setOccF] = useState(0);
+  const [liveAvail, setLiveAvail] = useState<Record<string, number>>({});
+
+  // Fetch live availability for all rooms (today)
+  useEffect(() => {
+    let active = true;
+    fetch("/api/availability?days=1", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => {
+        if (!active || !j.availability) return;
+        const map: Record<string, number> = {};
+        for (const a of j.availability) {
+          map[a.roomSlug] = a.days?.[0]?.available ?? 0;
+        }
+        setLiveAvail(map);
+      });
+    return () => { active = false; };
+  }, []);
 
   const filtered = useMemo(() => {
     return ROOMS.filter((r) => {
@@ -92,6 +109,7 @@ export default function RoomsPage() {
                 <RoomCard
                   key={room.slug}
                   room={room}
+                  liveAvailable={liveAvail[room.slug]}
                   onView={() => navigate(`/rooms/${room.slug}`)}
                 />
               ))}
@@ -158,8 +176,10 @@ function FilterGroup({
   );
 }
 
-function RoomCard({ room, onView }: { room: Room; onView: () => void }) {
+function RoomCard({ room, liveAvailable, onView }: { room: Room; liveAvailable?: number; onView: () => void }) {
   const waMsg = `Namaskaram! I'd like to enquire about the "${room.name}" at Guruvayur Dham (${formatINR(room.price)}/night). Please share availability.`;
+  const available = liveAvailable !== undefined && liveAvailable > 0;
+  const soldOut = liveAvailable === 0;
   return (
     <motion.div
       layout
@@ -169,7 +189,18 @@ function RoomCard({ room, onView }: { room: Room; onView: () => void }) {
       transition={{ duration: 0.4 }}
     >
       <TiltCard maxTilt={5} className="h-full">
-        <div className="card-luxe group flex h-full flex-col overflow-hidden">
+        <div className="card-luxe group relative flex h-full flex-col overflow-hidden">
+          {/* Live availability badge */}
+          {liveAvailable !== undefined && (
+            <div className={`absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md ${
+              available
+                ? "border-green-500/40 bg-green-500/15 text-green-300"
+                : "border-red-500/40 bg-red-500/15 text-red-300"
+            }`}>
+              <Radio className="h-2.5 w-2.5 animate-pulse" />
+              {available ? `${liveAvailable} left` : "Sold out"}
+            </div>
+          )}
           <div className="relative aspect-[4/3] overflow-hidden">
             <img
               src={room.image}
@@ -182,7 +213,7 @@ function RoomCard({ room, onView }: { room: Room; onView: () => void }) {
                 {room.badge}
               </span>
             )}
-            <span className="absolute right-3 top-3 rounded-full border border-champagne/25 bg-ink/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-champagne backdrop-blur-md">
+            <span className="absolute bottom-3 left-3 rounded-full border border-champagne/25 bg-ink/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-champagne backdrop-blur-md">
               {room.type}
             </span>
           </div>

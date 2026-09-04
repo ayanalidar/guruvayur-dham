@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, Phone, MessageCircle, Settings } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { cn } from "@/lib/utils";
@@ -84,6 +84,14 @@ export default function Navbar() {
 
         {/* Desktop CTAs */}
         <div className="hidden items-center gap-2 lg:flex">
+          <button
+            onClick={() => go("/admin")}
+            className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"
+            aria-label="Admin Dashboard"
+            title="Admin Dashboard"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
           <a
             href={`tel:${SITE.phoneRaw}`}
             className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:border-champagne/50 hover:bg-champagne/5"
@@ -156,6 +164,14 @@ export default function Navbar() {
                 >
                   <MessageCircle className="h-4 w-4" /> WhatsApp
                 </a>
+              </li>
+              <li>
+                <button
+                  onClick={() => go("/admin")}
+                  className="mt-2 block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
+                >
+                  <Settings className="mr-2 inline h-4 w-4" /> Admin Dashboard
+                </button>
               </li>
             </ul>
           </motion.div>
