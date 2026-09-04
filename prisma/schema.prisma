@@ -607,3 +607,42 @@ model RateLimitLog {
   attempts        Int
   createdAt       DateTime @default(now())
 }
+
+/* ============ CHANNEL PARTNER CONFIG (dynamic, any OTA) ============ */
+model ChannelConfig {
+  id              String   @id @default(cuid())
+  code            String   @unique // BOOKING_COM, MAKEMYTRIP, GOIBIBO, AGODA, EXPEDIA, MMT_LITE, ETC
+  name            String
+  logo            String?
+  category        String   @default("OTA") // OTA | HOSTING | MESSAGING | PAYMENT | ANALYTICS
+  apiEndpoint     String?  // their API URL for inventory push
+  webhookUrl      String?  // their webhook URL that calls our /api/channel-inbox
+  apiKey          String?  // encrypted in production
+  apiSecret       String?
+  hotelId         String?  // property ID on their platform
+  connected       Boolean  @default(false)
+  lastSyncAt      DateTime?
+  lastSyncStatus  String?  // SUCCESS | FAILED | PENDING
+  lastSyncMessage String?
+  config          String?  // JSON: extra fields specific to this partner
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ SEO AUDIT LOG ============ */
+model SeoAudit {
+  id              String   @id @default(cuid())
+  page            String
+  titleLength     Int?
+  descriptionLength Int?
+  hasH1           Boolean  @default(false)
+  hasSchema       Boolean  @default(false)
+  hasCanonical    Boolean  @default(false)
+  hasOgTags       Boolean  @default(false)
+  imageCount      Int      @default(0)
+  imagesWithoutAlt Int     @default(0)
+  wordCount       Int      @default(0)
+  score           Int      @default(0) // 0-100
+  issues          String?  // JSON array of issues
+  createdAt       DateTime @default(now())
+}

@@ -33,6 +33,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import ReviewSubmitPage from "@/pages/ReviewSubmitPage";
 import InfluencerPortalPage from "@/pages/InfluencerPortalPage";
 import PolicyPage from "@/pages/PolicyPage";
+import SettingsPage from "@/pages/SettingsPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
@@ -95,6 +96,7 @@ export default function Home() {
     if (path === "/review") return <ReviewSubmitPage />;
     if (path === "/influencer") return <InfluencerPortalPage />;
     if (path === "/policies") return <PolicyPage />;
+    if (path === "/settings") return <AdminGuard><SettingsPage /></AdminGuard>;
     if (path === "/reset-password") return <LoginPage />; // handled via query param
     if (path.startsWith("/kitchen/")) {
       const room = path.replace("/kitchen/", "");
