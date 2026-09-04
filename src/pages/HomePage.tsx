@@ -289,6 +289,7 @@ function MarqueeStrip() {
 
 /* ============ WHY CHOOSE US ============ */
 function WhyChooseUs() {
+  const { t } = useI18n();
   const { navigate } = useHashRoute();
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
@@ -352,6 +353,7 @@ function WhyChooseUs() {
 
 /* ============ ROOM PREVIEWS ============ */
 function RoomPreviews() {
+  const { t } = useI18n();
   const { navigate } = useHashRoute();
   const featured = ROOMS.slice(0, 4);
 
@@ -428,6 +430,7 @@ function RoomPreviewCard({ room, onClick }: { room: typeof ROOMS[number]; onClic
 
 /* ============ PLAN DARSHAN ============ */
 function PlanDarshan() {
+  const { t } = useI18n();
   const { navigate } = useHashRoute();
   const routes = ["/blog", "/pooja", "/events"];
 
@@ -474,6 +477,7 @@ function PlanDarshan() {
 
 /* ============ POOJA PREVIEW ============ */
 function PoojaPreview() {
+  const { t } = useI18n();
   const { navigate } = useHashRoute();
   const featured = POOJAS.slice(0, 3);
 
@@ -537,8 +541,9 @@ function PoojaPreview() {
 
 /* ============ TESTIMONIALS ============ */
 function Testimonials() {
+  const { t } = useI18n();
   const [idx, setIdx] = useState(0);
-  const t = TESTIMONIALS[idx];
+  const testimonial = TESTIMONIALS[idx];
 
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
@@ -560,21 +565,21 @@ function Testimonials() {
           <div className="relative rounded-3xl border border-champagne/15 bg-ink-card p-8 backdrop-blur-md sm:p-12">
             <Quote className="h-12 w-12 text-champagne/40" fill="currentColor" />
             <p className="mt-4 font-serif text-xl leading-relaxed text-ivory sm:text-2xl">
-              "{t.text}"
+              "{testimonial.text}"
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/25 bg-gradient-to-br from-champagne/15 to-transparent font-serif text-lg text-gold-foil">
-                  {t.name.charAt(0)}
+                  {testimonial.name.charAt(0)}
                 </span>
                 <div>
-                  <p className="font-semibold text-ivory">{t.name}</p>
-                  <p className="text-xs text-ivory/50">{t.city}{t.room && ` · ${t.room}`}</p>
+                  <p className="font-semibold text-ivory">{testimonial.name}</p>
+                  <p className="text-xs text-ivory/50">{testimonial.city}{testimonial.room && ` · ${testimonial.room}`}</p>
                 </div>
               </div>
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < t.rating ? "fill-gold text-gold" : "fill-ivory/10 text-ivory/10"}`} />
+                  <Star key={i} className={`h-4 w-4 ${i < testimonial.rating ? "fill-gold text-gold" : "fill-ivory/10 text-ivory/10"}`} />
                 ))}
               </div>
             </div>
@@ -598,6 +603,7 @@ function Testimonials() {
 
 /* ============ ABOUT TEASER ============ */
 function AboutTeaser() {
+  const { t } = useI18n();
   const { navigate } = useHashRoute();
 
   return (
@@ -656,6 +662,7 @@ function AboutTeaser() {
 
 /* ============ FINAL CTA ============ */
 function FinalCTA() {
+  const { t } = useI18n();
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
       <FloatingDiyas count={12} />
