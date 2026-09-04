@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import ZAI from "z-ai-web-dev-sdk";
+import { chat } from "@/lib/ai/provider";
 
 // POST /api/whatsapp-bot · simulated WhatsApp chatbot
 // body: { phone, message }
@@ -51,22 +51,18 @@ export async function POST(req: NextRequest) {
       reply = `I couldn't find a booking for ${phone}. Could you share your booking reference (starts with GD-)? Or book a new room at https://guruvayurdham.com/#/rooms`;
     }
   } else {
-    // Use AI for general questions
+    // Use AI for general questions (Groq first, z-ai fallback)
     intent = "ai_fallback";
     try {
-      const zai = await ZAI.create();
-      const response = await zai.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content: "You are the Guruvayur Dham WhatsApp assistant. Be warm, brief, and helpful. Use Namaskaram as greeting. Keep replies under 150 words. For booking, share https://guruvayurdham.com/#/rooms. For urgent help, share +91 98765 43210.",
-          },
-          { role: "user", content: message },
-        ],
-        temperature: 0.6,
-        max_tokens: 250,
-      });
-      reply = response.choices[0]?.message?.content || "I'll have our team reply shortly. WhatsApp +91 98765 43210 for urgent help.";
+      const result = await chat([
+        {
+          role: "system",
+          content: "You are the Guruvayur Dham WhatsApp assistant in Mathura, UP. Be warm, brief, and helpful. Use Namaskaram as greeting. Keep replies under 150 words. For booking, share https://guruvayurdham.com/#/rooms. For urgent help, share +91-90908 20208. Location: Opposite Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, UP 281001.",
+        },
+        { role: "user", content: message },
+      ], { temperature: 0.6, maxTokens: 250 });
+
+      reply = result.content;
     } catch {
       reply = `Namaskaram! I didn't quite understand that. I can help with: booking, pooja, darshan timings, festivals, dress code, how to reach, or check your booking. Try one of those, or WhatsApp our team at +91 98765 43210.`;
     }
