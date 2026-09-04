@@ -7,6 +7,7 @@ import {
   Users, Utensils, Flame, Tag, TrendingUp, Building2, Image, BookOpen,
   Wrench, Receipt, Download, Bell, Bot, CloudSun, MapPin, Star, ShoppingCart,
   RefreshCw, Check, X, Plus, Phone, Mail, ExternalLink, AlertCircle,
+  ShieldCheck, Lock,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -35,6 +36,8 @@ const SECTIONS = [
   { key: "exports", label: "Exports", icon: Download },
   { key: "notifications", label: "Notifications", icon: Bell },
   { key: "reviews", label: "Reviews", icon: Star },
+  { key: "analytics", label: "Analytics", icon: TrendingUp },
+  { key: "security", label: "Security", icon: ShieldCheck },
   { key: "chatbot", label: "AI Chatbot", icon: Bot },
   { key: "weather", label: "Weather & Crowd", icon: CloudSun },
   { key: "staff", label: "Staff", icon: Settings },
@@ -104,6 +107,8 @@ export default function AdminHub() {
             {active === "exports" && <ExportsSection />}
             {active === "notifications" && <NotificationsSection />}
             {active === "reviews" && <ReviewsSection />}
+            {active === "analytics" && <AnalyticsSection />}
+            {active === "security" && <SecuritySection />}
             {active === "chatbot" && <ChatbotSection />}
             {active === "weather" && <WeatherSection />}
             {active === "staff" && <StaffSection />}
@@ -1035,6 +1040,58 @@ function ReviewsSection() {
         </motion.div>
       )}
 
+      {/* Pending reviews (guest-submitted, awaiting moderation) */}
+      {reviews.filter(r => r.source === "GUEST_SUBMITTED" && !r.moderated).length > 0 && (
+        <div className="mt-6">
+          <h3 className="mb-3 flex items-center gap-2 font-serif text-lg text-saffron">
+            <AlertCircle className="h-5 w-5" /> Pending Moderation ({reviews.filter(r => r.source === "GUEST_SUBMITTED" && !r.moderated).length})
+          </h3>
+          <div className="space-y-3">
+            {reviews.filter(r => r.source === "GUEST_SUBMITTED" && !r.moderated).map((r) => (
+              <div key={r.id} className="rounded-xl border border-saffron/30 bg-saffron/5 p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 bg-gradient-to-br from-saffron/15 to-transparent font-serif text-sm text-gold-foil">
+                      {r.authorName.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-ivory">{r.authorName}</p>
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className={cn("h-3 w-3", i < r.rating ? "fill-gold text-gold" : "fill-ivory/10 text-ivory/10")} />
+                          ))}
+                        </div>
+                        <span className="text-xs text-ivory/40">{new Date(r.reviewDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+                        {r.guestEmail && <span className="text-xs text-ivory/40">· {r.guestEmail}</span>}
+                        {r.roomSlug && <span className="text-xs text-ivory/40">· {r.roomSlug}</span>}
+                      </div>
+                      <p className="mt-2 text-sm text-ivory/70">{r.text}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-shrink-0 flex-col gap-1.5">
+                    <button onClick={async () => {
+                      await fetch("/api/reviews", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, data: { published: true, moderated: true, moderatedAt: new Date() } }) });
+                      toast.success("Review approved & published");
+                      load();
+                    }} className="rounded-full bg-green-500/15 px-3 py-1 text-[10px] font-semibold text-green-300 hover:bg-green-500/25">
+                      ✓ Approve
+                    </button>
+                    <button onClick={async () => {
+                      await fetch("/api/reviews", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, data: { published: false, moderated: true, moderatedAt: new Date() } }) });
+                      toast.success("Review rejected");
+                      load();
+                    }} className="rounded-full bg-red-500/15 px-3 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/25">
+                      ✗ Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Reviews list */}
       <div className="mt-6 space-y-3">
         {reviews.map((r) => (
@@ -1080,6 +1137,276 @@ function ReviewsSection() {
           </div>
         ))}
         {reviews.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No reviews yet. Click "Import from Google" to seed demo reviews.</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ============ ANALYTICS ============ */
+function AnalyticsSection() {
+  const [data, setData] = useState<any>(null);
+  const [days, setDays] = useState(30);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/analytics?days=${days}`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setData(j); });
+    return () => { active = false; };
+  }, [days]);
+
+  if (!data) return <div className="py-12 text-center text-sm text-ivory/50"><RefreshCw className="mx-auto h-6 w-6 animate-spin" /> Loading analytics…</div>;
+
+  const funnel = data.funnel;
+  const maxRevenue = Math.max(...(data.revenueTrend || []).map((r: any) => r.revenue), 1);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Analytics Dashboard</h2>
+          <p className="mt-1 text-sm text-ivory/60">Booking funnel, revenue trends, channel performance, and occupancy forecast.</p>
+        </div>
+        <select value={days} onChange={(e) => setDays(parseInt(e.target.value))} className="rounded-full border border-champagne/15 bg-ink px-3 py-1.5 text-xs text-ivory focus:outline-none">
+          <option value={7}>Last 7 days</option>
+          <option value={30}>Last 30 days</option>
+          <option value={90}>Last 90 days</option>
+        </select>
+      </div>
+
+      {/* Summary cards */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-4">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Revenue</p>
+          <p className="font-serif text-2xl text-gold-foil">₹{(data.summary.totalRevenue || 0).toLocaleString("en-IN")}</p>
+          <p className="text-xs text-ivory/50">{data.summary.totalBookings} bookings</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Avg Booking Value</p>
+          <p className="font-serif text-2xl text-gold-foil">₹{(data.summary.avgBookingValue || 0).toLocaleString("en-IN")}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Conversion Rate</p>
+          <p className="font-serif text-2xl text-gold-foil">{funnel.conversionRate}%</p>
+          <p className="text-xs text-ivory/50">{funnel.bookingCompleted} bookings from {funnel.visitors} visitors</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Sentiment Score</p>
+          <p className="font-serif text-2xl text-green-300">{data.reviewSentiment.sentimentScore > 0 ? "+" : ""}{data.reviewSentiment.sentimentScore}</p>
+          <p className="text-xs text-ivory/50">{data.reviewSentiment.totalReviews} reviews</p>
+        </div>
+      </div>
+
+      {/* Booking funnel */}
+      <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+        <h3 className="font-serif text-lg text-ivory">Booking Funnel</h3>
+        <div className="mt-4 space-y-3">
+          {[
+            { label: "Visitors", value: funnel.visitors, pct: 100, color: "from-blue-500 to-blue-700" },
+            { label: "Started Booking", value: funnel.bookingStarted, pct: funnel.startRate, color: "from-yellow-500 to-yellow-700" },
+            { label: "Completed Booking", value: funnel.bookingCompleted, pct: funnel.completionRate, color: "from-green-500 to-green-700" },
+          ].map((s, i) => (
+            <div key={i}>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-ivory/70">{s.label}</span>
+                <span className="text-ivory">{s.value} <span className="text-xs text-ivory/40">({s.pct}%)</span></span>
+              </div>
+              <div className="mt-1 h-3 overflow-hidden rounded-full bg-ink">
+                <motion.div initial={{ width: 0 }} animate={{ width: `${s.pct}%` }} transition={{ duration: 0.8 }} className={cn("h-full rounded-full bg-gradient-to-r", s.color)} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Revenue trend */}
+      <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+        <h3 className="font-serif text-lg text-ivory">Revenue Trend ({data.summary.period})</h3>
+        <div className="mt-4 flex items-end gap-1" style={{ height: "120px" }}>
+          {(data.revenueTrend || []).slice(-30).map((r: any, i: number) => (
+            <div
+              key={i}
+              className="flex-1 rounded-t bg-gradient-to-t from-champagne/40 to-champagne"
+              style={{ height: `${(r.revenue / maxRevenue) * 100}%`, minHeight: "2px" }}
+              title={`${r.date}: ₹${r.revenue} (${r.bookings} bookings)`}
+            />
+          ))}
+        </div>
+        <div className="mt-2 flex justify-between text-[10px] text-ivory/40">
+          <span>{(data.revenueTrend || [])[0]?.date || "—"}</span>
+          <span>{(data.revenueTrend || [])[(data.revenueTrend || []).length - 1]?.date || "—"}</span>
+        </div>
+      </div>
+
+      {/* Channel + Room performance */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-5">
+          <h3 className="font-serif text-lg text-ivory">Channel Performance</h3>
+          <div className="mt-3 space-y-2">
+            {(data.channelPerformance || []).map((c: any, i: number) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-champagne/5 bg-ink/30 p-3 text-sm">
+                <span className="text-ivory/70">{c.source.replace(/_/g, " ")}</span>
+                <div className="text-right">
+                  <span className="text-ivory">{c.bookings} bookings</span>
+                  <span className="ml-3 font-semibold text-gold-foil">₹{c.revenue.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-5">
+          <h3 className="font-serif text-lg text-ivory">Room Performance</h3>
+          <div className="mt-3 space-y-2">
+            {(data.roomPerformance || []).map((r: any, i: number) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-champagne/5 bg-ink/30 p-3 text-sm">
+                <span className="text-ivory/70">{r.name}</span>
+                <div className="text-right">
+                  <span className="text-ivory">{r.bookings} bookings</span>
+                  <span className="ml-3 font-semibold text-gold-foil">₹{r.revenue.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Occupancy forecast */}
+      <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+        <h3 className="font-serif text-lg text-ivory">14-Day Occupancy Forecast</h3>
+        <div className="mt-4 grid grid-cols-7 gap-2 sm:grid-cols-14">
+          {(data.occupancyForecast || []).map((f: any, i: number) => (
+            <div key={i} className="rounded-lg border border-champagne/10 bg-ink/30 p-2 text-center">
+              <p className="text-[10px] text-ivory/50">{new Date(f.date).toLocaleDateString("en-IN", { weekday: "short", day: "numeric" })}</p>
+              <p className={cn("font-serif text-lg", f.occupancy >= 80 ? "text-red-300" : f.occupancy >= 50 ? "text-yellow-300" : "text-green-300")}>{f.occupancy}%</p>
+              <div className="mt-1 h-1 overflow-hidden rounded-full bg-ink">
+                <div className={cn("h-full rounded-full", f.occupancy >= 80 ? "bg-red-500" : f.occupancy >= 50 ? "bg-yellow-500" : "bg-green-500")} style={{ width: `${f.occupancy}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Review sentiment */}
+      <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+        <h3 className="font-serif text-lg text-ivory">Review Sentiment Analysis</h3>
+        <div className="mt-3 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Positive Mentions</p>
+            <p className="font-serif text-2xl text-green-300">{data.reviewSentiment.positiveMentions}</p>
+            <p className="text-xs text-ivory/40">clean, comfortable, divine…</p>
+          </div>
+          <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Negative Mentions</p>
+            <p className="font-serif text-2xl text-red-300">{data.reviewSentiment.negativeMentions}</p>
+            <p className="text-xs text-ivory/40">noisy, small, overpriced…</p>
+          </div>
+          <div className="rounded-lg border border-champagne/20 bg-champagne/5 p-4 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Sentiment Score</p>
+            <p className={cn("font-serif text-2xl", data.reviewSentiment.sentimentScore > 0 ? "text-green-300" : "text-red-300")}>
+              {data.reviewSentiment.sentimentScore > 0 ? "+" : ""}{data.reviewSentiment.sentimentScore}
+            </p>
+            <p className="text-xs text-ivory/40">-100 to +100 scale</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ SECURITY ============ */
+function SecuritySection() {
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [pushCount, setPushCount] = useState(0);
+
+  const load = () => {
+    fetch("/api/audit-log?limit=20", { cache: "no-store" }).then(r => r.json()).then(j => setAuditLogs(j.logs || []));
+    fetch("/api/push/subscribe", { cache: "no-store" }).then(r => r.json()).then(j => setPushCount(j.subscribers || 0));
+  };
+  useEffect(() => { load(); }, []);
+
+  const actionColors: any = {
+    LOGIN: "bg-green-500/15 text-green-300",
+    LOGOUT: "bg-ivory/10 text-ivory/60",
+    CREATE: "bg-blue-500/15 text-blue-300",
+    UPDATE: "bg-yellow-500/15 text-yellow-300",
+    DELETE: "bg-red-500/15 text-red-300",
+    EXPORT: "bg-purple-500/15 text-purple-300",
+  };
+
+  return (
+    <div>
+      <h2 className="font-serif text-2xl text-ivory">Security & Audit</h2>
+      <p className="mt-1 text-sm text-ivory/60">Track all admin actions, push notification subscribers, and security events.</p>
+
+      {/* Security overview */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <ShieldCheck className="h-5 w-5 text-champagne" />
+          <p className="mt-2 text-[10px] uppercase tracking-wider text-ivory/50">Admin Protection</p>
+          <p className="font-serif text-lg text-green-300">Active</p>
+          <p className="text-xs text-ivory/50">All /admin routes guarded</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <Bell className="h-5 w-5 text-champagne" />
+          <p className="mt-2 text-[10px] uppercase tracking-wider text-ivory/50">Push Subscribers</p>
+          <p className="font-serif text-lg text-gold-foil">{pushCount}</p>
+          <p className="text-xs text-ivory/50">users subscribed</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <Lock className="h-5 w-5 text-champagne" />
+          <p className="mt-2 text-[10px] uppercase tracking-wider text-ivory/50">2FA Support</p>
+          <p className="font-serif text-lg text-green-300">Ready</p>
+          <p className="text-xs text-ivory/50">TOTP + backup codes</p>
+        </div>
+      </div>
+
+      {/* Password reset + 2FA info */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-5">
+          <h3 className="font-serif text-lg text-ivory">Password Reset</h3>
+          <p className="mt-1 text-xs text-ivory/60">Guests can request a password reset link via email. The link is valid for 1 hour.</p>
+          <div className="mt-3 rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
+            <p>Flow: Login → "Forgot Password?" → Enter email → Receive link → Set new password → Auto-login</p>
+            <p className="mt-1">API: <code className="text-champagne">/api/auth/forgot-password</code> → <code className="text-champagne">/api/auth/reset-password</code></p>
+          </div>
+          <p className="mt-2 text-xs text-ivory/40">Note: Emails are simulated (logged to notification table). Add SendGrid/Twilio credentials for real email.</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-5">
+          <h3 className="font-serif text-lg text-ivory">2FA (TOTP)</h3>
+          <p className="mt-1 text-xs text-ivory/60">Staff can enable 2FA using Google Authenticator, Authy, or any TOTP app.</p>
+          <div className="mt-3 rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
+            <p>Flow: Staff settings → "Enable 2FA" → Scan QR → Enter 6-digit code → 2FA enabled</p>
+            <p className="mt-1">Includes 8 backup codes for recovery.</p>
+            <p className="mt-1">API: <code className="text-champagne">/api/auth/2fa</code> (POST=setup, PUT=verify, GET=status)</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Audit log */}
+      <div className="mt-6">
+        <h3 className="mb-3 font-serif text-lg text-ivory">Recent Activity (Audit Log)</h3>
+        <div className="card-luxe max-h-[500px] overflow-y-auto scroll-smooth-dark">
+          {auditLogs.map((log, i) => (
+            <div key={log.id} className={cn("flex items-start gap-3 p-3", i > 0 && "border-t border-champagne/5")}>
+              <span className={cn("flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", actionColors[log.action] || "bg-ivory/10 text-ivory/60")}>
+                {log.action}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-ivory">
+                  <span className="font-semibold">{log.userName || "System"}</span>
+                  <span className="text-ivory/50"> · {log.entity}</span>
+                  {log.entityId && <span className="text-ivory/40"> · {log.entityId.slice(-8)}</span>}
+                </p>
+                {log.details && <p className="text-xs text-ivory/40">{log.details}</p>}
+                <p className="text-[10px] text-ivory/30">
+                  {new Date(log.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  {log.ipAddress && ` · ${log.ipAddress}`}
+                </p>
+              </div>
+            </div>
+          ))}
+          {auditLogs.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No audit logs yet.</p>}
+        </div>
       </div>
     </div>
   );

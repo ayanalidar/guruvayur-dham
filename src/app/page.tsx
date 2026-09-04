@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useHashRoute } from "@/lib/router";
+import { useAnalytics } from "@/lib/use-analytics";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
+import AdminGuard from "@/components/site/AdminGuard";
+import PWAEnhancements from "@/components/site/PWAEnhancements";
 import { PageLoader } from "@/components/site/visuals";
 
 import HomePage from "@/pages/HomePage";
@@ -26,6 +29,7 @@ import KitchenOrderPage from "@/pages/KitchenOrderPage";
 import VirtualTourPage from "@/pages/VirtualTourPage";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
+import ReviewSubmitPage from "@/pages/ReviewSubmitPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
@@ -51,6 +55,7 @@ function NotFound() {
 
 export default function Home() {
   const { path } = useHashRoute();
+  const { trackEvent } = useAnalytics();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -83,17 +88,20 @@ export default function Home() {
     if (path === "/tour") return <VirtualTourPage />;
     if (path === "/login") return <LoginPage />;
     if (path === "/dashboard") return <DashboardPage />;
+    if (path === "/review") return <ReviewSubmitPage />;
+    if (path === "/reset-password") return <LoginPage />; // handled via query param
     if (path.startsWith("/kitchen/")) {
       const room = path.replace("/kitchen/", "");
       return <KitchenOrderPage roomNumber={room} />;
     }
     if (path === "/kitchen") return <KitchenOrderPage />;
-    if (path === "/admin") return <AdminDashboard />;
-    if (path === "/admin/hub") return <AdminHub />;
-    if (path === "/admin/bookings") return <AdminBookings />;
-    if (path === "/admin/content") return <AdminContent />;
-    if (path === "/admin/rooms") return <AdminRooms />;
-    if (path === "/admin/channels") return <AdminChannels />;
+    // Admin routes — protected by AdminGuard
+    if (path === "/admin") return <AdminGuard><AdminDashboard /></AdminGuard>;
+    if (path === "/admin/hub") return <AdminGuard><AdminHub /></AdminGuard>;
+    if (path === "/admin/bookings") return <AdminGuard><AdminBookings /></AdminGuard>;
+    if (path === "/admin/content") return <AdminGuard roles={["MANAGER"]} ><AdminContent /></AdminGuard>;
+    if (path === "/admin/rooms") return <AdminGuard><AdminRooms /></AdminGuard>;
+    if (path === "/admin/channels") return <AdminGuard><AdminChannels /></AdminGuard>;
     return <NotFound />;
   };
 
@@ -109,6 +117,7 @@ export default function Home() {
       </main>
       <Footer />
       <FloatingActions />
+      <PWAEnhancements />
     </>
   );
 }

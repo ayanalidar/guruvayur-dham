@@ -97,6 +97,32 @@ export default function LoginPage() {
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    if (!guestEmail) {
+      toast.error("Enter your email first");
+      return;
+    }
+    setLoading(true);
+    try {
+      const r = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: guestEmail }),
+      });
+      const j = await r.json();
+      if (j.demoResetUrl) {
+        toast.success("Reset link generated! Check the demo URL below.");
+        // In demo mode, show the reset URL
+        window.open(j.demoResetUrl, "_blank");
+      } else {
+        toast.success(j.message || "If the email exists, a reset link has been sent.");
+      }
+    } catch {
+      toast.error("Failed to send reset link");
+    }
+    setLoading(false);
+  };
+
   const handleGuestRegister = async () => {
     setLoading(true);
     try {
@@ -239,6 +265,9 @@ export default function LoginPage() {
                       </Field>
                       <button onClick={handleGuestLogin} disabled={loading} className="btn-luxe w-full">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ChevronRight className="h-4 w-4" /></>}
+                      </button>
+                      <button onClick={handleForgotPassword} className="text-center text-xs text-champagne hover:text-champagne-bright">
+                        Forgot password?
                       </button>
                     </div>
                   )}

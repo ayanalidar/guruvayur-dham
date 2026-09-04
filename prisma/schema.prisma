@@ -431,6 +431,8 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   sessions        Session[]
+  passwordResets  PasswordReset[]
+  twoFactor       TwoFactorSecret?
 }
 
 /* ============ SESSION TOKENS ============ */
@@ -452,12 +454,92 @@ model Review {
   rating          Int      // 1-5
   text            String
   reviewDate      DateTime
-  source          String   @default("GOOGLE") // GOOGLE | MANUAL | BOOKING_COM | MAKEMYTRIP
+  source          String   @default("GOOGLE") // GOOGLE | MANUAL | GUEST_SUBMITTED | BOOKING_COM | MAKEMYTRIP
   googleReviewId  String?  @unique // for dedup when importing from Google
   googleProfileUrl String?
   language        String   @default("en")
   published       Boolean  @default(true)
   featured        Boolean  @default(false) // show on homepage
+  // Guest submission fields
+  guestEmail      String?
+  guestPhone      String?
+  roomSlug        String?  // which room they stayed in
+  stayDate        DateTime? // when they stayed
+  moderated       Boolean  @default(false) // has admin reviewed this submission
+  moderatedBy     String?  // staff user ID who moderated
+  moderatedAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+/* ============ AUDIT LOG ============ */
+model AuditLog {
+  id              String   @id @default(cuid())
+  userId          String?  // staff user ID
+  userName        String?
+  action          String   // CREATE | UPDATE | DELETE | LOGIN | LOGOUT | EXPORT
+  entity          String   // BOOKING | ROOM | CONTENT | REVIEW | COUPON | etc.
+  entityId        String?
+  details         String?  // JSON of changes
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+}
+
+/* ============ PASSWORD RESET ============ */
+model PasswordReset {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token           String   @unique
+  expiresAt       DateTime
+  used            Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+/* ============ 2FA (TOTP) ============ */
+model TwoFactorSecret {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret          String   // TOTP secret (base32)
+  enabled         Boolean  @default(false)
+  backupCodes     String?  // JSON array of backup codes
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ PUSH NOTIFICATION SUBSCRIPTIONS ============ */
+model PushSubscription {
+  id              String   @id @default(cuid())
+  userId          String?  // null for anonymous
+  endpoint        String   @unique
+  keys            String   // JSON: { p256dh, auth }
+  userAgent       String?
+  createdAt       DateTime @default(now())
+}
+
+/* ============ A/B TEST VARIANTS ============ */
+model ABTest {
+  id              String   @id @default(cuid())
+  name            String   // "hero_headline_test"
+  description     String?
+  variants        String   // JSON: [{ key, label, weight }]
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ ANALYTICS EVENTS ============ */
+model AnalyticsEvent {
+  id              String   @id @default(cuid())
+  eventType       String   // PAGE_VIEW | BOOKING_STARTED | BOOKING_COMPLETED | ROOM_VIEW | POOJA_VIEW | etc.
+  page            String?  // current path
+  userId          String?  // if logged in
+  sessionId       String?  // browser session
+  properties      String?  // JSON of additional data
+  referrer        String?
+  userAgent       String?
+  ipAddress       String?
+  createdAt       DateTime @default(now())
 }
