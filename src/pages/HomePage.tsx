@@ -28,6 +28,7 @@ import {
   ImageReveal,
   SectionHeader,
 } from "@/components/site/visuals";
+import ReviewsWidget from "@/components/site/ReviewsWidget";
 
 export default function HomePage() {
   const { navigate } = useHashRoute();
@@ -40,6 +41,7 @@ export default function HomePage() {
       <RoomPreviews />
       <PlanDarshan />
       <PoojaPreview />
+      <ReviewsWidget />
       <Testimonials />
       <AboutTeaser />
       <FinalCTA />

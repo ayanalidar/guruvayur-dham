@@ -416,3 +416,48 @@ model EarlyBirdCampaign {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+/* ============ USER (Guest + Staff Auth) ============ */
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String?  @unique
+  phone           String?  @unique
+  passwordHash    String?  // null if OTP-only
+  customerId      String?  // link to CRM Customer record
+  role            String   @default("GUEST") // GUEST | STAFF
+  staffId         String?  // if role=STAFF, link to StaffUser
+  lastLoginAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  sessions        Session[]
+}
+
+/* ============ SESSION TOKENS ============ */
+model Session {
+  id              String   @id @default(cuid())
+  token           String   @unique
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role            String   // GUEST | MANAGER | RECEPTIONIST | HOUSEKEEPING | ACCOUNTANT
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+/* ============ REVIEWS (Google mirror + manual) ============ */
+model Review {
+  id              String   @id @default(cuid())
+  authorName      String
+  authorAvatar    String?
+  rating          Int      // 1-5
+  text            String
+  reviewDate      DateTime
+  source          String   @default("GOOGLE") // GOOGLE | MANUAL | BOOKING_COM | MAKEMYTRIP
+  googleReviewId  String?  @unique // for dedup when importing from Google
+  googleProfileUrl String?
+  language        String   @default("en")
+  published       Boolean  @default(true)
+  featured        Boolean  @default(false) // show on homepage
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

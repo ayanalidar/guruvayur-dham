@@ -34,6 +34,7 @@ const SECTIONS = [
   { key: "audit", label: "Night Audit", icon: Star },
   { key: "exports", label: "Exports", icon: Download },
   { key: "notifications", label: "Notifications", icon: Bell },
+  { key: "reviews", label: "Reviews", icon: Star },
   { key: "chatbot", label: "AI Chatbot", icon: Bot },
   { key: "weather", label: "Weather & Crowd", icon: CloudSun },
   { key: "staff", label: "Staff", icon: Settings },
@@ -102,6 +103,7 @@ export default function AdminHub() {
             {active === "audit" && <AuditSection />}
             {active === "exports" && <ExportsSection />}
             {active === "notifications" && <NotificationsSection />}
+            {active === "reviews" && <ReviewsSection />}
             {active === "chatbot" && <ChatbotSection />}
             {active === "weather" && <WeatherSection />}
             {active === "staff" && <StaffSection />}
@@ -871,6 +873,213 @@ function WeatherSection() {
             <p className="mt-2 text-xs text-ivory/50">{crowd.percentage}% expected occupancy</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ============ REVIEWS ============ */
+function ReviewsSection() {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [importing, setImporting] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newReview, setNewReview] = useState({ authorName: "", rating: 5, text: "", source: "MANUAL", featured: false });
+
+  const load = () => {
+    fetch("/api/reviews?limit=100", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { setReviews(j.reviews || []); setStats(j.stats); });
+  };
+  useEffect(() => { load(); }, []);
+
+  const importGoogle = async () => {
+    setImporting(true);
+    try {
+      const r = await fetch("/api/reviews/google-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shareUrl: "https://share.google/x0YWO22UQQiol8qYa" }),
+      });
+      const j = await r.json();
+      toast.success(j.message || `Imported ${j.imported} reviews`);
+      load();
+    } catch {
+      toast.error("Import failed");
+    }
+    setImporting(false);
+  };
+
+  const addReview = async () => {
+    if (!newReview.authorName || !newReview.text) {
+      toast.error("Author name and text required");
+      return;
+    }
+    const r = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newReview),
+    });
+    const j = await r.json();
+    if (j.error) toast.error(j.error);
+    else {
+      toast.success("Review added — now live on the website");
+      setShowAdd(false);
+      setNewReview({ authorName: "", rating: 5, text: "", source: "MANUAL", featured: false });
+      load();
+    }
+  };
+
+  const togglePublished = async (id: string, published: boolean) => {
+    await fetch("/api/reviews", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, data: { published: !published } }),
+    });
+    load();
+  };
+
+  const toggleFeatured = async (id: string, featured: boolean) => {
+    await fetch("/api/reviews", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, data: { featured: !featured } }),
+    });
+    load();
+  };
+
+  const deleteReview = async (id: string) => {
+    if (!confirm("Delete this review?")) return;
+    await fetch(`/api/reviews?id=${id}`, { method: "DELETE" });
+    toast.success("Review deleted");
+    load();
+  };
+
+  return (
+    <div>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Reviews Management</h2>
+          <p className="mt-1 text-sm text-ivory/60">Import Google reviews, add manual reviews, moderate visibility. Changes appear on the website in real-time.</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={importGoogle} disabled={importing} className="rounded-full border border-champagne/20 px-4 py-2 text-xs font-semibold text-champagne hover:bg-champagne/10 disabled:opacity-40">
+            {importing ? <><RefreshCw className="mr-1 inline h-3 w-3 animate-spin" /> Importing…</> : <>Import from Google</>}
+          </button>
+          <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe">
+            <Plus className="h-4 w-4" /> Add Review
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      {stats && (
+        <div className="mt-6 grid gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Reviews</p>
+            <p className="font-serif text-2xl text-gold-foil">{stats.total}</p>
+          </div>
+          <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Average Rating</p>
+            <p className="font-serif text-2xl text-gold-foil">{stats.averageRating} ★</p>
+          </div>
+          <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">5-Star Reviews</p>
+            <p className="font-serif text-2xl text-green-300">{stats.fiveStar}</p>
+          </div>
+          <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">Google Source</p>
+            <p className="font-serif text-2xl text-champagne">{reviews.filter(r => r.source === "GOOGLE").length}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Add review form */}
+      {showAdd && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-6 overflow-hidden">
+          <div className="card-luxe p-5">
+            <h3 className="font-serif text-lg text-ivory">Add New Review</h3>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Author Name *</label>
+                <input value={newReview.authorName} onChange={(e) => setNewReview({ ...newReview, authorName: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="Guest Name" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Rating</label>
+                <select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: parseInt(e.target.value) })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none">
+                  {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} stars</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="mt-3">
+              <label className="text-[10px] uppercase tracking-wider text-ivory/50">Review Text *</label>
+              <textarea value={newReview.text} onChange={(e) => setNewReview({ ...newReview, text: e.target.value })} rows={3} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none" placeholder="Review text…" />
+            </div>
+            <div className="mt-3 flex items-center gap-4">
+              <label className="flex items-center gap-2 text-sm text-ivory/70">
+                <input type="checkbox" checked={newReview.featured} onChange={(e) => setNewReview({ ...newReview, featured: e.target.checked })} className="accent-champagne" />
+                Featured (show on homepage)
+              </label>
+              <select value={newReview.source} onChange={(e) => setNewReview({ ...newReview, source: e.target.value })} className="rounded-lg border border-champagne/15 bg-ink px-3 py-1.5 text-xs text-ivory focus:outline-none">
+                <option value="MANUAL">Manual</option>
+                <option value="GOOGLE">Google</option>
+                <option value="BOOKING_COM">Booking.com</option>
+                <option value="MAKEMYTRIP">MakeMyTrip</option>
+              </select>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={addReview} className="btn-luxe">Add Review</button>
+              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe">Cancel</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Reviews list */}
+      <div className="mt-6 space-y-3">
+        {reviews.map((r) => (
+          <div key={r.id} className={cn("rounded-xl border p-4", r.published ? "border-champagne/10 bg-ink/50" : "border-red-500/20 bg-red-500/5 opacity-60")}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                {r.authorAvatar ? (
+                  <img src={r.authorAvatar} alt={r.authorName} className="h-10 w-10 rounded-full object-cover" />
+                ) : (
+                  <div className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 bg-gradient-to-br from-champagne/15 to-transparent font-serif text-sm text-gold-foil">
+                    {r.authorName.charAt(0)}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-ivory">{r.authorName}</p>
+                    <span className="rounded-full bg-ink/50 px-2 py-0.5 text-[10px] text-champagne">{r.source}</span>
+                    {r.featured && <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] text-gold">★ Featured</span>}
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-2">
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={cn("h-3 w-3", i < r.rating ? "fill-gold text-gold" : "fill-ivory/10 text-ivory/10")} />
+                      ))}
+                    </div>
+                    <span className="text-xs text-ivory/40">{new Date(r.reviewDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                  </div>
+                  <p className="mt-2 text-sm text-ivory/70 line-clamp-3">{r.text}</p>
+                </div>
+              </div>
+              <div className="flex flex-shrink-0 flex-col gap-1.5">
+                <button onClick={() => togglePublished(r.id, r.published)} className={cn("rounded-full px-2 py-1 text-[10px] font-semibold", r.published ? "bg-green-500/15 text-green-300" : "bg-red-500/15 text-red-300")}>
+                  {r.published ? "Published" : "Hidden"}
+                </button>
+                <button onClick={() => toggleFeatured(r.id, r.featured)} className={cn("rounded-full px-2 py-1 text-[10px] font-semibold", r.featured ? "bg-gold/15 text-gold" : "bg-ink/50 text-ivory/50")}>
+                  ★ Feature
+                </button>
+                <button onClick={() => deleteReview(r.id)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {reviews.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No reviews yet. Click "Import from Google" to seed demo reviews.</p>}
       </div>
     </div>
   );

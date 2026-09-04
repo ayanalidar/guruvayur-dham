@@ -24,6 +24,8 @@ import TermsPage from "@/pages/TermsPage";
 import GuestBookingPage from "@/pages/GuestBookingPage";
 import KitchenOrderPage from "@/pages/KitchenOrderPage";
 import VirtualTourPage from "@/pages/VirtualTourPage";
+import LoginPage from "@/pages/LoginPage";
+import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
@@ -79,6 +81,8 @@ export default function Home() {
     if (path === "/terms") return <TermsPage />;
     if (path === "/book") return <GuestBookingPage />;
     if (path === "/tour") return <VirtualTourPage />;
+    if (path === "/login") return <LoginPage />;
+    if (path === "/dashboard") return <DashboardPage />;
     if (path.startsWith("/kitchen/")) {
       const room = path.replace("/kitchen/", "");
       return <KitchenOrderPage roomNumber={room} />;
