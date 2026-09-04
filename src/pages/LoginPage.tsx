@@ -478,7 +478,7 @@ export default function LoginPage() {
           <p className="mt-6 text-center text-[10px] text-ivory/30">
             Made And Maintained By:{" "}
             <a
-              href="https://guardianx.tech"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-champagne/50 transition-colors hover:text-champagne"
