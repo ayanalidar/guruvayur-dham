@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Inter } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
-const inter = Inter({
-  variable: "--font-inter",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
+  axes: ["opsz", "SOFT"],
 });
 
-const dmSerif = DM_Serif_Display({
-  variable: "--font-serif-display",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["400"],
   display: "swap",
 });
 
@@ -22,20 +22,20 @@ const siteUrl = "https://www.guruvayurdham.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Guruvayur Dham — Stay 2 Minutes from Guruvayur Temple | AC Rooms, Pooja Booking",
+    default: "Guruvayur Dham — Luxury Pilgrim Stay 2 Minutes from Guruvayur Temple",
     template: "%s | Guruvayur Dham",
   },
   description:
-    "Book clean AC & non-AC rooms just 2 minutes walk from Guruvayur Temple. 24×7 hot water, free parking, family-friendly. Pooja booking, Palpayasam, Thulabharam & more. ₹700 onwards.",
+    "Boutique pilgrim accommodation near Guruvayur Temple. Cinematic dark-luxe rooms, 24×7 hot water, free parking, on-site pooja booking. Walk to East Nada in 2 minutes.",
   keywords: [
     "Guruvayur rooms",
     "Guruvayur temple accommodation",
-    "rooms near Guruvayur temple",
+    "luxury stay Guruvayur",
+    "boutique hotel Guruvayur",
     "Guruvayur Dham",
     "Guruvayur pooja booking",
     "Palpayasam booking",
     "Thulabharam Guruvayur",
-    "Guruvayur hotel booking",
     "AC rooms Guruvayur",
     "stay near Guruvayur temple",
     "Guruvayur darshan timings",
@@ -44,31 +44,29 @@ export const metadata: Metadata = {
   authors: [{ name: "Guruvayur Dham" }],
   creator: "Guruvayur Dham",
   publisher: "Guruvayur Dham",
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: siteUrl,
     siteName: "Guruvayur Dham",
-    title: "Guruvayur Dham — Stay 2 Minutes from Guruvayur Temple",
+    title: "Guruvayur Dham — Luxury Pilgrim Stay Near Guruvayur Temple",
     description:
-      "Clean AC & non-AC rooms, 24×7 hot water, family-friendly. Book in 30 seconds. Pooja booking available.",
+      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
     images: [
       {
         url: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
         width: 1200,
         height: 630,
-        alt: "Guruvayur Dham temple accommodation",
+        alt: "Guruvayur Dham — luxury pilgrim stay",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Guruvayur Dham — Stay 2 Minutes from Guruvayur Temple",
+    title: "Guruvayur Dham — Luxury Pilgrim Stay Near Guruvayur Temple",
     description:
-      "Clean AC & non-AC rooms, 24×7 hot water, family-friendly. Book in 30 seconds.",
+      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
     images: [
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
     ],
@@ -83,9 +81,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  icons: { icon: "/favicon.ico" },
   category: "travel",
 };
 
@@ -100,11 +96,12 @@ export default function RootLayout({
     "@id": `${siteUrl}/#hotel`,
     name: "Guruvayur Dham",
     description:
-      "Temple accommodation and services provider near Guruvayur Temple offering clean AC & non-AC rooms, pooja booking, and pilgrim services.",
+      "Boutique pilgrim accommodation near Guruvayur Temple offering dark-luxe AC & non-AC rooms, pooja booking, and pilgrim services.",
     url: siteUrl,
     telephone: "+91-98765-43210",
     email: "stay@guruvayurdham.com",
-    image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
     priceRange: "₹700 - ₹3500",
     starRating: { "@type": "Rating", ratingValue: "4.9", reviewCount: "847" },
     address: {
@@ -115,11 +112,7 @@ export default function RootLayout({
       postalCode: "680101",
       addressCountry: "IN",
     },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 10.5945,
-      longitude: 76.0424,
-    },
+    geo: { "@type": "GeoCoordinates", latitude: 10.5945, longitude: 76.0424 },
     amenityFeature: [
       { "@type": "LocationFeatureSpecification", name: "Free WiFi", value: true },
       { "@type": "LocationFeatureSpecification", name: "Free Parking", value: true },
@@ -132,7 +125,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
         <script
           type="application/ld+json"
@@ -140,7 +133,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${dmSerif.variable} antialiased bg-background text-foreground`}
+        className={`${fraunces.variable} ${manrope.variable} antialiased bg-background text-foreground`}
       >
         {children}
         <Toaster />

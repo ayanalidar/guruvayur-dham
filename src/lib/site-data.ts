@@ -30,18 +30,18 @@ export const SITE = {
   },
 };
 
-export type NavItem = { label: string; href: string };
+export type NavItem = { label: string; href: string; route: string };
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "Rooms", href: "#rooms" },
-  { label: "Pooja", href: "#pooja" },
-  { label: "About", href: "#about" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Events", href: "#events" },
-  { label: "Blog", href: "#blog" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "#/", route: "/" },
+  { label: "Rooms", href: "#/rooms", route: "/rooms" },
+  { label: "Pooja", href: "#/pooja", route: "/pooja" },
+  { label: "About", href: "#/about", route: "/about" },
+  { label: "Gallery", href: "#/gallery", route: "/gallery" },
+  { label: "Events", href: "#/events", route: "/events" },
+  { label: "Blog", href: "#/blog", route: "/blog" },
+  { label: "FAQ", href: "#/faq", route: "/faq" },
+  { label: "Contact", href: "#/contact", route: "/contact" },
 ];
 
 /* ============ HERO TRUST BADGES ============ */

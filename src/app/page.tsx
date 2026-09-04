@@ -1,36 +1,85 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { useHashRoute } from "@/lib/router";
 import Navbar from "@/components/site/Navbar";
-import Hero from "@/components/site/Hero";
-import WhyChooseUs from "@/components/site/WhyChooseUs";
-import Rooms from "@/components/site/Rooms";
-import PlanYourDarshan from "@/components/site/PlanYourDarshan";
-import PoojaSection from "@/components/site/PoojaSection";
-import Testimonials from "@/components/site/Testimonials";
-import AboutSection from "@/components/site/AboutSection";
-import Gallery from "@/components/site/Gallery";
-import EventsSection from "@/components/site/EventsSection";
-import BlogSection from "@/components/site/BlogSection";
-import FAQ from "@/components/site/FAQ";
-import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
+import { PageLoader } from "@/components/site/visuals";
+
+import HomePage from "@/pages/HomePage";
+import RoomsPage from "@/pages/RoomsPage";
+import RoomDetailPage from "@/pages/RoomDetailPage";
+import PoojaPage from "@/pages/PoojaPage";
+import AboutPage from "@/pages/AboutPage";
+import GalleryPage from "@/pages/GalleryPage";
+import EventsPage from "@/pages/EventsPage";
+import BlogPage from "@/pages/BlogPage";
+import BlogPostPage from "@/pages/BlogPostPage";
+import FAQPage from "@/pages/FAQPage";
+import ContactPage from "@/pages/ContactPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import TermsPage from "@/pages/TermsPage";
+
+function NotFound() {
+  const { navigate } = useHashRoute();
+  return (
+    <div className="grid min-h-[70vh] place-items-center bg-ink px-4 pt-20">
+      <div className="text-center">
+        <p className="font-serif text-7xl text-gold-foil">404</p>
+        <p className="mt-3 font-serif text-2xl text-ivory">Page Not Found</p>
+        <p className="mt-2 text-sm text-ivory/60">The page you're looking for doesn't exist.</p>
+        <button onClick={() => navigate("/")} className="btn-luxe mt-6">
+          Back to Home
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
+  const { path } = useHashRoute();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 1800);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Route matching
+  const renderPage = () => {
+    if (path === "/" || path === "") return <HomePage />;
+    if (path === "/rooms") return <RoomsPage />;
+    if (path.startsWith("/rooms/")) {
+      const slug = path.replace("/rooms/", "");
+      return <RoomDetailPage slug={slug} />;
+    }
+    if (path === "/pooja") return <PoojaPage />;
+    if (path === "/about") return <AboutPage />;
+    if (path === "/gallery") return <GalleryPage />;
+    if (path === "/events") return <EventsPage />;
+    if (path === "/blog") return <BlogPage />;
+    if (path.startsWith("/blog/")) {
+      const slug = path.replace("/blog/", "");
+      return <BlogPostPage slug={slug} />;
+    }
+    if (path === "/faq") return <FAQPage />;
+    if (path === "/contact") return <ContactPage />;
+    if (path === "/privacy") return <PrivacyPage />;
+    if (path === "/terms") return <TermsPage />;
+    return <NotFound />;
+  };
+
   return (
     <>
+      <AnimatePresence>{loading && <PageLoader onDone={() => setLoading(false)} />}</AnimatePresence>
+
       <Navbar />
-      <main className="pb-16 sm:pb-0">
-        <Hero />
-        <WhyChooseUs />
-        <Rooms />
-        <PlanYourDarshan />
-        <PoojaSection />
-        <Testimonials />
-        <AboutSection />
-        <Gallery />
-        <EventsSection />
-        <BlogSection />
-        <FAQ />
-        <Contact />
+      <main className="min-h-screen pb-16 sm:pb-0">
+        <AnimatePresence mode="wait">
+          <div key={path}>{renderPage()}</div>
+        </AnimatePresence>
       </main>
       <Footer />
       <FloatingActions />

@@ -4,126 +4,98 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
+import { useHashRoute, isRouteActive } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
+  const { path, navigate } = useHashRoute();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("#home");
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-
-      // active-section detection
-      const sections = NAV_ITEMS.map((n) => n.href.replace("#", ""));
-      let current = "#home";
-      for (const id of sections) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 120 && rect.bottom >= 120) {
-          current = "#" + id;
-          break;
-        }
-      }
-      setActive(current);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 30);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNav = (href: string) => {
+  // Navigate + close mobile menu in the same handler (avoids setState-in-effect)
+  const go = (route: string) => {
     setOpen(false);
-    const el = document.getElementById(href.replace("#", ""));
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 70;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
+    navigate(route);
   };
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled ? "glass-nav border-b border-border shadow-warm" : "bg-transparent"
+        "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+        scrolled ? "glass-nav py-2" : "bg-transparent py-4"
       )}
     >
-      <nav className="container-x flex h-16 items-center justify-between lg:h-20">
+      <nav className="container-x flex h-14 items-center justify-between lg:h-16">
         {/* Logo */}
         <button
-          onClick={() => handleNav("#home")}
-          className="flex items-center gap-2.5 text-left"
+          onClick={() => go("/")}
+          className="group flex items-center gap-3"
           aria-label="Guruvayur Dham home"
         >
-          <span className="relative grid h-10 w-10 place-items-center rounded-full bg-gradient-saffron text-white shadow-warm">
-            <span className="font-serif text-lg leading-none">গু</span>
+          <span className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-full border border-champagne/30 bg-ink-soft">
+            <span className="absolute inset-0 bg-gradient-to-br from-champagne/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <span className="font-serif text-lg text-gold-foil">गु</span>
           </span>
           <span className="flex flex-col leading-none">
-            <span
-              className={cn(
-                "font-serif text-xl font-bold transition-colors",
-                scrolled ? "text-maroon dark:text-cream" : "text-white"
-              )}
-            >
+            <span className="font-serif text-lg font-medium tracking-wide text-ivory">
               Guruvayur Dham
             </span>
-            <span
-              className={cn(
-                "text-[10px] uppercase tracking-[0.2em] transition-colors",
-                scrolled ? "text-muted-foreground" : "text-cream/80"
-              )}
-            >
-              Stay · Pooja · Blessing
+            <span className="mt-0.5 text-[10px] uppercase tracking-[0.3em] text-champagne/70">
+              Luxury Pilgrim Stay
             </span>
           </span>
         </button>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-1 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.href}>
-              <button
-                onClick={() => handleNav(item.href)}
-                className={cn(
-                  "relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
-                  scrolled
-                    ? "text-foreground/80 hover:text-maroon"
-                    : "text-cream/90 hover:text-white",
-                  active === item.href &&
-                    (scrolled ? "text-maroon" : "text-white")
-                )}
-              >
-                {item.label}
-                {active === item.href && (
-                  <motion.span
-                    layoutId="nav-active"
-                    className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-saffron"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </button>
-            </li>
-          ))}
+        <ul className="hidden items-center gap-0.5 lg:flex">
+          {NAV_ITEMS.map((item) => {
+            const active = isRouteActive(path, item.route);
+            return (
+              <li key={item.route}>
+                <button
+                  onClick={() => go(item.route)}
+                  className={cn(
+                    "relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+                    active
+                      ? "text-champagne"
+                      : "text-ivory/70 hover:text-ivory"
+                  )}
+                >
+                  {item.label}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 -z-10 rounded-full border border-champagne/20 bg-champagne/5"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </button>
+              </li>
+            );
+          })}
         </ul>
 
         {/* Desktop CTAs */}
         <div className="hidden items-center gap-2 lg:flex">
           <a
             href={`tel:${SITE.phoneRaw}`}
-            className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-maroon transition-colors hover:bg-muted"
+            className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:border-champagne/50 hover:bg-champagne/5"
             aria-label="Call us"
           >
             <Phone className="h-4 w-4" />
           </a>
           <a
-            href={waLink(
-              "Namaskaram! I'd like to enquire about room availability at Guruvayur Dham."
-            )}
+            href={waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-saffron px-5 py-2.5 text-sm font-semibold text-white shadow-warm transition-all hover:bg-saffron-dark hover:shadow-warm-lg active:scale-[0.98]"
+            className="btn-luxe"
           >
             <MessageCircle className="h-4 w-4" />
             Book Now
@@ -133,13 +105,10 @@ export default function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className={cn(
-            "grid h-10 w-10 place-items-center rounded-full lg:hidden",
-            scrolled ? "text-maroon" : "text-white"
-          )}
+          className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne lg:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
         >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </nav>
 
@@ -150,39 +119,40 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden glass-nav border-t border-border lg:hidden"
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden glass-strong lg:hidden"
           >
             <ul className="container-x flex flex-col gap-1 py-4">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <button
-                    onClick={() => handleNav(item.href)}
-                    className={cn(
-                      "block w-full rounded-xl px-4 py-3 text-left text-base font-medium transition-colors",
-                      active === item.href
-                        ? "bg-saffron/10 text-maroon"
-                        : "text-foreground/80 hover:bg-muted"
-                    )}
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-              <li className="mt-2 grid grid-cols-2 gap-2">
+              {NAV_ITEMS.map((item) => {
+                const active = isRouteActive(path, item.route);
+                return (
+                  <li key={item.route}>
+                    <button
+                      onClick={() => go(item.route)}
+                      className={cn(
+                        "block w-full rounded-xl px-4 py-3 text-left text-base font-medium transition-colors",
+                        active
+                          ? "bg-champagne/10 text-champagne"
+                          : "text-ivory/80 hover:bg-champagne/5"
+                      )}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                );
+              })}
+              <li className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={`tel:${SITE.phoneRaw}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-3 text-sm font-semibold text-maroon"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-champagne/20 px-4 py-3 text-sm font-semibold text-champagne"
                 >
                   <Phone className="h-4 w-4" /> Call
                 </a>
                 <a
-                  href={waLink(
-                    "Namaskaram! I'd like to book a room at Guruvayur Dham."
-                  )}
+                  href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-saffron px-4 py-3 text-sm font-semibold text-white"
+                  className="btn-luxe"
                 >
                   <MessageCircle className="h-4 w-4" /> WhatsApp
                 </a>
