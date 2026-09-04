@@ -37,6 +37,10 @@ const SECTIONS = [
   { key: "notifications", label: "Notifications", icon: Bell },
   { key: "reviews", label: "Reviews", icon: Star },
   { key: "analytics", label: "Analytics", icon: TrendingUp },
+  { key: "performance", label: "Performance", icon: TrendingUp },
+  { key: "influencers", label: "Influencers", icon: Users },
+  { key: "blog-schedule", label: "Blog Scheduler", icon: BookOpen },
+  { key: "rate-limit", label: "Rate Limits", icon: ShieldCheck },
   { key: "security", label: "Security", icon: ShieldCheck },
   { key: "chatbot", label: "AI Chatbot", icon: Bot },
   { key: "weather", label: "Weather & Crowd", icon: CloudSun },
@@ -108,6 +112,10 @@ export default function AdminHub() {
             {active === "notifications" && <NotificationsSection />}
             {active === "reviews" && <ReviewsSection />}
             {active === "analytics" && <AnalyticsSection />}
+            {active === "performance" && <PerformanceSection />}
+            {active === "influencers" && <InfluencersSection />}
+            {active === "blog-schedule" && <BlogScheduleSection />}
+            {active === "rate-limit" && <RateLimitSection />}
             {active === "security" && <SecuritySection />}
             {active === "chatbot" && <ChatbotSection />}
             {active === "weather" && <WeatherSection />}
@@ -1309,6 +1317,350 @@ function AnalyticsSection() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ============ PERFORMANCE ============ */
+function PerformanceSection() {
+  const [data, setData] = useState<any>(null);
+  const [days, setDays] = useState(7);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/metrics?days=${days}`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setData(j); });
+    return () => { active = false; };
+  }, [days]);
+
+  if (!data) return <div className="py-12 text-center text-sm text-ivory/50"><RefreshCw className="mx-auto h-6 w-6 animate-spin" /> Loading metrics…</div>;
+
+  const s = data.summary;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Performance Monitoring</h2>
+          <p className="mt-1 text-sm text-ivory/60">Core Web Vitals tracking — LCP, FID, CLS, TTFB, FCP. Real user monitoring from the browser.</p>
+        </div>
+        <select value={days} onChange={(e) => setDays(parseInt(e.target.value))} className="rounded-full border border-champagne/15 bg-ink px-3 py-1.5 text-xs text-ivory focus:outline-none">
+          <option value={1}>Last 24h</option>
+          <option value={7}>Last 7 days</option>
+          <option value={30}>Last 30 days</option>
+        </select>
+      </div>
+
+      {/* Overall score */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-4">
+        <div className={cn("rounded-xl border p-4 text-center", s.scores.overall >= 80 ? "border-green-500/20 bg-green-500/5" : s.scores.overall >= 50 ? "border-yellow-500/20 bg-yellow-500/5" : "border-red-500/20 bg-red-500/5")}>
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Overall Score</p>
+          <p className={cn("font-serif text-4xl", s.scores.overall >= 80 ? "text-green-300" : s.scores.overall >= 50 ? "text-yellow-300" : "text-red-300")}>{s.scores.overall}</p>
+          <p className="text-xs text-ivory/50">/ 100</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Samples</p>
+          <p className="font-serif text-2xl text-gold-foil">{s.samples}</p>
+          <p className="text-xs text-ivory/50">real user sessions</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Avg LCP</p>
+          <p className={cn("font-serif text-2xl", s.avgLcp <= 2500 ? "text-green-300" : s.avgLcp <= 4000 ? "text-yellow-300" : "text-red-300")}>{s.avgLcp}ms</p>
+          <p className="text-xs text-ivory/40">target: &lt;2500ms</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Avg CLS</p>
+          <p className={cn("font-serif text-2xl", s.avgCls <= 0.1 ? "text-green-300" : s.avgCls <= 0.25 ? "text-yellow-300" : "text-red-300")}>{s.avgCls}</p>
+          <p className="text-xs text-ivory/40">target: &lt;0.1</p>
+        </div>
+      </div>
+
+      {/* Metrics breakdown */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {[
+          { label: "LCP", value: s.avgLcp, unit: "ms", target: 2500, score: s.scores.lcp, desc: "Largest Contentful Paint" },
+          { label: "FID", value: s.avgFid, unit: "ms", target: 100, score: s.scores.fid, desc: "First Input Delay" },
+          { label: "CLS", value: s.avgCls, unit: "", target: 0.1, score: s.scores.cls, desc: "Cumulative Layout Shift" },
+          { label: "TTFB", value: s.avgTtfb, unit: "ms", target: 800, score: s.avgTtfb <= 800 ? 100 : 50, desc: "Time to First Byte" },
+          { label: "FCP", value: s.avgFcp, unit: "ms", target: 1800, score: s.avgFcp <= 1800 ? 100 : 50, desc: "First Contentful Paint" },
+        ].map((m, i) => (
+          <div key={i} className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] uppercase tracking-wider text-ivory/50">{m.label}</p>
+              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", m.score >= 80 ? "bg-green-500/15 text-green-300" : m.score >= 50 ? "bg-yellow-500/15 text-yellow-300" : "bg-red-500/15 text-red-300")}>
+                {m.score >= 80 ? "Good" : m.score >= 50 ? "Needs Work" : "Poor"}
+              </span>
+            </div>
+            <p className="mt-2 font-serif text-2xl text-ivory">{m.value}{m.unit}</p>
+            <p className="text-xs text-ivory/40">{m.desc} · target: &lt;{m.target}{m.unit}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Page breakdown */}
+      <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+        <h3 className="font-serif text-lg text-ivory">Per-Page Performance</h3>
+        <div className="mt-3 space-y-2">
+          {(data.pageBreakdown || []).map((p: any, i: number) => (
+            <div key={i} className="flex items-center justify-between rounded-lg border border-champagne/5 bg-ink/30 p-3 text-sm">
+              <span className="font-mono text-champagne">{p.page}</span>
+              <div className="flex gap-4 text-xs">
+                <span className="text-ivory/70">LCP: <span className={cn(p.avgLcp <= 2500 ? "text-green-300" : "text-yellow-300")}>{p.avgLcp}ms</span></span>
+                <span className="text-ivory/70">CLS: <span className={cn(p.avgCls <= 0.1 ? "text-green-300" : "text-yellow-300")}>{p.avgCls}</span></span>
+                <span className="text-ivory/70">TTFB: {p.avgTtfb}ms</span>
+                <span className="text-ivory/40">{p.samples} samples</span>
+              </div>
+            </div>
+          ))}
+          {(data.pageBreakdown || []).length === 0 && <p className="py-4 text-center text-sm text-ivory/50">No page metrics yet. Browse the site to collect data.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ INFLUENCERS ============ */
+function InfluencersSection() {
+  const [influencers, setInfluencers] = useState<any[]>([]);
+  const load = () => {
+    fetch("/api/influencers", { cache: "no-store" }).then(r => r.json()).then(j => setInfluencers(j.influencers || []));
+  };
+  useEffect(() => { load(); }, []);
+
+  const updateStatus = async (id: string, status: string) => {
+    await fetch("/api/influencers", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, data: { status } }),
+    });
+    toast.success(`Influencer ${status.toLowerCase()}`);
+    load();
+  };
+
+  const statusColors: any = {
+    PENDING: "bg-yellow-500/15 text-yellow-300",
+    APPROVED: "bg-green-500/15 text-green-300",
+    REJECTED: "bg-red-500/15 text-red-300",
+    SUSPENDED: "bg-orange-500/15 text-orange-300",
+  };
+
+  return (
+    <div>
+      <h2 className="font-serif text-2xl text-ivory">Influencer Portal</h2>
+      <p className="mt-1 text-sm text-ivory/60">Manage influencer partnerships. Each approved influencer gets a unique referral code and earns 10% commission per booking.</p>
+
+      {/* Summary */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-4">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Influencers</p>
+          <p className="font-serif text-2xl text-gold-foil">{influencers.length}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Approved</p>
+          <p className="font-serif text-2xl text-green-300">{influencers.filter(i => i.status === "APPROVED").length}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Clicks</p>
+          <p className="font-serif text-2xl text-gold-foil">{influencers.reduce((s, i) => s + i.totalClicks, 0)}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Commission</p>
+          <p className="font-serif text-2xl text-gold-foil">₹{influencers.reduce((s, i) => s + i.totalCommission, 0).toLocaleString("en-IN")}</p>
+        </div>
+      </div>
+
+      {/* List */}
+      <div className="mt-6 space-y-3">
+        {influencers.map((inf) => (
+          <div key={inf.id} className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="grid h-12 w-12 place-items-center rounded-full border border-champagne/20 bg-gradient-to-br from-champagne/15 to-transparent font-serif text-lg text-gold-foil">
+                  {inf.name.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-serif text-base text-ivory">{inf.name}</p>
+                    <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase", statusColors[inf.status])}>{inf.status}</span>
+                  </div>
+                  <p className="text-xs text-ivory/50">{inf.email} · {inf.socialPlatform} · {inf.socialHandle} · {inf.followerCount.toLocaleString()} followers</p>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs">
+                    <span className="text-ivory/70">Code: <code className="font-mono text-champagne">{inf.uniqueCode}</code></span>
+                    <span className="text-ivory/70">Clicks: <span className="text-gold-foil">{inf.totalClicks}</span></span>
+                    <span className="text-ivory/70">Bookings: <span className="text-gold-foil">{inf.totalBookings}</span></span>
+                    <span className="text-ivory/70">Commission: <span className="text-gold-foil">₹{inf.totalCommission.toLocaleString("en-IN")}</span></span>
+                    <span className="text-ivory/70">Rate: {(inf.commissionRate * 100).toFixed(0)}%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-shrink-0 gap-1.5">
+                {inf.status === "PENDING" && (
+                  <>
+                    <button onClick={() => updateStatus(inf.id, "APPROVED")} className="rounded-full bg-green-500/15 px-3 py-1 text-[10px] font-semibold text-green-300 hover:bg-green-500/25">Approve</button>
+                    <button onClick={() => updateStatus(inf.id, "REJECTED")} className="rounded-full bg-red-500/15 px-3 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/25">Reject</button>
+                  </>
+                )}
+                {inf.status === "APPROVED" && (
+                  <button onClick={() => updateStatus(inf.id, "SUSPENDED")} className="rounded-full bg-orange-500/15 px-3 py-1 text-[10px] font-semibold text-orange-300 hover:bg-orange-500/25">Suspend</button>
+                )}
+                {inf.status === "REJECTED" && (
+                  <button onClick={() => updateStatus(inf.id, "APPROVED")} className="rounded-full bg-green-500/15 px-3 py-1 text-[10px] font-semibold text-green-300 hover:bg-green-500/25">Approve</button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        {influencers.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No influencer applications yet. Share the influencer portal link: /#/influencer</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ============ BLOG SCHEDULER ============ */
+function BlogScheduleSection() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [processing, setProcessing] = useState(false);
+
+  const load = () => {
+    fetch("/api/blog-schedule", { cache: "no-store" }).then(r => r.json()).then(j => setPosts(j.posts || []));
+  };
+  useEffect(() => { load(); }, []);
+
+  const schedule = async (postId: string) => {
+    const datetime = prompt("Enter publish date & time (YYYY-MM-DD HH:MM):");
+    if (!datetime) return;
+    const scheduledAt = new Date(datetime).toISOString();
+    await fetch("/api/blog-schedule", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postId, scheduledAt }),
+    });
+    toast.success("Post scheduled");
+    load();
+  };
+
+  const processScheduled = async () => {
+    setProcessing(true);
+    const r = await fetch("/api/blog-schedule", { method: "PATCH" });
+    const j = await r.json();
+    toast.success(`Published ${j.published} scheduled posts`);
+    load();
+    setProcessing(false);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Blog Scheduler & SEO</h2>
+          <p className="mt-1 text-sm text-ivory/60">Schedule posts for auto-publishing. Add SEO metadata (title, description, keywords) for each post.</p>
+        </div>
+        <button onClick={processScheduled} disabled={processing} className="btn-luxe text-xs">
+          {processing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Process Scheduled
+        </button>
+      </div>
+
+      <div className="mt-6 space-y-3">
+        {posts.map((p) => (
+          <div key={p.id} className={cn("rounded-xl border p-4", p.published ? "border-green-500/20 bg-green-500/5" : p.scheduled ? "border-yellow-500/20 bg-yellow-500/5" : "border-champagne/10 bg-ink/50")}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <img src={p.image} alt={p.title} className="h-12 w-16 flex-shrink-0 rounded-lg object-cover photo-cinematic" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-serif text-base text-ivory">{p.title}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                    <span className={cn("rounded-full px-2 py-0.5 font-bold", p.published ? "bg-green-500/15 text-green-300" : p.scheduled ? "bg-yellow-500/15 text-yellow-300" : "bg-ivory/10 text-ivory/60")}>
+                      {p.published ? "Published" : p.scheduled ? "Scheduled" : "Draft"}
+                    </span>
+                    {p.scheduledAt && <span className="text-ivory/50">→ {new Date(p.scheduledAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>}
+                    {p.dueForPublish && <span className="rounded-full bg-saffron/15 px-2 py-0.5 text-saffron">Due now!</span>}
+                    <span className="text-ivory/40">· {p.category} · {p.readTime}</span>
+                  </div>
+                  {p.seoTitle && <p className="mt-1 text-xs text-champagne">SEO: {p.seoTitle}</p>}
+                </div>
+              </div>
+              <button onClick={() => schedule(p.id)} className="rounded-full border border-champagne/20 px-3 py-1 text-[10px] font-semibold text-champagne hover:bg-champagne/10">
+                Schedule
+              </button>
+            </div>
+          </div>
+        ))}
+        {posts.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No blog posts yet.</p>}
+      </div>
+    </div>
+  );
+}
+
+/* ============ RATE LIMITS ============ */
+function RateLimitSection() {
+  const [data, setData] = useState<any>(null);
+  const load = () => {
+    fetch("/api/rate-limit", { cache: "no-store" }).then(r => r.json()).then(setData);
+  };
+  useEffect(() => { load(); }, []);
+
+  const clearLimits = async () => {
+    await fetch("/api/rate-limit", { method: "DELETE" });
+    toast.success("Rate limits cleared");
+    load();
+  };
+
+  if (!data) return <div className="py-12 text-center text-sm text-ivory/50"><RefreshCw className="mx-auto h-6 w-6 animate-spin" /> Loading…</div>;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Rate Limiting</h2>
+          <p className="mt-1 text-sm text-ivory/60">Protects APIs from abuse. Tracks IP-based request counts and blocks excessive traffic.</p>
+        </div>
+        <button onClick={clearLimits} className="rounded-full border border-champagne/20 px-4 py-2 text-xs font-semibold text-champagne hover:bg-champagne/10">
+          Clear All Limits
+        </button>
+      </div>
+
+      {/* Config */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-4">
+        {Object.entries(data.config).map(([key, cfg]: any) => (
+          <div key={key} className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+            <p className="text-[10px] uppercase tracking-wider text-ivory/50">{key}</p>
+            <p className="font-serif text-2xl text-gold-foil">{cfg.max}</p>
+            <p className="text-xs text-ivory/50">per {cfg.window}s</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Stats */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Tracked IPs</p>
+          <p className="font-serif text-2xl text-gold-foil">{data.trackedKeys}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Blocks</p>
+          <p className="font-serif text-2xl text-red-300">{data.totalBlocks}</p>
+        </div>
+        <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+          <p className="text-[10px] uppercase tracking-wider text-ivory/50">Blocked IPs</p>
+          <p className="font-serif text-2xl text-yellow-300">{data.blockedIps.length}</p>
+        </div>
+      </div>
+
+      {/* Blocked IPs list */}
+      {data.blockedIps.length > 0 && (
+        <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+          <h3 className="font-serif text-lg text-ivory">Blocked IP Addresses</h3>
+          <div className="mt-3 space-y-2">
+            {data.blockedIps.map((b: any, i: number) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-red-500/10 bg-red-500/5 p-3 text-sm">
+                <span className="font-mono text-red-300">{b.ip}</span>
+                <span className="text-ivory/60">{b.blocks} blocks</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

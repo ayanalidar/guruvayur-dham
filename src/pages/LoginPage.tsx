@@ -9,6 +9,7 @@ import {
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
+import OAuthButtons from "@/components/site/OAuthButtons";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -271,6 +272,9 @@ export default function LoginPage() {
                       </button>
                     </div>
                   )}
+
+                  {/* OAuth buttons — show on login and register */}
+                  {(guestMode === "login" || guestMode === "register") && <OAuthButtons />}
 
                   {/* Guest Register */}
                   {guestMode === "register" && (

@@ -359,6 +359,10 @@ model BlogPost {
   image           String
   content         String   // JSON array of paragraphs
   published       Boolean  @default(true)
+  scheduledAt     DateTime? // if set, auto-publish at this time
+  seoTitle        String?  // custom SEO title
+  seoDescription  String?  // custom meta description
+  seoKeywords     String?  // comma-separated keywords
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -541,5 +545,65 @@ model AnalyticsEvent {
   referrer        String?
   userAgent       String?
   ipAddress       String?
+  createdAt       DateTime @default(now())
+}
+
+/* ============ INFLUENCER ============ */
+model Influencer {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  socialPlatform  String   // YOUTUBE | INSTAGRAM | TWITTER | BLOG | OTHER
+  socialHandle    String
+  followerCount   Int      @default(0)
+  uniqueCode      String   @unique // e.g. INFLUENCER10
+  commissionRate  Float    @default(0.10) // 10% default
+  totalClicks     Int      @default(0)
+  totalBookings   Int      @default(0)
+  totalCommission Int      @default(0)
+  status          String   @default("PENDING") // PENDING | APPROVED | REJECTED | SUSPENDED
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  clicks          InfluencerClick[]
+}
+
+/* ============ INFLUENCER CLICKS ============ */
+model InfluencerClick {
+  id              String   @id @default(cuid())
+  influencerId    String
+  influencer      Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+  ipAddress       String?
+  userAgent       String?
+  referrer        String?
+  convertedToBooking Boolean @default(false)
+  bookingRef      String?
+  createdAt       DateTime @default(now())
+}
+
+/* ============ PERFORMANCE METRICS ============ */
+model PerformanceMetric {
+  id              String   @id @default(cuid())
+  page            String
+  lcp             Float?   // Largest Contentful Paint (ms)
+  fid             Float?   // First Input Delay (ms)
+  cls             Float?   // Cumulative Layout Shift
+  ttfb            Float?   // Time to First Byte (ms)
+  fcp             Float?   // First Contentful Paint (ms)
+  sessionId       String?
+  userAgent       String?
+  connection      String?  // 4g, 3g, wifi
+  createdAt       DateTime @default(now())
+}
+
+/* ============ RATE LIMIT LOG ============ */
+model RateLimitLog {
+  id              String   @id @default(cuid())
+  ipAddress       String
+  endpoint        String
+  method          String
+  blocked         Boolean  @default(false)
+  attempts        Int
   createdAt       DateTime @default(now())
 }

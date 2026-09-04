@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hashPassword, verifyPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/auth/login
- * Supports 3 login types:
- * 1. Staff PIN login: { type: "pin", pin } → matches StaffUser.pin
- * 2. Staff email+password: { type: "staff", email, password }
- * 3. Guest email+password: { type: "guest", email, password }
- * 4. Guest phone+OTP: handled via /api/auth/otp first, then { type: "otp", phone, otp }
- *
- * Returns: { user, role } + sets session cookie
+ * Rate limited: 5 attempts per minute per IP
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 login attempts per minute
+  const rl = rateLimit(req, { window: 60, max: 5, key: "auth:login" });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many login attempts. Please try again in a minute." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+    );
+  }
+
   const body = await req.json();
   const { type } = body;
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useHashRoute } from "@/lib/router";
 import { useAnalytics } from "@/lib/use-analytics";
+import { useWebVitals } from "@/lib/use-web-vitals";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
@@ -30,6 +31,7 @@ import VirtualTourPage from "@/pages/VirtualTourPage";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import ReviewSubmitPage from "@/pages/ReviewSubmitPage";
+import InfluencerPortalPage from "@/pages/InfluencerPortalPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
@@ -56,6 +58,7 @@ function NotFound() {
 export default function Home() {
   const { path } = useHashRoute();
   const { trackEvent } = useAnalytics();
+  useWebVitals();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -89,6 +92,7 @@ export default function Home() {
     if (path === "/login") return <LoginPage />;
     if (path === "/dashboard") return <DashboardPage />;
     if (path === "/review") return <ReviewSubmitPage />;
+    if (path === "/influencer") return <InfluencerPortalPage />;
     if (path === "/reset-password") return <LoginPage />; // handled via query param
     if (path.startsWith("/kitchen/")) {
       const room = path.replace("/kitchen/", "");

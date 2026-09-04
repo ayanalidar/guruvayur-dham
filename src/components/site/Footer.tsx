@@ -11,6 +11,7 @@ const serviceLinks = [
   { label: "Family Suite", route: "/rooms" },
   { label: "360° Virtual Tour", route: "/tour" },
   { label: "Write a Review", route: "/review" },
+  { label: "Influencer Portal", route: "/influencer" },
   { label: "Palpayasam Booking", route: "/pooja" },
   { label: "Thulabharam", route: "/pooja" },
   { label: "Choroonu Ceremony", route: "/pooja" },

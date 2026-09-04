@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/reviews/submit
- * Public endpoint for guests to submit reviews.
- * Creates a review with source=GUEST_SUBMITTED, published=false, moderated=false.
- * Admin must approve (publish) before it appears on the website.
- *
- * body: { authorName, authorEmail?, authorPhone?, rating, text, roomSlug?, stayDate? }
+ * Rate limited: 3 reviews per hour per IP
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: 3 reviews per hour
+  const rl = rateLimit(req, { window: 3600, max: 3, key: "review:submit" });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "You've submitted too many reviews recently. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const body = await req.json();
   const { authorName, authorEmail, authorPhone, rating, text, roomSlug, stayDate } = body;
 
