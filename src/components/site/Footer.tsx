@@ -71,9 +71,11 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-champagne/30 bg-ink-card">
-              <span className="font-serif text-lg text-gold-foil">ॐ</span>
-            </span>
+            <img
+              src="/logo-footer.png"
+              alt="Guruvayur Dham"
+              className="h-12 w-12 object-contain"
+            />
             <div>
               <p className="font-serif text-xl font-medium text-ivory">{SITE.name}</p>
               <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">

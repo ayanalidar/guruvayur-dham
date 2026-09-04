@@ -36,13 +36,14 @@ export default function Navbar() {
         {/* Logo */}
         <button
           onClick={() => go("/")}
-          className="group flex items-center gap-3"
+          className="group flex items-center gap-2.5"
           aria-label="Guruvayur Dham home"
         >
-          <span className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-full border border-champagne/30 bg-ink-soft">
-            <span className="absolute inset-0 bg-gradient-to-br from-champagne/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            <span className="font-serif text-lg text-gold-foil">गु</span>
-          </span>
+          <img
+            src="/logo-nav.png"
+            alt="Guruvayur Dham"
+            className="h-10 w-10 object-contain transition-transform group-hover:scale-105"
+          />
           <span className="flex flex-col leading-none">
             <span className="font-serif text-lg font-medium tracking-wide text-ivory">
               Guruvayur Dham

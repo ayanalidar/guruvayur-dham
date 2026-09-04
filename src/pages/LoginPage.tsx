@@ -168,9 +168,11 @@ export default function LoginPage() {
         <div className="relative flex h-full flex-col justify-between p-12">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/30 bg-ink-soft">
-              <span className="font-serif text-xl text-gold-foil">गु</span>
-            </span>
+            <img
+              src="/logo-large.png"
+              alt="Guruvayur Dham"
+              className="h-12 w-12 object-contain"
+            />
             <div>
               <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
               <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
@@ -241,9 +243,11 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/30 bg-ink-soft">
-              <span className="font-serif text-xl text-gold-foil">गु</span>
-            </span>
+            <img
+              src="/logo-large.png"
+              alt="Guruvayur Dham"
+              className="h-12 w-12 object-contain"
+            />
             <div>
               <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
               <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
