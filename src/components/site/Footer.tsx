@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, MessageCircle, Mail, MapPin, Facebook, Instagram, Youtube, Twitter, Clock, BedDouble } from "lucide-react";
+import { Phone, MessageCircle, Mail, MapPin, Facebook, Instagram, Youtube, Twitter, Clock, BedDouble, CreditCard } from "lucide-react";
 import { SITE, NAV_ITEMS, waLink } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
 import { GoldFoilText, MandalaDivider } from "./visuals";
@@ -44,18 +44,16 @@ export default function Footer() {
               2 Minutes from the Temple?
             </h3>
             <p className="mx-auto mt-4 max-w-xl text-base text-ivory/70">
-              Book your room on WhatsApp in 30 seconds. Real-time availability, instant
-              confirmation, and zero booking fee.
+              Book your room online in 30 seconds. Real-time availability, instant
+              confirmation, dynamic pricing, and zero booking fee.
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham. Please share availability.")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => navigate("/book")}
                 className="btn-luxe"
               >
-                <MessageCircle className="h-5 w-5" /> Book on WhatsApp
-              </a>
+                <CreditCard className="h-5 w-5" /> Instant Book
+              </button>
               <a href={`tel:${SITE.phoneRaw}`} className="btn-ghost-luxe">
                 <Phone className="h-5 w-5" /> {SITE.phone}
               </a>

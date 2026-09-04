@@ -126,7 +126,14 @@ export default function GuestBookingPage() {
           return;
         }
 
-        // 2. Open Razorpay checkout
+        // Check if demo mode — skip Razorpay modal, go straight to booking
+        if (order.demo) {
+          toast.info("Demo mode: Payment simulated. Add Razorpay keys for real payments.");
+          await createBooking("pay_demo_" + Math.random().toString(36).slice(2, 14));
+          return;
+        }
+
+        // 2. Open Razorpay checkout (real mode only)
         const rzp = new window.Razorpay({
           key: order.keyId,
           amount: order.amount,

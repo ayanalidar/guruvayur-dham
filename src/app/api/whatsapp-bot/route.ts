@@ -20,24 +20,24 @@ export async function POST(req: NextRequest) {
   } else if (msg.match(/book|room|availability|reserve/)) {
     intent = "booking";
     reply = `We'd love to host you! 🏨\n\nOur rooms (2 min walk to Guruvayur Temple):\n• Non-AC Budget: ₹700/night\n• Standard AC: ₹1,500/night\n• Deluxe AC: ₹2,200/night\n• Family Suite AC: ₹3,500/night\n\nTo check availability & book instantly:\n👉 https://guruvayurdham.com/#/rooms\n\nOr just tell me:\n• Check-in date\n• Check-out date\n• Number of guests\n\nAnd I'll check availability for you!`;
-  } else if (msg.match(/pooja|palpayasam|thulabharam|choroonu|archana|offering/)) {
+  } else if (msg.match(/pooja|aarti|abhishek|bhog|offering/)) {
     intent = "pooja";
-    reply = ` sacred offerings at Guruvayur Temple (zero commission): 🙏\n\n• Palpayasam · ₹50\n• Archana · ₹100\n• Pushpanjali · ₹75\n• Mala Offering · ₹250\n• Thulabharam · ₹1,500\n• Choroonu (Annaprasham) · ₹800\n• Bhagavatha Sapthaham · ₹5,000\n\nBook online: https://guruvayurdham.com/#/pooja\n\nOr tell me which pooja and preferred date · I'll book it for you!`;
-  } else if (msg.match(/darshan|timing|nirmalya|deeparadhana|seeveli/)) {
+    reply = `Sacred offerings at Mathura temples (zero commission): 🙏\n\n• Pushpanjali · ₹21\n• Mangala Aarti · ₹51\n• Sandhya Aarti · ₹101\n• Rajbhog Aarti · ₹251\n• Abhishek · ₹1,100\n• Annadan · ₹2,100\n• Phool Bangla · ₹5,100\n\nBook online: https://guruvayurdham.com/#/pooja`;
+  } else if (msg.match(/darshan|timing|aarti|temple time/)) {
     intent = "darshan";
-    reply = `Guruvayur Temple Darshan Timings: 🛕\n\n• Nirmalya Darshan: 3:00 AM (most sacred)\n• Seeveli procession: 7:30 AM\n• General Darshan: 8:30 AM - 12:30 PM\n• Temple reopens: 4:30 PM\n• Deeparadhana (evening aarti): 6:15 PM\n• Temple closes: 9:15 PM\n\nShortest queue slots: Nirmalyam (3 AM), post-Ucha Pooja (12 PM), post-Deeparadhana (7:30 PM)\n\nAvoid weekends & Ekadasi unless specifically attending.`;
-  } else if (msg.match(/festival|utsavam|ekadasi|vishu|ashtami/)) {
+    reply = `Mathura Temple Darshan Timings: 🛕\n\n• Krishna Janmabhoomi: 5:00 AM - 12:00 PM, 4:00 PM - 9:30 PM\n• Dwarkadhish Temple: 6:30 AM - 10:30 AM, 4:00 PM - 7:00 PM\n• Banke Bihari (Vrindavan): 7:45 AM - 12:00 PM, 5:30 PM - 9:30 PM\n• Mata Pathwari Mandir: 5:00 AM - 9:00 PM (next to us!)\n\nBest time: Early morning for peaceful darshan.`;
+  } else if (msg.match(/festival|janmashtami|holi|diwali/)) {
     intent = "festival";
-    reply = `Major Guruvayur Festivals 2026: 🎉\n\n• Guruvayur Ekadasi: Dec 8, 2026 (Chembai music festival finale)\n• Ashtami Rohini: Aug 25, 2026 (Krishna Jayanti)\n• Guruvayur Utsavam: Feb 26 - Mar 7, 2026 (10-day elephant processions)\n• Vishu: Apr 14, 2026 (Malayalam New Year)\n• Mandala Season: Nov 16 - Dec 27, 2026\n\nBook rooms 60+ days in advance for festival dates! https://guruvayurdham.com/#/events`;
+    reply = `Major Mathura Festivals: 🎉\n\n• Janmashtami (Aug/Sept): Krishna's birthday · biggest festival\n• Holi (March): Lathmar Holi in Barsana, Phoolon ki Holi in Vrindavan\n• Diwali (Oct/Nov): Festival of lights\n• Radhashtami (Aug/Sept): Radha's appearance day\n• Kartik Purnima (Nov): Full moon celebration\n\nBook rooms 60+ days in advance! https://guruvayurdham.com/#/events`;
   } else if (msg.match(/check.?in|check.?out|time/)) {
     intent = "checkin";
-    reply = `Check-in & Check-out: ⏰\n\n• Check-in: 12:00 PM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n• Half-day extension (6 PM): ₹600\n\nFree pickup from Guruvayur railway station for 2+ night stays!`;
+    reply = `Check-in & Check-out: ⏰\n\n• Check-in: 12:00 PM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n• Half-day extension (6 PM): ₹600\n\nFree pickup from Mathura railway station for 2+ night stays!`;
   } else if (msg.match(/reach|how|direction|airport|train|bus/)) {
     intent = "directions";
-    reply = `How to Reach Guruvayur: 🚗\n\n• Nearest airport: Cochin (COK), 87 km, 2-hr taxi (₹2,500-3,500)\n• Nearest major railhead: Thrissur (29 km)\n• Guruvayur railway station: 1 km from temple\n• KSRTC buses from all Kerala cities\n\nFree parking for 25+ vehicles at Guruvayur Dham. WhatsApp +91 98765 43210 for pickup arrangement!`;
+    reply = `How to Reach Us: 🚗\n\n• Address: Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, UP 281001\n• Phone: +91-90908 20208\n• Nearest airport: Agra (60 km) / Delhi (150 km)\n• Mathura railway station: 3 km\n• Vrindavan: 15 km\n\nFree parking for 25+ vehicles. WhatsApp +91-90908 20208 for pickup!`;
   } else if (msg.match(/dress|code|mundu|saree|wear/)) {
     intent = "dresscode";
-    reply = `Dress Code for Guruvayur Temple: 👕\n\nMen:\n• Must wear mundu/dhoti\n• Remove upper garment (chest bare)\n• Towel/angavastram on shoulder OK\n\nWomen:\n• Saree or salwar kameez with dupatta\n• No trousers, jeans, leggings\n\nChildren under 10: relaxed\n\nSpare mundus/sarees at our reception (₹100 refundable deposit). Photography prohibited inside temple.`;
+    reply = `Dress Code for Mathura Temples: 👕\n\nMen:\n• Dhoti/kurta or traditional wear preferred\n• No shorts or sleeveless shirts\n\nWomen:\n• Saree, salwar kameez, or modest traditional wear\n• Cover head in some temples (especially Krishna Janmabhoomi)\n\nGeneral:\n• Remove footwear before entering\n• No leather items inside sanctum\n• Photography prohibited inside most temples`;
   } else if (msg.match(/my booking|status|reference/)) {
     intent = "booking_status";
     // Try to find booking by phone
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
     if (booking) {
-      reply = `Your booking: 📋\n\nReference: ${booking.reference}\nStatus: ${booking.status}\nCheck-in: ${new Date(booking.checkIn).toLocaleDateString("en-IN")}\nCheck-out: ${new Date(booking.checkOut).toLocaleDateString("en-IN")}\nNights: ${booking.nights}\nAmount: ₹${booking.amount}\nSource: ${booking.source}\n\nNeed changes? WhatsApp our front desk: +91 98765 43210`;
+      reply = `Your booking: 📋\n\nReference: ${booking.reference}\nStatus: ${booking.status}\nCheck-in: ${new Date(booking.checkIn).toLocaleDateString("en-IN")}\nCheck-out: ${new Date(booking.checkOut).toLocaleDateString("en-IN")}\nNights: ${booking.nights}\nAmount: ₹${booking.amount}\nSource: ${booking.source}\n\nNeed changes? WhatsApp our front desk: +91-90908 20208`;
     } else {
       reply = `I couldn't find a booking for ${phone}. Could you share your booking reference (starts with GD-)? Or book a new room at https://guruvayurdham.com/#/rooms`;
     }
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
       reply = result.content;
     } catch {
-      reply = `Namaskaram! I didn't quite understand that. I can help with: booking, pooja, darshan timings, festivals, dress code, how to reach, or check your booking. Try one of those, or WhatsApp our team at +91 98765 43210.`;
+      reply = `Namaskaram! I didn't quite understand that. I can help with: booking, pooja, darshan timings, festivals, dress code, how to reach, or check your booking. Try one of those, or WhatsApp our team at +91-90908 20208.`;
     }
   }
 

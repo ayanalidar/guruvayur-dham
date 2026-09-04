@@ -19,12 +19,12 @@ export default function FloatingActions() {
 
   return (
     <>
-      {/* Floating WhatsApp */}
+      {/* Floating WhatsApp — for enquiries, not bookings */}
       <motion.a
-        href={waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham.")}
+        href={waLink("Namaskaram! I have a question about Guruvayur Dham.")}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with us on WhatsApp"
+        aria-label="Chat on WhatsApp"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2, type: "spring", stiffness: 260, damping: 18 }}
@@ -59,13 +59,13 @@ export default function FloatingActions() {
           Call
         </a>
         <a
-          href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
+          href={waLink("Namaskaram! I have a question about Guruvayur Dham.")}
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center gap-0.5 border-x border-champagne/15 py-3 text-xs font-semibold text-[#25D366]"
         >
           <MessageCircle className="h-5 w-5" />
-          WhatsApp
+          Chat
         </a>
         <button
           onClick={() => navigate("/book")}

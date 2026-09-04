@@ -287,95 +287,95 @@ export interface Pooja {
 
 export const POOJAS: Pooja[] = [
   {
-    id: "palpayasam",
-    name: "Palpayasam",
-    price: 50,
-    duration: "Same day",
+    id: "mangala-aarti",
+    name: "Mangala Aarti",
+    price: 51,
+    duration: "15 min",
     description:
-      "The most beloved offering at Guruvayur · sweet, slow-cooked rice-and-milk porridge prepared in the temple kitchen. Offered to Lord Guruvayurappan and distributed as prasadam.",
-    prasadam: "1 packet Palpayasam (≈250 g)",
+      "The first morning aarti offered to the deity before sunrise. Devotees can sponsor this auspicious aarti in their name. Includes chanting of morning prayers and lamp offering.",
+    prasadam: "Blessed flowers + sweets",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
     significance:
-      "Believed to fulfill vows (mannathu) related to childbirth, marriage, and recovery from illness.",
+      "Mangala Aarti marks the awakening of the deity. Sponsoring it is believed to bring prosperity and new beginnings.",
   },
   {
-    id: "thulabharam",
-    name: "Thulabharam",
-    price: 1500,
-    duration: "1 hour",
-    description:
-      "The devotee is weighed against offerings (jaggery, sugar, rice, coins, or bananas) on a giant temple scale. The offering is then donated to the temple.",
-    prasadam: "Small packet of prasadam",
-    image:
-      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
-    significance:
-      "Traditional vow-fulfilment for newborns, recovery from illness, or major life milestones.",
-  },
-  {
-    id: "choroonu",
-    name: "Choroonu (Annaprasham)",
-    price: 800,
+    id: "abhishek",
+    name: "Abhishek (Holy Bath)",
+    price: 1100,
     duration: "45 min",
     description:
-      "The first rice-feeding ceremony for infants, conducted inside the temple precincts in the presence of Lord Guruvayurappan. Performed by the temple tantri.",
-    prasadam: "Sweet payasam + blessed rice",
-    image:
-      "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&h=400&fit=crop",
-    significance:
-      "The most sacred Annaprasham in Kerala · initiates a child into solid food with divine blessing.",
-  },
-  {
-    id: "archana",
-    name: "Archana",
-    price: 100,
-    duration: "15 min",
-    description:
-      "A simple, daily nama-archana offered to the Lord with flowers and recitation of the 1008 names of Lord Vishnu. Names of the devotee and family are read out.",
-    prasadam: "Blessed flowers + sandalwood paste",
+      "The sacred bathing ceremony of the deity with milk, curd, ghee, honey, and Ganga Jal (Panchamrit). Performed by the temple priest with Vedic chanting.",
+    prasadam: "Panchamrit + blessed flowers",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Ideal daily offering for spiritual merit, health, and family well-being.",
+      "Abhishek is considered one of the most powerful offerings for spiritual purification and fulfilling heartfelt wishes.",
+  },
+  {
+    id: "rajbhog-aarti",
+    name: "Rajbhog Aarti",
+    price: 251,
+    duration: "30 min",
+    description:
+      "The midday royal offering where the deity is served a grand meal of 56 bhogs (Chhappan Bhog). Devotees can sponsor this elaborate feast in their family's name.",
+    prasadam: "Blessed sweets + food prasadam",
+    image:
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
+    significance:
+      "Rajbhog represents offering the best to the Lord. Sponsoring it is believed to bring abundance and remove scarcity.",
+  },
+  {
+    id: "sandhya-aarti",
+    name: "Sandhya Aarti",
+    price: 101,
+    duration: "20 min",
+    description:
+      "The evening lamp ceremony at sunset. Multiple diyas are lit and waved before the deity while devotional hymns are sung. A deeply moving experience.",
+    prasadam: "Blessed lamp wick + flowers",
+    image:
+      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+    significance:
+      "Sandhya Aarti marks the transition from day to night. Sponsoring it brings peace and harmony to the family.",
   },
   {
     id: "pushpanjali",
-    name: "Pushpanjali",
-    price: 75,
+    name: "Pushpanjali (Flower Offering)",
+    price: 21,
     duration: "10 min",
     description:
-      "A short flower offering at the sanctum · the priest showers flowers on the deity while chanting your name and gotra. Perfect for travellers on a tight schedule.",
+      "A simple flower offering at the sanctum. The priest showers flowers on the deity while chanting your name. Perfect for visitors on a short schedule.",
     prasadam: "Blessed flowers",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "The simplest temple offering · recommended for first-time visitors and short stops.",
+      "The simplest and most affordable offering. Recommended for first-time visitors and daily devotion.",
   },
   {
-    id: "mala",
-    name: "Mala Offering",
-    price: 250,
-    duration: "20 min",
+    id: "phool-bangla",
+    name: "Phool Bangla (Flower Palace)",
+    price: 5100,
+    duration: "2 hours",
     description:
-      "Garland of fresh flowers (jasmine, marigold, or lotus) adorned on Lord Guruvayurappan in your name. Includes naming the devotee at the sanctum.",
-    prasadam: "Prasadam packet",
+      "An elaborate decoration where the entire sanctum is adorned with thousands of fresh flowers, creating a floral palace for the deity. A spectacular visual offering.",
+    prasadam: "Special prasadam + blessed flowers",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Symbolises surrender of the ego · popular for students appearing for exams and new beginnings.",
+      "Phool Bangla is a grand offering popular during festivals and special occasions. Sponsors are blessed with beauty, harmony, and joy.",
   },
   {
-    id: "bhagavatha-sapthaham",
-    name: "Bhagavatha Sapthaham",
-    price: 5000,
-    duration: "7 days",
+    id: "annadan",
+    name: "Annadan (Food Donation)",
+    price: 2100,
+    duration: "Full day",
     description:
-      "A seven-day recitation of the entire Srimad Bhagavatam performed by trained scholars in the temple hall. Can be sponsored in your family's name.",
-    prasadam: "Daily prasadam + special invitation on day 7",
+      "Sponsor a full day of meals for pilgrims and devotees at the temple annakshetra. Feeds approximately 100 people with pure vegetarian prasadam meals.",
+    prasadam: "Blessed food prasadam",
     image:
-      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
     significance:
-      "Considered the highest spiritual merit offering · sponsors are honoured throughout the seven days.",
+      "Annadan is considered the highest form of donation in Hindu tradition. 'Annadan is Mahadan' — feeding devotees brings infinite blessings.",
   },
 ];
 

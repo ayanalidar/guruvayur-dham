@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle, Settings, User } from "lucide-react";
+import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { cn } from "@/lib/utils";
@@ -166,14 +166,12 @@ export default function Navbar() {
                 >
                   <Phone className="h-4 w-4" /> Call
                 </a>
-                <a
-                  href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => go("/book")}
                   className="btn-luxe"
                 >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp
-                </a>
+                  <CreditCard className="h-4 w-4" /> Instant Book
+                </button>
               </li>
               <li>
                 <button
