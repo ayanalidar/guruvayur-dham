@@ -103,7 +103,7 @@ export default function KitchenOrderPage({ roomNumber: initialRoom }: { roomNumb
         eyebrow={`Room ${roomNumber || "—"} · In-Room Dining`}
         icon={Utensils}
         title={<>Order <GoldFoilText>Food</GoldFoilText></>}
-        subtitle="Pure-veg kitchen. Order from your room — delivered in 20-30 min. Added to your room bill."
+        subtitle="Pure-veg kitchen. Order from your room · delivered in 20-30 min. Added to your room bill."
         crumbs={[{ label: "Home", route: "/" }, { label: "Kitchen Order" }]}
       />
 

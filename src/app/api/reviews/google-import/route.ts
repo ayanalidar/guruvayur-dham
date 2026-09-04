@@ -77,7 +77,7 @@ const DEMO_REVIEWS = [
     authorName: "Priya Venkatesh",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocR7nT2pK5vJ3sW1xL6qH4tB2cY7nVfM3qZ8rX9bK=s96-c",
     rating: 5,
-    text: "The best decision we made for our Guruvayur trip! Booked the Deluxe AC room and it was pristine — fresh linen, working AC, great shower pressure. The staff helped us book Palpayasam and Pushpanjali without any queue. Walk to the temple in 2 minutes. Highly recommend!",
+    text: "The best decision we made for our Guruvayur trip! Booked the Deluxe AC room and it was pristine · fresh linen, working AC, great shower pressure. The staff helped us book Palpayasam and Pushpanjali without any queue. Walk to the temple in 2 minutes. Highly recommend!",
     reviewDate: "2026-05-30",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAG",
     googleProfileUrl: "https://www.google.com/maps/contrib/678901234/reviews",
@@ -97,7 +97,7 @@ const DEMO_REVIEWS = [
     authorName: "Deepa Raghavan",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocT9nV4pK7vJ1sW3xL8qH2tB4cY5nVfM5qZ9rX1bM=s96-c",
     rating: 5,
-    text: "Booked through their website — instant confirmation, no booking fee, and the dynamic pricing was transparent. Got 10% off with EARLYBIRD10 coupon. The room was exactly as shown in the photos. Will definitely book again for our next visit.",
+    text: "Booked through their website · instant confirmation, no booking fee, and the dynamic pricing was transparent. Got 10% off with EARLYBIRD10 coupon. The room was exactly as shown in the photos. Will definitely book again for our next visit.",
     reviewDate: "2026-04-25",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAI",
     googleProfileUrl: "https://www.google.com/maps/contrib/890123456/reviews",
@@ -107,7 +107,7 @@ const DEMO_REVIEWS = [
     authorName: "Suresh Babu",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocU1nW5pK8vJ4sW2xL7qH1tB3cY4nVfM6qZ2rX3bN=s96-c",
     rating: 5,
-    text: "Family of 6 stayed in the Family Suite for 3 nights during Vishu. Spacious, clean, and the kitchenette was handy for making morning coffee before darshan. Staff arranged Vishukkani darshan at 2:30 AM — unforgettable experience. Thank you Guruvayur Dham!",
+    text: "Family of 6 stayed in the Family Suite for 3 nights during Vishu. Spacious, clean, and the kitchenette was handy for making morning coffee before darshan. Staff arranged Vishukkani darshan at 2:30 AM · unforgettable experience. Thank you Guruvayur Dham!",
     reviewDate: "2026-04-20",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAJ",
     googleProfileUrl: "https://www.google.com/maps/contrib/901234567/reviews",
@@ -117,7 +117,7 @@ const DEMO_REVIEWS = [
     authorName: "Anitha Krishnan",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocV2nX6pK9vJ5sW1xL3qH6tB2cY8nVfM7qZ3rX4bO=s96-c",
     rating: 5,
-    text: "The QR code food ordering in the room is brilliant! Ordered dinner at 8 PM, food arrived in 20 minutes, hot and delicious. Pure-veg menu with great options. Bill added to room — no cash handling. This is how pilgrim stays should be.",
+    text: "The QR code food ordering in the room is brilliant! Ordered dinner at 8 PM, food arrived in 20 minutes, hot and delicious. Pure-veg menu with great options. Bill added to room · no cash handling. This is how pilgrim stays should be.",
     reviewDate: "2026-04-08",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAK",
     googleProfileUrl: "https://www.google.com/maps/contrib/012345678/reviews",
@@ -127,7 +127,7 @@ const DEMO_REVIEWS = [
     authorName: "Ramesh Iyer",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocW3nY7pK1vJ6sW2xL4qH5tB1cY7nVfM8qZ4rX5bP=s96-c",
     rating: 4,
-    text: "Good value for money. Rooms are clean, staff is helpful, and the location is perfect. The only improvement I'd suggest is soundproofing — you can hear temple bells and street noise. But that's part of the Guruvayur experience, isn't it?",
+    text: "Good value for money. Rooms are clean, staff is helpful, and the location is perfect. The only improvement I'd suggest is soundproofing · you can hear temple bells and street noise. But that's part of the Guruvayur experience, isn't it?",
     reviewDate: "2026-03-28",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAL",
     googleProfileUrl: "https://www.google.com/maps/contrib/123450678/reviews",
@@ -137,7 +137,7 @@ const DEMO_REVIEWS = [
     authorName: "Geeta Menon",
     authorAvatar: "https://lh3.googleusercontent.com/a/ACg8ocX4nZ8pK2vJ7sW3xL5qH4tB2cY6nVfM9qZ5rX6bQ=s96-c",
     rating: 5,
-    text: "What a beautiful property! The cinematic dark-luxe interiors are stunning — felt like a boutique hotel, not a pilgrim lodge. The Om watermarks and mandala dividers add such a spiritual touch. And the 360° virtual tour on their website helped us choose the perfect room.",
+    text: "What a beautiful property! The cinematic dark-luxe interiors are stunning · felt like a boutique hotel, not a pilgrim lodge. The Om watermarks and mandala dividers add such a spiritual touch. And the 360° virtual tour on their website helped us choose the perfect room.",
     reviewDate: "2026-03-15",
     googleReviewId: "ChdDSUhNMG9nS0VjQnRRQjJZM0x2Z25nRRAM",
     googleProfileUrl: "https://www.google.com/maps/contrib/234560789/reviews",
@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * GET /api/reviews/google-import — check import status
+ * GET /api/reviews/google-import · check import status
  */
 export async function GET() {
   const total = await db.review.count({ where: { source: "GOOGLE" } });

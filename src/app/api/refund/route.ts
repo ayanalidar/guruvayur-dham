@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// POST /api/refund — process refund for a booking
+// POST /api/refund · process refund for a booking
 // body: { bookingId, reason }
 // Calculates refund based on cancellation policy:
 // - 7+ days before check-in: 90% refund
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
         channel: ch.code,
         action: "UNBLOCK",
         status: "SUCCESS",
-        message: `Booking ${booking.reference} cancelled — room ${booking.room.name} released for ${new Date(booking.checkIn).toLocaleDateString()} → ${new Date(booking.checkOut).toLocaleDateString()}`,
+        message: `Booking ${booking.reference} cancelled · room ${booking.room.name} released for ${new Date(booking.checkIn).toLocaleDateString()} → ${new Date(booking.checkOut).toLocaleDateString()}`,
         payload: JSON.stringify({ reference: booking.reference, refundPercent, refundAmount }),
       },
     });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/stats — dashboard stats
+// GET /api/stats · dashboard stats
 export async function GET() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -32,7 +32,7 @@ export async function GET() {
     db.syncLog.count({ where: { createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } }),
   ]);
 
-  // Live availability — count rooms available today
+  // Live availability · count rooms available today
   const todayAv = await db.availability.findMany({
     where: { date: today },
     include: { room: { select: { slug: true, name: true, type: true, totalUnits: true } } },

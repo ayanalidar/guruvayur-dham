@@ -66,7 +66,7 @@ export default function AdminHub() {
         eyebrow="Admin Hub"
         icon={Settings}
         title={<>Complete <GoldFoilText>Operations Center</GoldFoilText></>}
-        subtitle="Every feature — bookings, CRM, housekeeping, kitchen, poojas, pricing, content, channels, invoices, audits, and more — in one place."
+        subtitle="Every feature · bookings, CRM, housekeeping, kitchen, poojas, pricing, content, channels, invoices, audits, and more · in one place."
         crumbs={[{ label: "Home", route: "/" }, { label: "Admin Hub" }]}
       />
 
@@ -148,13 +148,13 @@ function DashboardSection({ stats }: any) {
           </div>
         ))}
       </div>
-      {/* Live Activity Feed — real-time WebSocket */}
+      {/* Live Activity Feed · real-time WebSocket */}
       <div className="mt-6">
         <LiveActivityFeed />
       </div>
       <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-4 text-sm text-ivory/70">
         <AlertCircle className="mr-2 inline h-4 w-4 text-champagne" />
-        <strong className="text-ivory">Live:</strong> New bookings, kitchen orders, channel syncs, and housekeeping updates appear in the feed above in real-time — no refresh needed.
+        <strong className="text-ivory">Live:</strong> New bookings, kitchen orders, channel syncs, and housekeeping updates appear in the feed above in real-time · no refresh needed.
       </div>
     </div>
   );
@@ -172,7 +172,7 @@ function CRMSection() {
   return (
     <div>
       <h2 className="font-serif text-2xl text-ivory">Customer Relationship Management</h2>
-      <p className="mt-1 text-sm text-ivory/60">Track every guest — booking history, revenue, loyalty points, tags.</p>
+      <p className="mt-1 text-sm text-ivory/60">Track every guest · booking history, revenue, loyalty points, tags.</p>
       <input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -504,7 +504,7 @@ function BlogCMSSection() {
   return (
     <div>
       <h2 className="font-serif text-2xl text-ivory">Blog CMS</h2>
-      <p className="mt-1 text-sm text-ivory/60">Manage blog articles. Edit, publish, unpublish — changes go live instantly.</p>
+      <p className="mt-1 text-sm text-ivory/60">Manage blog articles. Edit, publish, unpublish · changes go live instantly.</p>
       <div className="mt-6 space-y-3">
         {posts.map((p) => (
           <div key={p.id} className="flex items-center gap-4 rounded-xl border border-champagne/10 bg-ink/50 p-4">
@@ -562,7 +562,7 @@ function MaintenanceSection() {
   return (
     <div>
       <h2 className="font-serif text-2xl text-ivory">Maintenance Mode</h2>
-      <p className="mt-1 text-sm text-ivory/60">Block rooms for repairs — auto-removed from all channels + housekeeping marked.</p>
+      <p className="mt-1 text-sm text-ivory/60">Block rooms for repairs · auto-removed from all channels + housekeeping marked.</p>
       <div className="mt-6 space-y-3">
         {blocks.map((b) => (
           <div key={b.id} className="flex items-center gap-4 rounded-xl border border-champagne/10 bg-ink/50 p-4">
@@ -603,7 +603,7 @@ function InvoicesSection() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(invoice),
     });
-    toast.success("Invoice saved — ready for PDF/print");
+    toast.success("Invoice saved · ready for PDF/print");
   };
   return (
     <div>
@@ -772,7 +772,7 @@ function NotificationsSection() {
   return (
     <div>
       <h2 className="font-serif text-2xl text-ivory">Notifications Log</h2>
-      <p className="mt-1 text-sm text-ivory/60">Every SMS, Email, WhatsApp, and Telegram sent — automated or manual.</p>
+      <p className="mt-1 text-sm text-ivory/60">Every SMS, Email, WhatsApp, and Telegram sent · automated or manual.</p>
       <div className="mt-6 max-h-[600px] space-y-2 overflow-y-auto scroll-smooth-dark">
         {notifs.map((n) => (
           <div key={n.id} className="rounded-xl border border-champagne/10 bg-ink/50 p-3">
@@ -818,7 +818,7 @@ function ChatbotSection() {
   };
   return (
     <div>
-      <h2 className="font-serif text-2xl text-ivory">AI Chatbot — Guruvayur Guide</h2>
+      <h2 className="font-serif text-2xl text-ivory">AI Chatbot · Guruvayur Guide</h2>
       <p className="mt-1 text-sm text-ivory/60">Test the AI chatbot that answers pilgrim questions 24×7. Powered by Z.ai LLM with Guruvayur-specific knowledge base.</p>
       <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-4">
         <div className="max-h-[400px] space-y-3 overflow-y-auto scroll-smooth-dark">
@@ -936,7 +936,7 @@ function ReviewsSection() {
     const j = await r.json();
     if (j.error) toast.error(j.error);
     else {
-      toast.success("Review added — now live on the website");
+      toast.success("Review added · now live on the website");
       setShowAdd(false);
       setNewReview({ authorName: "", rating: 5, text: "", source: "MANUAL", featured: false });
       load();
@@ -1343,7 +1343,7 @@ function PerformanceSection() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-serif text-2xl text-ivory">Performance Monitoring</h2>
-          <p className="mt-1 text-sm text-ivory/60">Core Web Vitals tracking — LCP, FID, CLS, TTFB, FCP. Real user monitoring from the browser.</p>
+          <p className="mt-1 text-sm text-ivory/60">Core Web Vitals tracking · LCP, FID, CLS, TTFB, FCP. Real user monitoring from the browser.</p>
         </div>
         <select value={days} onChange={(e) => setDays(parseInt(e.target.value))} className="rounded-full border border-champagne/15 bg-ink px-3 py-1.5 text-xs text-ivory focus:outline-none">
           <option value={1}>Last 24h</option>

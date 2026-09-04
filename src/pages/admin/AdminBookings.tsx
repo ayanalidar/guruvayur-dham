@@ -76,7 +76,7 @@ export default function AdminBookings() {
         eyebrow="Admin"
         icon={CalendarDays}
         title={<>All <GoldFoilText>Bookings</GoldFoilText></>}
-        subtitle="Every booking across all channels — direct, walk-in, Booking.com, MakeMyTrip, Goibibo, and Agoda. Each booking auto-syncs inventory to all other channels."
+        subtitle="Every booking across all channels · direct, walk-in, Booking.com, MakeMyTrip, Goibibo, and Agoda. Each booking auto-syncs inventory to all other channels."
         crumbs={[{ label: "Home", route: "/" }, { label: "Admin", route: "/admin" }, { label: "Bookings" }]}
       />
 
@@ -238,7 +238,7 @@ function WalkInDialog({ open, onClose, rooms, onCreated }: any) {
             <Select value={form.roomSlug} onValueChange={(v) => setForm({ ...form, roomSlug: v })}>
               <SelectTrigger><SelectValue placeholder="Select room" /></SelectTrigger>
               <SelectContent>
-                {rooms.map((r: any) => <SelectItem key={r.slug} value={r.slug}>{r.name} — ₹{r.price}/night</SelectItem>)}
+                {rooms.map((r: any) => <SelectItem key={r.slug} value={r.slug}>{r.name} · ₹{r.price}/night</SelectItem>)}
               </SelectContent>
             </Select>
           </Field>
@@ -255,7 +255,7 @@ function WalkInDialog({ open, onClose, rooms, onCreated }: any) {
 
           <div className="rounded-xl border border-champagne/15 bg-ink/50 p-3 text-xs text-ivory/60">
             <AlertCircle className="mb-1 h-4 w-4 text-champagne" />
-            This booking will be instantly synced to <strong className="text-champagne">Booking.com, MakeMyTrip, Goibibo, and Agoda</strong> — marking the room as sold out on all platforms.
+            This booking will be instantly synced to <strong className="text-champagne">Booking.com, MakeMyTrip, Goibibo, and Agoda</strong> · marking the room as sold out on all platforms.
           </div>
 
           <button onClick={submit} disabled={creating} className="btn-luxe w-full">

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/gallery — list all (optionally by tab)
+// GET /api/gallery · list all (optionally by tab)
 export async function GET(req: NextRequest) {
   const tab = req.nextUrl.searchParams.get("tab");
   const where: any = {};
@@ -13,14 +13,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ images });
 }
 
-// POST /api/gallery — add image
+// POST /api/gallery · add image
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const image = await db.galleryImage.create({ data: body });
   return NextResponse.json({ image });
 }
 
-// PATCH /api/gallery — update image
+// PATCH /api/gallery · update image
 export async function PATCH(req: NextRequest) {
   const { id, data } = await req.json();
   const image = await db.galleryImage.update({ where: { id }, data });

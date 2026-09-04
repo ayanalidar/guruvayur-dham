@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 /**
- * useRealtime — connects to the WebSocket service and listens for events.
+ * useRealtime · connects to the WebSocket service and listens for events.
  * Falls back to polling if the socket can't connect.
  */
 export function useRealtime(events: string[] = []) {
@@ -45,7 +45,7 @@ export function useRealtime(events: string[] = []) {
 }
 
 /**
- * useViewerCount — tracks how many people are viewing a specific room.
+ * useViewerCount · tracks how many people are viewing a specific room.
  * Call this on room detail pages to show "X people viewing" social proof.
  */
 export function useViewerCount(roomSlug: string) {

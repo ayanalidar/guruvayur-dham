@@ -113,7 +113,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="mt-8 card-luxe p-6">
-            <h3 className="flex items-center gap-2 font-serif text-xl text-ivory"><BedDouble className="h-5 w-5 text-champagne" /> Live Availability — Today</h3>
+            <h3 className="flex items-center gap-2 font-serif text-xl text-ivory"><BedDouble className="h-5 w-5 text-champagne" /> Live Availability · Today</h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {(stats?.liveAvailability?.rooms || []).map((r: any) => (
                 <div key={r.room.slug} className="rounded-xl border border-champagne/10 bg-ink/50 p-4">

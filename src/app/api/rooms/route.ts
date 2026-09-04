@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/rooms — fetch all rooms (with live availability count for next 30 days)
+// GET /api/rooms · fetch all rooms (with live availability count for next 30 days)
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("slug");
   if (slug) {
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ rooms: rooms.map(serializeRoom) });
 }
 
-// PATCH /api/rooms — update a room (price, name, description, etc.)
+// PATCH /api/rooms · update a room (price, name, description, etc.)
 // body: { id, data: { ...fields }
 export async function PATCH(req: NextRequest) {
   const body = await req.json();

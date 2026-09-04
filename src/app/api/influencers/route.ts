@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/influencers
- * Register a new influencer (public — anyone can apply)
+ * Register a new influencer (public · anyone can apply)
  * body: { name, email, phone, socialPlatform, socialHandle, followerCount }
  */
 export async function POST(req: NextRequest) {

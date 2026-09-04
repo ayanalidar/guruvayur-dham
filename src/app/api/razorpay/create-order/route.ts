@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       currency: "INR",
       keyId: "rzp_test_DEMOKEY",
       demo: true,
-      message: "Running in DEMO mode — no real payment will be charged. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to .env for live payments.",
+      message: "Running in DEMO mode · no real payment will be charged. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to .env for live payments.",
     });
   }
 

@@ -49,7 +49,7 @@ export default function HomePage() {
   );
 }
 
-/* ============ HERO — 3D TILT CARDS ============ */
+/* ============ HERO · 3D TILT CARDS ============ */
 function Hero() {
   const { navigate } = useHashRoute();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,7 +92,7 @@ function Hero() {
       <OmWatermark className="right-[-4rem] top-1/4" size="22rem" />
 
       <div className="container-x relative z-10 grid items-center gap-12 py-28 lg:grid-cols-2 lg:gap-8">
-        {/* Left — text content */}
+        {/* Left · text content */}
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -123,7 +123,7 @@ function Hero() {
             className="mt-6 max-w-xl text-base leading-relaxed text-ivory/80 sm:text-lg"
           >
             Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada
-            for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant WhatsApp
+            for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp
             confirmation.
           </motion.p>
 
@@ -164,7 +164,7 @@ function Hero() {
           </motion.div>
         </div>
 
-        {/* Right — 3D tilt image cards */}
+        {/* Right · 3D tilt image cards */}
         <motion.div
           ref={containerRef}
           onMouseMove={onMove}
@@ -179,7 +179,7 @@ function Hero() {
             style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
             className="relative h-full w-full"
           >
-            {/* Card 1 — main temple */}
+            {/* Card 1 · main temple */}
             <div
               className="absolute right-0 top-8 h-72 w-64 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(80px)" }}
@@ -196,7 +196,7 @@ function Hero() {
               </div>
             </div>
 
-            {/* Card 2 — room */}
+            {/* Card 2 · room */}
             <div
               className="absolute left-0 top-32 h-64 w-56 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(40px)" }}
@@ -213,7 +213,7 @@ function Hero() {
               </div>
             </div>
 
-            {/* Card 3 — pooja */}
+            {/* Card 3 · pooja */}
             <div
               className="absolute bottom-0 right-12 h-48 w-48 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(120px)" }}
@@ -294,8 +294,8 @@ function WhyChooseUs() {
       <div className="container-x relative">
         <SectionHeader
           eyebrow="Why Pilgrims Choose Us"
-          title={<>More Than a Stay — A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
-          subtitle="We've hosted over 50,000 devotees since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs."
+          title={<>More Than a Stay · A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
+          subtitle="We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -361,7 +361,7 @@ function RoomPreviews() {
             align="left"
             eyebrow="Rooms & Suites"
             title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
-            subtitle="From ₹700/night budget rooms to ₹3,500 family suites — every option is sanitised daily and a 2-minute walk from East Nada."
+            subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from East Nada."
             className="!mx-0"
           />
           <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>
@@ -435,7 +435,7 @@ function PlanDarshan() {
         <SectionHeader
           eyebrow="Plan Your Darshan"
           title={<>Everything You Need for a <GoldFoilText>Blessed Visit</GoldFoilText></>}
-          subtitle="From darshan timings to festival calendars — we've put together the essential resources every Guruvayur pilgrim needs."
+          subtitle="From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
         />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {DARSHAN_CARDS.map((card, i) => {
@@ -636,7 +636,7 @@ function AboutTeaser() {
               into a 52-room boutique property that has welcomed over 50,000 devotees.
             </p>
             <p className="mt-4 text-base leading-relaxed text-ivory/70">
-              We are not a hotel — we are a pilgrim home. Every decision, from the 3 AM
+              We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
               reception shift during Nirmalya darshan to the complimentary chai before temple
               visits, is made with the devotee in mind.
             </p>

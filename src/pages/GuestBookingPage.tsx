@@ -180,7 +180,7 @@ export default function GuestBookingPage() {
       return;
     }
 
-    // Non-Razorpay methods (UPI, CARD, COD) — direct booking
+    // Non-Razorpay methods (UPI, CARD, COD) · direct booking
     await createBooking();
   };
 

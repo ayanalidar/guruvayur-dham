@@ -116,10 +116,10 @@ export default function ReviewSubmitPage() {
               </div>
               <p className="mt-1 text-xs text-ivory/40">
                 {form.rating === 5 && "⭐ Excellent! We're so glad you loved it."}
-                {form.rating === 4 && "😊 Very good — thank you!"}
-                {form.rating === 3 && "🙂 Good — we appreciate your feedback."}
+                {form.rating === 4 && "😊 Very good · thank you!"}
+                {form.rating === 3 && "🙂 Good · we appreciate your feedback."}
                 {form.rating === 2 && "😐 We're sorry we didn't meet expectations."}
-                {form.rating === 1 && "😞 We'd like to make it right — please WhatsApp us."}
+                {form.rating === 1 && "😞 We'd like to make it right · please WhatsApp us."}
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export default function ReviewSubmitPage() {
                 value={form.text}
                 onChange={(e) => setForm({ ...form, text: e.target.value.slice(0, 2000) })}
                 rows={5}
-                placeholder="Tell us about your stay — the room, the service, the location, your darshan experience, anything that made your visit special…"
+                placeholder="Tell us about your stay · the room, the service, the location, your darshan experience, anything that made your visit special…"
                 className="input-luxe mt-1 resize-none"
               />
             </div>

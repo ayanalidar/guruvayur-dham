@@ -77,7 +77,7 @@ export default function Hero() {
             className="mt-5 max-w-2xl text-lg leading-relaxed text-cream/90 sm:text-xl"
           >
             Clean AC &amp; non-AC rooms, 24×7 hot water, family-friendly. Walk to East
-            Nada for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant
+            Nada for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant
             WhatsApp confirmation.
           </motion.p>
 

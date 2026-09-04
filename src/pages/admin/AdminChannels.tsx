@@ -70,7 +70,7 @@ export default function AdminChannels() {
         eyebrow="Admin"
         icon={Radio}
         title={<>Channel <GoldFoilText>Manager</GoldFoilText></>}
-        subtitle="Two-way sync with Booking.com, MakeMyTrip, Goibibo, and Agoda. Every booking — direct, walk-in, or from a channel — instantly blocks inventory on all other channels."
+        subtitle="Two-way sync with Booking.com, MakeMyTrip, Goibibo, and Agoda. Every booking · direct, walk-in, or from a channel · instantly blocks inventory on all other channels."
         crumbs={[{ label: "Home", route: "/" }, { label: "Admin", route: "/admin" }, { label: "Channels" }]}
       />
 
@@ -135,7 +135,7 @@ export default function AdminChannels() {
                   <Building2 className="h-5 w-5" />
                   <span className="text-xs uppercase tracking-wider">1. Booking Made</span>
                 </div>
-                <p className="text-sm text-ivory/70">A guest books via any source — direct website, walk-in front desk, or any channel partner.</p>
+                <p className="text-sm text-ivory/70">A guest books via any source · direct website, walk-in front desk, or any channel partner.</p>
               </div>
               <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
                 <div className="mb-2 flex items-center gap-2 text-champagne">
@@ -149,7 +149,7 @@ export default function AdminChannels() {
                   <CheckCircle2 className="h-5 w-5" />
                   <span className="text-xs uppercase tracking-wider">3. Inventory Locked</span>
                 </div>
-                <p className="text-sm text-ivory/70">No double-bookings possible — the room is shown as unavailable on Booking.com, MakeMyTrip, Goibibo, and Agoda simultaneously.</p>
+                <p className="text-sm text-ivory/70">No double-bookings possible · the room is shown as unavailable on Booking.com, MakeMyTrip, Goibibo, and Agoda simultaneously.</p>
               </div>
             </div>
           </div>

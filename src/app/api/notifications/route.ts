@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/notifications — list all notifications (SMS/Email/WhatsApp log)
+// GET /api/notifications · list all notifications (SMS/Email/WhatsApp log)
 export async function GET(req: NextRequest) {
   const type = req.nextUrl.searchParams.get("type");
   const where: any = {};
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ notifications });
 }
 
-// POST /api/notifications — manually send a notification (simulated)
+// POST /api/notifications · manually send a notification (simulated)
 // body: { type: "SMS"|"EMAIL"|"WHATSAPP", recipient, subject?, body }
 export async function POST(req: NextRequest) {
   const { type, recipient, subject, body } = await req.json();
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   });
 }
 
-// PUT /api/notifications — bulk send (e.g., festival alert to all subscribers)
+// PUT /api/notifications · bulk send (e.g., festival alert to all subscribers)
 // body: { template, recipients: [...] }
 export async function PUT(req: NextRequest) {
   const { template, recipients, type = "WHATSAPP" } = await req.json();

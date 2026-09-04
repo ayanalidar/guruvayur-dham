@@ -69,7 +69,7 @@ export default function RoomsPage() {
         eyebrow="Rooms & Suites"
         icon={BedDouble}
         title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText> in Guruvayur</>}
-        subtitle="From ₹700/night budget rooms to ₹3,500 family suites — every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada."
+        subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada."
         crumbs={[{ label: "Home", route: "/" }, { label: "Rooms" }]}
       />
 
@@ -135,7 +135,7 @@ export default function RoomsPage() {
             <SectionHeader
               eyebrow="Need Help Choosing?"
               title={<>Not Sure Which Room <GoldFoilText>Suits You?</GoldFoilText></>}
-              subtitle="Message us on WhatsApp with your group size, dates, and budget — we'll recommend the perfect room and share live availability."
+              subtitle="Message us on WhatsApp with your group size, dates, and budget · we'll recommend the perfect room and share live availability."
             />
             <div className="mt-6 flex justify-center">
               <MagneticButton
@@ -204,7 +204,7 @@ function RoomCard({ room, liveAvailable, onView }: { room: Room; liveAvailable?:
           <div className="relative aspect-[4/3] overflow-hidden">
             <img
               src={room.image}
-              alt={`${room.name} at Guruvayur Dham — ${room.shortDesc}`}
+              alt={`${room.name} at Guruvayur Dham · ${room.shortDesc}`}
               className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />

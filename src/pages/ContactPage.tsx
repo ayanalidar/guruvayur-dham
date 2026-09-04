@@ -32,7 +32,7 @@ type FormData = z.infer<typeof schema>;
 
 const INFO_CARDS = [
   { icon: Phone, label: "Call Us", value: SITE.phone, href: `tel:${SITE.phoneRaw}`, sub: "Mon–Sun, 24×7" },
-  { icon: MessageCircle, label: "WhatsApp", value: SITE.phone, href: waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham."), sub: "Fastest reply — under 5 min" },
+  { icon: MessageCircle, label: "WhatsApp", value: SITE.phone, href: waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham."), sub: "Fastest reply · under 5 min" },
   { icon: Mail, label: "Email", value: SITE.email, href: `mailto:${SITE.email}`, sub: "Reply within 4 hours" },
   { icon: MapPin, label: "Visit", value: SITE.shortAddress, href: SITE.mapLink, sub: "200 m from East Nada gate" },
   { icon: Clock, label: "Check-in / out", value: `${SITE.checkIn} · ${SITE.checkOut}`, href: "#/contact", sub: "Early check-in: ₹200 extra" },
@@ -67,7 +67,7 @@ ${data.message}`;
         eyebrow="Get in Touch"
         icon={MessageCircle}
         title={<>Book Your Stay or <GoldFoilText>Ask Anything</GoldFoilText></>}
-        subtitle="Fill the form below and we'll WhatsApp you back within minutes — or reach us directly through any of the channels here."
+        subtitle="Fill the form below and we'll WhatsApp you back within minutes · or reach us directly through any of the channels here."
         crumbs={[{ label: "Home", route: "/" }, { label: "Contact" }]}
       />
 
@@ -234,7 +234,7 @@ ${data.message}`;
                   <p className="font-serif text-2xl text-ivory">Why book with us?</p>
                   <ul className="mt-4 space-y-3 text-sm">
                     {[
-                      "Instant WhatsApp confirmation — no waiting",
+                      "Instant WhatsApp confirmation · no waiting",
                       "Zero booking fee, zero commission on poojas",
                       "Free pickup from Guruvayur railway station (2+ night stays)",
                       "Flexible cancellation up to 7 days before check-in",
@@ -252,7 +252,7 @@ ${data.message}`;
                     <p className="flex items-center gap-2 text-sm font-semibold text-ivory">
                       <BedDouble className="h-4 w-4 text-champagne" /> Rooms from ₹700/night
                     </p>
-                    <p className="mt-1 text-xs text-ivory/60">AC, non-AC, family suites, dormitory — all 200 m from East Nada.</p>
+                    <p className="mt-1 text-xs text-ivory/60">AC, non-AC, family suites, dormitory · all 200 m from East Nada.</p>
                     <MagneticButton
                       href={waLink("Namaskaram! I'd like to know today's best available room rate at Guruvayur Dham.")}
                       className="mt-3 w-full"

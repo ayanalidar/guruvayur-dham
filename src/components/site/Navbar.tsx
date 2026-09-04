@@ -107,15 +107,6 @@ export default function Navbar() {
           >
             <Phone className="h-4 w-4" />
           </a>
-          <a
-            href={waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-luxe"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Book Now
-          </a>
           <button
             onClick={() => go("/book")}
             className="rounded-full border border-champagne/30 bg-champagne/10 px-4 py-2.5 text-sm font-semibold text-champagne transition-all hover:bg-champagne/20"

@@ -12,8 +12,8 @@ export default function PoojaPage() {
       <PageHeader
         eyebrow="Pooja & Offerings"
         icon={Flame}
-        title={<>Guruvayur Pooja Booking — <GoldFoilText>Palpayasam, Thulabharam &amp; More</GoldFoilText></>}
-        subtitle="Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room."
+        title={<>Guruvayur Pooja Booking · <GoldFoilText>Palpayasam, Thulabharam &amp; More</GoldFoilText></>}
+        subtitle="Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room."
         crumbs={[{ label: "Home", route: "/" }, { label: "Pooja" }]}
       />
 
@@ -101,7 +101,7 @@ export default function PoojaPage() {
           </div>
 
           <p className="mx-auto mt-10 max-w-2xl text-center text-xs text-ivory/50">
-            * All pooja bookings are subject to temple availability and confirmation by the Guruvayur Devaswom Board. Guruvayur Dham facilitates the booking only — no markup is added to the official temple rate.
+            * All pooja bookings are subject to temple availability and confirmation by the Guruvayur Devaswom Board. Guruvayur Dham facilitates the booking only · no markup is added to the official temple rate.
           </p>
         </div>
       </section>

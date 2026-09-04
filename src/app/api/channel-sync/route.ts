@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/channel-sync — list sync logs (audit trail)
+// GET /api/channel-sync · list sync logs (audit trail)
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const limit = parseInt(searchParams.get("limit") || "50");
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ logs });
 }
 
-// POST /api/channel-sync — manual re-sync of a booking to all channels
+// POST /api/channel-sync · manual re-sync of a booking to all channels
 // body: { bookingId }
 export async function POST(req: NextRequest) {
   const { bookingId } = await req.json();

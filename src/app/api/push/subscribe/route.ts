@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "endpoint and keys required" }, { status: 400 });
   }
 
-  // Upsert — if endpoint exists, update; otherwise create
+  // Upsert · if endpoint exists, update; otherwise create
   const existing = await db.pushSubscription.findUnique({ where: { endpoint } });
   if (existing) {
     await db.pushSubscription.update({

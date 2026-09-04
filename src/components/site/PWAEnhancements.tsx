@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, X, Download, Smartphone, Check } from "lucide-react";
 
 /**
- * PWAEnhancements — handles:
+ * PWAEnhancements · handles:
  * 1. Push notification subscription (asks permission, registers with server)
  * 2. Add to Home Screen prompt (iOS + Android)
  */
@@ -27,7 +27,7 @@ export default function PWAEnhancements() {
 
     // ===== 2. CHECK IF ALREADY INSTALLED =====
     if (window.matchMedia("(display-mode: standalone)").matches) {
-      // Already installed — don't show install prompt
+      // Already installed · don't show install prompt
       return;
     }
 
@@ -63,7 +63,7 @@ export default function PWAEnhancements() {
       setDeferredPrompt(null);
       setShowInstallPrompt(false);
     } else {
-      // iOS — show instructions
+      // iOS · show instructions
       setShowInstallPrompt(false);
       // The instructions are already shown in the prompt
     }
@@ -107,7 +107,7 @@ export default function PWAEnhancements() {
       setPushSubscribed(true);
       setShowPushPrompt(false);
     } catch (e) {
-      // Silent fail — push is a progressive enhancement
+      // Silent fail · push is a progressive enhancement
       setShowPushPrompt(false);
     }
   };

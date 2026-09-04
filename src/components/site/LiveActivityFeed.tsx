@@ -20,22 +20,22 @@ const EVENT_META: Record<string, { icon: any; color: string; label: (data: any) 
   "booking:new": {
     icon: CalendarDays,
     color: "text-green-300 bg-green-500/15",
-    label: (d) => `New booking ${d.reference} — ${d.guestName} · ${d.roomName} · ₹${d.amount}`,
+    label: (d) => `New booking ${d.reference} · ${d.guestName} · ${d.roomName} · ₹${d.amount}`,
   },
   "booking:cancelled": {
     icon: CalendarDays,
     color: "text-red-300 bg-red-500/15",
-    label: (d) => `Booking cancelled ${d.reference} — ${d.guestName}`,
+    label: (d) => `Booking cancelled ${d.reference} · ${d.guestName}`,
   },
   "sync:new": {
     icon: Radio,
     color: "text-blue-300 bg-blue-500/15",
-    label: (d) => `Channel sync: ${d.channel} — ${d.action} (${d.status})`,
+    label: (d) => `Channel sync: ${d.channel} · ${d.action} (${d.status})`,
   },
   "kitchen:order:new": {
     icon: Utensils,
     color: "text-yellow-300 bg-yellow-500/15",
-    label: (d) => `Kitchen order ${d.reference} — Room ${d.roomNumber} · ₹${d.total}`,
+    label: (d) => `Kitchen order ${d.reference} · Room ${d.roomNumber} · ₹${d.total}`,
   },
   "kitchen:order:update": {
     icon: Utensils,
@@ -69,7 +69,7 @@ export default function LiveActivityFeed() {
 
   useEffect(() => {
     if (!lastEvent) return;
-    // Dedup — same event+reference shouldn't be added twice
+    // Dedup · same event+reference shouldn't be added twice
     const sig = `${lastEvent.event}:${lastEvent.data?.reference || lastEvent.data?.roomNumber || JSON.stringify(lastEvent.data).slice(0, 50)}`;
     if (sig === lastEventRef.current) return;
     lastEventRef.current = sig;

@@ -28,7 +28,7 @@ export default function PoojaSection() {
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
             Book any temple pooja through Guruvayur Dham at the{" "}
-            <strong className="text-foreground">official temple rate</strong> — zero
+            <strong className="text-foreground">official temple rate</strong> · zero
             commission, zero waiting in queue. Our team coordinates with the temple
             tantri on your behalf and ensures prasadam reaches your room.
           </p>

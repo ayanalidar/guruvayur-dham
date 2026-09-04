@@ -61,7 +61,7 @@ export default function Rooms() {
             <span className="text-gradient-saffron">Walkable to Temple</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            From ₹700/night budget rooms to ₹3,500 family suites — every option is
+            From ₹700/night budget rooms to ₹3,500 family suites · every option is
             sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute
             walk from East Nada. Filter to find your perfect match.
           </p>
@@ -189,7 +189,7 @@ function RoomCard({ room, onView }: { room: Room; onView: () => void }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={room.image}
-          alt={`${room.name} at Guruvayur Dham — ${room.shortDesc}`}
+          alt={`${room.name} at Guruvayur Dham · ${room.shortDesc}`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -319,7 +319,7 @@ function RoomDetailContent({ room, onClose }: { room: Room; onClose: () => void 
         <div className="relative aspect-[16/10] w-full overflow-hidden">
           <Image
             src={room.gallery[activeImg]}
-            alt={`${room.name} — photo ${activeImg + 1} at Guruvayur Dham`}
+            alt={`${room.name} · photo ${activeImg + 1} at Guruvayur Dham`}
             fill
             sizes="(max-width: 768px) 100vw, 800px"
             className="object-cover"

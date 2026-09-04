@@ -20,7 +20,7 @@ export default function GalleryPage() {
         eyebrow="Photo Gallery"
         icon={Images}
         title={<>Step Inside <GoldFoilText>Guruvayur Dham</GoldFoilText></>}
-        subtitle="Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town — every photo tells the story of a pilgrim's day."
+        subtitle="Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town · every photo tells the story of a pilgrim's day."
         crumbs={[{ label: "Home", route: "/" }, { label: "Gallery" }]}
       />
 

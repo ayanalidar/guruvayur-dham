@@ -56,7 +56,7 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
             >
               <img
                 src={room.gallery[activeImg]}
-                alt={`${room.name} — photo ${activeImg + 1} at Guruvayur Dham`}
+                alt={`${room.name} · photo ${activeImg + 1} at Guruvayur Dham`}
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute left-4 top-4 flex gap-2">
@@ -128,7 +128,7 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
                 </span>
               </div>
 
-              {/* Live viewer count — social proof */}
+              {/* Live viewer count · social proof */}
               {viewerConnected && viewerCount > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
@@ -212,7 +212,7 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
               <div className="mt-6 border-t border-champagne/10 pt-5">
                 <p className="text-sm font-semibold text-ivory">Quick Book</p>
                 <p className="mt-1 text-xs text-ivory/60">
-                  Skip the form — message us directly for instant confirmation.
+                  Skip the form · message us directly for instant confirmation.
                 </p>
                 <a
                   href={waLink(waMsg)}

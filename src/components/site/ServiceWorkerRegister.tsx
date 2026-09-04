@@ -13,7 +13,7 @@ export default function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register("/sw.js")
         .catch(() => {
-          // Silent fail — SW is a progressive enhancement
+          // Silent fail · SW is a progressive enhancement
         });
     };
     if (document.readyState === "complete") register();

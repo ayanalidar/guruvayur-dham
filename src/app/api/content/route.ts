@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/content — fetch all content blocks (or by ?category=)
+// GET /api/content · fetch all content blocks (or by ?category=)
 export async function GET(req: NextRequest) {
   const cat = req.nextUrl.searchParams.get("category");
   const blocks = await db.contentBlock.findMany(
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ blocks, map });
 }
 
-// PATCH /api/content — update one or more content blocks
+// PATCH /api/content · update one or more content blocks
 // body: { updates: [{ key, value }, ...] }
 export async function PATCH(req: NextRequest) {
   const body = await req.json();

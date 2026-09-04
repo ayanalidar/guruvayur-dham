@@ -9,7 +9,7 @@ import { GoldFoilText, ImageReveal, MandalaDivider, MagneticButton, CountUp, OmW
 
 const HIGHLIGHTS = [
   "Walking distance (200 m) to Guruvayur Temple East Nada gate",
-  "Family-run since 1998 — three generations of warm hospitality",
+  "Family-run since 1998 · three generations of warm hospitality",
   "52 rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
@@ -75,14 +75,14 @@ export default function AboutPage() {
             <div className="mt-5 space-y-4 text-base leading-relaxed text-ivory/70">
               <p>
                 Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather
-                Shri Krishna Warrier — himself a daily devotee at the temple — noticed that
+                Shri Krishna Warrier · himself a daily devotee at the temple · noticed that
                 pilgrims arriving from distant states had nowhere clean, affordable, and
                 walking-distance to stay. What started as a single rented house has, over
                 25 years and three generations, grown into a 52-room property that has
                 welcomed over 50,000 devotees from across India and the diaspora.
               </p>
               <p>
-                We are not a hotel — we are a pilgrim home. Every decision, from the 3 AM
+                We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
                 reception shift during Nirmalya darshan to the complimentary chai service
                 before temple visits, is made with the devotee in mind. Our pooja-booking
                 coordinator works directly with the temple tantri's office to secure your

@@ -30,7 +30,7 @@ const SECTIONS = [
   {
     h: "4. Cookies and Analytics",
     p: [
-      "Our website uses essential cookies to function properly (such as remembering your language preference and form inputs). We also use privacy-respecting analytics to understand how visitors use our site — this data is anonymised and does not identify individual users.",
+      "Our website uses essential cookies to function properly (such as remembering your language preference and form inputs). We also use privacy-respecting analytics to understand how visitors use our site · this data is anonymised and does not identify individual users.",
       "You can disable cookies in your browser settings at any time. Doing so will not affect your ability to browse the website or book rooms, but may limit some personalisation features.",
     ],
   },

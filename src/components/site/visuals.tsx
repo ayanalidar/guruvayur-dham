@@ -4,7 +4,7 @@ import { motion, useInView, useMotionValue, useSpring, useTransform } from "fram
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /* ====================================================================
-   1. MANDALA DIVIDER — animated SVG kolam/mandala between sections
+   1. MANDALA DIVIDER · animated SVG kolam/mandala between sections
 ==================================================================== */
 export function MandalaDivider({ className = "" }: { className?: string }) {
   return (
@@ -55,7 +55,7 @@ export function MandalaDivider({ className = "" }: { className?: string }) {
 }
 
 /* ====================================================================
-   2. GOLD FOIL TEXT — shimmering champagne gradient text
+   2. GOLD FOIL TEXT · shimmering champagne gradient text
 ==================================================================== */
 export function GoldFoilText({
   children,
@@ -74,7 +74,7 @@ export function GoldFoilText({
 }
 
 /* ====================================================================
-   3. GLASS CARD — frosted glass with gold border
+   3. GLASS CARD · frosted glass with gold border
 ==================================================================== */
 export function GlassCard({
   children,
@@ -93,7 +93,7 @@ export function GlassCard({
 }
 
 /* ====================================================================
-   4. FLOATING DIYAS — particles drifting upward (canvas-based)
+   4. FLOATING DIYAS · particles drifting upward (canvas-based)
 ==================================================================== */
 export function FloatingDiyas({ count = 14 }: { count?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -173,7 +173,7 @@ export function FloatingDiyas({ count = 14 }: { count?: number }) {
 }
 
 /* ====================================================================
-   5. OM WATERMARK — giant faint ॐ rotating slowly behind content
+   5. OM WATERMARK · giant faint ॐ rotating slowly behind content
 ==================================================================== */
 export function OmWatermark({
   className = "",
@@ -194,7 +194,7 @@ export function OmWatermark({
 }
 
 /* ====================================================================
-   6. MAGNETIC BUTTON — attracts toward cursor on hover
+   6. MAGNETIC BUTTON · attracts toward cursor on hover
 ==================================================================== */
 export function MagneticButton({
   children,
@@ -270,7 +270,7 @@ export function MagneticButton({
 }
 
 /* ====================================================================
-   7. COUNT UP — animates numbers from 0 to target when in view
+   7. COUNT UP · animates numbers from 0 to target when in view
 ==================================================================== */
 export function CountUp({
   to,
@@ -317,7 +317,7 @@ export function CountUp({
 }
 
 /* ====================================================================
-   8. TILT CARD — 3D tilt following mouse
+   8. TILT CARD · 3D tilt following mouse
 ==================================================================== */
 export function TiltCard({
   children,
@@ -384,7 +384,7 @@ export function TiltCard({
 }
 
 /* ====================================================================
-   9. MARQUEE — horizontal scrolling text strip
+   9. MARQUEE · horizontal scrolling text strip
 ==================================================================== */
 export function Marquee({
   items,
@@ -411,7 +411,7 @@ export function Marquee({
 }
 
 /* ====================================================================
-   10. IMAGE REVEAL — clip-path curtain reveal on scroll
+   10. IMAGE REVEAL · clip-path curtain reveal on scroll
 ==================================================================== */
 export function ImageReveal({
   src,
@@ -453,7 +453,7 @@ export function ImageReveal({
 }
 
 /* ====================================================================
-   11. PAGE TRANSITION — wraps page content with fade/slide
+   11. PAGE TRANSITION · wraps page content with fade/slide
 ==================================================================== */
 export function PageTransition({ children }: { children: ReactNode }) {
   return (
@@ -469,7 +469,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
 }
 
 /* ====================================================================
-   12. PAGE LOADER — mandala draw animation on initial load
+   12. PAGE LOADER · mandala draw animation on initial load
 ==================================================================== */
 export function PageLoader({ onDone }: { onDone?: () => void }) {
   const [hidden, setHidden] = useState(false);
@@ -579,7 +579,7 @@ export function PageLoader({ onDone }: { onDone?: () => void }) {
 }
 
 /* ====================================================================
-   SECTION HEADER — eyebrow + title + subtitle with consistent luxury feel
+   SECTION HEADER · eyebrow + title + subtitle with consistent luxury feel
 ==================================================================== */
 export function SectionHeader({
   eyebrow,

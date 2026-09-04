@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     d.setDate(d.getDate() + i);
     const av = await db.availability.findUnique({ where: { roomId_date: { roomId: room.id, date: d } } });
     if (!av || av.available <= 0) {
-      // CHANNEL CONFLICT — room is already booked
+      // CHANNEL CONFLICT · room is already booked
       // In production, we'd return 409 and the channel partner would show "sold out" on their side
       return NextResponse.json({
         error: "ROOM_SOLD_OUT",
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
       channel: channelCode,
       action: "BOOKING_RECEIVED",
       status: "SUCCESS",
-      message: `Booking received from ${channel.name} (${channelBookingId}) — auto-created ${ref}`,
+      message: `Booking received from ${channel.name} (${channelBookingId}) · auto-created ${ref}`,
       payload: JSON.stringify({ channelBookingId, reference: ref, guestName }),
     },
   });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/waiting-list — list all waitlist entries
+// GET /api/waiting-list · list all waitlist entries
 export async function GET(req: NextRequest) {
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ entries });
 }
 
-// POST /api/waiting-list — join waitlist
+// POST /api/waiting-list · join waitlist
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { roomSlug, checkIn, checkOut, guestName, guestPhone, guestEmail, guests } = body;
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ entry, message: "Added to waiting list. We'll WhatsApp you if a room opens up." });
 }
 
-// PATCH /api/waiting-list — notify next person in waitlist (when cancellation happens)
+// PATCH /api/waiting-list · notify next person in waitlist (when cancellation happens)
 // body: { roomSlug, checkIn, checkOut }
 export async function PATCH(req: NextRequest) {
   const { roomSlug, checkIn, checkOut } = await req.json();
@@ -74,5 +74,5 @@ export async function PATCH(req: NextRequest) {
       relatedRef: `WL-${next.id.slice(-6)}`,
     },
   });
-  return NextResponse.json({ notified: next, message: `Notified ${next.guestName} — they have 2 hours to confirm` });
+  return NextResponse.json({ notified: next, message: `Notified ${next.guestName} · they have 2 hours to confirm` });
 }

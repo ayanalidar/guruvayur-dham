@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/pooja-bookings — list all pooja bookings
+// GET /api/pooja-bookings · list all pooja bookings
 export async function GET(req: NextRequest) {
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ bookings });
 }
 
-// POST /api/pooja-bookings — create a pooja booking
+// POST /api/pooja-bookings · create a pooja booking
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { poojaId, poojaName, guestName, guestPhone, guestEmail, preferredDate, amount, notes } = body;
@@ -45,10 +45,10 @@ export async function POST(req: NextRequest) {
       relatedRef: ref,
     },
   });
-  return NextResponse.json({ booking, message: `Pooja booked — reference ${ref}` });
+  return NextResponse.json({ booking, message: `Pooja booked · reference ${ref}` });
 }
 
-// PATCH /api/pooja-bookings — update pooja status (e.g., SCHEDULED → AT_TEMPLE → COMPLETED → PRASADAM_READY)
+// PATCH /api/pooja-bookings · update pooja status (e.g., SCHEDULED → AT_TEMPLE → COMPLETED → PRASADAM_READY)
 export async function PATCH(req: NextRequest) {
   const { id, status, prasadamNote } = await req.json();
   const booking = await db.poojaBooking.update({

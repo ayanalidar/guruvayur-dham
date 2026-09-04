@@ -6,7 +6,7 @@ import { Loader2, Lock, ShieldAlert } from "lucide-react";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 
 /**
- * AdminGuard — wraps admin pages to check authentication.
+ * AdminGuard · wraps admin pages to check authentication.
  * If not logged in or not staff, redirects to login.
  * Shows loading state while checking.
  */

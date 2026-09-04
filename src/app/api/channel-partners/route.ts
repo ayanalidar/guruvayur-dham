@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/channel-partners — list all channel partners with stats
+// GET /api/channel-partners · list all channel partners with stats
 export async function GET() {
   const partners = await db.channelPartner.findMany({
     orderBy: { name: "asc" },
@@ -35,7 +35,7 @@ export async function GET() {
   });
 }
 
-// PATCH /api/channel-partners — connect/disconnect a channel
+// PATCH /api/channel-partners · connect/disconnect a channel
 // body: { code, connected: boolean }
 export async function PATCH(req: NextRequest) {
   const { code, connected } = await req.json();

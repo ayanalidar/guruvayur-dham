@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useHashRoute } from "@/lib/router";
 
 /**
- * useAnalytics — tracks page views and custom events.
+ * useAnalytics · tracks page views and custom events.
  * Automatically tracks page views on route change.
  * Call trackEvent() for custom events (booking started, etc.)
  */
@@ -30,7 +30,7 @@ export function useAnalytics() {
     if (!path || path === lastPath.current) return;
     lastPath.current = path;
 
-    // Fire and forget — don't block navigation
+    // Fire and forget · don't block navigation
     fetch("/api/analytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

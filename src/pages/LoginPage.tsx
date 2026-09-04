@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Settings, User as UserIcon, Mail, Phone, Lock, Eye, EyeOff, ChevronRight,
-  ArrowLeft, KeyRound, ShieldCheck, Sparkles, Loader2, Check,
+  ArrowLeft, KeyRound, ShieldCheck, Sparkles, Loader2, Check, Star,
+  MapPin, Bell, MessageCircle,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
-import PageHeader from "@/components/site/PageHeader";
+import { SITE, waLink } from "@/lib/site-data";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import OAuthButtons from "@/components/site/OAuthButtons";
 import { toast } from "sonner";
@@ -25,12 +26,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Staff form
   const [pin, setPin] = useState("");
   const [staffEmail, setStaffEmail] = useState("");
   const [staffPassword, setStaffPassword] = useState("");
 
-  // Guest form
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [guestName, setGuestName] = useState("");
@@ -40,7 +39,6 @@ export default function LoginPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [demoOtp, setDemoOtp] = useState("");
 
-  // Check if already logged in
   useEffect(() => {
     fetch("/api/auth/session", { cache: "no-store" })
       .then(r => r.json())
@@ -58,22 +56,15 @@ export default function LoginPage() {
       const body = staffMode === "pin"
         ? { type: "pin", pin }
         : { type: "staff", email: staffEmail, password: staffPassword };
-
       const r = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-      } else {
-        toast.success(`Welcome back, ${j.user.name}!`);
-        navigate("/admin/hub");
-      }
-    } catch {
-      toast.error("Login failed");
-    }
+      if (j.error) toast.error(j.error);
+      else { toast.success(`Welcome back, ${j.user.name}!`); navigate("/admin/hub"); }
+    } catch { toast.error("Login failed"); }
     setLoading(false);
   };
 
@@ -86,23 +77,14 @@ export default function LoginPage() {
         body: JSON.stringify({ type: "guest", email: guestEmail, password: guestPassword }),
       });
       const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-      } else {
-        toast.success(`Welcome back, ${j.user.name}!`);
-        navigate("/dashboard");
-      }
-    } catch {
-      toast.error("Login failed");
-    }
+      if (j.error) toast.error(j.error);
+      else { toast.success(`Welcome back, ${j.user.name}!`); navigate("/dashboard"); }
+    } catch { toast.error("Login failed"); }
     setLoading(false);
   };
 
   const handleForgotPassword = async () => {
-    if (!guestEmail) {
-      toast.error("Enter your email first");
-      return;
-    }
+    if (!guestEmail) { toast.error("Enter your email first"); return; }
     setLoading(true);
     try {
       const r = await fetch("/api/auth/forgot-password", {
@@ -112,15 +94,12 @@ export default function LoginPage() {
       });
       const j = await r.json();
       if (j.demoResetUrl) {
-        toast.success("Reset link generated! Check the demo URL below.");
-        // In demo mode, show the reset URL
+        toast.success("Reset link generated!");
         window.open(j.demoResetUrl, "_blank");
       } else {
         toast.success(j.message || "If the email exists, a reset link has been sent.");
       }
-    } catch {
-      toast.error("Failed to send reset link");
-    }
+    } catch { toast.error("Failed to send reset link"); }
     setLoading(false);
   };
 
@@ -133,23 +112,14 @@ export default function LoginPage() {
         body: JSON.stringify({ name: guestName, email: guestEmail, password: guestPassword, phone: guestPhone }),
       });
       const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-      } else {
-        toast.success("Account created! Welcome to Guruvayur Dham.");
-        navigate("/dashboard");
-      }
-    } catch {
-      toast.error("Registration failed");
-    }
+      if (j.error) toast.error(j.error);
+      else { toast.success("Account created! Welcome to Guruvayur Dham."); navigate("/dashboard"); }
+    } catch { toast.error("Registration failed"); }
     setLoading(false);
   };
 
   const sendOtp = async () => {
-    if (!otpPhone || otpPhone.length < 10) {
-      toast.error("Enter a valid phone number");
-      return;
-    }
+    if (!otpPhone || otpPhone.length < 10) { toast.error("Enter a valid phone number"); return; }
     setLoading(true);
     try {
       const r = await fetch("/api/auth/otp", {
@@ -158,16 +128,9 @@ export default function LoginPage() {
         body: JSON.stringify({ phone: otpPhone }),
       });
       const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-      } else {
-        setOtpSent(true);
-        setDemoOtp(j.otp);
-        toast.success(`OTP sent to ${otpPhone}`);
-      }
-    } catch {
-      toast.error("Failed to send OTP");
-    }
+      if (j.error) toast.error(j.error);
+      else { setOtpSent(true); setDemoOtp(j.otp); toast.success(`OTP sent to ${otpPhone}`); }
+    } catch { toast.error("Failed to send OTP"); }
     setLoading(false);
   };
 
@@ -180,32 +143,115 @@ export default function LoginPage() {
         body: JSON.stringify({ type: "otp", phone: otpPhone, otp }),
       });
       const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-      } else {
-        toast.success(`Welcome!`);
-        navigate("/dashboard");
-      }
-    } catch {
-      toast.error("OTP verification failed");
-    }
+      if (j.error) toast.error(j.error);
+      else { toast.success(`Welcome!`); navigate("/dashboard"); }
+    } catch { toast.error("OTP verification failed"); }
     setLoading(false);
   };
 
   return (
-    <div className="animate-page-reveal">
-      <PageHeader
-        eyebrow="Sign In"
-        icon={ShieldCheck}
-        title={<>Welcome to <GoldFoilText>Guruvayur Dham</GoldFoilText></>}
-        subtitle="Sign in to manage your bookings, track pooja requests, and access exclusive features."
-        crumbs={[{ label: "Home", route: "/" }, { label: "Login" }]}
-      />
+    <div className="min-h-screen bg-ink lg:grid lg:grid-cols-2">
+      {/* ===== LEFT: Brand visual (desktop only) ===== */}
+      <div className="relative hidden overflow-hidden lg:block">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop"
+            alt="Guruvayur Dham"
+            className="h-full w-full object-cover photo-cinematic-strong"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink/60 to-transparent" />
+        </div>
 
-      <section className="bg-ink py-12">
-        <div className="container-x max-w-md">
+        {/* Content */}
+        <div className="relative flex h-full flex-col justify-between p-12">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/30 bg-ink-soft">
+              <span className="font-serif text-xl text-gold-foil">गु</span>
+            </span>
+            <div>
+              <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
+            </div>
+          </div>
+
+          {/* Center content */}
+          <div className="max-w-md">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="font-serif text-5xl leading-[1.05] text-ivory"
+              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+            >
+              Begin Your<br />
+              <span className="text-gold-foil">Sacred Journey</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-5 text-base leading-relaxed text-ivory/70"
+            >
+              Book luxury rooms, manage your pooja bookings, track loyalty points, and access exclusive features. All in one place.
+            </motion.p>
+
+            {/* Features */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-8 space-y-3"
+            >
+              {[
+                { icon: Star, text: "Instant booking with live availability" },
+                { icon: Bell, text: "Festival alerts & darshan reminders" },
+                { icon: ShieldCheck, text: "Secure payments via Razorpay" },
+                { icon: MapPin, text: SITE.shortAddress },
+              ].map((f, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-ivory/80">
+                  <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full border border-champagne/20 bg-ink/50 backdrop-blur-sm">
+                    <f.icon className="h-4 w-4 text-champagne" />
+                  </span>
+                  {f.text}
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Bottom: rating + contact */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 fill-gold text-gold" />)}
+              </div>
+              <span className="text-sm text-ivory/60">{SITE.rating} · {SITE.reviewCount}+ reviews</span>
+            </div>
+            <a href={`tel:${SITE.phoneRaw}`} className="text-sm text-champagne hover:text-champagne-bright">
+              {SITE.phone}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== RIGHT: Login form ===== */}
+      <div className="flex min-h-screen items-center justify-center px-4 py-12 lg:min-h-0">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
+            <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/30 bg-ink-soft">
+              <span className="font-serif text-xl text-gold-foil">गु</span>
+            </span>
+            <div>
+              <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
+            </div>
+          </div>
+
           {/* Tab switcher */}
-          <div className="mb-6 flex gap-1.5 rounded-full border border-champagne/15 bg-ink-card p-1.5">
+          <div className="mb-8 flex gap-1.5 rounded-full border border-champagne/15 bg-ink-card p-1.5">
             <button
               onClick={() => setTab("guest")}
               className={cn(
@@ -226,11 +272,12 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {/* Form card */}
           <div className="card-luxe p-6 sm:p-8">
             <AnimatePresence mode="wait">
+              {/* ===== GUEST ===== */}
               {tab === "guest" && (
                 <motion.div key="guest" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  {/* Guest sub-tabs */}
                   <div className="mb-6 flex gap-1 border-b border-champagne/10">
                     {[
                       { key: "login", label: "Login" },
@@ -267,14 +314,11 @@ export default function LoginPage() {
                       <button onClick={handleGuestLogin} disabled={loading} className="btn-luxe w-full">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ChevronRight className="h-4 w-4" /></>}
                       </button>
-                      <button onClick={handleForgotPassword} className="text-center text-xs text-champagne hover:text-champagne-bright">
+                      <button onClick={handleForgotPassword} className="block w-full text-center text-xs text-champagne hover:text-champagne-bright">
                         Forgot password?
                       </button>
                     </div>
                   )}
-
-                  {/* OAuth buttons — show on login and register */}
-                  {(guestMode === "login" || guestMode === "register") && <OAuthButtons />}
 
                   {/* Guest Register */}
                   {guestMode === "register" && (
@@ -321,24 +365,27 @@ export default function LoginPage() {
                             {demoOtp && <div className="mt-1 text-xs text-ivory/50">Demo OTP: <code className="text-gold-foil">{demoOtp}</code></div>}
                           </div>
                           <Field icon={KeyRound} label="Enter 4-digit OTP">
-                            <input value={otp} onChange={(e) => setOtp(e.target.value)} maxLength={4} placeholder="1234" className="input-luxe text-center text-2xl tracking-[0.5em]" />
+                            <input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))} maxLength={4} placeholder="1234" className="input-luxe text-center text-2xl tracking-[0.5em]" />
                           </Field>
                           <button onClick={verifyOtp} disabled={loading || otp.length !== 4} className="btn-luxe w-full">
                             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Verify & Sign In <Check className="h-4 w-4" /></>}
                           </button>
                           <button onClick={() => { setOtpSent(false); setOtp(""); }} className="w-full text-center text-xs text-ivory/50 hover:text-champagne">
-                            ← Change phone number
+                            Change phone number
                           </button>
                         </>
                       )}
                     </div>
                   )}
+
+                  {/* OAuth */}
+                  {(guestMode === "login" || guestMode === "register") && <OAuthButtons />}
                 </motion.div>
               )}
 
+              {/* ===== STAFF ===== */}
               {tab === "staff" && (
                 <motion.div key="staff" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  {/* Staff sub-tabs */}
                   <div className="mb-6 flex gap-1 border-b border-champagne/10">
                     {[
                       { key: "pin", label: "PIN Login" },
@@ -405,11 +452,12 @@ export default function LoginPage() {
               )}
             </AnimatePresence>
 
+            {/* Footer */}
             <div className="mt-6 flex items-center justify-between text-xs">
               <button onClick={() => navigate("/")} className="text-ivory/50 hover:text-champagne">
                 <ArrowLeft className="mr-1 inline h-3 w-3" /> Back to Home
               </button>
-              <span className="text-ivory/40">Secure login · SSL encrypted</span>
+              <span className="text-ivory/40">Secure · SSL encrypted</span>
             </div>
           </div>
 
@@ -420,7 +468,7 @@ export default function LoginPage() {
             <span className="inline-flex items-center gap-1"><Sparkles className="h-3 w-3" /> Fast</span>
           </div>
         </div>
-      </section>
+      </div>
 
       <style jsx>{`
         :global(.input-luxe) {

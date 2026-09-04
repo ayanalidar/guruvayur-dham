@@ -16,12 +16,12 @@ export default function WhyChooseUs() {
         <div className="mx-auto max-w-2xl text-center">
           <span className="section-eyebrow">Why Pilgrims Choose Us</span>
           <h2 className="section-title mt-4">
-            More Than a Stay — A{" "}
+            More Than a Stay · A{" "}
             <span className="text-gradient-saffron">Pilgrim Companion</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            We've hosted over 50,000 devotees since 1998. Every detail — from 24×7 hot
-            water to free temple darshan guidance — is designed around what a pilgrim
+            We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot
+            water to free temple darshan guidance · is designed around what a pilgrim
             actually needs.
           </p>
         </div>

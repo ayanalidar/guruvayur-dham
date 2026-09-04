@@ -7,7 +7,7 @@ import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton, SectionHeader } from "@/components/site/visuals";
 import VirtualTourViewer, { type TourScene } from "@/components/site/VirtualTourViewer";
 
-// Demo scenes — uses regular photos as 360° placeholders.
+// Demo scenes · uses regular photos as 360° placeholders.
 // In production, replace these URLs with real equirectangular 360° panoramas (2:1 aspect ratio).
 // The viewer will still work with regular photos (just no actual 360° rotation), but
 // for a true VR experience you need 360° photos shot with a specialized camera or app.
@@ -51,7 +51,7 @@ const DEMO_SCENES: TourScene[] = [
     preview: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=400&fit=crop",
     hotspots: [
       { pitch: 0, yaw: 180, type: "scene", targetScene: "corridor", text: "← Back to Corridor" },
-      { pitch: -20, yaw: 0, type: "info", text: "Pure-veg Brahmin hotel tie-up — order to your room via QR" },
+      { pitch: -20, yaw: 0, type: "info", text: "Pure-veg Brahmin hotel tie-up · order to your room via QR" },
     ],
   },
 ];
@@ -81,7 +81,7 @@ export default function VirtualTourPage() {
                 <MapPin className="h-5 w-5" />
                 <span className="text-xs uppercase tracking-wider">Drag to Look</span>
               </div>
-              <p className="mt-2 text-sm text-ivory/70">Click and drag the image in any direction to look around the room — up, down, left, right.</p>
+              <p className="mt-2 text-sm text-ivory/70">Click and drag the image in any direction to look around the room · up, down, left, right.</p>
             </div>
             <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
               <div className="flex items-center gap-2 text-champagne">
@@ -106,7 +106,7 @@ export default function VirtualTourPage() {
               <div>
                 <p className="text-sm font-semibold text-ivory">About This Demo</p>
                 <p className="mt-1 text-xs text-ivory/60">
-                  This virtual tour uses regular photos as placeholders. For a true 360° VR experience, you need equirectangular panoramas (2:1 aspect ratio, 360°×180°) shot with a 360° camera (Ricoh Theta, Insta360, etc.) or a smartphone app (Google Street View, Cardboard Camera). The viewer component is fully built — just upload real 360° photos to replace the demo URLs.
+                  This virtual tour uses regular photos as placeholders. For a true 360° VR experience, you need equirectangular panoramas (2:1 aspect ratio, 360°×180°) shot with a 360° camera (Ricoh Theta, Insta360, etc.) or a smartphone app (Google Street View, Cardboard Camera). The viewer component is fully built · just upload real 360° photos to replace the demo URLs.
                 </p>
               </div>
             </div>

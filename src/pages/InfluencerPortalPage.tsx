@@ -75,7 +75,7 @@ export default function InfluencerPortalPage() {
         eyebrow="Influencer Portal"
         icon={Share2}
         title={<>Become a <GoldFoilText>Guruvayur Dham</GoldFoilText> Partner</>}
-        subtitle="Travel influencers, bloggers, and content creators — earn commission on every booking referred through your unique link."
+        subtitle="Travel influencers, bloggers, and content creators · earn commission on every booking referred through your unique link."
         crumbs={[{ label: "Home", route: "/" }, { label: "Influencer Portal" }]}
       />
 

@@ -19,10 +19,10 @@ export default function OAuthButtons() {
 
   const handleGoogleLogin = () => {
     if (status.google) {
-      // Real OAuth — redirect to NextAuth
+      // Real OAuth · redirect to NextAuth
       window.location.assign("/api/auth/signin/google");
     } else {
-      // Demo mode — simulate OAuth
+      // Demo mode · simulate OAuth
       toast.info("Demo mode: Add GOOGLE_CLIENT_ID to .env for real Google OAuth");
       // Simulate: create a demo OAuth user
       simulateOAuth("Google");
@@ -107,7 +107,7 @@ export default function OAuthButtons() {
 
       {status.demoMode && (
         <p className="mt-2 text-center text-[10px] text-ivory/40">
-          Demo mode — buttons simulate OAuth. Add API keys to .env for real login.
+          Demo mode · buttons simulate OAuth. Add API keys to .env for real login.
         </p>
       )}
     </div>

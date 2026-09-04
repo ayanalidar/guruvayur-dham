@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const user = await db.user.findUnique({ where: { email } });
   if (!user) {
-    // Don't reveal whether email exists — security best practice
+    // Don't reveal whether email exists · security best practice
     return NextResponse.json({ ok: true, message: "If an account with that email exists, a reset link has been sent." });
   }
 
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     data: {
       type: "EMAIL",
       recipient: email,
-      subject: "Password Reset — Guruvayur Dham",
+      subject: "Password Reset · Guruvayur Dham",
       body: `Namaskaram ${user.name},\n\nWe received a request to reset your password. Click the link below to set a new password:\n\n${resetUrl}\n\nThis link expires in 1 hour. If you didn't request this, you can safely ignore this email.\n\nGuruvayur Dham Team`,
       status: "QUEUED",
       relatedRef: `RESET-${token.slice(0, 8)}`,
@@ -45,6 +45,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     message: "If an account with that email exists, a reset link has been sent.",
-    demoResetUrl: resetUrl, // DEMO ONLY — remove in production
+    demoResetUrl: resetUrl, // DEMO ONLY · remove in production
   });
 }

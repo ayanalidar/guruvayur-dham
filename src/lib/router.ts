@@ -26,7 +26,7 @@ export function useHashRoute(): {
   const navigate = useCallback((to: string) => {
     const clean = to.startsWith("/") ? to : `/${to}`;
     if (window.location.hash.replace(/^#/, "") === clean) {
-      // same route — just scroll to top
+      // same route · just scroll to top
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }

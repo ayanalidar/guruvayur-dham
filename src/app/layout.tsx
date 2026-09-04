@@ -23,7 +23,7 @@ const siteUrl = "https://www.guruvayurdham.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Guruvayur Dham — Luxury Pilgrim Stay 2 Minutes from Guruvayur Temple",
+    default: "Guruvayur Dham · Luxury Pilgrim Stay 2 Minutes from Guruvayur Temple",
     template: "%s | Guruvayur Dham",
   },
   description:
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: siteUrl,
     siteName: "Guruvayur Dham",
-    title: "Guruvayur Dham — Luxury Pilgrim Stay Near Guruvayur Temple",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Guruvayur Temple",
     description:
       "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
     images: [
@@ -59,13 +59,13 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
         width: 1200,
         height: 630,
-        alt: "Guruvayur Dham — luxury pilgrim stay",
+        alt: "Guruvayur Dham · luxury pilgrim stay",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Guruvayur Dham — Luxury Pilgrim Stay Near Guruvayur Temple",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Guruvayur Temple",
     description:
       "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
     images: [
@@ -125,7 +125,7 @@ export default function RootLayout({
     description:
       "Boutique pilgrim accommodation near Guruvayur Temple offering dark-luxe AC & non-AC rooms, pooja booking, and pilgrim services.",
     url: siteUrl,
-    telephone: "+91-98765-43210",
+    telephone: "+91-90908-20208",
     email: "stay@guruvayurdham.com",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
@@ -133,13 +133,13 @@ export default function RootLayout({
     starRating: { "@type": "Rating", ratingValue: "4.9", reviewCount: "847" },
     address: {
       "@type": "PostalAddress",
-      streetAddress: "East Nada Road, Near Guruvayur Temple",
-      addressLocality: "Guruvayur",
-      addressRegion: "Kerala",
-      postalCode: "680101",
+      streetAddress: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau",
+      addressLocality: "Mathura",
+      addressRegion: "Uttar Pradesh",
+      postalCode: "281001",
       addressCountry: "IN",
     },
-    geo: { "@type": "GeoCoordinates", latitude: 10.5945, longitude: 76.0424 },
+    geo: { "@type": "GeoCoordinates", latitude: 27.4924, longitude: 77.6900 },
     amenityFeature: [
       { "@type": "LocationFeatureSpecification", name: "Free WiFi", value: true },
       { "@type": "LocationFeatureSpecification", name: "Free Parking", value: true },

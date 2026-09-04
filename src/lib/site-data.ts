@@ -1,27 +1,27 @@
 /**
  * Central mock-data store for Guruvayur Dham.
- * Swap these arrays/objects with real CMS / API data later — every component
+ * Swap these arrays/objects with real CMS / API data later · every component
  * in src/components/site reads from here, so the rest of the UI stays intact.
  */
 
 export const SITE = {
   name: "Guruvayur Dham",
   tagline: "Stay 2 Minutes from the Divine",
-  phone: "+91 98765 43210",
-  phoneRaw: "+919876543210",
-  whatsapp: "919876543210",
+  phone: "+91-90908 20208",
+  phoneRaw: "+919090820208",
+  whatsapp: "919090820208",
   email: "stay@guruvayurdham.com",
-  address: "East Nada Road, Near Guruvayur Temple, Guruvayur, Kerala 680101",
-  shortAddress: "East Nada Road, Guruvayur, Kerala 680101",
+  address: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
+  shortAddress: "Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
   mapEmbed:
-    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.6345879023456!2d76.0424!3d10.5945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDM1JzM0LjIiTiA3NsKwMDInMzIuNiJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
-  mapLink: "https://www.google.com/maps/search/?api=1&query=Guruvayur+Temple",
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zTWF0aHVyYSwgVXR0YXIgUHJhZGVzaA!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+  mapLink: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Natwar+Nagar+Dholi+Pyau+Mathura+281001",
   checkIn: "12:00 PM",
   checkOut: "11:00 AM",
   rating: 4.9,
   reviewCount: 847,
   totalRooms: 52,
-  distanceToTemple: "2 min walk to East Nada",
+  distanceToTemple: "2 min walk to temple",
   socials: {
     facebook: "https://facebook.com/guruvayurdham",
     instagram: "https://instagram.com/guruvayurdham",
@@ -57,7 +57,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "MapPin",
     title: "Walk to the Temple",
-    text: "Just 200 metres from Guruvayur Temple's East Nada gate. Skip the rush-hour traffic and reach the sanctum in two minutes flat — perfect for early-morning Nirmalya Darshan.",
+    text: "Just 200 metres from Guruvayur Temple's East Nada gate. Skip the rush-hour traffic and reach the sanctum in two minutes flat · perfect for early-morning Nirmalya Darshan.",
   },
   {
     icon: "BedDouble",
@@ -72,7 +72,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "Wallet",
     title: "Honest, Transparent Pricing",
-    text: "No hidden charges. Rates start at ₹700/night with clear add-ons for extra person, AC, and early check-in. Pay by UPI, card, or cash — your choice.",
+    text: "No hidden charges. Rates start at ₹700/night with clear add-ons for extra person, AC, and early check-in. Pay by UPI, card, or cash · your choice.",
   },
   {
     icon: "ShieldCheck",
@@ -82,7 +82,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "Utensils",
     title: "Pure Veg Meals Nearby",
-    text: "Tie-ups with three pure-veg Brahmin hotels within 200 m. Order to your room or walk over — South Indian thali, filter coffee, and prasadam-friendly menus.",
+    text: "Tie-ups with three pure-veg Brahmin hotels within 200 m. Order to your room or walk over · South Indian thali, filter coffee, and prasadam-friendly menus.",
   },
 ];
 
@@ -138,7 +138,7 @@ export const ROOMS: Room[] = [
     ],
     badge: "Most Popular",
     description:
-      "Our flagship Deluxe AC Room is designed for couples and pilgrim duos who want a touch of comfort after a long temple day. The room features a plush king-size bed dressed in crisp white linen, a wooden headboard, warm saffron accent wall, and a study desk by the window. The en-suite bathroom has a glass shower cubicle, premium fixtures, 24×7 hot water, and complimentary herbal toiletries. A mini-fridge, LED TV with Tamil and Malayalam channels, high-speed WiFi, and an in-room safe round out the experience. Wake up to temple bells and the gentle aroma of incense — that's the Guruvayur Dham morning ritual.",
+      "Our flagship Deluxe AC Room is designed for couples and pilgrim duos who want a touch of comfort after a long temple day. The room features a plush king-size bed dressed in crisp white linen, a wooden headboard, warm saffron accent wall, and a study desk by the window. The en-suite bathroom has a glass shower cubicle, premium fixtures, 24×7 hot water, and complimentary herbal toiletries. A mini-fridge, LED TV with Tamil and Malayalam channels, high-speed WiFi, and an in-room safe round out the experience. Wake up to temple bells and the gentle aroma of incense · that's the Guruvayur Dham morning ritual.",
     shortDesc:
       "King bed, AC, premium linen, en-suite bath, mini-fridge, WiFi. Perfect for couples.",
     amenities: ["AC", "Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "RoomService", "PowerBackup"],
@@ -165,7 +165,7 @@ export const ROOMS: Room[] = [
     ],
     badge: "Best Value",
     description:
-      "A practical, well-appointed AC room for pilgrims who want cool comfort without breaking the bank. The room has a queen-size bed, bedside reading lamps, a wardrobe, and a writing desk. The attached bathroom has a hot-water geyser, fresh towels, and basic toiletries. The room faces the inner courtyard, so it stays quiet even during peak temple hours — ideal for a midday nap between darshan slots. AC, WiFi, and LED TV are standard, and housekeeping cleans every morning by 10 AM unless you place a Do-Not-Disturb tag.",
+      "A practical, well-appointed AC room for pilgrims who want cool comfort without breaking the bank. The room has a queen-size bed, bedside reading lamps, a wardrobe, and a writing desk. The attached bathroom has a hot-water geyser, fresh towels, and basic toiletries. The room faces the inner courtyard, so it stays quiet even during peak temple hours · ideal for a midday nap between darshan slots. AC, WiFi, and LED TV are standard, and housekeeping cleans every morning by 10 AM unless you place a Do-Not-Disturb tag.",
     shortDesc:
       "Queen bed, AC, courtyard-facing, quiet. Great value for couples and solo pilgrims.",
     amenities: ["AC", "Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "PowerBackup"],
@@ -243,7 +243,7 @@ export const ROOMS: Room[] = [
       "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=900&fit=crop",
     ],
     description:
-      "A larger non-AC room ideal for small families or three adults travelling together. Comes with a double bed plus a rolled-out floor mattress (Indian style — perfect for kids), ceiling fan, large louvered windows for cross-breeze, and a freshly tiled attached bathroom with 24×7 hot water. The room has a small puja niche with an idol shelf — many guests light a diya before leaving for darshan. Excellent value for pilgrims who don't need AC but want extra space and the comfort of an attached bathroom.",
+      "A larger non-AC room ideal for small families or three adults travelling together. Comes with a double bed plus a rolled-out floor mattress (Indian style · perfect for kids), ceiling fan, large louvered windows for cross-breeze, and a freshly tiled attached bathroom with 24×7 hot water. The room has a small puja niche with an idol shelf · many guests light a diya before leaving for darshan. Excellent value for pilgrims who don't need AC but want extra space and the comfort of an attached bathroom.",
     shortDesc:
       "Double bed + floor mattress, attached bath, puja niche. Suits families of three.",
     amenities: ["Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "Parking", "PowerBackup"],
@@ -292,7 +292,7 @@ export const POOJAS: Pooja[] = [
     price: 50,
     duration: "Same day",
     description:
-      "The most beloved offering at Guruvayur — sweet, slow-cooked rice-and-milk porridge prepared in the temple kitchen. Offered to Lord Guruvayurappan and distributed as prasadam.",
+      "The most beloved offering at Guruvayur · sweet, slow-cooked rice-and-milk porridge prepared in the temple kitchen. Offered to Lord Guruvayurappan and distributed as prasadam.",
     prasadam: "1 packet Palpayasam (≈250 g)",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
@@ -323,7 +323,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&h=400&fit=crop",
     significance:
-      "The most sacred Annaprasham in Kerala — initiates a child into solid food with divine blessing.",
+      "The most sacred Annaprasham in Kerala · initiates a child into solid food with divine blessing.",
   },
   {
     id: "archana",
@@ -344,12 +344,12 @@ export const POOJAS: Pooja[] = [
     price: 75,
     duration: "10 min",
     description:
-      "A short flower offering at the sanctum — the priest showers flowers on the deity while chanting your name and gotra. Perfect for travellers on a tight schedule.",
+      "A short flower offering at the sanctum · the priest showers flowers on the deity while chanting your name and gotra. Perfect for travellers on a tight schedule.",
     prasadam: "Blessed flowers",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "The simplest temple offering — recommended for first-time visitors and short stops.",
+      "The simplest temple offering · recommended for first-time visitors and short stops.",
   },
   {
     id: "mala",
@@ -362,7 +362,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Symbolises surrender of the ego — popular for students appearing for exams and new beginnings.",
+      "Symbolises surrender of the ego · popular for students appearing for exams and new beginnings.",
   },
   {
     id: "bhagavatha-sapthaham",
@@ -375,7 +375,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Considered the highest spiritual merit offering — sponsors are honoured throughout the seven days.",
+      "Considered the highest spiritual merit offering · sponsors are honoured throughout the seven days.",
   },
 ];
 
@@ -400,7 +400,7 @@ export const DARSHAN_CARDS = [
   {
     icon: "CalendarDays",
     title: "Festival Calendar",
-    text: "Utsavam, Ashtami Rohini, Ekadasi — plan your visit around major festivals.",
+    text: "Utsavam, Ashtami Rohini, Ekadasi · plan your visit around major festivals.",
     cta: "View Festivals",
     href: "#events",
     accent: "gold",
@@ -477,27 +477,27 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     tab: "Rooms",
     src: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=800&fit=crop",
     alt: "Deluxe AC room with king bed and saffron accent wall at Guruvayur Dham",
-    caption: "Deluxe AC Room — king bed, premium linen",
+    caption: "Deluxe AC Room · king bed, premium linen",
     span: "tall",
   },
   {
     tab: "Rooms",
     src: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
     alt: "Standard AC room interior with queen bed",
-    caption: "Standard AC Room — quiet courtyard view",
+    caption: "Standard AC Room · quiet courtyard view",
   },
   {
     tab: "Rooms",
     src: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
     alt: "Family suite living area at Guruvayur Dham",
-    caption: "Family Suite — separate sitting area",
+    caption: "Family Suite · separate sitting area",
     span: "wide",
   },
   {
     tab: "Temple",
     src: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=800&fit=crop",
     alt: "Guruvayur Temple gopuram at sunrise",
-    caption: "Guruvayur Temple East Nada — 2 min walk",
+    caption: "Guruvayur Temple East Nada · 2 min walk",
     span: "tall",
   },
   {
@@ -550,7 +550,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     tab: "Surroundings",
     src: "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
     alt: "Street market near Guruvayur temple",
-    caption: "East Nada bazaar — souvenirs and prasadam",
+    caption: "East Nada bazaar · souvenirs and prasadam",
     span: "wide",
   },
 ];
@@ -571,7 +571,7 @@ export const EVENTS: FestEvent[] = [
     date: "Feb 26 – Mar 7, 2026",
     dateISO: "2026-02-26",
     description:
-      "The annual 10-day festival of Guruvayur Temple. Each day features a grand procession of Lord Guruvayurappan atop caparisoned elephants, accompanied by traditional Kerala percussion (Panchavadyam and Melam). The festival concludes with the Aarattu holy dip ceremony at the Rudratheertham temple tank. Rooms sell out 3 months in advance — book early.",
+      "The annual 10-day festival of Guruvayur Temple. Each day features a grand procession of Lord Guruvayurappan atop caparisoned elephants, accompanied by traditional Kerala percussion (Panchavadyam and Melam). The festival concludes with the Aarattu holy dip ceremony at the Rudratheertham temple tank. Rooms sell out 3 months in advance · book early.",
     highlight: "Grand elephant procession + Aarattu",
     image:
       "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=800&h=600&fit=crop",
@@ -581,7 +581,7 @@ export const EVENTS: FestEvent[] = [
     date: "Aug 25, 2026",
     dateISO: "2026-08-25",
     description:
-      "Sri Krishna Jayanti — the birth anniversary of Lord Krishna, of whom Guruvayurappan is a form. The temple is decorated with flowers and lights, and a special abhishekam is performed at midnight. Children dressed as little Krishnas line up for darshan — a heart-melting sight. Special Palpayasam is distributed to all devotees.",
+      "Sri Krishna Jayanti · the birth anniversary of Lord Krishna, of whom Guruvayurappan is a form. The temple is decorated with flowers and lights, and a special abhishekam is performed at midnight. Children dressed as little Krishnas line up for darshan · a heart-melting sight. Special Palpayasam is distributed to all devotees.",
     highlight: "Midnight Krishna abhishekam + children's procession",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
@@ -591,7 +591,7 @@ export const EVENTS: FestEvent[] = [
     date: "Dec 8, 2026",
     dateISO: "2026-12-08",
     description:
-      "The most important Ekadasi of the year at Guruvayur — commemorates the installation of the idol by Guru (Brihaspati) and Vayu. The famous Chembai Sangeetholsavam, a 10-day Carnatic music festival honouring the legendary Chembai Vaidyanatha Bhagavathar, concludes on this night with a mass chorus of hundreds of musicians singing at the temple hall.",
+      "The most important Ekadasi of the year at Guruvayur · commemorates the installation of the idol by Guru (Brihaspati) and Vayu. The famous Chembai Sangeetholsavam, a 10-day Carnatic music festival honouring the legendary Chembai Vaidyanatha Bhagavathar, concludes on this night with a mass chorus of hundreds of musicians singing at the temple hall.",
     highlight: "Chembai Sangeetholsavam grand finale chorus",
     image:
       "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=600&fit=crop",
@@ -601,7 +601,7 @@ export const EVENTS: FestEvent[] = [
     date: "Apr 14, 2026",
     dateISO: "2026-04-14",
     description:
-      "The Malayalam New Year — devotees throng to see the Vishukkani, the auspicious first sight arranged in front of Lord Guruvayurappan with rice, gold, flowers, and a mirror. The temple opens at 2:30 AM for Vishukkani darshan. Families traditionally start the year with the Lord's darshan, making this one of our busiest single days.",
+      "The Malayalam New Year · devotees throng to see the Vishukkani, the auspicious first sight arranged in front of Lord Guruvayurappan with rice, gold, flowers, and a mirror. The temple opens at 2:30 AM for Vishukkani darshan. Families traditionally start the year with the Lord's darshan, making this one of our busiest single days.",
     highlight: "Vishukkani darshan at 2:30 AM",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&h=600&fit=crop",
@@ -611,7 +611,7 @@ export const EVENTS: FestEvent[] = [
     date: "Nov 16 – Dec 27, 2026",
     dateISO: "2026-11-16",
     description:
-      "The 41-day Mandalam pilgrimage season — Sabarimala pilgrims break their journey at Guruvayur for darshan and Ayyappa pooja. Special ayyappa abhishekams, mala-dharana ceremonies, and kettunira arrangements are available at the temple. Guruvayur Dham offers extended check-out (2 PM) and packed meals for pilgrim groups during this season.",
+      "The 41-day Mandalam pilgrimage season · Sabarimala pilgrims break their journey at Guruvayur for darshan and Ayyappa pooja. Special ayyappa abhishekams, mala-dharana ceremonies, and kettunira arrangements are available at the temple. Guruvayur Dham offers extended check-out (2 PM) and packed meals for pilgrim groups during this season.",
     highlight: "41-day Sabarimala pilgrimage stopover",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
@@ -643,25 +643,25 @@ export interface BlogPost {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "guruvayur-temple-darshan-timings",
-    title: "Guruvayur Temple Darshan Timings — Complete 2026 Guide",
+    title: "Guruvayur Temple Darshan Timings · Complete 2026 Guide",
     excerpt:
-      "Nirmalyam at 3 AM to closing at 9:15 PM — here's the full darshan schedule, special pooja slots, and when to go for the shortest queue.",
+      "Nirmalyam at 3 AM to closing at 9:15 PM · here's the full darshan schedule, special pooja slots, and when to go for the shortest queue.",
     category: "Temple Guide",
     readTime: "5 min",
     date: "Jan 12, 2026",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=500&fit=crop",
     content: [
-      "Guruvayur Temple opens at 3:00 AM every day with the Nirmalya Darshan — the most sacred darshan of the day, when the idol is still adorned with the previous night's flowers and the holy sandalwood paste. This darshan is considered extremely auspicious and is a must for first-time visitors who can manage the early wake-up. The queue starts forming from 2:15 AM, but during festival days and weekends, pilgrims line up as early as 1:30 AM.",
-      "After Nirmalyam, the sanctum closes briefly for the Seeveli procession at 7:30 AM, where Lord Guruvayurappan is taken around the inner pradakshina path on the back of an elephant. The idol is then bathed and re-dressed for the morning Usha Pooja. General darshan resumes around 8:30 AM and continues with brief interruptions for each major pooja — Usha Pooja, Ethirettu Pooja, Pantheerady Pooja, and Ucha Pooja — until the temple closes at 12:30 PM for the afternoon break.",
-      "The temple reopens at 4:30 PM for the evening session, which is when most casual visitors arrive. The highlight of the evening is the Deeparadhana at 6:15 PM — the lamp-lighting ceremony where hundreds of oil lamps are simultaneously lit around the sanctum, and the idol is shown in full aarti splendour. This is the most crowded darshan of the day; expect at least a 90-minute queue during peak season.",
-      "If you want the shortest queue, the best slots are (1) Nirmalyam at 3:00 AM, (2) just after Ucha Pooja at 12:00 PM when the afternoon crowd hasn't built up, and (3) the 7:30 PM post-deeparadhana slot when many families have left for dinner. Avoid weekends, full-moon days, and Ekadasi unless you have a special reason — the crowd on those days can be 5-10× a regular weekday.",
-      "Special darshan tickets (₹100 per person) are available at the temple counter and let you skip part of the general queue. Senior citizens above 65, pregnant women, and parents with infants under 1 year get a free priority darshan line on the right side of the sanctum — show an ID at the gate. Guruvayur Dham's reception can guide you on the day's expected crowd levels and help you pick the right slot before you leave for the temple.",
+      "Guruvayur Temple opens at 3:00 AM every day with the Nirmalya Darshan · the most sacred darshan of the day, when the idol is still adorned with the previous night's flowers and the holy sandalwood paste. This darshan is considered extremely auspicious and is a must for first-time visitors who can manage the early wake-up. The queue starts forming from 2:15 AM, but during festival days and weekends, pilgrims line up as early as 1:30 AM.",
+      "After Nirmalyam, the sanctum closes briefly for the Seeveli procession at 7:30 AM, where Lord Guruvayurappan is taken around the inner pradakshina path on the back of an elephant. The idol is then bathed and re-dressed for the morning Usha Pooja. General darshan resumes around 8:30 AM and continues with brief interruptions for each major pooja · Usha Pooja, Ethirettu Pooja, Pantheerady Pooja, and Ucha Pooja · until the temple closes at 12:30 PM for the afternoon break.",
+      "The temple reopens at 4:30 PM for the evening session, which is when most casual visitors arrive. The highlight of the evening is the Deeparadhana at 6:15 PM · the lamp-lighting ceremony where hundreds of oil lamps are simultaneously lit around the sanctum, and the idol is shown in full aarti splendour. This is the most crowded darshan of the day; expect at least a 90-minute queue during peak season.",
+      "If you want the shortest queue, the best slots are (1) Nirmalyam at 3:00 AM, (2) just after Ucha Pooja at 12:00 PM when the afternoon crowd hasn't built up, and (3) the 7:30 PM post-deeparadhana slot when many families have left for dinner. Avoid weekends, full-moon days, and Ekadasi unless you have a special reason · the crowd on those days can be 5-10× a regular weekday.",
+      "Special darshan tickets (₹100 per person) are available at the temple counter and let you skip part of the general queue. Senior citizens above 65, pregnant women, and parents with infants under 1 year get a free priority darshan line on the right side of the sanctum · show an ID at the gate. Guruvayur Dham's reception can guide you on the day's expected crowd levels and help you pick the right slot before you leave for the temple.",
     ],
   },
   {
     slug: "dress-code-guruvayur-temple",
-    title: "Dress Code for Guruvayur Temple — What to Wear (and Avoid)",
+    title: "Dress Code for Guruvayur Temple · What to Wear (and Avoid)",
     excerpt:
       "Men must remove their upper garment. Women must wear saree or salwar. Here's the complete dress code, with practical tips for first-timers.",
     category: "Temple Guide",
@@ -670,16 +670,16 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=500&fit=crop",
     content: [
-      "Guruvayur Temple enforces a strict traditional dress code rooted in Kerala temple custom. Men must wear a mundu (dhoti) or veshti — a single piece of cotton cloth wrapped around the waist, reaching the ankles. Upper garments (shirts, kurtas, t-shirts) must be removed before entering the inner sanctum. Men may keep a small towel or angavastram on the shoulder, but the chest must remain bare. This rule applies to all men, regardless of age, religion, or nationality, with no exceptions.",
-      "Women must wear either a saree, a salwar kameez with dupatta, or a long skirt and blouse. Trousers, jeans, leggings, and short tops are not permitted inside the sanctum. Girls below 12 may wear frocks. Many women pilgrims carry a spare saree in their bag and change in the dedicated dressing rooms near the East Nada entrance — Guruvayur Dham also keeps a few spare sarees and mundus at the reception for guests who arrive unprepared, available against a refundable deposit.",
-      "Footwear must be removed at the designated counters near each temple gate. There are three footwear deposit counters — East Nada, West Nada, and South Nada — and each charges a nominal ₹2-5 per pair. Socks are allowed inside the temple if the marble floor gets too hot during the day, but many traditional pilgrims prefer to walk barefoot as a mark of devotion. The temple floor is washed daily and is generally clean, but during monsoon (June-September) it can get slippery.",
-      "Avoid wearing black clothing on festival days — Kerala tradition associates black with Lord Ayyappa and certain Shaivite rituals, and some temple staff may politely turn you away. White, saffron, cream, and pastel shades are the safest and most respectful choices. Leather items (belts, wallets, bags) are allowed but many devotees prefer to leave them at their rooms. Mobile phones must be switched off inside the sanctum — there are free locker facilities outside the gates.",
-      "Children below 10 do not have to follow the dress code strictly, but traditional clothes are appreciated. Photography is strictly prohibited inside the temple complex — leave your camera at the room. Guruvayur Dham provides a free locker in every room for valuables, and our reception can store larger items if needed. The dress code may seem strict to first-time visitors, but it preserves the sanctity that makes Guruvayur special — embrace it as part of the pilgrimage.",
+      "Guruvayur Temple enforces a strict traditional dress code rooted in Kerala temple custom. Men must wear a mundu (dhoti) or veshti · a single piece of cotton cloth wrapped around the waist, reaching the ankles. Upper garments (shirts, kurtas, t-shirts) must be removed before entering the inner sanctum. Men may keep a small towel or angavastram on the shoulder, but the chest must remain bare. This rule applies to all men, regardless of age, religion, or nationality, with no exceptions.",
+      "Women must wear either a saree, a salwar kameez with dupatta, or a long skirt and blouse. Trousers, jeans, leggings, and short tops are not permitted inside the sanctum. Girls below 12 may wear frocks. Many women pilgrims carry a spare saree in their bag and change in the dedicated dressing rooms near the East Nada entrance · Guruvayur Dham also keeps a few spare sarees and mundus at the reception for guests who arrive unprepared, available against a refundable deposit.",
+      "Footwear must be removed at the designated counters near each temple gate. There are three footwear deposit counters · East Nada, West Nada, and South Nada · and each charges a nominal ₹2-5 per pair. Socks are allowed inside the temple if the marble floor gets too hot during the day, but many traditional pilgrims prefer to walk barefoot as a mark of devotion. The temple floor is washed daily and is generally clean, but during monsoon (June-September) it can get slippery.",
+      "Avoid wearing black clothing on festival days · Kerala tradition associates black with Lord Ayyappa and certain Shaivite rituals, and some temple staff may politely turn you away. White, saffron, cream, and pastel shades are the safest and most respectful choices. Leather items (belts, wallets, bags) are allowed but many devotees prefer to leave them at their rooms. Mobile phones must be switched off inside the sanctum · there are free locker facilities outside the gates.",
+      "Children below 10 do not have to follow the dress code strictly, but traditional clothes are appreciated. Photography is strictly prohibited inside the temple complex · leave your camera at the room. Guruvayur Dham provides a free locker in every room for valuables, and our reception can store larger items if needed. The dress code may seem strict to first-time visitors, but it preserves the sanctity that makes Guruvayur special · embrace it as part of the pilgrimage.",
     ],
   },
   {
     slug: "how-to-reach-guruvayur",
-    title: "How to Reach Guruvayur — By Air, Train, Bus & Car",
+    title: "How to Reach Guruvayur · By Air, Train, Bus & Car",
     excerpt:
       "Nearest airport is Kochi (87 km). Nearest major railhead is Thrissur (29 km). Complete routes with travel time and cost for every mode.",
     category: "Travel Guide",
@@ -688,17 +688,17 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
     content: [
-      "Guruvayur is in Thrissur district of central Kerala, well-connected by rail, road, and the nearest airports. The town is small and walkable — once you arrive, you can cover the temple, the elephant sanctuary, and the main market on foot. Here's a breakdown of every travel option with realistic travel times, costs, and the best routes we recommend to Guruvayur Dham guests.",
-      "By air: The nearest international airport is Cochin International Airport (COK), about 87 km south of Guruvayur — a 2-hour taxi ride costing ₹2,500-3,500 depending on the time of day. Pre-paid taxis are available at the airport 24×7, and most drivers know Guruvayur Dham by name. Alternatively, you can take the airport metro to Aluva railway station (30 min, ₹60), then a direct train to Guruvayur (90 min, ₹50-150). For those coming from the north, Calicut International Airport (CCJ) is 100 km away — roughly a 2.5-hour drive.",
-      "By train: Guruvayur has its own railway station (GUV), a small terminus about 1 km from the temple, with direct daily trains from Chennai, Mumbai, Bangalore, Thiruvananthapuram, and several Kerala towns. The most convenient connection is from Thrissur Junction (TCR), 29 km away — Thrissur is on the main Konkan-Mangalore line and is connected to every major Indian city. From Thrissur, local trains run to Guruvayur every 2 hours (₹25, 45 min), and taxis charge ₹600-800. Guruvayur Dham offers a complimentary pickup from Guruvayur railway station for guests staying 2+ nights — just WhatsApp us your train details in advance.",
-      "By bus: Kerala State Road Transport Corporation (KSRTC) operates direct buses to Guruvayur from all major Kerala cities — Thrissur (every 15 min, ₹45, 1 hour), Kochi (every 30 min, ₹120, 2.5 hours), Kozhikode (every hour, ₹150, 3 hours), and Thiruvananthapuram (3 daily, ₹280, 6 hours). Private inter-city sleeper buses from Bangalore (8 hours, ₹800-1200) and Chennai (12 hours, ₹1200-1800) arrive at the nearby Thrissur KSRTC stand, from where you take a local bus or taxi. The Guruvayur bus stand is 800 m from the temple — an easy 10-minute walk with light luggage.",
-      "By car: Self-drive from Kochi takes the NH-66 north via Angamaly, Chalakudy, and Kodungallur — a scenic 2-hour drive through coconut groves and backwaters. From Bangalore, the route is Salem-Coimbatore-Palakkad-Thrissur-Guruvayur, about 410 km and a 9-hour drive with breaks. Free parking for 25+ vehicles is available at Guruvayur Dham — reserve your spot on WhatsApp before arrival, especially during festival season when street parking is impossible to find.",
-      "Local transport within Guruvayur is mostly by auto-rickshaw (₹30 minimum, ₹50-80 for short hops) and the occasional e-rickshaw. Most pilgrim points — temple, elephant sanctuary, Rudratheertham tank, and the main market — are within a 1-km radius of the temple and walkable. For day trips to nearby Athirappilly Waterfalls (60 km), Kerala Kalamandalam (35 km), or Palayur Church (25 km), hire a taxi from the stand near the West Nada — typical rates are ₹1,800-2,500 for a full-day 8-hour trip.",
+      "Guruvayur is in Thrissur district of central Kerala, well-connected by rail, road, and the nearest airports. The town is small and walkable · once you arrive, you can cover the temple, the elephant sanctuary, and the main market on foot. Here's a breakdown of every travel option with realistic travel times, costs, and the best routes we recommend to Guruvayur Dham guests.",
+      "By air: The nearest international airport is Cochin International Airport (COK), about 87 km south of Guruvayur · a 2-hour taxi ride costing ₹2,500-3,500 depending on the time of day. Pre-paid taxis are available at the airport 24×7, and most drivers know Guruvayur Dham by name. Alternatively, you can take the airport metro to Aluva railway station (30 min, ₹60), then a direct train to Guruvayur (90 min, ₹50-150). For those coming from the north, Calicut International Airport (CCJ) is 100 km away · roughly a 2.5-hour drive.",
+      "By train: Guruvayur has its own railway station (GUV), a small terminus about 1 km from the temple, with direct daily trains from Chennai, Mumbai, Bangalore, Thiruvananthapuram, and several Kerala towns. The most convenient connection is from Thrissur Junction (TCR), 29 km away · Thrissur is on the main Konkan-Mangalore line and is connected to every major Indian city. From Thrissur, local trains run to Guruvayur every 2 hours (₹25, 45 min), and taxis charge ₹600-800. Guruvayur Dham offers a complimentary pickup from Guruvayur railway station for guests staying 2+ nights · just WhatsApp us your train details in advance.",
+      "By bus: Kerala State Road Transport Corporation (KSRTC) operates direct buses to Guruvayur from all major Kerala cities · Thrissur (every 15 min, ₹45, 1 hour), Kochi (every 30 min, ₹120, 2.5 hours), Kozhikode (every hour, ₹150, 3 hours), and Thiruvananthapuram (3 daily, ₹280, 6 hours). Private inter-city sleeper buses from Bangalore (8 hours, ₹800-1200) and Chennai (12 hours, ₹1200-1800) arrive at the nearby Thrissur KSRTC stand, from where you take a local bus or taxi. The Guruvayur bus stand is 800 m from the temple · an easy 10-minute walk with light luggage.",
+      "By car: Self-drive from Kochi takes the NH-66 north via Angamaly, Chalakudy, and Kodungallur · a scenic 2-hour drive through coconut groves and backwaters. From Bangalore, the route is Salem-Coimbatore-Palakkad-Thrissur-Guruvayur, about 410 km and a 9-hour drive with breaks. Free parking for 25+ vehicles is available at Guruvayur Dham · reserve your spot on WhatsApp before arrival, especially during festival season when street parking is impossible to find.",
+      "Local transport within Guruvayur is mostly by auto-rickshaw (₹30 minimum, ₹50-80 for short hops) and the occasional e-rickshaw. Most pilgrim points · temple, elephant sanctuary, Rudratheertham tank, and the main market · are within a 1-km radius of the temple and walkable. For day trips to nearby Athirappilly Waterfalls (60 km), Kerala Kalamandalam (35 km), or Palayur Church (25 km), hire a taxi from the stand near the West Nada · typical rates are ₹1,800-2,500 for a full-day 8-hour trip.",
     ],
   },
   {
     slug: "best-time-to-visit-guruvayur",
-    title: "Best Time to Visit Guruvayur — Weather, Crowds & Festivals",
+    title: "Best Time to Visit Guruvayur · Weather, Crowds & Festivals",
     excerpt:
       "October to February is ideal weather. December-January is peak festival season. Monsoon (June-September) is peaceful and green.",
     category: "Travel Guide",
@@ -707,41 +707,41 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=800&h=500&fit=crop",
     content: [
-      "Guruvayur enjoys a tropical monsoon climate with three distinct seasons — winter (October-February), summer (March-May), and monsoon (June-September). Each season has its own character, and the best time to visit depends on what you're looking for: comfortable weather, fewer crowds, or the chance to witness a major festival.",
-      "Winter (October to February) is the peak pilgrim season — and for good reason. Daytime temperatures hover around 28-32°C with low humidity, mornings are pleasant at 22°C, and rainfall is rare. This is also when most major festivals fall: Guruvayur Utsavam (Feb-Mar), Mandala Pooja season (Nov-Dec), Guruvayur Ekadasi (Dec), and Vishu (Apr 14, technically spring but with winter-like weather). Expect heavy crowds on weekends and festival days; book rooms at least 2 months in advance. Guruvayur Dham is fully booked for Ekadasi and Vishu by early October.",
-      "Summer (March to May) is hot and humid — daytime temperatures reach 35-38°C with high humidity that makes the heat feel more intense. The temple is less crowded, but the marble floor inside the sanctum gets uncomfortably hot underfoot by noon, so morning and evening darshan are strongly preferred. This is when our AC rooms see the highest demand. Hotel rates drop 20-30% in this season, and you can often get a same-day room without prior booking on weekdays. Carry an umbrella, light cotton clothes, and a water bottle — heatstroke is a real risk for elderly pilgrims walking from distant parking.",
-      "Monsoon (June to September) is the most underrated season — and our personal favourite for a quiet pilgrimage. Kerala receives heavy rain from June onwards, and Guruvayur turns lush green. The temple is far less crowded (you can sometimes walk straight into the sanctum on weekday evenings), rooms are discounted 25-40%, and the post-rain smell of the temple grounds is magical. The downsides: occasional flooding of East Nada Road, limited elephant processions (Seeveli is shorter during heavy rain), and the risk of train delays. Carry a sturdy umbrella, waterproof footwear, and pack clothes in plastic bags inside your luggage.",
-      "If you must pick one week of the year: the first week of December is the sweet spot — the Mandala-Makaravilakku season has ended the peak Sabarimala rush but Guruvayur Ekadasi hasn't yet arrived, weather is pleasant, and the temple is decorated for the upcoming festival. The second-best pick is the last week of February — right after Utsavam concludes, when the temple is freshly cleaned, the weather is still cool, and the festival crowds have thinned out.",
-      "Avoid if possible: Vishu (Apr 14), Guruvayur Ekadasi (Dec), and the Utsavam closing day — unless you specifically want to attend these festivals, the crowds are overwhelming for casual visitors. Also avoid the second Saturday of every month — special abhishekam days draw large crowds from across Kerala. Guruvayur Dham's WhatsApp broadcast sends weekly crowd forecasts to all opted-in guests; message us at +91 98765 43210 with 'forecast' to subscribe.",
+      "Guruvayur enjoys a tropical monsoon climate with three distinct seasons · winter (October-February), summer (March-May), and monsoon (June-September). Each season has its own character, and the best time to visit depends on what you're looking for: comfortable weather, fewer crowds, or the chance to witness a major festival.",
+      "Winter (October to February) is the peak pilgrim season · and for good reason. Daytime temperatures hover around 28-32°C with low humidity, mornings are pleasant at 22°C, and rainfall is rare. This is also when most major festivals fall: Guruvayur Utsavam (Feb-Mar), Mandala Pooja season (Nov-Dec), Guruvayur Ekadasi (Dec), and Vishu (Apr 14, technically spring but with winter-like weather). Expect heavy crowds on weekends and festival days; book rooms at least 2 months in advance. Guruvayur Dham is fully booked for Ekadasi and Vishu by early October.",
+      "Summer (March to May) is hot and humid · daytime temperatures reach 35-38°C with high humidity that makes the heat feel more intense. The temple is less crowded, but the marble floor inside the sanctum gets uncomfortably hot underfoot by noon, so morning and evening darshan are strongly preferred. This is when our AC rooms see the highest demand. Hotel rates drop 20-30% in this season, and you can often get a same-day room without prior booking on weekdays. Carry an umbrella, light cotton clothes, and a water bottle · heatstroke is a real risk for elderly pilgrims walking from distant parking.",
+      "Monsoon (June to September) is the most underrated season · and our personal favourite for a quiet pilgrimage. Kerala receives heavy rain from June onwards, and Guruvayur turns lush green. The temple is far less crowded (you can sometimes walk straight into the sanctum on weekday evenings), rooms are discounted 25-40%, and the post-rain smell of the temple grounds is magical. The downsides: occasional flooding of East Nada Road, limited elephant processions (Seeveli is shorter during heavy rain), and the risk of train delays. Carry a sturdy umbrella, waterproof footwear, and pack clothes in plastic bags inside your luggage.",
+      "If you must pick one week of the year: the first week of December is the sweet spot · the Mandala-Makaravilakku season has ended the peak Sabarimala rush but Guruvayur Ekadasi hasn't yet arrived, weather is pleasant, and the temple is decorated for the upcoming festival. The second-best pick is the last week of February · right after Utsavam concludes, when the temple is freshly cleaned, the weather is still cool, and the festival crowds have thinned out.",
+      "Avoid if possible: Vishu (Apr 14), Guruvayur Ekadasi (Dec), and the Utsavam closing day · unless you specifically want to attend these festivals, the crowds are overwhelming for casual visitors. Also avoid the second Saturday of every month · special abhishekam days draw large crowds from across Kerala. Guruvayur Dham's WhatsApp broadcast sends weekly crowd forecasts to all opted-in guests; message us at +91 98765 43210 with 'forecast' to subscribe.",
     ],
   },
   {
     slug: "places-to-visit-near-guruvayur",
     title: "Top 10 Places to Visit Near Guruvayur (Within 60 km)",
     excerpt:
-      "Punnathur Kotta elephant sanctuary, Athirappilly Falls, Kerala Kalamandalam — the best day-trips from Guruvayur, with timings and entry fees.",
+      "Punnathur Kotta elephant sanctuary, Athirappilly Falls, Kerala Kalamandalam · the best day-trips from Guruvayur, with timings and entry fees.",
     category: "Travel Guide",
     readTime: "7 min",
     date: "Dec 30, 2025",
     image:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
     content: [
-      "Guruvayur is more than just the temple — the surrounding region of central Kerala is packed with cultural, natural, and spiritual attractions that make for excellent day trips. After your darshan and pooja, consider spending an extra day or two exploring these gems, all within an hour's drive from Guruvayur Dham. Most can be covered in 4-6 hour round trips; the front desk can arrange a trusted taxi for ₹1,800-2,500 per day.",
-      "1. Punnathur Kotta Elephant Sanctuary (3 km, 15 min): The most popular nearby attraction — an ancestral palace converted into a sanctuary for the temple's 50+ elephants. Walk through the courtyard, watch the elephants being bathed and fed (mornings are best), and learn about the role of elephants in Kerala temple festivals. Entry ₹10, open 9 AM to 5 PM, closed on certain festival days — check before you go. Guruvayur Dham is walking distance from here.",
-      "2. Athirappilly & Vazhachal Waterfalls (60 km, 1.5 hours): Kerala's largest waterfall — 80 ft of the Chalakudy River cascading into a dramatic gorge, surrounded by dense Sholayar forest. Often called the 'Niagara of India', it's a popular filming location for Indian cinema. Combine with the smaller Vazhachal Falls 5 km downstream. Entry ₹50, best visited July-February (during monsoon the falls are spectacular but access can be restricted). Plan a half-day trip; carry lunch, as food options near the falls are limited.",
-      "3. Kerala Kalamandalam (35 km, 1 hour): A deemed university for Indian performing arts, founded in 1930 by poet Vallathol Narayana Menon. Watch students train in Kathakali, Mohiniyattam, Koodiyattam, and traditional Kerala percussion. Guided tours run twice daily (9:30 AM and 3 PM) and include a 45-minute performance demonstration. Entry ₹250 with camera. A must for culture enthusiasts — budget at least 3 hours for the visit.",
+      "Guruvayur is more than just the temple · the surrounding region of central Kerala is packed with cultural, natural, and spiritual attractions that make for excellent day trips. After your darshan and pooja, consider spending an extra day or two exploring these gems, all within an hour's drive from Guruvayur Dham. Most can be covered in 4-6 hour round trips; the front desk can arrange a trusted taxi for ₹1,800-2,500 per day.",
+      "1. Punnathur Kotta Elephant Sanctuary (3 km, 15 min): The most popular nearby attraction · an ancestral palace converted into a sanctuary for the temple's 50+ elephants. Walk through the courtyard, watch the elephants being bathed and fed (mornings are best), and learn about the role of elephants in Kerala temple festivals. Entry ₹10, open 9 AM to 5 PM, closed on certain festival days · check before you go. Guruvayur Dham is walking distance from here.",
+      "2. Athirappilly & Vazhachal Waterfalls (60 km, 1.5 hours): Kerala's largest waterfall · 80 ft of the Chalakudy River cascading into a dramatic gorge, surrounded by dense Sholayar forest. Often called the 'Niagara of India', it's a popular filming location for Indian cinema. Combine with the smaller Vazhachal Falls 5 km downstream. Entry ₹50, best visited July-February (during monsoon the falls are spectacular but access can be restricted). Plan a half-day trip; carry lunch, as food options near the falls are limited.",
+      "3. Kerala Kalamandalam (35 km, 1 hour): A deemed university for Indian performing arts, founded in 1930 by poet Vallathol Narayana Menon. Watch students train in Kathakali, Mohiniyattam, Koodiyattam, and traditional Kerala percussion. Guided tours run twice daily (9:30 AM and 3 PM) and include a 45-minute performance demonstration. Entry ₹250 with camera. A must for culture enthusiasts · budget at least 3 hours for the visit.",
       "4. Vadakkunnathan Temple, Thrissur (29 km, 45 min): An ancient Shiva temple dating back over 1,000 years, with classical Kerala architecture and murals. The temple is the focal point of the famous Thrissur Pooram festival (April-May). Note: same dress code as Guruvayur (men bare-chested, women in saree/salwar). Non-Hindus are not allowed inside the sanctum but can walk around the outer walls. Free entry.",
       "5. Paramekkavu & Thiruvambadi Temples, Thrissur (29 km): The two rival Bhagavathy temples whose elephant processions are the heart of Thrissur Pooram. Both temples have beautiful architecture and are open to all visitors. Combine with a walk around the Thrissur Round (the circular road around Vadakkunnathan) for a great half-day cultural circuit.",
-      "6. Palayur Church / St. Thomas Church (25 km, 40 min): One of the seven churches founded by St. Thomas the Apostle in 52 AD — among the oldest churches in India. The current building dates to 1607 but the original baptismal pond is still preserved. A significant Christian pilgrimage site and an interesting interfaith visit from Guruvayur. Open daily 7 AM to 7 PM, free entry.",
-      "7. Peechi Dam & Wildlife Sanctuary (25 km, 45 min): A scenic dam and botanical garden with boating facilities, plus a 125-sq-km wildlife sanctuary known for its bird population. The Peechi-Vazhani Wildlife Sanctuary offers guided treks (₹200, advance booking required) — leopards, bison, and over 100 bird species have been recorded. Best visited November-March.",
+      "6. Palayur Church / St. Thomas Church (25 km, 40 min): One of the seven churches founded by St. Thomas the Apostle in 52 AD · among the oldest churches in India. The current building dates to 1607 but the original baptismal pond is still preserved. A significant Christian pilgrimage site and an interesting interfaith visit from Guruvayur. Open daily 7 AM to 7 PM, free entry.",
+      "7. Peechi Dam & Wildlife Sanctuary (25 km, 45 min): A scenic dam and botanical garden with boating facilities, plus a 125-sq-km wildlife sanctuary known for its bird population. The Peechi-Vazhani Wildlife Sanctuary offers guided treks (₹200, advance booking required) · leopards, bison, and over 100 bird species have been recorded. Best visited November-March.",
       "8. Shakthan Thampuran Palace, Thrissur (29 km): A 18th-century palace of the Cochin royal family, now a museum with galleries on royal history, sculpture, and a valuable coin collection. Built in a mix of Dutch and traditional Kerala architecture. Entry ₹20, open 9 AM to 5 PM (closed Mondays). Allow 90 minutes.",
-      "9. Chavakkad Beach (25 km, 40 min): A clean, less-crowded beach at the mouth of the Chettuva River — great for sunset, with a historic lighthouse and a backwater boating option. The nearby Blangad beach is even quieter. Avoid swimming here as currents are strong; enjoy the view, the seafood shacks, and the sunset photography.",
-      "10. Vadanappally Beach & Snehatheeram Beach (30 km, 45 min): Snehatheeram ('Love Shore') won the Best Beach in India award in 2010 — a long crescent of golden sand with a cliff-top park. The sunset view here is one of the best in Kerala. Pair with Vadanappally for a relaxed evening trip; both beaches have basic amenities and are family-friendly.",
+      "9. Chavakkad Beach (25 km, 40 min): A clean, less-crowded beach at the mouth of the Chettuva River · great for sunset, with a historic lighthouse and a backwater boating option. The nearby Blangad beach is even quieter. Avoid swimming here as currents are strong; enjoy the view, the seafood shacks, and the sunset photography.",
+      "10. Vadanappally Beach & Snehatheeram Beach (30 km, 45 min): Snehatheeram ('Love Shore') won the Best Beach in India award in 2010 · a long crescent of golden sand with a cliff-top park. The sunset view here is one of the best in Kerala. Pair with Vadanappally for a relaxed evening trip; both beaches have basic amenities and are family-friendly.",
     ],
   },
   {
     slug: "guruvayur-room-booking-tips",
-    title: "Guruvayur Room Booking Tips — 12 Things Every Pilgrim Should Know",
+    title: "Guruvayur Room Booking Tips · 12 Things Every Pilgrim Should Know",
     excerpt:
       "When to book, how to avoid scams, what to ask before paying, and how to score the best deal on rooms near the temple.",
     category: "Booking Tips",
@@ -751,18 +751,18 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=500&fit=crop",
     content: [
       "Booking a room in Guruvayur is straightforward once you know what to look for, but the surge of pilgrims during festival season attracts its share of overpricing, false location claims, and bait-and-switch listings. After hosting thousands of pilgrims at Guruvayur Dham, here are the 12 things we wish every guest knew before booking.",
-      "1. Verify the actual walking distance to East Nada. Many properties claim 'walking distance' or 'near temple' but are 2-3 km away. Ask for the exact distance in metres — anything beyond 500 m means a 7+ minute walk, which is exhausting for elderly pilgrims and dangerous at 2:30 AM for Nirmalyam darshan. Guruvayur Dham is 200 m from East Nada — verify any property on Google Maps before paying.",
+      "1. Verify the actual walking distance to East Nada. Many properties claim 'walking distance' or 'near temple' but are 2-3 km away. Ask for the exact distance in metres · anything beyond 500 m means a 7+ minute walk, which is exhausting for elderly pilgrims and dangerous at 2:30 AM for Nirmalyam darshan. Guruvayur Dham is 200 m from East Nada · verify any property on Google Maps before paying.",
       "2. Book 60+ days ahead for festival dates. Guruvayur Ekadasi (Dec), Vishu (Apr 14), and Utsavam (Feb-Mar) see 10× the normal pilgrim crowd. All reputable properties within 1 km of the temple are sold out by mid-October. Last-minute bookings on these dates either pay 3× the normal rate or land you in a far-flung lodge with no AC.",
-      "3. Always confirm AC actually works. Many budget listings advertise 'AC room' but the AC is either broken or switched off between 11 PM and 5 AM 'to save power'. Ask explicitly: 'Is the AC 24×7? Does it have a remote in the room?' At Guruvayur Dham, every AC room has a working remote and 24×7 cooling — no excuses.",
+      "3. Always confirm AC actually works. Many budget listings advertise 'AC room' but the AC is either broken or switched off between 11 PM and 5 AM 'to save power'. Ask explicitly: 'Is the AC 24×7? Does it have a remote in the room?' At Guruvayur Dham, every AC room has a working remote and 24×7 cooling · no excuses.",
       "4. Ask about 24×7 hot water. Standard in every hotel, but many budget lodges in Guruvayur run the geyser only from 5 AM to 9 AM. If you want a shower after the noon darshan or before evening deeparadhana, you need 24-hour hot water. Confirm in writing before booking.",
-      "5. Check the actual check-in/check-out times. Standard is 12 PM check-in, 11 AM check-out — but some properties push 24-hour check-out (i.e., check-out at the same time as check-in) which can ruin your schedule if you arrive early morning. Guruvayur Dham offers flexible early check-in for ₹200 extra when the room is ready.",
-      "6. Avoid paying the full amount as advance. Reputable properties take 10-25% as booking advance via UPI or bank transfer and the balance on arrival. Anyone demanding 100% advance via personal UPI (not a business account) is a red flag — it's almost impossible to get a refund if they don't honour the booking.",
+      "5. Check the actual check-in/check-out times. Standard is 12 PM check-in, 11 AM check-out · but some properties push 24-hour check-out (i.e., check-out at the same time as check-in) which can ruin your schedule if you arrive early morning. Guruvayur Dham offers flexible early check-in for ₹200 extra when the room is ready.",
+      "6. Avoid paying the full amount as advance. Reputable properties take 10-25% as booking advance via UPI or bank transfer and the balance on arrival. Anyone demanding 100% advance via personal UPI (not a business account) is a red flag · it's almost impossible to get a refund if they don't honour the booking.",
       "7. Verify the room photos are recent. Many listings on aggregator sites use stock or doctored photos. Ask the property to send a fresh WhatsApp photo of the exact room number being booked. At Guruvayur Dham, every room has a unique number and live photos are available on request.",
       "8. Confirm parking if you're driving. During festival days, on-street parking near the temple is impossible. Many properties list 'parking available' but mean 'parking on the street 500 m away'. Ask specifically: 'Do you have on-premise parking? Is it covered? Is there a charge?' Guruvayur Dham has free covered parking for 25+ vehicles.",
-      "9. Ask about lift access if you're on a higher floor. Many older Guruvayur properties are 3-4 storeys with no lift — a serious problem for elderly pilgrims and those with knee issues. If you have mobility concerns, insist on a ground or first-floor room with lift access.",
-      "10. Don't fall for 'temple view' claims. The actual temple is visible only from a handful of rooftop terraces within 200 m — most 'temple view' rooms just face the temple-side road. A real temple view (where you can see the gopuram from the window) is rare and commands a 30-50% premium. Ask for a photo of the actual view from the room window.",
-      "11. Book poojas in advance, not at the temple. Major poojas like Thulabharam, Choroonu, and Bhagavatha Sapthaham have 2-3 week waiting lists. Your accommodation should help you book these in advance — Guruvayur Dham's reception does this free for all guests. Don't pay extra 'agents' who offer to do this for a commission.",
-      "12. Save the property's WhatsApp number. WhatsApp is the fastest way to reach the front desk for room service, early check-out, taxi booking, or any issue. Phone calls during peak hours may go unanswered. Save our number +91 98765 43210 for direct WhatsApp booking and 24×7 support — average response time under 5 minutes.",
+      "9. Ask about lift access if you're on a higher floor. Many older Guruvayur properties are 3-4 storeys with no lift · a serious problem for elderly pilgrims and those with knee issues. If you have mobility concerns, insist on a ground or first-floor room with lift access.",
+      "10. Don't fall for 'temple view' claims. The actual temple is visible only from a handful of rooftop terraces within 200 m · most 'temple view' rooms just face the temple-side road. A real temple view (where you can see the gopuram from the window) is rare and commands a 30-50% premium. Ask for a photo of the actual view from the room window.",
+      "11. Book poojas in advance, not at the temple. Major poojas like Thulabharam, Choroonu, and Bhagavatha Sapthaham have 2-3 week waiting lists. Your accommodation should help you book these in advance · Guruvayur Dham's reception does this free for all guests. Don't pay extra 'agents' who offer to do this for a commission.",
+      "12. Save the property's WhatsApp number. WhatsApp is the fastest way to reach the front desk for room service, early check-out, taxi booking, or any issue. Phone calls during peak hours may go unanswered. Save our number +91 98765 43210 for direct WhatsApp booking and 24×7 support · average response time under 5 minutes.",
     ],
   },
 ];
@@ -771,7 +771,7 @@ export const BLOG_POSTS: BlogPost[] = [
 export const FAQS = [
   {
     q: "How far is Guruvayur Dham from Guruvayur Temple?",
-    a: "We are exactly 200 metres (a 2-minute walk) from the temple's East Nada gate. You can see the temple gopuram from our rooftop terrace, and the walk is on a flat, well-lit road — safe even at 3 AM for Nirmalyam darshan.",
+    a: "We are exactly 200 metres (a 2-minute walk) from the temple's East Nada gate. You can see the temple gopuram from our rooftop terrace, and the walk is on a flat, well-lit road · safe even at 3 AM for Nirmalyam darshan.",
   },
   {
     q: "What are the check-in and check-out times?",
@@ -783,11 +783,11 @@ export const FAQS = [
   },
   {
     q: "Is parking free? Do you have space for buses?",
-    a: "Yes — we have free covered parking for 25 cars and 5 bikes inside the property. For tempo travellers and buses, we arrange dedicated parking at a partner lot 300 m away for ₹200/night.",
+    a: "Yes · we have free covered parking for 25 cars and 5 bikes inside the property. For tempo travellers and buses, we arrange dedicated parking at a partner lot 300 m away for ₹200/night.",
   },
   {
     q: "Can I book a pooja through you? Which poojas are available?",
-    a: "Absolutely — we book all major Guruvayur temple poojas on behalf of our guests at the official temple rate, with no commission. Popular options include Palpayasam (₹50), Archana (₹100), Pushpanjali (₹75), Thulabharam (₹1,500), Choroonu (₹800), and Bhagavatha Sapthaham (₹5,000). Browse the Pooja section above and click 'Book This Pooja' on WhatsApp.",
+    a: "Absolutely · we book all major Guruvayur temple poojas on behalf of our guests at the official temple rate, with no commission. Popular options include Palpayasam (₹50), Archana (₹100), Pushpanjali (₹75), Thulabharam (₹1,500), Choroonu (₹800), and Bhagavatha Sapthaham (₹5,000). Browse the Pooja section above and click 'Book This Pooja' on WhatsApp.",
   },
   {
     q: "What is the dress code for the temple?",
@@ -795,7 +795,7 @@ export const FAQS = [
   },
   {
     q: "Do you serve food at the property?",
-    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg Brahmin hotels within 200 m — order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary filter coffee and chai are served at reception every morning from 6 to 8 AM.",
+    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg Brahmin hotels within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary filter coffee and chai are served at reception every morning from 6 to 8 AM.",
   },
   {
     q: "Are pets allowed?",
@@ -803,7 +803,7 @@ export const FAQS = [
   },
   {
     q: "Do you have a lift? My mother has knee issues.",
-    a: "Yes, all four floors are served by a 6-passenger elevator with backup power. We also have two ground-floor rooms specifically designed for elderly and mobility-impaired guests — request these at the time of booking and we'll prioritise them.",
+    a: "Yes, all four floors are served by a 6-passenger elevator with backup power. We also have two ground-floor rooms specifically designed for elderly and mobility-impaired guests · request these at the time of booking and we'll prioritise them.",
   },
   {
     q: "Can I get a refund if I cancel my booking?",
@@ -811,7 +811,7 @@ export const FAQS = [
   },
   {
     q: "Is WiFi free? How fast is it?",
-    a: "Yes — free, unlimited WiFi throughout the property, including rooms. Speeds are 50-100 Mbps (sufficient for video calls, Netflix, and remote work). Power backup covers the WiFi router, so it stays online during outages.",
+    a: "Yes · free, unlimited WiFi throughout the property, including rooms. Speeds are 50-100 Mbps (sufficient for video calls, Netflix, and remote work). Power backup covers the WiFi router, so it stays online during outages.",
   },
   {
     q: "Do you accept international guests and foreign currency?",
@@ -819,11 +819,11 @@ export const FAQS = [
   },
   {
     q: "Can I store my luggage after check-out?",
-    a: "Of course — free luggage storage for up to 8 hours after check-out, in a locked room at reception. Perfect for a final darshan or shopping before your train. Just collect your bags before 9 PM.",
+    a: "Of course · free luggage storage for up to 8 hours after check-out, in a locked room at reception. Perfect for a final darshan or shopping before your train. Just collect your bags before 9 PM.",
   },
   {
     q: "Do you offer group discounts for pilgrim batches?",
-    a: "Yes — groups of 10+ guests staying 2+ nights get 15% off the total bill, plus a complimentary group darshan briefing and packed breakfast on the first morning. School and college pilgrimage groups get an additional 5% off. WhatsApp us for group quotes.",
+    a: "Yes · groups of 10+ guests staying 2+ nights get 15% off the total bill, plus a complimentary group darshan briefing and packed breakfast on the first morning. School and college pilgrimage groups get an additional 5% off. WhatsApp us for group quotes.",
   },
 ];
 

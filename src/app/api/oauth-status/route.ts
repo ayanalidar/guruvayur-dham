@@ -14,6 +14,6 @@ export async function GET() {
     demoMode: !oauthConfigured.any,
     message: oauthConfigured.any
       ? "OAuth providers configured."
-      : "Demo mode — add GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET to .env for real OAuth.",
+      : "Demo mode · add GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET to .env for real OAuth.",
   });
 }

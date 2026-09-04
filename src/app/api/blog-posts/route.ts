@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/blog-posts — list all (or by slug)
+// GET /api/blog-posts · list all (or by slug)
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get("slug");
   if (slug) {
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ posts: posts.map(p => ({ ...p, content: JSON.parse(p.content) })) });
 }
 
-// POST /api/blog-posts — create new post
+// POST /api/blog-posts · create new post
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { title, excerpt, category, readTime, image, content, published } = body;
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ post });
 }
 
-// PATCH /api/blog-posts — update post
+// PATCH /api/blog-posts · update post
 export async function PATCH(req: NextRequest) {
   const { id, data } = await req.json();
   if (data.content && Array.isArray(data.content)) data.content = JSON.stringify(data.content);

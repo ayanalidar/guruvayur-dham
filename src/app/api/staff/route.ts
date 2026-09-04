@@ -1,27 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/staff — list all staff
+// GET /api/staff · list all staff
 export async function GET() {
   const staff = await db.staffUser.findMany({ orderBy: { role: "asc" } });
   return NextResponse.json({ staff });
 }
 
-// POST /api/staff — create staff
+// POST /api/staff · create staff
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const staff = await db.staffUser.create({ data: body });
   return NextResponse.json({ staff });
 }
 
-// PATCH /api/staff — update staff (role, pin, active)
+// PATCH /api/staff · update staff (role, pin, active)
 export async function PATCH(req: NextRequest) {
   const { id, data } = await req.json();
   const staff = await db.staffUser.update({ where: { id }, data });
   return NextResponse.json({ staff });
 }
 
-// PUT /api/staff — login with PIN
+// PUT /api/staff · login with PIN
 export async function PUT(req: NextRequest) {
   const { pin } = await req.json();
   const staff = await db.staffUser.findFirst({ where: { pin, active: true } });

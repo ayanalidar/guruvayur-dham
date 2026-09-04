@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/night-audit?date=2026-09-04 — generates end-of-day report
+// GET /api/night-audit?date=2026-09-04 · generates end-of-day report
 export async function GET(req: NextRequest) {
   const dateParam = req.nextUrl.searchParams.get("date");
   const today = dateParam ? new Date(dateParam) : new Date();
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     ? Math.round((inHouse / totalUnits._sum.totalUnits) * 100)
     : 0;
 
-  // Calculate cash reconciliation (simplified — would integrate with payment gateway in production)
+  // Calculate cash reconciliation (simplified · would integrate with payment gateway in production)
   const expectedRevenue = revenue._sum.amount || 0;
   const cashCollected = Math.round(expectedRevenue * 0.4); // 40% cash estimate
   const cardCollected = Math.round(expectedRevenue * 0.3); // 30% card

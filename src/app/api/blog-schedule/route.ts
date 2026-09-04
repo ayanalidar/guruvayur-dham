@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
 /**
  * PATCH /api/blog-schedule
- * Process scheduled posts — publishes any posts whose scheduledAt has passed.
+ * Process scheduled posts · publishes any posts whose scheduledAt has passed.
  * Called by a cron job or manual trigger.
  */
 export async function PATCH() {

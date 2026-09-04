@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/weather?date=2026-09-10 — returns Guruvayur weather (simulated, since no API key)
+// GET /api/weather?date=2026-09-10 · returns Guruvayur weather (simulated, since no API key)
 // In production, integrate with OpenWeatherMap or WeatherAPI.com
 export async function GET(req: NextRequest) {
   const dateParam = req.nextUrl.searchParams.get("date");

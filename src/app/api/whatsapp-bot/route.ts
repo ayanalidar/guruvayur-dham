@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import ZAI from "z-ai-web-dev-sdk";
 
-// POST /api/whatsapp-bot — simulated WhatsApp chatbot
+// POST /api/whatsapp-bot · simulated WhatsApp chatbot
 // body: { phone, message }
 // Recognizes intents: "book a room", "my booking", "pooja list", "check-out time", "festival dates"
 export async function POST(req: NextRequest) {
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     reply = `We'd love to host you! 🏨\n\nOur rooms (2 min walk to Guruvayur Temple):\n• Non-AC Budget: ₹700/night\n• Standard AC: ₹1,500/night\n• Deluxe AC: ₹2,200/night\n• Family Suite AC: ₹3,500/night\n\nTo check availability & book instantly:\n👉 https://guruvayurdham.com/#/rooms\n\nOr just tell me:\n• Check-in date\n• Check-out date\n• Number of guests\n\nAnd I'll check availability for you!`;
   } else if (msg.match(/pooja|palpayasam|thulabharam|choroonu|archana|offering/)) {
     intent = "pooja";
-    reply = ` sacred offerings at Guruvayur Temple (zero commission): 🙏\n\n• Palpayasam — ₹50\n• Archana — ₹100\n• Pushpanjali — ₹75\n• Mala Offering — ₹250\n• Thulabharam — ₹1,500\n• Choroonu (Annaprasham) — ₹800\n• Bhagavatha Sapthaham — ₹5,000\n\nBook online: https://guruvayurdham.com/#/pooja\n\nOr tell me which pooja and preferred date — I'll book it for you!`;
+    reply = ` sacred offerings at Guruvayur Temple (zero commission): 🙏\n\n• Palpayasam · ₹50\n• Archana · ₹100\n• Pushpanjali · ₹75\n• Mala Offering · ₹250\n• Thulabharam · ₹1,500\n• Choroonu (Annaprasham) · ₹800\n• Bhagavatha Sapthaham · ₹5,000\n\nBook online: https://guruvayurdham.com/#/pooja\n\nOr tell me which pooja and preferred date · I'll book it for you!`;
   } else if (msg.match(/darshan|timing|nirmalya|deeparadhana|seeveli/)) {
     intent = "darshan";
     reply = `Guruvayur Temple Darshan Timings: 🛕\n\n• Nirmalya Darshan: 3:00 AM (most sacred)\n• Seeveli procession: 7:30 AM\n• General Darshan: 8:30 AM - 12:30 PM\n• Temple reopens: 4:30 PM\n• Deeparadhana (evening aarti): 6:15 PM\n• Temple closes: 9:15 PM\n\nShortest queue slots: Nirmalyam (3 AM), post-Ucha Pooja (12 PM), post-Deeparadhana (7:30 PM)\n\nAvoid weekends & Ekadasi unless specifically attending.`;

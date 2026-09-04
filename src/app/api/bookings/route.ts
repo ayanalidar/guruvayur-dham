@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/bookings — list all bookings (optional filters: ?status, ?source, ?from, ?to)
+// GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to)
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const status = searchParams.get("status");
@@ -27,9 +27,9 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ bookings });
 }
 
-// POST /api/bookings — create a new booking (from any source)
+// POST /api/bookings · create a new booking (from any source)
 // body: { roomSlug, guestName, guestPhone, guestEmail?, checkIn, checkOut, guests, source, channelBookingId?, notes? }
-// This is the CORE function — when a booking is made here, it broadcasts BLOCK to all channels.
+// This is the CORE function · when a booking is made here, it broadcasts BLOCK to all channels.
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const {
@@ -169,7 +169,7 @@ async function simulateChannelWebhook(channel: any, payload: any) {
     success,
     message: success
       ? `Inventory blocked on ${channel.name} for ${payload.guestName} (${payload.reference})`
-      : `Failed to sync with ${channel.name} — will retry`,
+      : `Failed to sync with ${channel.name} · will retry`,
     payload: {
       channelCode: channel.code,
       channelName: channel.name,

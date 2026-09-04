@@ -99,7 +99,7 @@ export default function Home() {
       return <KitchenOrderPage roomNumber={room} />;
     }
     if (path === "/kitchen") return <KitchenOrderPage />;
-    // Admin routes — protected by AdminGuard
+    // Admin routes · protected by AdminGuard
     if (path === "/admin") return <AdminGuard><AdminDashboard /></AdminGuard>;
     if (path === "/admin/hub") return <AdminGuard><AdminHub /></AdminGuard>;
     if (path === "/admin/bookings") return <AdminGuard><AdminBookings /></AdminGuard>;

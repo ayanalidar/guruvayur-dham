@@ -50,7 +50,7 @@ export default function ReviewsWidget() {
         <SectionHeader
           eyebrow="Google Reviews"
           title={<>Loved by <GoldFoilText>{stats?.total || 847}+ Pilgrims</GoldFoilText></>}
-          subtitle={`${stats?.averageRating || 4.9} ★ average rating on Google. Reviews update in real-time — when a guest posts a new review, it appears here instantly.`}
+          subtitle={`${stats?.averageRating || 4.9} ★ average rating on Google. Reviews update in real-time · when a guest posts a new review, it appears here instantly.`}
         />
 
         {/* Google rating badge */}

@@ -24,7 +24,7 @@ export default function FAQ() {
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
             We've compiled the 14 questions our guests ask most often. Can't find your
-            answer? WhatsApp us any time — we reply within minutes.
+            answer? WhatsApp us any time · we reply within minutes.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function FAQ() {
             <div>
               <p className="font-serif text-xl text-white">Still have a question?</p>
               <p className="text-sm text-cream/80">
-                Our front desk is on WhatsApp 24×7 — average reply time under 5 minutes.
+                Our front desk is on WhatsApp 24×7 · average reply time under 5 minutes.
               </p>
             </div>
             <a

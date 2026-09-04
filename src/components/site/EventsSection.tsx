@@ -19,7 +19,7 @@ export default function EventsSection() {
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
             Guruvayur's festivals are spiritual experiences of a lifetime. Here are the
-            major events for 2026 — book rooms 60+ days in advance for festival dates.
+            major events for 2026 · book rooms 60+ days in advance for festival dates.
           </p>
         </div>
 

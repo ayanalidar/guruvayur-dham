@@ -59,7 +59,7 @@ const SECTIONS = [
   {
     h: "8. Liability",
     p: [
-      "Guruvayur Dham is not liable for any loss, theft, or damage to guests' personal belongings, vehicles, or valuables. We provide in-room lockers and a secure safe at reception for valuables — please use them. CCTV operates in common areas for security.",
+      "Guruvayur Dham is not liable for any loss, theft, or damage to guests' personal belongings, vehicles, or valuables. We provide in-room lockers and a secure safe at reception for valuables · please use them. CCTV operates in common areas for security.",
       "We are not liable for any injury, illness, or accident that may occur during your stay, except where caused by our direct negligence. Guests are advised to carry valid travel insurance for medical emergencies.",
     ],
   },

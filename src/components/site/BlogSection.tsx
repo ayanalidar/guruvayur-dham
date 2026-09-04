@@ -39,7 +39,7 @@ export default function BlogSection() {
             <span className="text-gradient-saffron">Knowledge Hub</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Everything you need to know before your visit — darshan timings, dress
+            Everything you need to know before your visit · darshan timings, dress
             code, travel routes, festival calendars, and booking tips.
           </p>
         </div>

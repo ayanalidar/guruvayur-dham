@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/reminders — list pending reminders
+// GET /api/reminders · list pending reminders
 export async function GET(req: NextRequest) {
   const sent = req.nextUrl.searchParams.get("sent") === "true";
   const where: any = {};
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ reminders });
 }
 
-// POST /api/reminders — create a reminder
+// POST /api/reminders · create a reminder
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { type, bookingRef, guestName, guestPhone, message, scheduledFor, channel } = body;
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ reminder });
 }
 
-// PATCH /api/reminders — mark as sent (and create notification log)
+// PATCH /api/reminders · mark as sent (and create notification log)
 export async function PATCH(req: NextRequest) {
   const { id } = await req.json();
   const reminder = await db.reminder.update({
@@ -48,7 +48,7 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json({ reminder });
 }
 
-// PUT /api/reminders/process — process all due reminders (called by cron)
+// PUT /api/reminders/process · process all due reminders (called by cron)
 export async function PUT() {
   const now = new Date();
   const due = await db.reminder.findMany({

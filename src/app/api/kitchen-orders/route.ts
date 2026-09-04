@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/kitchen-orders — list all orders
+// GET /api/kitchen-orders · list all orders
 export async function GET(req: NextRequest) {
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ orders });
 }
 
-// POST /api/kitchen-orders — create new order (from QR code in room)
+// POST /api/kitchen-orders · create new order (from QR code in room)
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { roomNumber, guestName, guestPhone, items, notes } = body;
@@ -60,10 +60,10 @@ export async function POST(req: NextRequest) {
     }),
   }).catch(() => {});
 
-  return NextResponse.json({ order, message: `Order placed — ${ref}. Kitchen notified.` });
+  return NextResponse.json({ order, message: `Order placed · ${ref}. Kitchen notified.` });
 }
 
-// PATCH /api/kitchen-orders — update status (NEW → PREPARING → READY → DELIVERED)
+// PATCH /api/kitchen-orders · update status (NEW → PREPARING → READY → DELIVERED)
 // When status becomes PREPARING, mark as printed (sent to kitchen printer)
 export async function PATCH(req: NextRequest) {
   const { id, status } = await req.json();

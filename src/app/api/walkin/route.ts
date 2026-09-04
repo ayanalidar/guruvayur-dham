@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// POST /api/walkin — create a walk-in booking (front desk use)
+// POST /api/walkin · create a walk-in booking (front desk use)
 // This is the same as POST /api/bookings but with source=WALKIN hardcoded
 // and it ALSO broadcasts to all channel partners to block inventory
 export async function POST(req: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Create booking — WALKIN source, no channel markup
+  // Create booking · WALKIN source, no channel markup
   const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
   const amount = room.price * nights;
 
@@ -84,8 +84,8 @@ export async function POST(req: NextRequest) {
         action: "BLOCK",
         status: success ? "SUCCESS" : "FAILED",
         message: success
-          ? `Walk-in booking (${ref}) synced to ${ch.name} — inventory blocked`
-          : `Failed to sync walk-in to ${ch.name} — will retry`,
+          ? `Walk-in booking (${ref}) synced to ${ch.name} · inventory blocked`
+          : `Failed to sync walk-in to ${ch.name} · will retry`,
         payload: JSON.stringify({
           reference: ref,
           channelCode: ch.code,

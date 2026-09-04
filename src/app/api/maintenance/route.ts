@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/maintenance — list maintenance blocks
+// GET /api/maintenance · list maintenance blocks
 export async function GET() {
   const blocks = await db.maintenanceBlock.findMany({ orderBy: { startDate: "desc" } });
   return NextResponse.json({ blocks });
 }
 
-// POST /api/maintenance — create maintenance block (also blocks availability + sets housekeeping status)
+// POST /api/maintenance · create maintenance block (also blocks availability + sets housekeeping status)
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { roomSlug, roomNumber, startDate, endDate, reason, cost, notes } = body;
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ block, message: `Maintenance scheduled. Room blocked on all ${channels.length} channels.` });
 }
 
-// PATCH /api/maintenance — update status (SCHEDULED → IN_PROGRESS → COMPLETED)
+// PATCH /api/maintenance · update status (SCHEDULED → IN_PROGRESS → COMPLETED)
 export async function PATCH(req: NextRequest) {
   const { id, status } = await req.json();
   const block = await db.maintenanceBlock.update({ where: { id }, data: { status } });

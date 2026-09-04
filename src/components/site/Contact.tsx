@@ -62,7 +62,7 @@ const INFO_CARDS = [
     label: "WhatsApp",
     value: SITE.phone,
     href: waLink("Namaskaram! I'd like to enquire about rooms at Guruvayur Dham."),
-    sub: "Fastest reply — under 5 min",
+    sub: "Fastest reply · under 5 min",
   },
   {
     icon: Mail,
@@ -135,7 +135,7 @@ ${data.message}`;
             <span className="text-gradient-saffron">Ask Anything</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Fill the form below and we'll WhatsApp you back within minutes — or reach
+            Fill the form below and we'll WhatsApp you back within minutes · or reach
             us directly through any of the channels here.
           </p>
         </div>
@@ -350,7 +350,7 @@ ${data.message}`;
                 <p className="font-serif text-2xl text-white">Why book with us?</p>
                 <ul className="mt-4 space-y-3 text-sm">
                   {[
-                    "Instant WhatsApp confirmation — no waiting",
+                    "Instant WhatsApp confirmation · no waiting",
                     "Zero booking fee, zero commission on poojas",
                     "Free pickup from Guruvayur railway station (2+ night stays)",
                     "Flexible cancellation up to 7 days before check-in",
@@ -370,7 +370,7 @@ ${data.message}`;
                     Rooms from ₹700/night
                   </p>
                   <p className="mt-1 text-xs text-cream/80">
-                    AC, non-AC, family suites, dormitory — all 200 m from East Nada.
+                    AC, non-AC, family suites, dormitory · all 200 m from East Nada.
                   </p>
                   <a
                     href={waLink(

@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     const verified = expectedSignature === razorpay_signature;
     if (!verified) {
-      return NextResponse.json({ verified: false, error: "Signature mismatch — possible tampering" }, { status: 400 });
+      return NextResponse.json({ verified: false, error: "Signature mismatch · possible tampering" }, { status: 400 });
     }
     return NextResponse.json({
       verified: true,

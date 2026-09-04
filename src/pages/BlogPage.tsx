@@ -17,7 +17,7 @@ export default function BlogPage() {
         eyebrow="Travel Guide & Blog"
         icon={BookOpen}
         title={<>Guruvayur Pilgrim <GoldFoilText>Knowledge Hub</GoldFoilText></>}
-        subtitle="Everything you need to know before your visit — darshan timings, dress code, travel routes, festival calendars, and booking tips."
+        subtitle="Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips."
         crumbs={[{ label: "Home", route: "/" }, { label: "Blog" }]}
       />
 
@@ -74,7 +74,7 @@ export default function BlogPage() {
             <SectionHeader
               eyebrow="Still Curious?"
               title={<>Have a Question Not <GoldFoilText>Covered Here?</GoldFoilText></>}
-              subtitle="Our front desk is on WhatsApp 24×7. Ask us anything about Guruvayur — darshan, dress code, travel, room availability, or festival planning."
+              subtitle="Our front desk is on WhatsApp 24×7. Ask us anything about Guruvayur · darshan, dress code, travel, room availability, or festival planning."
             />
             <div className="mt-6 flex justify-center">
               <MagneticButton href={waLink("Namaskaram! I have a question about visiting Guruvayur.")}>

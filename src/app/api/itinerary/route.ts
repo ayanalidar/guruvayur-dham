@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/itinerary — list itineraries
+// GET /api/itinerary · list itineraries
 export async function GET() {
   const items = await db.itinerary.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json({ itineraries: items.map(i => ({ ...i, items: JSON.parse(i.items) })) });
 }
 
-// POST /api/itinerary — create itinerary
+// POST /api/itinerary · create itinerary
 // body: { guestName, guestPhone, days, startDate, items: [{day, time, title, description, type}], totalEstimate }
 export async function POST(req: NextRequest) {
   const body = await req.json();

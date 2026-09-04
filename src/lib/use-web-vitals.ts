@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * useWebVitals — tracks Core Web Vitals and reports to /api/metrics
+ * useWebVitals · tracks Core Web Vitals and reports to /api/metrics
  *
  * Tracks:
  * - LCP (Largest Contentful Paint)

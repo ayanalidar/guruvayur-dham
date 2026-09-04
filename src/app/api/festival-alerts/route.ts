@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/festival-alerts — list opt-ins
+// GET /api/festival-alerts · list opt-ins
 export async function GET() {
   const alerts = await db.festivalAlert.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json({ alerts: alerts.map(a => ({ ...a, festivals: JSON.parse(a.festivals) })) });
 }
 
-// POST /api/festival-alerts — opt in to festival alerts
+// POST /api/festival-alerts · opt in to festival alerts
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const alert = await db.festivalAlert.create({

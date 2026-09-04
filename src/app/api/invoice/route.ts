@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/invoice?bookingId=xxx — get invoice data for a booking
+// GET /api/invoice?bookingId=xxx · get invoice data for a booking
 export async function GET(req: NextRequest) {
   const bookingId = req.nextUrl.searchParams.get("bookingId");
   if (!bookingId) return NextResponse.json({ error: "bookingId required" }, { status: 400 });
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   });
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
 
-  // Build invoice data — every field is editable in the admin invoice generator
+  // Build invoice data · every field is editable in the admin invoice generator
   const invoice = {
     invoiceNumber: `INV-${booking.reference}`,
     invoiceDate: new Date().toISOString().slice(0, 10),
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     // Items
     items: [
       {
-        description: `${booking.room.name} — ${booking.nights} night(s)`,
+        description: `${booking.room.name} · ${booking.nights} night(s)`,
         hsn: "996331",
         qty: booking.nights,
         rate: Math.round(booking.amount / booking.nights),
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ invoice, booking });
 }
 
-// PATCH /api/invoice — save edited invoice (returns the updated invoice for PDF generation)
+// PATCH /api/invoice · save edited invoice (returns the updated invoice for PDF generation)
 export async function PATCH(req: NextRequest) {
   const body = await req.json();
   // In production, this would save to an Invoice table.

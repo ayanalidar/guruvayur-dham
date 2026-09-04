@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-// POST /api/pricing/validate-coupon — validate a coupon against an amount
+// POST /api/pricing/validate-coupon · validate a coupon against an amount
 export async function POST(req: NextRequest) {
   const { code, bookingAmount } = await req.json();
   const result = await validateCoupon(code, bookingAmount);

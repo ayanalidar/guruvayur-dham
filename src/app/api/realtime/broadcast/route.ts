@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const j = await r.json();
     return NextResponse.json({ ok: true, broadcast: j });
   } catch (e: any) {
-    // Realtime service might be down — fail silently (don't break the booking flow)
+    // Realtime service might be down · fail silently (don't break the booking flow)
     return NextResponse.json({ ok: false, error: e.message }, { status: 200 });
   }
 }

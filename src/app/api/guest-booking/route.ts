@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         error: "ROOM_SOLD_OUT",
         soldOutDate: d.toISOString(),
         waitlistId: wl.id,
-        message: `Room not available on ${d.toLocaleDateString()}. You've been added to the waiting list — we'll WhatsApp you if it opens up.`,
+        message: `Room not available on ${d.toLocaleDateString()}. You've been added to the waiting list · we'll WhatsApp you if it opens up.`,
       }, { status: 409 });
     }
   }
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
         channel: ch.code,
         action: "BLOCK",
         status: "SUCCESS",
-        message: `Direct website booking ${ref} — room ${room.name} blocked for ${guestName}`,
+        message: `Direct website booking ${ref} · room ${room.name} blocked for ${guestName}`,
         payload: JSON.stringify({ reference: ref, roomSlug, checkIn: ci, checkOut: co, source: "DIRECT" }),
       },
     });
@@ -192,7 +192,7 @@ export async function POST(req: NextRequest) {
           type: "DARSHAN",
           bookingRef: ref,
           guestName, guestPhone,
-          message: `Your preferred darshan: ${slot.desc} at ${slot.time}. Walk to East Nada (2 min) — give yourself 30 min for queue. Reference: ${ref}`,
+          message: `Your preferred darshan: ${slot.desc} at ${slot.time}. Walk to East Nada (2 min) · give yourself 30 min for queue. Reference: ${ref}`,
           scheduledFor: darshanReminder,
           channel: "WHATSAPP",
         },

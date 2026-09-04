@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/menu — list all menu items
+// GET /api/menu · list all menu items
 export async function GET(req: NextRequest) {
   const category = req.nextUrl.searchParams.get("category");
   const where: any = { available: true };
@@ -10,14 +10,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ items });
 }
 
-// POST /api/menu — create new menu item
+// POST /api/menu · create new menu item
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const item = await db.menuItem.create({ data: body });
   return NextResponse.json({ item });
 }
 
-// PATCH /api/menu — update menu item
+// PATCH /api/menu · update menu item
 export async function PATCH(req: NextRequest) {
   const { id, data } = await req.json();
   const item = await db.menuItem.update({ where: { id }, data });

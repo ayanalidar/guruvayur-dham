@@ -54,7 +54,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ====== CINEMATIC DARK — BLACK & CHAMPAGNE ====== */
+/* ====== CINEMATIC DARK · BLACK & CHAMPAGNE ====== */
 :root {
   --radius: 0.875rem;
   --background: #0F0A08;
@@ -152,7 +152,7 @@
       var(--ink-soft);
   }
 
-  /* Gold foil text — shimmering champagne gradient */
+  /* Gold foil text · shimmering champagne gradient */
   .text-gold-foil {
     background: linear-gradient(
       100deg,

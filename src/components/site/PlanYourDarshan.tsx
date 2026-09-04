@@ -30,7 +30,7 @@ export default function PlanYourDarshan() {
             <span className="text-gradient-saffron">Blessed Visit</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            From darshan timings to festival calendars — we've put together the
+            From darshan timings to festival calendars · we've put together the
             essential resources every Guruvayur pilgrim needs.
           </p>
         </div>

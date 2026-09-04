@@ -94,7 +94,7 @@ export function clearSessionCookie(): string {
 }
 
 /**
- * Role hierarchy — determines what each staff role can access
+ * Role hierarchy · determines what each staff role can access
  */
 export const ROLE_PERMISSIONS: Record<string, string[]> = {
   MANAGER: ["*"], // all access

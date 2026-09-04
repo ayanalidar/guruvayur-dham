@@ -26,7 +26,7 @@ export default function Gallery() {
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
             Browse our rooms, the temple, our facilities, and the surrounding
-            Guruvayur town — every photo tells the story of a pilgrim's day.
+            Guruvayur town · every photo tells the story of a pilgrim's day.
           </p>
         </div>
 

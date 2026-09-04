@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 
 /**
  * POST /api/auth/otp
- * Sends an OTP to the given phone number (simulated — logs to notification table)
+ * Sends an OTP to the given phone number (simulated · logs to notification table)
  * body: { phone }
  * returns: { sent: true, otp: "1234" } (in production, OTP would not be returned)
  */
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   // In production, this would be sent via real SMS and NOT returned
   return NextResponse.json({
     sent: true,
-    otp, // DEMO ONLY — remove in production
+    otp, // DEMO ONLY · remove in production
     message: `OTP sent to ${phone}`,
   });
 }

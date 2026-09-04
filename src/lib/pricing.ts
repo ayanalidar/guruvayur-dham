@@ -159,7 +159,7 @@ export async function validateCoupon(code: string, bookingAmount: number): Promi
 
   return {
     valid: true,
-    message: `Coupon applied — you save ₹${discount}`,
+    message: `Coupon applied · you save ₹${discount}`,
     discount,
     coupon: {
       code: coupon.code,

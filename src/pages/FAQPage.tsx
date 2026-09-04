@@ -16,7 +16,7 @@ export default function FAQPage() {
         eyebrow="Frequently Asked"
         icon={HelpCircle}
         title={<>Your Guruvayur Questions, <GoldFoilText>Answered</GoldFoilText></>}
-        subtitle="We've compiled the 14 questions our guests ask most often. Can't find your answer? WhatsApp us any time — we reply within minutes."
+        subtitle="We've compiled the 14 questions our guests ask most often. Can't find your answer? WhatsApp us any time · we reply within minutes."
         crumbs={[{ label: "Home", route: "/" }, { label: "FAQ" }]}
       />
 
@@ -60,7 +60,7 @@ export default function FAQPage() {
             <SectionHeader
               eyebrow="Still Curious?"
               title={<>Have a <GoldFoilText>Different Question?</GoldFoilText></>}
-              subtitle="Our front desk is on WhatsApp 24×7 — average reply time under 5 minutes."
+              subtitle="Our front desk is on WhatsApp 24×7 · average reply time under 5 minutes."
             />
             <div className="mt-6 flex justify-center">
               <MagneticButton href={waLink("Namaskaram! I have a question about staying at Guruvayur Dham.")}>

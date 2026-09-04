@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 /**
- * GET /api/reviews — list all reviews (admin)
+ * GET /api/reviews · list all reviews (admin)
  * Query params: ?source=GOOGLE, ?published=true, ?featured=true, ?limit=50
  */
 export async function GET(req: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * POST /api/reviews — create a new review (manual entry by admin)
+ * POST /api/reviews · create a new review (manual entry by admin)
  * body: { authorName, authorAvatar?, rating, text, reviewDate?, source?, featured? }
  */
 export async function POST(req: NextRequest) {
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * PATCH /api/reviews — update review (toggle published/featured, edit text)
+ * PATCH /api/reviews · update review (toggle published/featured, edit text)
  * body: { id, data: { ...fields } }
  */
 export async function PATCH(req: NextRequest) {

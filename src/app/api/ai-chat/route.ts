@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 
-// POST /api/ai-chat — Guruvayur Guide chatbot
+// POST /api/ai-chat · Guruvayur Guide chatbot
 // body: { message: "What time is Nirmalya darshan?" }
 // Returns: { reply: "...", sources: [...] }
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
   if (!message) return NextResponse.json({ error: "Message required" }, { status: 400 });
 
-  // Knowledge base about Guruvayur — pulled from blog content
+  // Knowledge base about Guruvayur · pulled from blog content
   const knowledgeBase = `
 Guruvayur Dham is a boutique pilgrim accommodation 200 metres from Guruvayur Temple's East Nada gate.
 
 KEY FACTS:
 - Distance to temple: 2-minute walk (200 m) to East Nada gate
-- Rooms: 52 total — AC, Non-AC, Family Suite, Dormitory
+- Rooms: 52 total · AC, Non-AC, Family Suite, Dormitory
 - Price range: ₹700 to ₹3,500 per night
 - Check-in: 12:00 PM, Check-out: 11:00 AM
 - 24×7 hot water, free WiFi, free parking for 25+ vehicles
@@ -22,7 +22,7 @@ KEY FACTS:
 - Family-run since 1998, three generations
 
 GURUVAYUR TEMPLE DARSHAN TIMINGS:
-- Nirmalya Darshan: 3:00 AM (most sacred — idol with previous night's flowers)
+- Nirmalya Darshan: 3:00 AM (most sacred · idol with previous night's flowers)
 - Seeveli procession: 7:30 AM (elephant procession around inner pradakshina)
 - Usha Pooja: 8:00 AM
 - General Darshan: 8:30 AM - 12:30 PM
@@ -48,7 +48,7 @@ POOJAS AVAILABLE (book through us, zero commission):
 - Bhagavatha Sapthaham: ₹5,000 (7-day Bhagavatam recitation)
 
 MAJOR FESTIVALS:
-- Guruvayur Ekadasi (Dec 8, 2026): Most important — Chembai Sangeetholsavam music festival
+- Guruvayur Ekadasi (Dec 8, 2026): Most important · Chembai Sangeetholsavam music festival
 - Ashtami Rohini (Aug 25, 2026): Krishna Jayanti, midnight abhishekam
 - Guruvayur Utsavam (Feb 26 - Mar 7, 2026): Annual 10-day festival with elephant processions
 - Vishu (Apr 14, 2026): Malayalam New Year, Vishukkani darshan at 2:30 AM
@@ -69,17 +69,17 @@ BEST TIME TO VISIT:
 NEARBY ATTRACTIONS (within 60 km):
 1. Punnathur Kotta Elephant Sanctuary (3 km)
 2. Athirappilly Waterfalls (60 km)
-3. Kerala Kalamandalam (35 km) — performing arts university
+3. Kerala Kalamandalam (35 km) · performing arts university
 4. Vadakkunnathan Temple, Thrissur (29 km)
 5. Paramekkavu & Thiruvambadi Temples (29 km)
-6. Palayur Church (25 km) — St. Thomas church
+6. Palayur Church (25 km) · St. Thomas church
 7. Peechi Dam & Wildlife Sanctuary (25 km)
 8. Shakthan Thampuran Palace (29 km)
 9. Chavakkad Beach (25 km)
 10. Snehatheeram Beach (30 km)
 `;
 
-  const systemPrompt = `You are the Guruvayur Dham AI Guide — a warm, knowledgeable assistant for pilgrims visiting Guruvayur Temple in Kerala, India. You help with:
+  const systemPrompt = `You are the Guruvayur Dham AI Guide · a warm, knowledgeable assistant for pilgrims visiting Guruvayur Temple in Kerala, India. You help with:
 - Temple darshan timings, dress code, and rituals
 - Room bookings at Guruvayur Dham (₹700-₹3,500/night, 2 min walk to temple)
 - Pooja bookings (Palpayasam, Thulabharam, Choroonu, etc.)
@@ -114,7 +114,7 @@ If you don't know something, say so honestly and suggest the guest WhatsApp us a
   } catch (error: any) {
     // Fallback if AI SDK fails
     return NextResponse.json({
-      reply: `Namaskaram! I'm having trouble connecting right now. For immediate assistance, please WhatsApp us at +91 98765 43210 — we reply within 5 minutes.`,
+      reply: `Namaskaram! I'm having trouble connecting right now. For immediate assistance, please WhatsApp us at +91 98765 43210 · we reply within 5 minutes.`,
       error: error.message,
     });
   }

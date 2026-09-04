@@ -13,7 +13,7 @@ export default function EventsPage() {
         eyebrow="Festivals & Events"
         icon={CalendarDays}
         title={<>Plan Your Visit Around <GoldFoilText>Sacred Festivals</GoldFoilText></>}
-        subtitle="Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 — book rooms 60+ days in advance for festival dates."
+        subtitle="Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates."
         crumbs={[{ label: "Home", route: "/" }, { label: "Events" }]}
       />
 
