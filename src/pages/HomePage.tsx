@@ -330,9 +330,9 @@ function WhyChooseUs() {
           className="mt-16 grid grid-cols-2 gap-4 rounded-3xl border border-champagne/15 bg-ink-card p-8 sm:grid-cols-4 lg:p-10"
         >
           {[
-            { value: 200, suffix: " m", label: "to East Nada gate" },
             { value: 52, suffix: "", label: "AC & non-AC rooms" },
-            { value: 50000, suffix: "+", label: "happy pilgrims" },
+            { value: 25, suffix: "+", label: "years of service" },
+            { value: 1000, suffix: "+", label: "happy guests" },
             { value: 4.9, suffix: " ★", label: "Google rating", decimals: 1 },
           ].map((s, i) => (
             <div key={i} className="text-center">

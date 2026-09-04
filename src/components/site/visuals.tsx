@@ -287,22 +287,25 @@ export function CountUp({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
-  const [val, setVal] = useState(0);
+  const [val, setVal] = useState(to); // Start at target value (no 0 flash)
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || hasAnimated) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHasAnimated(true);
+    setVal(0); // Reset to 0 only when animation starts
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / (duration * 1000));
-      // easeOutExpo
       const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
       setVal(to * eased);
       if (t < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, to, duration]);
+  }, [inView, to, duration, hasAnimated]);
 
   return (
     <span ref={ref}>

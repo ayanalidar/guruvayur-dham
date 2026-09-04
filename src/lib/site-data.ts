@@ -14,14 +14,14 @@ export const SITE = {
   address: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
   shortAddress: "Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
   mapEmbed:
-    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zTWF0aHVyYSwgVXR0YXIgUHJhZGVzaA!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zMjfCsDI5JzQwLjYiTiA3N8KwNDEnMjQuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
   mapLink: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Natwar+Nagar+Dholi+Pyau+Mathura+281001",
   checkIn: "12:00 PM",
   checkOut: "11:00 AM",
   rating: 4.9,
   reviewCount: 847,
   totalRooms: 52,
-  distanceToTemple: "2 min walk to temple",
+  distanceToTemple: "Near Mata Pathwari Mandir",
   socials: {
     facebook: "https://facebook.com/guruvayurdham",
     instagram: "https://instagram.com/guruvayurdham",
@@ -47,7 +47,7 @@ export const NAV_ITEMS: NavItem[] = [
 /* ============ HERO TRUST BADGES ============ */
 export const TRUST_BADGES = [
   { icon: "Star", text: `4.9 Google Rating` },
-  { icon: "Footprints", text: "2 min to East Nada" },
+  { icon: "Footprints", text: "Near Mata Pathwari Mandir" },
   { icon: "Car", text: "Free Parking" },
   { icon: "BedDouble", text: "50+ Rooms" },
 ];

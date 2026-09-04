@@ -102,6 +102,51 @@
   --maroon: #7B2D26;
 }
 
+/* ====== LIGHT THEME (Royal Blue) ====== */
+html:not(.dark) {
+  --background: #EFF3F8;
+  --foreground: #1A2332;
+  --card: #FFFFFF;
+  --card-foreground: #1A2332;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A2332;
+  --primary: #1B4D7E;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8F0F7;
+  --secondary-foreground: #1A2332;
+  --muted: #F0F4F8;
+  --muted-foreground: #5A6B7D;
+  --accent: #1B4D7E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --border: rgba(27, 77, 126, 0.12);
+  --input: rgba(27, 77, 126, 0.08);
+  --ring: #1B4D7E;
+  --chart-1: #1B4D7E;
+  --chart-2: #2E6DA4;
+  --chart-3: #C9A961;
+  --chart-4: #6B8CAE;
+  --chart-5: #1A2332;
+  --sidebar: #F0F4F8;
+  --sidebar-foreground: #1A2332;
+  --sidebar-primary: #1B4D7E;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8F0F7;
+  --sidebar-accent-foreground: #1A2332;
+  --sidebar-border: rgba(27, 77, 126, 0.10);
+  --sidebar-ring: #1B4D7E;
+  --ink: #EFF3F8;
+  --ink-soft: #F0F4F8;
+  --ink-card: #FFFFFF;
+  --champagne: #1B4D7E;
+  --champagne-bright: #2E6DA4;
+  --gold: #B8860B;
+  --gold-deep: #8B6508;
+  --ivory: #1A2332;
+  --saffron: #E67E22;
+  --maroon: #8B3A2E;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -118,6 +163,59 @@
       radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 55, 0.08), transparent),
       radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255, 179, 71, 0.04), transparent);
     background-attachment: fixed;
+  }
+  /* Light mode body — soft blue gradient instead of dark */
+  html:not(.dark) body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(27, 77, 126, 0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(46, 109, 164, 0.04), transparent);
+  }
+  html:not(.dark) {
+    background: #EFF3F8;
+  }
+  /* Light mode overrides for glass components */
+  html:not(.dark) .glass-nav {
+    background: rgba(240, 244, 248, 0.85);
+    border-bottom: 1px solid rgba(27, 77, 126, 0.10);
+  }
+  html:not(.dark) .glass-card,
+  html:not(.dark) .card-luxe {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 244, 248, 0.7) 100%);
+    border-color: rgba(27, 77, 126, 0.10);
+  }
+  html:not(.dark) .glass-strong {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(27, 77, 126, 0.12);
+  }
+  html:not(.dark) .bg-ink-gradient,
+  html:not(.dark) .bg-ink,
+  html:not(.dark) .bg-ink-soft {
+    background: #EFF3F8 !important;
+  }
+  html:not(.dark) .bg-ink-card {
+    background: #FFFFFF !important;
+  }
+  html:not(.dark) .text-ivory { color: #1A2332 !important; }
+  html:not(.dark) .text-cream { color: #1A2332 !important; }
+  html:not(.dark) .border-champagne\/20 { border-color: rgba(27, 77, 126, 0.15) !important; }
+  html:not(.dark) .border-champagne\/15 { border-color: rgba(27, 77, 126, 0.12) !important; }
+  html:not(.dark) .border-champagne\/10 { border-color: rgba(27, 77, 126, 0.08) !important; }
+  html:not(.dark) .bg-champagne\/10 { background-color: rgba(27, 77, 126, 0.08) !important; }
+  html:not(.dark) .bg-champagne\/15 { background-color: rgba(27, 77, 126, 0.12) !important; }
+  html:not(.dark) .bg-champagne\/5 { background-color: rgba(27, 77, 126, 0.04) !important; }
+  html:not(.dark) .text-champagne { color: #1B4D7E !important; }
+  html:not(.dark) .text-gold-foil {
+    background: linear-gradient(100deg, #1B4D7E 0%, #2E6DA4 30%, #1B4D7E 50%, #2E6DA4 70%, #1B4D7E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  html:not(.dark) .btn-luxe {
+    background: linear-gradient(135deg, #2E6DA4 0%, #1B4D7E 50%, #1B4D7E 100%);
+    color: #FFFFFF;
+  }
+  html:not(.dark) .photo-cinematic {
+    filter: contrast(1.02) saturate(0.95) brightness(1.02);
   }
   ::selection {
     background: var(--champagne);

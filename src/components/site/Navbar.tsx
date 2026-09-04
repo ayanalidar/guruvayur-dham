@@ -6,6 +6,8 @@ import { Menu, X, Phone, MessageCircle, Settings, User } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "@/components/site/ThemeToggle";
+import LanguageSelector from "@/components/site/LanguageSelector";
 
 export default function Navbar() {
   const { path, navigate } = useHashRoute();
@@ -93,6 +95,8 @@ export default function Navbar() {
           >
             <User className="h-4 w-4" />
           </button>
+          <ThemeToggle />
+          <LanguageSelector />
           <button
             onClick={() => go("/admin")}
             className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"

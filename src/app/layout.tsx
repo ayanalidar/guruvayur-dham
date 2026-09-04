@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import ServiceWorkerRegister from "@/components/site/ServiceWorkerRegister";
+import { ThemeProvider } from "@/lib/theme-context";
+import { I18nProvider } from "@/lib/i18n/context";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -152,8 +154,22 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem('gd-theme') || 'dark';
+                  if (t === 'dark') document.documentElement.classList.add('dark');
+                } catch(e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -162,10 +178,14 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${manrope.variable} antialiased bg-background text-foreground`}
       >
-        <ServiceWorkerRegister />
-        {children}
-        <Toaster />
-        <SonnerToaster position="top-center" richColors />
+        <I18nProvider>
+          <ThemeProvider>
+            <ServiceWorkerRegister />
+            {children}
+            <Toaster />
+            <SonnerToaster position="top-center" richColors />
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

@@ -186,6 +186,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <button onClick={() => navigate("/privacy")} className="hover:text-champagne">Privacy Policy</button>
             <button onClick={() => navigate("/terms")} className="hover:text-champagne">Terms of Service</button>
+            <button onClick={() => navigate("/policies")} className="hover:text-champagne">Booking Policies</button>
             <button onClick={() => navigate("/faq")} className="hover:text-champagne">FAQ</button>
           </div>
         </div>
