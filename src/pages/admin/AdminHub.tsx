@@ -11,6 +11,7 @@ import {
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
+import LiveActivityFeed from "@/components/site/LiveActivityFeed";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -132,9 +133,13 @@ function DashboardSection({ stats }: any) {
           </div>
         ))}
       </div>
+      {/* Live Activity Feed — real-time WebSocket */}
+      <div className="mt-6">
+        <LiveActivityFeed />
+      </div>
       <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-4 text-sm text-ivory/70">
         <AlertCircle className="mr-2 inline h-4 w-4 text-champagne" />
-        <strong className="text-ivory">Tip:</strong> Use the tabs above to access CRM, Housekeeping, Kitchen, Pooja Bookings, Pricing, Invoices, Night Audit, Exports, AI Chatbot, Weather, and more. Every feature is wired to the database.
+        <strong className="text-ivory">Live:</strong> New bookings, kitchen orders, channel syncs, and housekeeping updates appear in the feed above in real-time — no refresh needed.
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar, Users, Tag, CreditCard, Check, ChevronRight, ChevronLeft,
-  Star, Sparkles, AlertCircle, Lock, ShieldCheck,
+  Star, Sparkles, AlertCircle, Lock, ShieldCheck, Loader2,
 } from "lucide-react";
 import { ROOMS, formatINR, waLink } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
@@ -12,6 +12,13 @@ import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
+// Extend window for Razorpay
+declare global {
+  interface Window {
+    Razorpay?: any;
+  }
+}
 
 const STEPS = ["Dates & Room", "Guest Details", "Coupon & Payment", "Confirmation"];
 
@@ -82,8 +89,102 @@ export default function GuestBookingPage() {
     else toast.error(j.message);
   };
 
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  // Load Razorpay checkout.js script
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.Razorpay) { setRazorpayLoaded(true); return; }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => setRazorpayLoaded(true);
+    document.body.appendChild(script);
+  }, []);
+
   const submit = async () => {
     setCreating(true);
+
+    // If Razorpay selected, open the checkout modal
+    if (paymentMethod === "RAZORPAY" && razorpayLoaded && pricing) {
+      try {
+        const finalAmount = pricing.finalTotal - (couponResult?.discount || 0);
+        // 1. Create order on server
+        const orderRes = await fetch("/api/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: finalAmount * 100, // convert to paise
+            receipt: `GD-${Date.now()}`,
+            notes: { roomSlug: selectedRoom, guestName, checkIn, checkOut },
+          }),
+        });
+        const order = await orderRes.json();
+        if (!order.orderId) {
+          toast.error("Failed to create payment order");
+          setCreating(false);
+          return;
+        }
+
+        // 2. Open Razorpay checkout
+        const rzp = new window.Razorpay({
+          key: order.keyId,
+          amount: order.amount,
+          currency: order.currency || "INR",
+          name: "Guruvayur Dham",
+          description: `${ROOMS.find(r => r.slug === selectedRoom)?.name} · ${pricing.nights} night(s)`,
+          image: "/icon-192.png",
+          order_id: order.orderId,
+          prefill: {
+            name: guestName,
+            contact: guestPhone,
+            email: guestEmail || undefined,
+          },
+          theme: { color: "#D4C4A8" },
+          handler: async (response: any) => {
+            // 3. Verify payment on server
+            const verifyRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verify = await verifyRes.json();
+            if (!verify.verified) {
+              toast.error("Payment verification failed. Please contact us.");
+              setCreating(false);
+              return;
+            }
+            // 4. Create the booking with verified payment
+            await createBooking(verify.paymentId);
+          },
+          modal: {
+            ondismiss: () => {
+              toast.info("Payment cancelled. Your booking was not created.");
+              setCreating(false);
+            },
+          },
+        });
+        rzp.on("payment.failed", (resp: any) => {
+          toast.error(`Payment failed: ${resp.error?.description || "Unknown error"}`);
+          setCreating(false);
+        });
+        rzp.open();
+      } catch (e) {
+        toast.error("Payment initialization failed");
+        setCreating(false);
+      }
+      return;
+    }
+
+    // Non-Razorpay methods (UPI, CARD, COD) — direct booking
+    await createBooking();
+  };
+
+  const createBooking = async (paymentId?: string) => {
     try {
       const r = await fetch("/api/guest-booking", {
         method: "POST",
@@ -95,6 +196,7 @@ export default function GuestBookingPage() {
           couponCode: couponResult?.valid ? couponCode : undefined,
           darshanSlot: darshanSlot || undefined,
           paymentMethod,
+          paymentId,
         }),
       });
       const j = await r.json();
@@ -296,12 +398,22 @@ export default function GuestBookingPage() {
 
                 <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
                   <Lock className="h-3 w-3" /> Secure payment via Razorpay. Your card details never touch our server.
+                  {paymentMethod === "RAZORPAY" && !razorpayLoaded && (
+                    <span className="ml-2 inline-flex items-center gap-1 text-champagne"><Loader2 className="h-3 w-3 animate-spin" /> Loading checkout…</span>
+                  )}
+                  {paymentMethod === "RAZORPAY" && razorpayLoaded && (
+                    <span className="ml-2 inline-flex items-center gap-1 text-green-300"><ShieldCheck className="h-3 w-3" /> Ready</span>
+                  )}
+                </div>
+
+                <div className="mt-2 rounded-lg border border-champagne/10 bg-ink/30 p-2 text-[10px] text-ivory/40">
+                  ⚠️ Demo mode: No real payment will be charged. Add <code className="text-champagne">RAZORPAY_KEY_ID</code> and <code className="text-champagne">RAZORPAY_KEY_SECRET</code> to <code className="text-champagne">.env</code> for live payments.
                 </div>
 
                 <div className="mt-6 flex justify-between">
                   <button onClick={() => setStep(1)} className="btn-ghost-luxe"><ChevronLeft className="h-4 w-4" /> Back</button>
-                  <button onClick={submit} disabled={creating} className="btn-luxe disabled:opacity-40">
-                    {creating ? <><Sparkles className="h-4 w-4 animate-spin" /> Processing…</> : <><CreditCard className="h-4 w-4" /> Pay & Confirm</>}
+                  <button onClick={submit} disabled={creating || (paymentMethod === "RAZORPAY" && !razorpayLoaded)} className="btn-luxe disabled:opacity-40">
+                    {creating ? <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</> : <><CreditCard className="h-4 w-4" /> {paymentMethod === "COD" ? "Confirm Booking" : "Pay & Confirm"}</>}
                   </button>
                 </div>
               </motion.div>

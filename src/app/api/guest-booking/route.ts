@@ -231,6 +231,27 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // ====== BROADCAST REAL-TIME EVENT ======
+  // Notify all connected admin dashboards about the new booking
+  fetch("http://localhost:3003/broadcast", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "booking:new",
+      data: {
+        reference: ref,
+        guestName,
+        roomName: room.name,
+        roomSlug,
+        checkIn: ci,
+        checkOut: co,
+        amount: finalAmount,
+        source: "DIRECT",
+        timestamp: new Date().toISOString(),
+      },
+    }),
+  }).catch(() => {}); // silent fail if realtime service is down
+
   return NextResponse.json({
     booking: { ...booking, reference: ref },
     pricing: {

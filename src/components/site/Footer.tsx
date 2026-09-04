@@ -9,6 +9,7 @@ const serviceLinks = [
   { label: "AC Rooms", route: "/rooms" },
   { label: "Non-AC Rooms", route: "/rooms" },
   { label: "Family Suite", route: "/rooms" },
+  { label: "360° Virtual Tour", route: "/tour" },
   { label: "Palpayasam Booking", route: "/pooja" },
   { label: "Thulabharam", route: "/pooja" },
   { label: "Choroonu Ceremony", route: "/pooja" },

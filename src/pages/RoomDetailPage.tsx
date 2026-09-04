@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Star, Users, Maximize, Bed, MessageCircle, Check, ChevronRight, ArrowLeft, Calendar, Wifi, Snowflake, Tv, ShowerHead,
+  Star, Users, Maximize, Bed, MessageCircle, Check, ChevronRight, ArrowLeft, Calendar, Wifi, Snowflake, Tv, ShowerHead, Eye,
 } from "lucide-react";
 import { ROOMS, formatINR, waLink, type Room } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
@@ -11,6 +11,7 @@ import { getIcon } from "@/components/site/icon-map";
 import {
   GoldFoilText, TiltCard, MagneticButton, ImageReveal, MandalaDivider,
 } from "@/components/site/visuals";
+import { useViewerCount } from "@/lib/use-realtime";
 
 const amenityLabels: Record<string, string> = {
   Wifi: "Free WiFi", AC: "Air Conditioning", TV: "LED TV", Geyser: "Hot Water",
@@ -22,6 +23,7 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
   const { navigate } = useHashRoute();
   const room = ROOMS.find((r) => r.slug === slug) || ROOMS[0];
   const [activeImg, setActiveImg] = useState(0);
+  const { count: viewerCount, connected: viewerConnected } = useViewerCount(room.slug);
 
   const waMsg = `Namaskaram! I'd like to book the "${room.name}" at Guruvayur Dham (${formatINR(room.price)}/night). Please share availability.`;
   const related = ROOMS.filter((r) => r.slug !== room.slug).slice(0, 3);
@@ -125,6 +127,18 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
                   + taxes
                 </span>
               </div>
+
+              {/* Live viewer count — social proof */}
+              {viewerConnected && viewerCount > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-saffron/30 bg-saffron/10 px-3 py-1.5 text-xs font-semibold text-saffron"
+                >
+                  <Eye className="h-3.5 w-3.5 animate-pulse" />
+                  {viewerCount} {viewerCount === 1 ? "person is" : "people are"} viewing this room right now
+                </motion.div>
+              )}
 
               <div className="mt-6 flex flex-col gap-3">
                 <MagneticButton href={waLink(waMsg)}>

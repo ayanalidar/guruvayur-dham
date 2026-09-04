@@ -49,6 +49,17 @@ export async function POST(req: NextRequest) {
       relatedRef: ref,
     },
   });
+
+  // ====== BROADCAST REAL-TIME EVENT ======
+  fetch("http://localhost:3003/broadcast", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "kitchen:order:new",
+      data: { reference: ref, roomNumber, guestName, items, total, timestamp: new Date().toISOString() },
+    }),
+  }).catch(() => {});
+
   return NextResponse.json({ order, message: `Order placed — ${ref}. Kitchen notified.` });
 }
 
