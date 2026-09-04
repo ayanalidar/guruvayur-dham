@@ -10,6 +10,7 @@ import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
 import AdminGuard from "@/components/site/AdminGuard";
 import PWAEnhancements from "@/components/site/PWAEnhancements";
+import CookieConsent from "@/components/site/CookieConsent";
 import { PageLoader } from "@/components/site/visuals";
 
 import HomePage from "@/pages/HomePage";
@@ -126,6 +127,7 @@ export default function Home() {
       <Footer />
       <FloatingActions />
       <PWAEnhancements />
+      <CookieConsent />
     </>
   );
 }

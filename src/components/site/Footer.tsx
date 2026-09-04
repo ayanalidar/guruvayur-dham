@@ -190,6 +190,19 @@ export default function Footer() {
             <button onClick={() => navigate("/faq")} className="hover:text-champagne">{t('footer.faq')}</button>
           </div>
         </div>
+        <div className="container-x pb-4 text-center">
+          <p className="text-[10px] text-ivory/30">
+            Made And Maintained By:{" "}
+            <a
+              href="https://guardianx.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-champagne/50 transition-colors hover:text-champagne"
+            >
+              GuardianX
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

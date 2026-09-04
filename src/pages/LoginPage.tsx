@@ -473,6 +473,19 @@ export default function LoginPage() {
             <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> Secure</span>
             <span className="inline-flex items-center gap-1"><Sparkles className="h-3 w-3" /> Fast</span>
           </div>
+
+          {/* GuardianX credit */}
+          <p className="mt-6 text-center text-[10px] text-ivory/30">
+            Made And Maintained By:{" "}
+            <a
+              href="https://guardianx.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-champagne/50 transition-colors hover:text-champagne"
+            >
+              GuardianX
+            </a>
+          </p>
         </div>
       </div>
 
