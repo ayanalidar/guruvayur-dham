@@ -29,9 +29,11 @@ import {
   SectionHeader,
 } from "@/components/site/visuals";
 import ReviewsWidget from "@/components/site/ReviewsWidget";
+import { useI18n } from "@/lib/i18n/context";
 
 export default function HomePage() {
   const { navigate } = useHashRoute();
+  const { t } = useI18n();
 
   return (
     <div className="animate-page-reveal">
@@ -293,7 +295,7 @@ function WhyChooseUs() {
       <OmWatermark className="left-[-6rem] top-20" size="18rem" />
       <div className="container-x relative">
         <SectionHeader
-          eyebrow="Why Pilgrims Choose Us"
+          eyebrow={t("section.whyUs")}
           title={<>More Than a Stay · A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
           subtitle="We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
         />
@@ -359,7 +361,7 @@ function RoomPreviews() {
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeader
             align="left"
-            eyebrow="Rooms & Suites"
+            eyebrow={t("section.rooms")}
             title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
             subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from East Nada."
             className="!mx-0"
@@ -433,7 +435,7 @@ function PlanDarshan() {
     <section className="relative bg-ink py-24 lg:py-32">
       <div className="container-x">
         <SectionHeader
-          eyebrow="Plan Your Darshan"
+          eyebrow={t("section.darshan")}
           title={<>Everything You Need for a <GoldFoilText>Blessed Visit</GoldFoilText></>}
           subtitle="From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
         />
@@ -482,7 +484,7 @@ function PoojaPreview() {
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeader
             align="left"
-            eyebrow="Pooja & Offerings"
+            eyebrow={t("section.pooja")}
             title={<>Book Sacred Poojas at <GoldFoilText>Temple Rates</GoldFoilText></>}
             subtitle="Zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf."
             className="!mx-0"
@@ -543,7 +545,7 @@ function Testimonials() {
       <FloatingDiyas count={8} />
       <div className="container-x relative">
         <SectionHeader
-          eyebrow="Guest Stories"
+          eyebrow={t("section.testimonials")}
           title={<>Loved by <GoldFoilText>50,000+ Pilgrims</GoldFoilText></>}
           subtitle={`${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`}
         />
@@ -625,7 +627,7 @@ function AboutTeaser() {
           <div>
             <SectionHeader
               align="left"
-              eyebrow="About Guruvayur Dham"
+              eyebrow={t("section.about")}
               title={<>A Family-Run Pilgrim Home Since <GoldFoilText>1998</GoldFoilText></>}
               className="!mx-0"
             />

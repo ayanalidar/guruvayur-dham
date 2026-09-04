@@ -8,9 +8,11 @@ import { useHashRoute, isRouteActive } from "@/lib/router";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/site/ThemeToggle";
 import LanguageSelector from "@/components/site/LanguageSelector";
+import { useI18n } from "@/lib/i18n/context";
 
 export default function Navbar() {
   const { path, navigate } = useHashRoute();
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -71,7 +73,7 @@ export default function Navbar() {
                       : "text-ivory/70 hover:text-ivory"
                   )}
                 >
-                  {item.label}
+                  {t(`nav.${item.label.toLowerCase()}`) || item.label}
                   {active && (
                     <motion.span
                       layoutId="nav-active"
@@ -154,7 +156,7 @@ export default function Navbar() {
                           : "text-ivory/80 hover:bg-champagne/5"
                       )}
                     >
-                      {item.label}
+                      {t(`nav.${item.label.toLowerCase()}`) || item.label}
                     </button>
                   </li>
                 );

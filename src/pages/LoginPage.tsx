@@ -11,6 +11,7 @@ import { useHashRoute } from "@/lib/router";
 import { SITE, waLink } from "@/lib/site-data";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import OAuthButtons from "@/components/site/OAuthButtons";
+import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ type GuestMode = "login" | "register" | "otp";
 
 export default function LoginPage() {
   const { navigate } = useHashRoute();
+  const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("guest");
   const [staffMode, setStaffMode] = useState<StaffMode>("pin");
   const [guestMode, setGuestMode] = useState<GuestMode>("login");
@@ -263,7 +265,7 @@ export default function LoginPage() {
                 tab === "guest" ? "bg-champagne text-ink" : "text-ivory/60 hover:text-ivory"
               )}
             >
-              <UserIcon className="h-4 w-4" /> Guest
+              <UserIcon className="h-4 w-4" /> {t("login.guest")}
             </button>
             <button
               onClick={() => setTab("staff")}
@@ -272,7 +274,7 @@ export default function LoginPage() {
                 tab === "staff" ? "bg-champagne text-ink" : "text-ivory/60 hover:text-ivory"
               )}
             >
-              <Settings className="h-4 w-4" /> Staff
+              <Settings className="h-4 w-4" /> {t("login.staff")}
             </button>
           </div>
 
@@ -316,10 +318,10 @@ export default function LoginPage() {
                         </div>
                       </Field>
                       <button onClick={handleGuestLogin} disabled={loading} className="btn-luxe w-full">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ChevronRight className="h-4 w-4" /></>}
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.signIn")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
                       <button onClick={handleForgotPassword} className="block w-full text-center text-xs text-champagne hover:text-champagne-bright">
-                        Forgot password?
+                        {t('login.forgotPassword')}
                       </button>
                     </div>
                   )}
@@ -345,7 +347,7 @@ export default function LoginPage() {
                         </div>
                       </Field>
                       <button onClick={handleGuestRegister} disabled={loading} className="btn-luxe w-full">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Create Account <ChevronRight className="h-4 w-4" /></>}
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.createAccount")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
                     </div>
                   )}
@@ -359,7 +361,7 @@ export default function LoginPage() {
                             <input value={otpPhone} onChange={(e) => setOtpPhone(e.target.value)} placeholder="+91 98765 43210" className="input-luxe" />
                           </Field>
                           <button onClick={sendOtp} disabled={loading} className="btn-luxe w-full">
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Send OTP <ChevronRight className="h-4 w-4" /></>}
+                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.sendOtp")} <ChevronRight className="h-4 w-4" /></>}
                           </button>
                         </>
                       ) : (
@@ -372,7 +374,7 @@ export default function LoginPage() {
                             <input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))} maxLength={4} placeholder="1234" className="input-luxe text-center text-2xl tracking-[0.5em]" />
                           </Field>
                           <button onClick={verifyOtp} disabled={loading || otp.length !== 4} className="btn-luxe w-full">
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Verify & Sign In <Check className="h-4 w-4" /></>}
+                            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.verifySignIn")} <Check className="h-4 w-4" /></>}
                           </button>
                           <button onClick={() => { setOtpSent(false); setOtp(""); }} className="w-full text-center text-xs text-ivory/50 hover:text-champagne">
                             Change phone number
@@ -418,7 +420,7 @@ export default function LoginPage() {
                         <input value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))} maxLength={4} placeholder="••••" className="input-luxe text-center text-2xl tracking-[0.5em]" />
                       </Field>
                       <button onClick={handleStaffLogin} disabled={loading || pin.length !== 4} className="btn-luxe w-full">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ChevronRight className="h-4 w-4" /></>}
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.signIn")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
                       <div className="rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
                         <p className="mb-1 font-semibold text-ivory/70">Demo PINs:</p>
@@ -444,7 +446,7 @@ export default function LoginPage() {
                         </div>
                       </Field>
                       <button onClick={handleStaffLogin} disabled={loading} className="btn-luxe w-full">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ChevronRight className="h-4 w-4" /></>}
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.signIn")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
                       <div className="rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
                         <p>Demo: Use any staff email + PIN as password, or <code className="text-gold-foil">admin123</code></p>
@@ -459,9 +461,9 @@ export default function LoginPage() {
             {/* Footer */}
             <div className="mt-6 flex items-center justify-between text-xs">
               <button onClick={() => navigate("/")} className="text-ivory/50 hover:text-champagne">
-                <ArrowLeft className="mr-1 inline h-3 w-3" /> Back to Home
+                <ArrowLeft className="mr-1 inline h-3 w-3" /> {t('login.backHome')}
               </button>
-              <span className="text-ivory/40">Secure · SSL encrypted</span>
+              <span className="text-ivory/40">{t('login.secure')}</span>
             </div>
           </div>
 

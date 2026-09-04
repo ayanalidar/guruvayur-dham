@@ -4,6 +4,7 @@ import { Phone, MessageCircle, Mail, MapPin, Facebook, Instagram, Youtube, Twitt
 import { SITE, NAV_ITEMS, waLink } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
 import { GoldFoilText, MandalaDivider } from "./visuals";
+import { useI18n } from "@/lib/i18n/context";
 
 const serviceLinks = [
   { label: "AC Rooms", route: "/rooms" },
@@ -19,6 +20,7 @@ const serviceLinks = [
 
 export default function Footer() {
   const { navigate } = useHashRoute();
+  const { t } = useI18n();
 
   return (
     <footer className="relative overflow-hidden bg-ink-soft text-ivory">
@@ -109,7 +111,7 @@ export default function Footer() {
 
         {/* Quick links */}
         <div>
-          <h3 className="font-serif text-lg text-champagne">Quick Links</h3>
+          <h3 className="font-serif text-lg text-champagne">{t('footer.quickLinks')}</h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             {NAV_ITEMS.map((l) => (
               <li key={l.route}>
@@ -117,7 +119,7 @@ export default function Footer() {
                   onClick={() => navigate(l.route)}
                   className="text-ivory/60 transition-colors hover:text-champagne"
                 >
-                  {l.label}
+                  {t(`nav.${l.label.toLowerCase()}`) || l.label}
                 </button>
               </li>
             ))}
@@ -126,7 +128,7 @@ export default function Footer() {
 
         {/* Services */}
         <div>
-          <h3 className="font-serif text-lg text-champagne">Our Services</h3>
+          <h3 className="font-serif text-lg text-champagne">{t('footer.services')}</h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             {serviceLinks.map((l, i) => (
               <li key={i}>
@@ -134,7 +136,7 @@ export default function Footer() {
                   onClick={() => navigate(l.route)}
                   className="text-ivory/60 transition-colors hover:text-champagne"
                 >
-                  {l.label}
+                  {t(`nav.${l.label.toLowerCase()}`) || l.label}
                 </button>
               </li>
             ))}
@@ -143,7 +145,7 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h3 className="font-serif text-lg text-champagne">Reach Us</h3>
+          <h3 className="font-serif text-lg text-champagne">{t('footer.reachUs')}</h3>
           <ul className="mt-4 space-y-3 text-sm">
             <li className="flex gap-3">
               <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-champagne/80" />
@@ -180,12 +182,12 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-champagne/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-ivory/50 sm:flex-row">
-          <p>© {new Date().getFullYear()} {SITE.name}. Crafted with devotion.</p>
+          <p>© {new Date().getFullYear()} {SITE.name}. {t('footer.craftedWith')}</p>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate("/privacy")} className="hover:text-champagne">Privacy Policy</button>
-            <button onClick={() => navigate("/terms")} className="hover:text-champagne">Terms of Service</button>
-            <button onClick={() => navigate("/policies")} className="hover:text-champagne">Booking Policies</button>
-            <button onClick={() => navigate("/faq")} className="hover:text-champagne">FAQ</button>
+            <button onClick={() => navigate("/privacy")} className="hover:text-champagne">{t('footer.privacyPolicy')}</button>
+            <button onClick={() => navigate("/terms")} className="hover:text-champagne">{t('footer.terms')}</button>
+            <button onClick={() => navigate("/policies")} className="hover:text-champagne">{t('footer.policies')}</button>
+            <button onClick={() => navigate("/faq")} className="hover:text-champagne">{t('footer.faq')}</button>
           </div>
         </div>
       </div>
