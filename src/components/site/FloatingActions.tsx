@@ -68,7 +68,7 @@ export default function FloatingActions() {
           WhatsApp
         </a>
         <button
-          onClick={() => navigate("/contact")}
+          onClick={() => navigate("/book")}
           className="flex flex-col items-center justify-center gap-0.5 py-3 text-xs font-semibold text-gold"
         >
           <span className="grid h-5 w-5 place-items-center rounded-full bg-gradient-to-br from-champagne to-gold-deep text-[10px] text-ink">

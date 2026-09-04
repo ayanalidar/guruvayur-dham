@@ -123,8 +123,296 @@ model Availability {
   date            DateTime       // the specific night
   available       Int            // units still bookable
   lockedBy        String?        // comma-separated booking refs that hold this date
+  priceOverride   Int?           // dynamic price for this date (null = use room.price)
+  maintenanceNote String?        // if set, room is under maintenance
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
   @@unique([roomId, date])
+}
+
+/* ============ DYNAMIC PRICING RULES ============ */
+model DynamicPricingRule {
+  id              String   @id @default(cuid())
+  name            String   // e.g. "Weekend Surge", "Ekadasi Festival"
+  type            String   // WEEKEND | FESTIVAL | LAST_MINUTE | EARLY_BIRD | SEASONAL
+  multiplier      Float    // 1.3 = 30% surge, 0.8 = 20% off
+  startDate       DateTime?
+  endDate         DateTime?
+  dayOfWeek       String?  // comma-separated: "5,6" for Fri,Sat (null = all days)
+  roomType        String?  // null = all rooms, else filter by type
+  active          Boolean  @default(true)
+  priority        Int      @default(0) // higher = applied first
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ COUPONS & PROMO CODES ============ */
+model Coupon {
+  id              String   @id @default(cuid())
+  code            String   @unique // EARLYBIRD10, EKADASI2026
+  description     String
+  type            String   // PERCENTAGE | FLAT
+  value           Float    // 10 = 10% off, or 200 = ₹200 off
+  maxDiscount     Int?     // cap for percentage coupons
+  minBooking      Int      // minimum booking amount
+  usageLimit      Int      // total times usable (0 = unlimited)
+  usedCount       Int      @default(0)
+  validFrom       DateTime
+  validTo         DateTime
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ WAITING LIST ============ */
+model WaitingList {
+  id              String   @id @default(cuid())
+  roomSlug        String
+  checkIn         DateTime
+  checkOut        DateTime
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  guests          Int      @default(2)
+  status          String   @default("WAITING") // WAITING | NOTIFIED | BOOKED | EXPIRED
+  notifiedAt      DateTime?
+  bookingRef      String?  // if converted to booking
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ POOJA BOOKINGS ============ */
+model PoojaBooking {
+  id              String   @id @default(cuid())
+  reference       String   @unique // PB-XXXXXX
+  poojaId         String   // matches pooja.id in site-data
+  poojaName       String
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  preferredDate   DateTime
+  amount          Int
+  status          String   @default("SCHEDULED") // SCHEDULED | AT_TEMPLE | COMPLETED | PRASADAM_READY | PICKED_UP | CANCELLED
+  prasadamNote    String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ REMINDERS (Darshan slots, check-in, etc.) ============ */
+model Reminder {
+  id              String   @id @default(cuid())
+  type            String   // DARSHAN | CHECK_IN | CHECK_OUT | POOJA | FESTIVAL
+  bookingRef      String?
+  guestName       String
+  guestPhone      String
+  message         String
+  scheduledFor    DateTime
+  sent            Boolean  @default(false)
+  sentAt          DateTime?
+  channel         String   @default("WHATSAPP") // WHATSAPP | SMS | EMAIL
+  createdAt       DateTime @default(now())
+}
+
+/* ============ FESTIVAL ALERTS OPT-IN ============ */
+model FestivalAlert {
+  id              String   @id @default(cuid())
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  festivals       String   // JSON array of festival names
+  notifyDays      String   @default("30,7,1") // days before
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+/* ============ ITINERARIES ============ */
+model Itinerary {
+  id              String   @id @default(cuid())
+  reference       String   @unique // IT-XXXXXX
+  guestName       String
+  guestPhone      String
+  days            Int
+  startDate       DateTime
+  items           String   // JSON array of {day, time, title, description, type}
+  totalEstimate   Int
+  status          String   @default("DRAFT") // DRAFT | CONFIRMED | COMPLETED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ CRM: CUSTOMERS ============ */
+model Customer {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String   @unique
+  email           String?
+  city            String?
+  totalBookings   Int      @default(0)
+  totalRevenue    Int      @default(0)
+  loyaltyPoints   Int      @default(0)
+  preferences     String?  // JSON: preferred room type, dietary, etc.
+  notes           String?
+  tags            String?  // comma-separated: VIP, REPEAT, FESTIVAL_GOER
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ HOUSEKEEPING STATUS ============ */
+model HousekeepingStatus {
+  id              String   @id @default(cuid())
+  roomNumber      String   @unique // physical room number, e.g. "101", "102A"
+  roomSlug        String   // links to Room type
+  status          String   @default("READY") // READY | OCCUPIED | DIRTY | CLEANING | INSPECT | MAINTENANCE
+  assignedTo      String?  // housekeeping staff name
+  lastCleanedAt   DateTime?
+  notes           String?
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ STAFF USERS ============ */
+model StaffUser {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  role            String   @default("RECEPTIONIST") // MANAGER | RECEPTIONIST | HOUSEKEEPING | ACCOUNTANT
+  pin             String   // 4-digit PIN for quick login
+  active          Boolean  @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ MAINTENANCE BLOCKS ============ */
+model MaintenanceBlock {
+  id              String   @id @default(cuid())
+  roomSlug        String
+  roomNumber      String?
+  startDate       DateTime
+  endDate         DateTime
+  reason          String   // e.g. "AC repair", "Painting"
+  status          String   @default("SCHEDULED") // SCHEDULED | IN_PROGRESS | COMPLETED
+  cost            Int?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ KITCHEN ORDERS ============ */
+model KitchenOrder {
+  id              String   @id @default(cuid())
+  reference       String   @unique // KO-XXXXXX
+  roomNumber      String
+  guestName       String
+  guestPhone      String?
+  items           String   // JSON array of {itemId, name, qty, price}
+  total           Int
+  status          String   @default("NEW") // NEW | PREPARING | READY | DELIVERED | CANCELLED
+  notes           String?
+  printedAt       DateTime? // when sent to kitchen printer
+  deliveredAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ MENU ITEMS ============ */
+model MenuItem {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  price           Int
+  category        String   // BREAKFAST | LUNCH | DINNER | SNACKS | BEVERAGES
+  veg             Boolean  @default(true)
+  available       Boolean  @default(true)
+  prepTime        Int      @default(15) // minutes
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ TRAVEL AGENTS (B2B) ============ */
+model TravelAgent {
+  id              String   @id @default(cuid())
+  companyName     String
+  contactName     String
+  phone           String
+  email           String?
+  commissionRate  Float    @default(0.12) // 12% default
+  creditLimit     Int      @default(50000) // deferred payment limit
+  outstanding     Int      @default(0)
+  totalBookings   Int      @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ BLOG POSTS (CMS) ============ */
+model BlogPost {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  excerpt         String
+  category        String
+  readTime        String
+  date            String
+  image           String
+  content         String   // JSON array of paragraphs
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ GALLERY IMAGES (CMS) ============ */
+model GalleryImage {
+  id              String   @id @default(cuid())
+  tab             String   // Rooms | Temple | Facilities | Surroundings
+  src             String
+  alt             String
+  caption         String
+  span            String?  // tall | wide | normal
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ REVIEW REQUESTS (Google Reviews automation) ============ */
+model ReviewRequest {
+  id              String   @id @default(cuid())
+  bookingRef      String
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  sentAt          DateTime?
+  status          String   @default("PENDING") // PENDING | SENT | COMPLETED | SKIPPED
+  reviewLink      String   @default("https://g.page/r/GURUVAYUR_DHAM/review")
+  createdAt       DateTime @default(now())
+}
+
+/* ============ NOTIFICATIONS (broadcast log) ============ */
+model Notification {
+  id              String   @id @default(cuid())
+  type            String   // SMS | EMAIL | WHATSAPP | TELEGRAM
+  recipient       String
+  subject         String?
+  body            String
+  status          String   @default("QUEUED") // QUEUED | SENT | FAILED
+  sentAt          DateTime?
+  relatedRef      String?  // booking or pooja reference
+  createdAt       DateTime @default(now())
+}
+
+/* ============ EARLY-BIRD CAMPAIGNS ============ */
+model EarlyBirdCampaign {
+  id              String   @id @default(cuid())
+  name            String   // "Ekadasi 2026 Early Bird"
+  festivalName    String
+  startDate       DateTime
+  endDate         DateTime
+  discountPercent Float    @default(15)
+  bookingWindowStart DateTime
+  bookingWindowEnd   DateTime
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
