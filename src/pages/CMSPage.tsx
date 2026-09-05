@@ -5,15 +5,16 @@ import { motion } from "framer-motion";
 import {
   Image as ImageIcon, Upload, Plus, Trash2, Save, X, RefreshCw,
   Flame, BedDouble, GalleryHorizontal, Loader2, Check, ArrowUp, ArrowDown,
-  CalendarDays, Star, HelpCircle, ShieldCheck, BookOpen,
+  CalendarDays, Star, HelpCircle, ShieldCheck, BookOpen, FileText,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText } from "@/components/site/visuals";
+import { SEO_PAGES, getSEOPage } from "@/lib/seo-pages";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts";
+type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts" | "seoPages";
 
 export default function CMSPage() {
   const [tab, setTab] = useState<Tab>("rooms");
@@ -43,6 +44,7 @@ export default function CMSPage() {
               { key: "faqs" as Tab, label: "FAQs", icon: HelpCircle },
               { key: "trustBadges" as Tab, label: "Badges", icon: ShieldCheck },
               { key: "blogPosts" as Tab, label: "Blog", icon: BookOpen },
+              { key: "seoPages" as Tab, label: "SEO Pages", icon: FileText },
             ].map((t) => (
               <button
                 key={t.key}
@@ -69,6 +71,7 @@ export default function CMSPage() {
           {tab === "faqs" && <GenericCMS type="faqs" title="FAQs" fields={[{ key: "question", label: "Question" }, { key: "answer", label: "Answer", textarea: true }]} />}
           {tab === "trustBadges" && <GenericCMS type="trustBadges" title="Trust Badges" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "text", label: "Badge Text" }]} />}
           {tab === "blogPosts" && <BlogCMS />}
+          {tab === "seoPages" && <SEOPagesCMS />}
         </div>
       </section>
     </div>
@@ -1071,4 +1074,247 @@ function BlogCMS() {
       </div>
     </div>
   );
+}
+
+/* ============ SEO PAGES CMS (edit festival/hotel/darshan guides) ============ */
+function SEOPagesCMS() {
+  const [selectedSlug, setSelectedSlug] = useState(SEO_PAGES[0].slug);
+  const [contentMap, setContentMap] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [draft, setDraft] = useState<any>(null);
+
+  const load = async () => {
+    const r = await fetch("/api/content", { cache: "no-store" });
+    const j = await r.json();
+    setContentMap(j.map || {});
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const configPage = getSEOPage(selectedSlug);
+    if (!configPage) return;
+    const cmsRaw = contentMap[`seo.${selectedSlug}`];
+    if (cmsRaw) {
+      try {
+        const parsed = JSON.parse(cmsRaw);
+        setDraft({
+          ...configPage,
+          ...parsed,
+          _introText: Array.isArray(parsed.intro) ? parsed.intro.join("\n\n") : (configPage.intro || []).join("\n\n"),
+          _sections: (parsed.sections || configPage.sections || []).map((s: any) => ({
+            heading: s.heading || "",
+            _bodyText: Array.isArray(s.body) ? s.body.join("\n\n") : "",
+          })),
+          _faqs: parsed.faqs || configPage.faqs || [],
+        });
+      } catch {
+        setDraft(toDraft(configPage));
+      }
+    } else {
+      setDraft(toDraft(configPage));
+    }
+  }, [selectedSlug, contentMap]);
+
+  if (loading || !draft) {
+    return <div className="py-12 text-center text-ivory/50">Loading…</div>;
+  }
+
+  const save = async () => {
+    setSaving(true);
+    const data = {
+      title: draft.title,
+      metaDescription: draft.metaDescription,
+      eyebrow: draft.eyebrow,
+      ctaHeadline: draft.ctaHeadline,
+      heroImage: draft.heroImage,
+      intro: (draft._introText || "").split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean),
+      sections: (draft._sections || []).map((s: any) => ({
+        heading: s.heading,
+        body: (s._bodyText || "").split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean),
+      })),
+      faqs: draft._faqs || [],
+    };
+    await fetch("/api/content", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        updates: [{ key: `seo.${selectedSlug}`, value: JSON.stringify(data) }],
+      }),
+    });
+    toast.success("SEO page saved — live on website now");
+    setSaving(false);
+    load();
+  };
+
+  const updateField = (field: string, value: any) => setDraft({ ...draft, [field]: value });
+  const updateSection = (idx: number, field: string, value: string) => {
+    const sections = [...draft._sections];
+    sections[idx] = { ...sections[idx], [field]: value };
+    setDraft({ ...draft, _sections: sections });
+  };
+  const addSection = () => setDraft({ ...draft, _sections: [...draft._sections, { heading: "", _bodyText: "" }] });
+  const removeSection = (idx: number) => setDraft({ ...draft, _sections: draft._sections.filter((_: any, i: number) => i !== idx) });
+  const updateFAQ = (idx: number, field: string, value: string) => {
+    const faqs = [...draft._faqs];
+    faqs[idx] = { ...faqs[idx], [field]: value };
+    setDraft({ ...draft, _faqs: faqs });
+  };
+  const addFAQ = () => setDraft({ ...draft, _faqs: [...draft._faqs, { q: "", a: "" }] });
+  const removeFAQ = (idx: number) => setDraft({ ...draft, _faqs: draft._faqs.filter((_: any, i: number) => i !== idx) });
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">SEO Pages Editor</h2>
+          <p className="mt-1 text-sm text-ivory/60">Edit festival guides, hotel-near pages, and darshan timing guides. Changes go live instantly.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <select
+            value={selectedSlug}
+            onChange={(e) => setSelectedSlug(e.target.value)}
+            className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+          >
+            {SEO_PAGES.map((p) => (
+              <option key={p.slug} value={p.slug}>{p.navLabel} ({p.category})</option>
+            ))}
+          </select>
+          <button onClick={save} disabled={saving} className="btn-luxe text-xs whitespace-nowrap">
+            {saving ? <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving…</> : <><Save className="h-3.5 w-3.5" /> Save Page</>}
+          </button>
+        </div>
+      </div>
+
+      {draft.heroImage && (
+        <div className="mt-4 overflow-hidden rounded-xl border border-champagne/10">
+          <img src={draft.heroImage} alt="" className="h-32 w-full object-cover photo-cinematic" />
+        </div>
+      )}
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Page Title (H1 + SEO title tag)</label>
+          <input value={draft.title || ""} onChange={(e) => updateField("title", e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Meta Description ({(draft.metaDescription || "").length} chars — ideal: 120-160)</label>
+          <textarea value={draft.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none" />
+        </div>
+        <div>
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Eyebrow (small label above title)</label>
+          <input value={draft.eyebrow || ""} onChange={(e) => updateField("eyebrow", e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+        </div>
+        <div>
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">CTA Headline (booking button text)</label>
+          <input value={draft.ctaHeadline || ""} onChange={(e) => updateField("ctaHeadline", e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Hero Image URL</label>
+          <div className="mt-1 flex items-center gap-2">
+            <input value={draft.heroImage || ""} onChange={(e) => updateField("heroImage", e.target.value)} className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" placeholder="https://..." />
+            <ImageUploader label="Upload" onUpload={(url) => updateField("heroImage", url)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Introduction (3 paragraphs — separate with a blank line)</label>
+        <textarea
+          value={draft._introText || ""}
+          onChange={(e) => updateField("_introText", e.target.value)}
+          rows={10}
+          className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+          placeholder={"First paragraph...\n\nSecond paragraph...\n\nThird paragraph..."}
+        />
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center justify-between">
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Content Sections ({draft._sections.length})</label>
+          <button onClick={addSection} className="rounded-full border border-champagne/20 px-3 py-1 text-[10px] font-semibold text-champagne hover:bg-champagne/10">
+            <Plus className="h-3 w-3 inline" /> Add Section
+          </button>
+        </div>
+        <div className="mt-2 space-y-3">
+          {draft._sections.map((sec: any, i: number) => (
+            <div key={i} className="card-luxe p-4">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-[10px] font-bold text-champagne/60">Section {i + 1}</span>
+                <button onClick={() => removeSection(i)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+              <input
+                value={sec.heading || ""}
+                onChange={(e) => updateSection(i, "heading", e.target.value)}
+                className="mt-2 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                placeholder="Section heading..."
+              />
+              <textarea
+                value={sec._bodyText || ""}
+                onChange={(e) => updateSection(i, "_bodyText", e.target.value)}
+                rows={5}
+                className="mt-2 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                placeholder={"Paragraph 1...\n\nParagraph 2..."}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-center justify-between">
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">FAQs ({draft._faqs.length}) — also used for Google rich results</label>
+          <button onClick={addFAQ} className="rounded-full border border-champagne/20 px-3 py-1 text-[10px] font-semibold text-champagne hover:bg-champagne/10">
+            <Plus className="h-3 w-3 inline" /> Add FAQ
+          </button>
+        </div>
+        <div className="mt-2 space-y-3">
+          {draft._faqs.map((faq: any, i: number) => (
+            <div key={i} className="card-luxe p-4">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-[10px] font-bold text-champagne/60">FAQ {i + 1}</span>
+                <button onClick={() => removeFAQ(i)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+              <input
+                value={faq.q || ""}
+                onChange={(e) => updateFAQ(i, "q", e.target.value)}
+                className="mt-2 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                placeholder="Question..."
+              />
+              <textarea
+                value={faq.a || ""}
+                onChange={(e) => updateFAQ(i, "a", e.target.value)}
+                rows={3}
+                className="mt-2 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                placeholder="Answer..."
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <button onClick={save} disabled={saving} className="btn-luxe text-sm">
+          {saving ? <><RefreshCw className="h-4 w-4 animate-spin" /> Saving…</> : <><Save className="h-4 w-4" /> Save Page</>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function toDraft(page: any) {
+  return {
+    ...page,
+    _introText: (page.intro || []).join("\n\n"),
+    _sections: (page.sections || []).map((s: any) => ({
+      heading: s.heading,
+      _bodyText: (s.body || []).join("\n\n"),
+    })),
+    _faqs: page.faqs || [],
+  };
 }

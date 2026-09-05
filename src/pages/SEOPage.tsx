@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import { ChevronRight, MessageCircle, MapPin, Clock, Calendar, ArrowRight } from "lucide-react";
-import { getSEOPage, getSEOPagesByCategory, type SEOPageCategory } from "@/lib/seo-pages";
+import { getSEOPage, getSEOPagesByCategory, type SEOPageCategory, type SEOPage as SEOPageType } from "@/lib/seo-pages";
 import { useHashRoute } from "@/lib/router";
+import { useContent } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton, OmWatermark } from "@/components/site/visuals";
 import { JsonLd } from "@/components/site/JsonLd";
@@ -32,7 +33,28 @@ import {
  */
 export default function SEOPage({ slug }: { slug: string }) {
   const { navigate } = useHashRoute();
-  const page = getSEOPage(slug);
+  const { map } = useContent();
+  const configPage = getSEOPage(slug);
+
+  // Try to load from CMS content block "seo.<slug>"
+  // If found, merge CMS data over config (CMS wins, config is fallback)
+  let page: SEOPageType | undefined = configPage;
+  const cmsRaw = map[`seo.${slug}`];
+  if (cmsRaw && configPage) {
+    try {
+      const parsed = JSON.parse(cmsRaw);
+      page = {
+        ...configPage,
+        ...parsed,
+        slug: configPage.slug, // don't allow overriding structural fields
+        category: configPage.category,
+        navLabel: configPage.navLabel,
+        jsonLdType: configPage.jsonLdType,
+      };
+    } catch {
+      // invalid JSON, use config
+    }
+  }
 
   if (!page) {
     return (
@@ -123,7 +145,7 @@ export default function SEOPage({ slug }: { slug: string }) {
 
       <PageHeader
         eyebrow={page.eyebrow}
-        title={page.title.split(" — ")[0].split(" | ")[0]}
+        title={page.title}
         subtitle={page.metaDescription}
         crumbs={[
           { label: "Home", route: "/" },
@@ -147,7 +169,7 @@ export default function SEOPage({ slug }: { slug: string }) {
             transition={{ duration: 0.6 }}
             className="font-serif text-2xl text-ivory sm:text-3xl lg:text-4xl"
           >
-            {page.title.split(" — ")[0]}
+            {page.title}
           </motion.h1>
         </div>
       </section>
