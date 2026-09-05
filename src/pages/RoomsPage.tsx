@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Users, Maximize, Bed, MessageCircle, Eye, Check, Radio } from "lucide-react";
+import { Star, Users, Maximize, Bed, MessageCircle, Eye, Check, Radio, ChevronRight } from "lucide-react";
 import {
   ROOMS,
   formatINR,
@@ -12,7 +12,6 @@ import {
 } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
 import { getIcon } from "@/components/site/icon-map";
-import PageHeader from "@/components/site/PageHeader";
 import ParticleLogo from "@/components/site/ParticleLogo";
 import { GoldFoilText, TiltCard, MagneticButton, SectionHeader, MandalaDivider } from "@/components/site/visuals";
 import { BedDouble } from "lucide-react";
@@ -66,27 +65,74 @@ export default function RoomsPage() {
 
   return (
     <div className="animate-page-reveal">
-      <PageHeader
-        eyebrow="Rooms & Suites"
-        icon={BedDouble}
-        title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText> in Guruvayur</>}
-        subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada."
-        crumbs={[{ label: "Home", route: "/" }, { label: "Rooms" }]}
-      />
+      {/* Custom hero — two-column layout with the particle logo as a prominent
+          feature on the right. Aesthetic reference: academy.guardianx.cloud
+          (logo + glow + radial halo), adapted to the site's champagne/gold
+          palette and scaled up to be a proper hero element. */}
+      <section className="relative overflow-hidden bg-ink-gradient pt-28 pb-12 lg:pt-36 lg:pb-16">
+        {/* Decorative Om watermark */}
+        <div className="pointer-events-none absolute -right-10 top-10 select-none font-serif text-[18rem] leading-none text-champagne/[0.04]">
+          ॐ
+        </div>
+        {/* Top glow */}
+        <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[600px] -translate-x-1/2 rounded-full bg-gold/8 blur-3xl" />
 
-      {/* Particle logo — animated gold particles orbiting the Guruvayur Dham mark.
-          Aesthetic reference: academy.guardianx.cloud (logo + glow + radial halo),
-          adapted to the site's champagne/gold palette. */}
-      <div className="pointer-events-none relative z-10 -mt-4 flex justify-center lg:-mt-8 lg:justify-end lg:pr-12">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="pointer-events-auto"
-        >
-          <ParticleLogo size={120} glow="#D4AF37" particleCount={54} />
-        </motion.div>
-      </div>
+        <div className="container-x relative">
+          {/* Breadcrumbs */}
+          <motion.nav
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8 flex items-center gap-2 text-xs text-ivory/50"
+          >
+            <button onClick={() => navigate("/")} className="transition-colors hover:text-champagne">Home</button>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-champagne">Rooms</span>
+          </motion.nav>
+
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            {/* Left: title + subtitle */}
+            <div className="order-2 lg:order-1">
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="section-eyebrow"
+              >
+                <BedDouble className="h-3.5 w-3.5" />
+                Rooms &amp; Suites
+              </motion.span>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="section-title mt-5"
+              >
+                Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText> in Guruvayur
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="section-subtitle mt-5"
+              >
+                From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada.
+              </motion.p>
+            </div>
+
+            {/* Right: large particle logo */}
+            <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
+              >
+                <ParticleLogo size={280} glow="#D4AF37" particleCount={72} />
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Sticky filter bar */}
       <div className="sticky top-16 z-30 border-y border-champagne/10 bg-ink-soft/90 backdrop-blur-md lg:top-20">
