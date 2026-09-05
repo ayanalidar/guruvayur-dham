@@ -152,7 +152,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ink lg:grid lg:grid-cols-2">
+    <div className="min-h-screen bg-ink lg:grid lg:grid-cols-2 lg:pt-0">
       {/* ===== LEFT: Brand visual (desktop only) ===== */}
       <div className="relative hidden overflow-hidden lg:block">
         {/* Background */}
@@ -241,7 +241,7 @@ export default function LoginPage() {
       </div>
 
       {/* ===== RIGHT: Login form ===== */}
-      <div className="flex min-h-screen items-center justify-center px-4 py-12 lg:min-h-0">
+      <div className="flex min-h-screen items-center justify-center px-4 pb-12 pt-24 lg:min-h-screen lg:pt-0">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">

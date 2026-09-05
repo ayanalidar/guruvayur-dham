@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { useHashRoute } from "@/lib/router";
 import { useAnalytics } from "@/lib/use-analytics";
 import { useWebVitals } from "@/lib/use-web-vitals";
+import { cn } from "@/lib/utils";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
@@ -114,18 +115,22 @@ export default function Home() {
     return <NotFound />;
   };
 
+  // Hide navbar/footer on login page (full-screen split layout)
+  const isLoginPage = path === "/login";
+  const isResetPage = path === "/reset-password";
+
   return (
     <>
       <AnimatePresence>{loading && <PageLoader onDone={() => setLoading(false)} />}</AnimatePresence>
 
-      <Navbar />
-      <main className="min-h-screen pb-16 sm:pb-0">
+      {!isLoginPage && <Navbar />}
+      <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>
         <AnimatePresence mode="wait">
           <div key={path}>{renderPage()}</div>
         </AnimatePresence>
       </main>
-      <Footer />
-      <FloatingActions />
+      {!isLoginPage && <Footer />}
+      {!isLoginPage && <FloatingActions />}
       <PWAEnhancements />
       <CookieConsent />
     </>
