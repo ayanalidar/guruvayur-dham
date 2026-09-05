@@ -1,0 +1,57 @@
+# Version-controlled dependencies
+node_modules
+.next
+out
+build
+dist
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# IDE & OS
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+
+# Logs & temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test & coverage
+coverage
+.nyc_output
+*.lcov
+
+# Documentation (not needed in image)
+docs
+README*.md
+LICENSE
+
+# Scripts not needed at runtime
+scripts
+skills
+examples
+tests
+mini-services
+upload
+
+# Database backups
+backup-*.sql.gz

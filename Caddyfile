@@ -1,23 +1,61 @@
-:81 {
-	@transform_port_query {
-		query XTransformPort=*
+# ============================================================================
+# Guruvayur Dham — Caddyfile (production HTTPS + reverse proxy)
+# ============================================================================
+# Caddy automatically obtains and renews Let's Encrypt SSL certificates.
+# Just set DOMAIN in your .env file and Caddy will handle the rest.
+#
+# Replace {$DOMAIN} with your actual domain, or set the DOMAIN env var
+# in docker-compose.yml (already configured).
+# ============================================================================
+
+{$DOMAIN} {
+	# Reverse proxy to the Next.js app
+	reverse_proxy app:3000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
 	}
 
-	handle @transform_port_query {
-		reverse_proxy localhost:{query.XTransformPort} {
-			header_up Host {host}
-			header_up X-Forwarded-For {remote_host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Real-IP {remote_host}
-		}
+	# Compression
+	encode gzip zstd
+
+	# Cache static assets aggressively
+	@static {
+		path /_next/static/* /favicon.ico /robots.txt /sitemap.xml /manifest.json
+	}
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	# Cache images
+	@images {
+		path /uploads/* /logo-*.png /guruyavur*.png /icon-*.png /apple-touch-icon.png
+	}
+	header @images Cache-Control "public, max-age=604800"
+
+	# Security headers
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 	}
 
-	handle {
-		reverse_proxy localhost:3000 {
-			header_up Host {host}
-			header_up X-Forwarded-For {remote_host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Real-IP {remote_host}
+	# Don't log health checks (reduces noise)
+	@healthcheck path /api/health
+	skip_log @healthcheck
+
+	# Access log
+	log {
+		output file /data/access.log {
+			roll_size 100mb
+			roll_keep 5
 		}
+		format json
 	}
+}
+
+# Redirect www to non-www (or vice versa — adjust as needed)
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
 }
