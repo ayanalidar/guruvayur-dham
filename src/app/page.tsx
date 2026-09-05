@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import FloatingActions from "@/components/site/FloatingActions";
+import WhatsAppChat from "@/components/site/WhatsAppChat";
 import AdminGuard from "@/components/site/AdminGuard";
 import PWAEnhancements from "@/components/site/PWAEnhancements";
 import CookieConsent from "@/components/site/CookieConsent";
@@ -133,6 +134,7 @@ export default function Home() {
       </main>
       {!isLoginPage && <Footer />}
       {!isLoginPage && <FloatingActions />}
+      {!isLoginPage && <WhatsAppChat />}
       <PWAEnhancements />
       <CookieConsent />
     </>

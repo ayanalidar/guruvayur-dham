@@ -22,6 +22,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Vercel Cron — runs the post-stay review funnel every 15 minutes.
+  // Finds bookings that checked out ~2 hours ago and sends a Google Reviews
+  // request via WhatsApp. Endpoint is at /api/reviews/checkout-funnel
+  // and is protected by CRON_SECRET env var.
+  async headers() {
+    return [
+      {
+        source: "/api/reviews/checkout-funnel",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

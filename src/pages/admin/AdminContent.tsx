@@ -29,6 +29,7 @@ const CATEGORIES = [
   { key: "gallery", label: "Gallery Section" },
   { key: "darshan", label: "Plan Your Darshan" },
   { key: "login", label: "Login Page" },
+  { key: "reviews", label: "Reviews Funnel" },
   { key: "footer", label: "Footer" },
 ];
 

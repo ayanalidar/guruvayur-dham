@@ -100,6 +100,11 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "login.bgImage", value: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop", category: "login", label: "Login Page Background Image (left panel, desktop)" },
   { key: "login.logo", value: "/logo-large.png", category: "login", label: "Login Page Logo (top-left + mobile)" },
 
+  /* ----- Reviews / Post-stay funnel ----- */
+  { key: "reviews.googleLink", value: "https://g.page/r/GURUVAYUR_DHAM/review", category: "reviews", label: "Google Reviews Link (sent to guests 2hrs after checkout)" },
+  { key: "reviews.funnelEnabled", value: "true", category: "reviews", label: "Enable Post-Stay Review Funnel (true/false)" },
+  { key: "reviews.funnelHours", value: "2", category: "reviews", label: "Hours after checkout to send review request" },
+
   /* ----- Footer ----- */
   { key: "footer.ctaHeadline", value: "Ready for Divine Comfort, 2 Minutes from the Temple?", category: "footer", label: "Footer CTA Headline" },
   { key: "footer.ctaSubtitle", value: "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, and zero booking fee.", category: "footer", label: "Footer CTA Subtitle" },
