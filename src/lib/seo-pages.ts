@@ -48,7 +48,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Janmashtami",
     title: "Janmashtami in Mathura — Krishna's Birthday Celebration 2026",
     metaDescription:
-      "Celebrate Janmashtami in Mathura — Krishna's birthplace. Book rooms near Krishna Janmabhoomi. Darshan timings, festival schedule, pooja booking, and travel guide for Janmashtami 2026.",
+      "Celebrate Janmashtami in Mathura — Krishna's birthplace. Book rooms near Krishna Janmabhoomi. Darshan timings, pooja booking & travel guide for 2026.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
@@ -113,7 +113,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Holi in Mathura",
     title: "Holi in Mathura — Lathmar Holi, Phoolon ki Holi & Festival Guide 2026",
     metaDescription:
-      "Experience Holi in Mathura — Lathmar Holi in Barsana, Phoolon ki Holi in Vrindavan. Book rooms near Mathura temples. Complete Holi festival guide, dates, and travel tips.",
+      "Experience Holi in Mathura — Lathmar Holi in Barsana, Phoolon ki Holi in Vrindavan. Complete festival guide, dates, travel tips. Book rooms now.",
     heroImage:
       "https://images.unsplash.com/photo-1583077783049-9c1e9e0f1a3e?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
@@ -179,7 +179,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Diwali in Mathura",
     title: "Diwali in Mathura — Festival of Lights, Dev Deepawali & Temple Celebrations",
     metaDescription:
-      "Celebrate Diwali in Mathura — the city of Krishna. Dev Deepawali on Yamuna ghats, temple illuminations, pooja booking. Book rooms near Mathura temples for Diwali 2026.",
+      "Celebrate Diwali in Mathura — Dev Deepawali on Yamuna ghats, temple illuminations, Govardhan Puja. Book rooms for Diwali 2026. Pooja booking available.",
     heroImage:
       "https://images.unsplash.com/photo-1605021154661-9c7c1c1a1d6e?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
@@ -308,7 +308,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Kartik Purnima",
     title: "Kartik Purnima in Mathura — Dev Deepawali, Yamuna Snan & Temple Guide",
     metaDescription:
-      "Kartik Purnima in Mathura — Dev Deepawali on Yamuna ghats, sacred bath, temple celebrations. Book rooms for the holiest full moon night. Complete guide & pooja booking.",
+      "Kartik Purnima in Mathura — Dev Deepawali on Yamuna ghats, sacred Yamuna bath, temple celebrations. Book rooms for the holiest full moon. Guide & pooja booking.",
     heroImage:
       "https://images.unsplash.com/photo-1605306691369-6c4c3c1c1a8e?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
@@ -375,7 +375,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Near Banke Bihari",
     title: "Hotels Near Banke Bihari Temple Vrindavan — Stay in Mathura (15 min away)",
     metaDescription:
-      "Best hotels near Banke Bihari Temple Vrindavan. Stay at Guruvayur Dham in Mathura — 15 min from Banke Bihari. Clean AC rooms, 24×7 hot water, free parking. Book now.",
+      "Best hotels near Banke Bihari Temple Vrindavan. Guruvayur Dham in Mathura — 15 min away. Clean AC rooms, 24×7 hot water, free parking. Book now.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -441,7 +441,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Near Krishna Janmabhoomi",
     title: "Hotels Near Krishna Janmabhoomi Mathura — Stay 10 Minutes Away",
     metaDescription:
-      "Best hotels near Krishna Janmabhoomi Mathura. Guruvayur Dham — 10 min from Krishna Janmabhoomi temple. AC rooms, 24×7 hot water, free parking. Book direct & save.",
+      "Best hotels near Krishna Janmabhoomi Mathura. Guruvayur Dham — 10 min from temple. AC rooms, 24×7 hot water, free parking. Book direct & save.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -508,7 +508,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Near Dwarkadhish",
     title: "Hotels Near Dwarkadhish Temple Mathura — Stay 8 Minutes Away",
     metaDescription:
-      "Best hotels near Dwarkadhish Temple Mathura. Guruvayur Dham — 8 min from Dwarkadhish temple. AC rooms from ₹1,500/night. 24×7 hot water, free parking. Book direct.",
+      "Best hotels near Dwarkadhish Temple Mathura. Guruvayur Dham — 8 min away. AC rooms from ₹1,500/night, 24×7 hot water, free parking. Book direct.",
     heroImage:
       "https://images.unsplash.com/photo-1623691884827-ec241a91efed?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
