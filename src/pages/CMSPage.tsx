@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   Image as ImageIcon, Upload, Plus, Trash2, Save, X, RefreshCw,
   Flame, BedDouble, GalleryHorizontal, Loader2, Check, ArrowUp, ArrowDown,
+  CalendarDays, Star, HelpCircle, ShieldCheck,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -12,7 +13,7 @@ import { GoldFoilText } from "@/components/site/visuals";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type Tab = "rooms" | "poojas" | "gallery" | "carousel";
+type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges";
 
 export default function CMSPage() {
   const [tab, setTab] = useState<Tab>("rooms");
@@ -32,10 +33,15 @@ export default function CMSPage() {
           {/* Tabs */}
           <div className="mb-6 flex gap-1.5 overflow-x-auto no-scrollbar">
             {[
-              { key: "rooms" as Tab, label: "Rooms & Images", icon: BedDouble },
-              { key: "poojas" as Tab, label: "Pooja Offerings", icon: Flame },
-              { key: "gallery" as Tab, label: "Gallery Photos", icon: ImageIcon },
-              { key: "carousel" as Tab, label: "Hero Carousel", icon: GalleryHorizontal },
+              { key: "rooms" as Tab, label: "Rooms", icon: BedDouble },
+              { key: "poojas" as Tab, label: "Poojas", icon: Flame },
+              { key: "gallery" as Tab, label: "Gallery", icon: ImageIcon },
+              { key: "carousel" as Tab, label: "Carousel", icon: GalleryHorizontal },
+              { key: "features" as Tab, label: "Why Us", icon: Check },
+              { key: "events" as Tab, label: "Events", icon: CalendarDays },
+              { key: "testimonials" as Tab, label: "Reviews", icon: Star },
+              { key: "faqs" as Tab, label: "FAQs", icon: HelpCircle },
+              { key: "trustBadges" as Tab, label: "Badges", icon: ShieldCheck },
             ].map((t) => (
               <button
                 key={t.key}
@@ -56,6 +62,11 @@ export default function CMSPage() {
           {tab === "poojas" && <PoojaCMS />}
           {tab === "gallery" && <GalleryCMS />}
           {tab === "carousel" && <CarouselCMS />}
+          {tab === "features" && <GenericCMS type="features" title="Why Choose Us" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "title", label: "Title" }, { key: "text", label: "Description", textarea: true }]} />}
+          {tab === "events" && <GenericCMS type="events" title="Events & Festivals" fields={[{ key: "name", label: "Event Name" }, { key: "date", label: "Date Display" }, { key: "highlight", label: "Highlight" }, { key: "image", label: "Image URL", image: true }, { key: "description", label: "Description", textarea: true }]} />}
+          {tab === "testimonials" && <GenericCMS type="testimonials" title="Testimonials" fields={[{ key: "name", label: "Guest Name" }, { key: "city", label: "City" }, { key: "rating", label: "Rating (1-5)" }, { key: "room", label: "Room (optional)" }, { key: "text", label: "Review Text", textarea: true }]} />}
+          {tab === "faqs" && <GenericCMS type="faqs" title="FAQs" fields={[{ key: "question", label: "Question" }, { key: "answer", label: "Answer", textarea: true }]} />}
+          {tab === "trustBadges" && <GenericCMS type="trustBadges" title="Trust Badges" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "text", label: "Badge Text" }]} />}
         </div>
       </section>
     </div>
@@ -484,6 +495,160 @@ function CarouselCMS() {
             <GalleryHorizontal className="mx-auto h-8 w-8 text-ivory/30" />
             <p className="mt-2 text-sm text-ivory/50">No carousel slides yet. Click "Add Slide" to create one.</p>
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============ GENERIC CMS (for features, events, testimonials, faqs, trustBadges) ============ */
+interface CMSField {
+  key: string;
+  label: string;
+  textarea?: boolean;
+  image?: boolean;
+}
+
+function GenericCMS({ type, title, fields }: { type: string; title: string; fields: CMSField[] }) {
+  const [items, setItems] = useState<any[]>([]);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newItem, setNewItem] = useState<Record<string, string>>({});
+
+  const load = () => {
+    fetch(`/api/cms?type=${type}`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => setItems(j.data || []));
+  };
+  useEffect(() => { load(); }, [type]);
+
+  const addItem = async () => {
+    const data: any = { ...newItem, sortOrder: items.length };
+    if (newItem.rating) data.rating = parseInt(newItem.rating);
+    await fetch("/api/cms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, data }),
+    });
+    toast.success(`${title} item added`);
+    setShowAdd(false);
+    setNewItem({});
+    load();
+  };
+
+  const deleteItem = async (id: string) => {
+    if (!confirm("Delete this item?")) return;
+    await fetch(`/api/cms?type=${type}&id=${id}`, { method: "DELETE" });
+    toast.success("Deleted");
+    load();
+  };
+
+  const updateField = async (id: string, field: string, value: any) => {
+    const data: any = { [field]: field === "rating" ? parseInt(value) : value };
+    await fetch("/api/cms", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, id, data }),
+    });
+    toast.success(`${field} updated`);
+    load();
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">{title}</h2>
+          <p className="mt-1 text-sm text-ivory/60">Add, edit, or delete {title.toLowerCase()}. Changes appear on the website instantly.</p>
+        </div>
+        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+          <Plus className="h-4 w-4" /> Add
+        </button>
+      </div>
+
+      {/* Add form */}
+      {showAdd && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+          <div className="card-luxe p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {fields.map((f) => (
+                <div key={f.key} className={f.textarea ? "sm:col-span-2" : ""}>
+                  <label className="text-[10px] uppercase tracking-wider text-ivory/50">{f.label}</label>
+                  {f.textarea ? (
+                    <textarea
+                      value={newItem[f.key] || ""}
+                      onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+                      rows={3}
+                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none"
+                      placeholder={f.label}
+                    />
+                  ) : f.image ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <input
+                        value={newItem[f.key] || ""}
+                        onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+                        className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
+                        placeholder="Image URL or upload"
+                      />
+                      <ImageUploader label="Upload" onUpload={(url) => setNewItem({ ...newItem, [f.key]: url })} />
+                    </div>
+                  ) : (
+                    <input
+                      value={newItem[f.key] || ""}
+                      onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                      placeholder={f.label}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={addItem} className="btn-luxe text-xs">Add Item</button>
+              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Items list */}
+      <div className="mt-6 space-y-3">
+        {items.map((item, idx) => (
+          <div key={item.id} className="card-luxe p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                {/* Show image if exists */}
+                {item.image && (
+                  <img src={item.image} alt="" className="mb-2 h-16 w-24 rounded-lg object-cover photo-cinematic" />
+                )}
+                {/* Inline editable fields */}
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {fields.map((f) => (
+                    <EditableField
+                      key={f.key}
+                      label={f.label}
+                      value={String(item[f.key] || "")}
+                      onSave={(v) => updateField(item.id, f.key, v)}
+                    />
+                  ))}
+                </div>
+                {/* Image upload for image fields */}
+                {fields.some(f => f.image) && (
+                  <div className="mt-2">
+                    <ImageUploader label="Change Image" onUpload={(url) => updateField(item.id, "image", url)} />
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => deleteItem(item.id)}
+                className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <p className="py-8 text-center text-sm text-ivory/50">No {title.toLowerCase()} yet. Click "Add" to create one.</p>
         )}
       </div>
     </div>
