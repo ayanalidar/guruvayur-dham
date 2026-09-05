@@ -45,8 +45,8 @@ dev.log
 server.log
 *.log
 
-# upload temp
-upload/
+# upload temp (local file uploads — keep dir out of git, but keep the API route)
+/public/uploads/
 
 # zscripts (sandbox specific)
 .zscripts/
