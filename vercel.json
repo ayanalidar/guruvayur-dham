@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/reviews/checkout-funnel",
-      "schedule": "*/15 * * * *"
+      "schedule": "30 7 * * *"
     }
   ]
 }
