@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest) {
   if (!template || !Array.isArray(recipients)) {
     return NextResponse.json({ error: "template and recipients[] required" }, { status: 400 });
   }
-  const results = [];
+  const results: Array<{ id: string; recipient: string; status: string }> = [];
   for (const r of recipients) {
     const notif = await db.notification.create({
       data: {
@@ -53,7 +53,7 @@ export async function PUT(req: NextRequest) {
         sentAt: new Date(),
       },
     });
-    results.push(notif);
+    results.push({ id: notif.id, recipient: notif.recipient, status: notif.status });
   }
   return NextResponse.json({ sent: results.length, notifications: results });
 }

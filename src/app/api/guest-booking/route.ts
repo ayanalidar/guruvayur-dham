@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign } from "@/lib/pricing";
+import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
 
 /**
  * POST /api/guest-booking
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
   // ===== 4. APPLY COUPON =====
   let couponDiscount = 0;
-  let couponResult = null;
+  let couponResult: CouponResult | null = null;
   if (couponCode) {
     couponResult = await validateCoupon(couponCode, finalAmount);
     if (couponResult.valid) {

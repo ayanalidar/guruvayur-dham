@@ -72,6 +72,7 @@ export const authOptions: NextAuthOptions = {
           data: {
             name: user.name || "Guest",
             email: user.email,
+            phone: `oauth-${Date.now()}`, // placeholder; OAuth users may add phone later
             tags: "OAUTH_USER",
           },
         });

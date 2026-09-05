@@ -96,7 +96,7 @@ export function useWebVitals() {
 
     // ===== FID (First Input Delay) =====
     const fidObserver = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
+      for (const entry of list.getEntries() as PerformanceEventTiming[]) {
         const fid = entry.processingStart - entry.startTime;
         reportMetric({ name: "FID", value: fid });
       }

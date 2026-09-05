@@ -177,6 +177,7 @@ function FilterGroup({
 }
 
 function RoomCard({ room, liveAvailable, onView }: { room: Room; liveAvailable?: number; onView: () => void }) {
+  const { navigate } = useHashRoute();
   const waMsg = `Namaskaram! I'd like to enquire about the "${room.name}" at Guruvayur Dham (${formatINR(room.price)}/night). Please share availability.`;
   const available = liveAvailable !== undefined && liveAvailable > 0;
   const soldOut = liveAvailable === 0;

@@ -9,6 +9,7 @@ import { FAQS, waLink } from "@/lib/site-data";
 import { useContent, useCMSList, mapFAQ, type FAQEntry } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export default function FAQPage() {
   const { get } = useContent();
@@ -27,8 +28,20 @@ export default function FAQPage() {
   const titlePre = titleParts.length > 1 ? titleParts[0] + "," : title;
   const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join(",").trim() : "";
 
+  // JSON-LD FAQPage schema — rich Google search results
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <div className="animate-page-reveal">
+      <JsonLd id="faq-page" data={faqSchema} />
       <PageHeader
         eyebrow={eyebrow}
         icon={HelpCircle}

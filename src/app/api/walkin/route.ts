@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   // This is what makes walk-in bookings mark the room occupied on Booking.com, MakeMyTrip, etc.
   const channels = await db.channelPartner.findMany({ where: { connected: true } });
 
-  const syncResults = [];
+  const syncResults: Array<{ channel: string; name: string; success: boolean; logId: string }> = [];
   for (const ch of channels) {
     // Simulate calling each channel partner's API
     await new Promise((r) => setTimeout(r, 150 + Math.random() * 200));

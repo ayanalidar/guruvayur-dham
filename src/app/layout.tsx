@@ -119,7 +119,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
+  // Primary business schema (Hotel / LodgingBusiness) — server-rendered so
+  // Google rich-results can pick it up without running client JS.
+  const hotelSchema = {
     "@context": "https://schema.org",
     "@type": "Hotel",
     "@id": `${siteUrl}/#hotel`,
@@ -153,6 +155,40 @@ export default function RootLayout({
     checkoutTime: "11:00",
   };
 
+  // WebSite schema — helps Google show sitelinks search box etc.
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    url: siteUrl,
+    name: "Guruvayur Dham",
+    publisher: { "@id": `${siteUrl}/#hotel` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/#/blog?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  // Organization schema — for knowledge panel
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: "Guruvayur Dham",
+    url: siteUrl,
+    logo: `${siteUrl}/logo-large.png`,
+    email: "stay@guruvayurdham.com",
+    telephone: "+91-90908-20208",
+    address: { "@id": `${siteUrl}/#hotel` },
+    sameAs: [
+      "https://facebook.com/guruvayurdham",
+      "https://instagram.com/guruvayurdham",
+      "https://youtube.com/@guruvayurdham",
+      "https://twitter.com/guruvayurdham",
+    ],
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -172,7 +208,15 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(hotelSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
       </head>
       <body

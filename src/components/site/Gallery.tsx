@@ -1,17 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ZoomIn, X } from "lucide-react";
 import { GALLERY_IMAGES, GALLERY_TABS, type GalleryTab } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
 
+// Shape returned by /api/gallery
+type GalleryImageRow = {
+  id: string;
+  tab: string;
+  src: string;
+  alt: string;
+  caption: string;
+  span: string | null;
+  sortOrder: number;
+};
+
 export default function Gallery() {
+  const { get } = useContent();
   const [tab, setTab] = useState<GalleryTab>("Rooms");
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [cmsImages, setCmsImages] = useState<GalleryImageRow[] | null>(null);
 
-  const filtered = GALLERY_IMAGES.filter((g) => g.tab === tab);
+  // Fetch gallery images from CMS once
+  useEffect(() => {
+    let active = true;
+    fetch("/api/gallery", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => {
+        if (active && Array.isArray(j.images) && j.images.length > 0) {
+          setCmsImages(j.images);
+        } else if (active) {
+          setCmsImages(null); // fall back to hardcoded
+        }
+      })
+      .catch(() => active && setCmsImages(null));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Use CMS images if available; else fall back to hardcoded
+  const images = cmsImages
+    ? cmsImages.map((g) => ({
+        tab: g.tab as GalleryTab,
+        src: g.src,
+        alt: g.alt,
+        caption: g.caption,
+        span: (g.span || undefined) as "tall" | "wide" | undefined,
+      }))
+    : GALLERY_IMAGES;
+
+  // Derive tabs from the actual images present (so CMS-added tabs show up)
+  const tabs = Array.from(new Set(images.map((g) => g.tab)));
+  const activeTabs = tabs.length > 0 ? tabs : GALLERY_TABS;
+  const safeTab = activeTabs.includes(tab) ? tab : activeTabs[0];
+  const filtered = images.filter((g) => g.tab === safeTab);
+
+  const eyebrow = get("gallery.eyebrow", "Photo Gallery");
+  const title = get("gallery.title", "Step Inside Guruvayur Dham");
+  const subtitle = get(
+    "gallery.subtitle",
+    "Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town · every photo tells the story of a pilgrim's day."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 2 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
 
   return (
     <section
@@ -20,25 +79,25 @@ export default function Gallery() {
     >
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="section-eyebrow">Photo Gallery</span>
+          <span className="section-eyebrow">{eyebrow}</span>
           <h2 className="section-title mt-4">
-            Step Inside <span className="text-gradient-saffron">Guruvayur Dham</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Browse our rooms, the temple, our facilities, and the surrounding
-            Guruvayur town · every photo tells the story of a pilgrim's day.
+            {subtitle}
           </p>
         </div>
 
         {/* Tabs */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-          {GALLERY_TABS.map((t) => (
+          {activeTabs.map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={cn(
                 "rounded-full px-5 py-2 text-sm font-semibold transition-all",
-                tab === t
+                safeTab === t
                   ? "bg-saffron text-white shadow-warm"
                   : "bg-card text-foreground/70 hover:bg-saffron/10 hover:text-saffron-dark"
               )}
@@ -53,7 +112,7 @@ export default function Gallery() {
           <AnimatePresence mode="popLayout">
             {filtered.map((img, i) => (
               <motion.button
-                key={`${tab}-${i}`}
+                key={`${safeTab}-${i}`}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

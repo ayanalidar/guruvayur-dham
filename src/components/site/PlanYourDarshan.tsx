@@ -3,7 +3,17 @@
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { DARSHAN_CARDS } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 import { getIcon } from "./icon-map";
+
+type DarshanCard = {
+  icon: string;
+  title: string;
+  text: string;
+  cta: string;
+  href: string;
+  accent: "saffron" | "maroon" | "gold";
+};
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id.replace("#", ""));
@@ -20,24 +30,53 @@ const accentMap: Record<string, string> = {
 };
 
 export default function PlanYourDarshan() {
+  const { get } = useContent();
+
+  // Cards: stored as a JSON-stringified content block "darshan.cards".
+  // Falls back to hardcoded DARSHAN_CARDS if missing or parse fails.
+  const raw = get("darshan.cards", "");
+  let cards: DarshanCard[] = DARSHAN_CARDS as DarshanCard[];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as DarshanCard[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        cards = parsed;
+      }
+    } catch {
+      // ignore parse errors, use fallback
+    }
+  }
+
+  const eyebrow = get("darshan.eyebrow", "Plan Your Darshan");
+  const title = get("darshan.title", "Everything You Need for a Blessed Visit");
+  const subtitle = get(
+    "darshan.subtitle",
+    "From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" for a ");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + " for a " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts[1] : "";
+
   return (
     <section className="relative overflow-hidden bg-muted/40 py-20 lg:py-24">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="section-eyebrow">Plan Your Darshan</span>
+          <span className="section-eyebrow">{eyebrow}</span>
           <h2 className="section-title mt-4">
-            Everything You Need for a{" "}
-            <span className="text-gradient-saffron">Blessed Visit</span>
+            {titlePre}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            From darshan timings to festival calendars · we've put together the
-            essential resources every Guruvayur pilgrim needs.
+            {subtitle}
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {DARSHAN_CARDS.map((card, i) => {
+          {cards.map((card, i) => {
             const Icon = getIcon(card.icon);
+            const accentClass = accentMap[card.accent] || accentMap.saffron;
             return (
               <motion.button
                 key={i}
@@ -51,12 +90,12 @@ export default function PlanYourDarshan() {
               >
                 {/* Top gradient bar */}
                 <div
-                  className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${accentMap[card.accent]}`}
+                  className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${accentClass}`}
                 />
 
                 <div className="flex items-start justify-between">
                   <span
-                    className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${accentMap[card.accent]} text-white shadow-warm transition-transform duration-300 group-hover:scale-110`}
+                    className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${accentClass} text-white shadow-warm transition-transform duration-300 group-hover:scale-110`}
                   >
                     <Icon className="h-7 w-7" />
                   </span>

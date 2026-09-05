@@ -4,8 +4,40 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Clock, Gift, ChevronRight, Sparkles, Flame } from "lucide-react";
 import { POOJAS, formatINR, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, type Pooja } from "@/lib/use-cms";
+
+// Map CMS Pooja row to the shape site-data.ts exports
+function mapPooja(p: Pooja) {
+  return {
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    duration: p.duration,
+    description: p.description,
+    prasadam: p.prasadam,
+    image: p.image,
+    significance: p.significance,
+  };
+}
 
 export default function PoojaSection() {
+  const { get } = useContent();
+  // Poojas: prefer CMS, fall back to hardcoded POOJAS
+  const cmsPoojas = useCMSList<Pooja>("poojas", []);
+  const poojas = cmsPoojas.length > 0 ? cmsPoojas.map(mapPooja) : POOJAS;
+
+  const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
+  const title = get("pooja.title", "Guruvayur Pooja Booking — Palpayasam, Thulabharam & More");
+  const subtitle = get(
+    "pooja.subtitle",
+    "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room."
+  );
+
+  // Split title on em-dash so the second half gets the gradient
+  const titleParts = title.split("—");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "— " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("—").trim() : "";
+
   return (
     <section
       id="pooja"
@@ -20,17 +52,14 @@ export default function PoojaSection() {
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center">
           <span className="section-eyebrow">
-            <Sparkles className="h-3.5 w-3.5" /> Pooja &amp; Offerings
+            <Sparkles className="h-3.5 w-3.5" /> {eyebrow}
           </span>
           <h2 className="section-title mt-4">
-            Guruvayur Pooja Booking —{" "}
-            <span className="text-gradient-saffron">Palpayasam, Thulabharam &amp; More</span>
+            {titlePre}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Book any temple pooja through Guruvayur Dham at the{" "}
-            <strong className="text-foreground">official temple rate</strong> · zero
-            commission, zero waiting in queue. Our team coordinates with the temple
-            tantri on your behalf and ensures prasadam reaches your room.
+            {subtitle}
           </p>
         </div>
 
@@ -55,13 +84,13 @@ export default function PoojaSection() {
 
         {/* Cards grid */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {POOJAS.map((pooja, i) => {
+          {poojas.map((pooja, i) => {
             const waMsg = `Namaskaram! I'd like to book the "${pooja.name}" pooja (${formatINR(
               pooja.price
             )}) at Guruvayur Temple through Guruvayur Dham. Please share next available date.`;
             return (
               <motion.article
-                key={pooja.id}
+                key={pooja.id || i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}

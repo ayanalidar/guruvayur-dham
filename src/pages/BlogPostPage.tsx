@@ -5,7 +5,9 @@ import { Clock, ChevronRight, ArrowLeft, Calendar, BookOpen, MessageCircle } fro
 import { BLOG_POSTS, waLink, type BlogPost } from "@/lib/site-data";
 import { useCMSList, mapBlogPost, type BlogPostItem } from "@/lib/use-cms";
 import { useHashRoute } from "@/lib/router";
+import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export default function BlogPostPage({ slug }: { slug: string }) {
   const { navigate } = useHashRoute();
@@ -19,8 +21,31 @@ export default function BlogPostPage({ slug }: { slug: string }) {
   };
   const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
+  // JSON-LD Article schema — Google rich results for articles
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.image,
+    datePublished: post.date,
+    dateModified: post.date,
+    articleSection: post.category,
+    author: { "@type": "Organization", name: "Guruvayur Dham" },
+    publisher: {
+      "@type": "Organization",
+      name: "Guruvayur Dham",
+      logo: { "@type": "ImageObject", url: "https://www.guruvayurdham.com/logo-large.png" },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.guruvayurdham.com/#/blog/${post.slug}`,
+    },
+  };
+
   return (
     <div className="animate-page-reveal">
+      <JsonLd id="blog-post" data={articleSchema} />
       {/* Breadcrumbs */}
       <section className="bg-ink-gradient pt-28 pb-6 lg:pt-36">
         <div className="container-x">

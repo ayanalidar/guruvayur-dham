@@ -6,6 +6,7 @@ import { EVENTS, waLink } from "@/lib/site-data";
 import { useContent, useCMSList, mapEvent, type EventItem } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
+import { JsonLd } from "@/components/site/JsonLd";
 
 export default function EventsPage() {
   const { get } = useContent();
@@ -24,8 +25,35 @@ export default function EventsPage() {
   const titleHighlight = titleParts.length > 3 ? titleParts.slice(-2).join(" ") : "";
   const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
 
+  // JSON-LD Event schema — one entry per upcoming event
+  const eventSchema = {
+    "@context": "https://schema.org",
+    "@graph": events.map((ev) => ({
+      "@type": "Event",
+      name: ev.name,
+      description: ev.description,
+      startDate: ev.dateISO || ev.date,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: "Guruvayur Temple",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "East Nada, Guruvayur",
+          addressLocality: "Guruvayur",
+          addressRegion: "Kerala",
+          addressCountry: "IN",
+        },
+      },
+      image: ev.image,
+      organizer: { "@type": "Organization", name: "Guruvayur Devaswom Board" },
+    })),
+  };
+
   return (
     <div className="animate-page-reveal">
+      <JsonLd id="events-page" data={eventSchema} />
       <PageHeader
         eyebrow={eyebrow}
         icon={CalendarDays}

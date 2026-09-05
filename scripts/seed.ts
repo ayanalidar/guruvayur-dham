@@ -98,6 +98,28 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   /* ----- Footer ----- */
   { key: "footer.ctaHeadline", value: "Ready for Divine Comfort, 2 Minutes from the Temple?", category: "footer", label: "Footer CTA Headline" },
   { key: "footer.ctaSubtitle", value: "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, and zero booking fee.", category: "footer", label: "Footer CTA Subtitle" },
+  { key: "footer.tagline", value: "Luxury Pilgrim Stay", category: "footer", label: "Footer Brand Tagline (under logo)" },
+  { key: "footer.socials.facebook", value: "https://facebook.com/guruvayurdham", category: "footer", label: "Facebook URL" },
+  { key: "footer.socials.instagram", value: "https://instagram.com/guruvayurdham", category: "footer", label: "Instagram URL" },
+  { key: "footer.socials.youtube", value: "https://youtube.com/@guruvayurdham", category: "footer", label: "YouTube URL" },
+  { key: "footer.socials.twitter", value: "https://twitter.com/guruvayurdham", category: "footer", label: "Twitter URL" },
+  { key: "footer.madeBy", value: "Made And Maintained By:", category: "footer", label: "Made By (label)" },
+  { key: "footer.madeByLink", value: "GuardianX", category: "footer", label: "Made By (link text)" },
+
+  /* ----- Plan Your Darshan section ----- */
+  { key: "darshan.eyebrow", value: "Plan Your Darshan", category: "darshan", label: "Darshan Eyebrow" },
+  { key: "darshan.title", value: "Everything You Need for a Blessed Visit", category: "darshan", label: "Darshan Title" },
+  { key: "darshan.subtitle", value: "From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs.", category: "darshan", label: "Darshan Subtitle" },
+  {
+    key: "darshan.cards",
+    category: "darshan",
+    label: "Darshan Cards (JSON array — icon/title/text/cta/href/accent)",
+    value: JSON.stringify([
+      { icon: "Clock", title: "Temple Timings", text: "Nirmalyam 3:00 AM • Seeveli 7:30 AM • General Darshan till 9:15 PM", cta: "View Full Schedule", href: "#blog", accent: "saffron" },
+      { icon: "Flame", title: "Pooja Booking", text: "Palpayasam, Thulabharam, Choroonu, Archana & more. Book in 60 seconds.", cta: "Book a Pooja", href: "#pooja", accent: "maroon" },
+      { icon: "CalendarDays", title: "Festival Calendar", text: "Utsavam, Ashtami Rohini, Ekadasi · plan your visit around major festivals.", cta: "View Festivals", href: "#events", accent: "gold" },
+    ]),
+  },
 ];
 
 async function seed() {

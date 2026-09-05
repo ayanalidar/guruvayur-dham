@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Star, Users, Maximize, Bed, MessageCircle, Eye, Check, X } from "lucide-react";
@@ -11,6 +11,8 @@ import {
   type Room,
   type RoomType,
 } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
+import { fetchRooms } from "@/lib/api-client";
 import {
   Dialog,
   DialogContent,
@@ -34,36 +36,93 @@ const OCCUPANCY_FILTERS = [
   { label: "4+", min: 4 },
 ];
 
+// Convert a CMS room row to the Room shape site-data.ts exports
+function mapRoom(r: any): Room {
+  return {
+    slug: r.slug,
+    name: r.name,
+    type: r.type as RoomType,
+    price: r.price,
+    originalPrice: r.originalPrice ?? undefined,
+    rating: r.rating,
+    reviews: r.reviews,
+    capacity: r.capacity,
+    size: r.size,
+    bedType: r.bedType,
+    image: r.image,
+    gallery: Array.isArray(r.gallery) ? r.gallery : (() => {
+      try { return JSON.parse(r.gallery || "[]"); } catch { return []; }
+    })(),
+    badge: r.badge ?? undefined,
+    description: r.description,
+    shortDesc: r.shortDesc,
+    amenities: Array.isArray(r.amenities) ? r.amenities : (() => {
+      try { return JSON.parse(r.amenities || "[]"); } catch { return []; }
+    })(),
+  };
+}
+
 export default function Rooms() {
+  const { get } = useContent();
   const [typeF, setTypeF] = useState<RoomType | "All">("All");
   const [budgetF, setBudgetF] = useState(0);
   const [occF, setOccF] = useState(0);
   const [selected, setSelected] = useState<Room | null>(null);
+  const [cmsRooms, setCmsRooms] = useState<Room[] | null>(null);
+
+  // Fetch rooms from /api/rooms (Prisma-backed) once
+  useEffect(() => {
+    let active = true;
+    fetchRooms()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          setCmsRooms(data.map(mapRoom));
+        } else {
+          setCmsRooms(null); // fall back to hardcoded
+        }
+      })
+      .catch(() => active && setCmsRooms(null));
+    return () => { active = false; };
+  }, []);
+
+  // Use CMS rooms if available; else fall back to hardcoded
+  const allRooms = cmsRooms || ROOMS;
 
   const filtered = useMemo(() => {
-    return ROOMS.filter((r) => {
+    return allRooms.filter((r) => {
       if (typeF !== "All" && r.type !== typeF) return false;
       const b = BUDGET_FILTERS[budgetF];
       if (r.price < b.min || r.price > b.max) return false;
       if (r.capacity < OCCUPANCY_FILTERS[occF].min) return false;
       return true;
     });
-  }, [typeF, budgetF, occF]);
+  }, [allRooms, typeF, budgetF, occF]);
+
+  const eyebrow = get("rooms.eyebrow", "Rooms & Suites");
+  const title = get("rooms.title", "Clean Rooms in Guruvayur — Walkable to Temple");
+  const subtitle = get(
+    "rooms.subtitle",
+    "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada. Filter to find your perfect match."
+  );
+
+  // Split title on em-dash so the second half gets the gradient
+  const titleParts = title.split("—");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "— " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("—").trim() : "";
 
   return (
     <section id="rooms" className="relative scroll-mt-20 bg-background py-20 lg:py-28">
       <div className="container-x">
         {/* Header */}
         <div className="mx-auto max-w-3xl text-center">
-          <span className="section-eyebrow">Rooms &amp; Suites</span>
+          <span className="section-eyebrow">{eyebrow}</span>
           <h2 className="section-title mt-4">
-            Clean Rooms in Guruvayur —{" "}
-            <span className="text-gradient-saffron">Walkable to Temple</span>
+            {titlePre}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            From ₹700/night budget rooms to ₹3,500 family suites · every option is
-            sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute
-            walk from East Nada. Filter to find your perfect match.
+            {subtitle}
           </p>
         </div>
 
@@ -98,7 +157,7 @@ export default function Rooms() {
         {/* Results count */}
         <p className="mb-6 text-sm text-muted-foreground">
           Showing <span className="font-semibold text-foreground">{filtered.length}</span>{" "}
-          of {ROOMS.length} rooms
+          of {allRooms.length} rooms
         </p>
 
         {/* Cards grid */}

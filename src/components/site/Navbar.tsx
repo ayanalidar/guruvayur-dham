@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { useHashRoute, isRouteActive } from "@/lib/router";
+import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/site/ThemeToggle";
 import LanguageSelector from "@/components/site/LanguageSelector";
@@ -13,8 +14,14 @@ import { useI18n } from "@/lib/i18n/context";
 export default function Navbar() {
   const { path, navigate } = useHashRoute();
   const { t } = useI18n();
+  const { get } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  // Brand info from CMS (with hardcoded fallbacks)
+  const brandName = get("site.name", "Guruvayur Dham");
+  const brandTagline = get("footer.tagline", "Luxury Pilgrim Stay");
+  const phoneRaw = get("contact.phoneRaw", SITE.phoneRaw);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -50,10 +57,10 @@ export default function Navbar() {
           />
           <span className="flex flex-col leading-none">
             <span className="font-serif text-lg font-medium tracking-wide text-ivory">
-              Guruvayur Dham
+              {brandName}
             </span>
             <span className="mt-0.5 text-[10px] uppercase tracking-[0.3em] text-champagne/70">
-              Luxury Pilgrim Stay
+              {brandTagline}
             </span>
           </span>
         </button>
@@ -108,7 +115,7 @@ export default function Navbar() {
             <Settings className="h-4 w-4" />
           </button>
           <a
-            href={`tel:${SITE.phoneRaw}`}
+            href={`tel:${phoneRaw}`}
             className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:border-champagne/50 hover:bg-champagne/5"
             aria-label="Call us"
           >
@@ -118,7 +125,7 @@ export default function Navbar() {
             onClick={() => go("/book")}
             className="rounded-full border border-champagne/30 bg-champagne/10 px-4 py-2.5 text-sm font-semibold text-champagne transition-all hover:bg-champagne/20"
           >
-            Instant Book
+            {t("nav.instantBook") || "Instant Book"}
           </button>
         </div>
 
@@ -163,16 +170,16 @@ export default function Navbar() {
               })}
               <li className="mt-3 grid grid-cols-2 gap-2">
                 <a
-                  href={`tel:${SITE.phoneRaw}`}
+                  href={`tel:${phoneRaw}`}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-champagne/20 px-4 py-3 text-sm font-semibold text-champagne"
                 >
-                  <Phone className="h-4 w-4" /> Call
+                  <Phone className="h-4 w-4" /> {t("cta.call") || "Call"}
                 </a>
                 <button
                   onClick={() => go("/book")}
                   className="btn-luxe"
                 >
-                  <CreditCard className="h-4 w-4" /> Instant Book
+                  <CreditCard className="h-4 w-4" /> {t("nav.instantBook") || "Instant Book"}
                 </button>
               </li>
               <li>
@@ -180,7 +187,7 @@ export default function Navbar() {
                   onClick={() => go("/login")}
                   className="mt-2 block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
                 >
-                  <User className="mr-2 inline h-4 w-4" /> Guest Login
+                  <User className="mr-2 inline h-4 w-4" /> {t("nav.login") || "Guest Login"}
                 </button>
               </li>
               <li>
@@ -188,7 +195,7 @@ export default function Navbar() {
                   onClick={() => go("/admin")}
                   className="block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
                 >
-                  <Settings className="mr-2 inline h-4 w-4" /> Admin Dashboard
+                  <Settings className="mr-2 inline h-4 w-4" /> {t("nav.admin") || "Admin Dashboard"}
                 </button>
               </li>
             </ul>
