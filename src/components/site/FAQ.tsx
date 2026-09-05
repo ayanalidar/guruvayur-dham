@@ -15,7 +15,16 @@ export default function FAQ() {
   const { get } = useContent();
   // FAQs: prefer CMS, fall back to hardcoded FAQS
   const cmsFAQs = useCMSList<FAQEntry>("faqs", []);
-  const faqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+  // Deduplicate by question text in case the DB has duplicates (e.g. from
+  // running the seed script multiple times). Keeps the first occurrence.
+  const rawFaqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+  const seen = new Set<string>();
+  const faqs = rawFaqs.filter((f) => {
+    const key = f.q.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   const eyebrow = get("faq.eyebrow", "Frequently Asked");
   const title = get("faq.title", "Your Guruvayur Questions, Answered");

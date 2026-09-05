@@ -28,6 +28,11 @@ export default function Hero() {
     "hero.subheadline",
     "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp confirmation."
   );
+  // Hero background image — editable via CMS content block "hero.bgImage"
+  const bgImage = get(
+    "hero.bgImage",
+    "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"
+  );
 
   return (
     <section
@@ -38,7 +43,7 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 animate-kenburns">
           <Image
-            src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"
+            src={bgImage}
             alt="Guruvayur Temple gopuram at golden hour"
             fill
             priority

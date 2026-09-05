@@ -35,6 +35,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "hero.headline", value: "Stay 2 Minutes from", category: "hero", label: "Hero Headline (first part)" },
   { key: "hero.headlineHighlight", value: "Guruvayur Temple", category: "hero", label: "Hero Headline Highlight (gold foil)" },
   { key: "hero.subheadline", value: "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.", category: "hero", label: "Hero Subheadline" },
+  { key: "hero.bgImage", value: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop", category: "hero", label: "Hero Background Image URL (full-width, ≥1920×1280)" },
 
   /* ----- Why Choose Us section ----- */
   { key: "whyChooseUs.eyebrow", value: "Why Pilgrims Choose Us", category: "whyChooseUs", label: "Why Us Eyebrow" },

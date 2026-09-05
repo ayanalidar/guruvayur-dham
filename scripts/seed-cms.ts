@@ -9,6 +9,16 @@ const db = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding CMS content to Neon...");
 
+  // Clear existing CMS data first to prevent duplicates from multiple seed runs
+  console.log("  Clearing existing CMS rows...");
+  await db.feature.deleteMany({});
+  await db.event.deleteMany({});
+  await db.testimonial.deleteMany({});
+  await db.fAQItem.deleteMany({});
+  await db.trustBadge.deleteMany({});
+  await db.pooja.deleteMany({});
+  console.log("  ✓ Cleared");
+
   // Features (Why Choose Us)
   for (let i = 0; i < WHY_CHOOSE_US.length; i++) {
     const f = WHY_CHOOSE_US[i];

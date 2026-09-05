@@ -160,7 +160,7 @@ export default function Footer() {
                   onClick={() => navigate(l.route)}
                   className="text-ivory/60 transition-colors hover:text-champagne"
                 >
-                  {t(`nav.${l.label.toLowerCase()}`) || l.label}
+                  {l.label}
                 </button>
               </li>
             ))}

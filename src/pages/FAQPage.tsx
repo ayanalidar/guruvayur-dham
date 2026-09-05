@@ -14,7 +14,16 @@ import { JsonLd } from "@/components/site/JsonLd";
 export default function FAQPage() {
   const { get } = useContent();
   const cmsFAQs = useCMSList<FAQEntry>("faqs", []);
-  const faqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+  // Deduplicate by question text (defensive — DB may have duplicates from
+  // multiple seed runs)
+  const rawFaqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+  const seen = new Set<string>();
+  const faqs = rawFaqs.filter((f) => {
+    const key = f.q.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   const eyebrow = get("faq.eyebrow", "Frequently Asked");
   const title = get("faq.title", "Your Guruvayur Questions, Answered");

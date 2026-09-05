@@ -128,11 +128,53 @@ function RoomsCMS() {
   const [rooms, setRooms] = useState<any[]>([]);
   const [editing, setEditing] = useState<string | null>(null);
   const [editImage, setEditImage] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+  const [newRoom, setNewRoom] = useState({
+    name: "",
+    slug: "",
+    type: "AC",
+    price: 1500,
+    capacity: 2,
+    size: "200 sq.ft",
+    bedType: "1 Double Bed",
+    shortDesc: "",
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+    totalUnits: 1,
+  });
 
   const load = () => {
     fetch("/api/rooms", { cache: "no-store" }).then(r => r.json()).then(j => setRooms(j.rooms || []));
   };
   useEffect(() => { load(); }, []);
+
+  const slugify = (s: string) =>
+    s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+
+  const addRoom = async () => {
+    if (!newRoom.name || !newRoom.slug) {
+      toast.error("Name and slug are required");
+      return;
+    }
+    const r = await fetch("/api/rooms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...newRoom, slug: slugify(newRoom.slug) }),
+    });
+    const j = await r.json();
+    if (j.error) {
+      toast.error(j.error);
+      return;
+    }
+    toast.success("Room added — visible on website now");
+    setShowAdd(false);
+    setNewRoom({
+      name: "", slug: "", type: "AC", price: 1500, capacity: 2,
+      size: "200 sq.ft", bedType: "1 Double Bed", shortDesc: "",
+      image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+      totalUnits: 1,
+    });
+    load();
+  };
 
   const saveImage = async (id: string) => {
     await fetch("/api/rooms", {
@@ -147,8 +189,129 @@ function RoomsCMS() {
 
   return (
     <div>
-      <h2 className="font-serif text-2xl text-ivory">Room Images & Details</h2>
-      <p className="mt-1 text-sm text-ivory/60">Upload real room photos. Changes appear on the website instantly.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Room Images & Details</h2>
+          <p className="mt-1 text-sm text-ivory/60">Upload real room photos, edit details, or add new rooms. Changes appear on the website instantly.</p>
+        </div>
+        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+          <Plus className="h-4 w-4" /> Add Room
+        </button>
+      </div>
+
+      {/* Add room form */}
+      {showAdd && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+          <div className="card-luxe p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Room Name</label>
+                <input
+                  value={newRoom.name}
+                  onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value, slug: slugify(e.target.value) })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="Deluxe AC Room"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Slug (URL)</label>
+                <input
+                  value={newRoom.slug}
+                  onChange={(e) => setNewRoom({ ...newRoom, slug: slugify(e.target.value) })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none font-mono"
+                  placeholder="deluxe-ac-room"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Type</label>
+                <select
+                  value={newRoom.type}
+                  onChange={(e) => setNewRoom({ ...newRoom, type: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
+                >
+                  <option value="AC">AC</option>
+                  <option value="Non-AC">Non-AC</option>
+                  <option value="Family">Family</option>
+                  <option value="Deluxe">Deluxe</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Price (₹/night)</label>
+                <input
+                  type="number"
+                  value={newRoom.price}
+                  onChange={(e) => setNewRoom({ ...newRoom, price: parseInt(e.target.value) || 0 })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="1500"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Capacity (guests)</label>
+                <input
+                  type="number"
+                  value={newRoom.capacity}
+                  onChange={(e) => setNewRoom({ ...newRoom, capacity: parseInt(e.target.value) || 2 })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="2"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Total Units</label>
+                <input
+                  type="number"
+                  value={newRoom.totalUnits}
+                  onChange={(e) => setNewRoom({ ...newRoom, totalUnits: parseInt(e.target.value) || 1 })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="1"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Size</label>
+                <input
+                  value={newRoom.size}
+                  onChange={(e) => setNewRoom({ ...newRoom, size: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="200 sq.ft"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Bed Type</label>
+                <input
+                  value={newRoom.bedType}
+                  onChange={(e) => setNewRoom({ ...newRoom, bedType: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="1 Double Bed"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Short Description</label>
+                <input
+                  value={newRoom.shortDesc}
+                  onChange={(e) => setNewRoom({ ...newRoom, shortDesc: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="Queen bed, AC, courtyard-facing, quiet."
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Image URL</label>
+                <div className="mt-1 flex items-center gap-2">
+                  <input
+                    value={newRoom.image}
+                    onChange={(e) => setNewRoom({ ...newRoom, image: e.target.value })}
+                    className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
+                    placeholder="https://..."
+                  />
+                  <ImageUploader label="Upload" onUpload={(url) => setNewRoom({ ...newRoom, image: url })} />
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={addRoom} className="btn-luxe text-xs">Create Room</button>
+              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <div className="mt-6 space-y-4">
         {rooms.map((room) => (
