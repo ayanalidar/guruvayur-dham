@@ -28,6 +28,7 @@ const CATEGORIES = [
   { key: "faq", label: "FAQ Section" },
   { key: "gallery", label: "Gallery Section" },
   { key: "darshan", label: "Plan Your Darshan" },
+  { key: "login", label: "Login Page" },
   { key: "footer", label: "Footer" },
 ];
 

@@ -96,6 +96,10 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "gallery.title", value: "Step Inside Guruvayur Dham", category: "gallery", label: "Gallery Title" },
   { key: "gallery.subtitle", value: "A glimpse of our rooms, temple views, and the warm hospitality that awaits every pilgrim.", category: "gallery", label: "Gallery Subtitle" },
 
+  /* ----- Login page ----- */
+  { key: "login.bgImage", value: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop", category: "login", label: "Login Page Background Image (left panel, desktop)" },
+  { key: "login.logo", value: "/logo-large.png", category: "login", label: "Login Page Logo (top-left + mobile)" },
+
   /* ----- Footer ----- */
   { key: "footer.ctaHeadline", value: "Ready for Divine Comfort, 2 Minutes from the Temple?", category: "footer", label: "Footer CTA Headline" },
   { key: "footer.ctaSubtitle", value: "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, and zero booking fee.", category: "footer", label: "Footer CTA Subtitle" },

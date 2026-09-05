@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import { SITE, waLink } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import OAuthButtons from "@/components/site/OAuthButtons";
 import { useI18n } from "@/lib/i18n/context";
@@ -22,6 +23,15 @@ type GuestMode = "login" | "register" | "otp";
 export default function LoginPage() {
   const { navigate } = useHashRoute();
   const { t } = useI18n();
+  const { get } = useContent();
+  // Login page images — editable via CMS content blocks
+  const loginBgImage = get(
+    "login.bgImage",
+    "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop"
+  );
+  const loginLogo = get("login.logo", "/logo-large.png");
+  const brandName = get("site.name", "Guruvayur Dham");
+  const brandTagline = get("footer.tagline", "Luxury Pilgrim Stay");
   const [tab, setTab] = useState<Tab>("guest");
   const [staffMode, setStaffMode] = useState<StaffMode>("pin");
   const [guestMode, setGuestMode] = useState<GuestMode>("login");
@@ -158,7 +168,7 @@ export default function LoginPage() {
         {/* Background */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop"
+            src={loginBgImage}
             alt="Guruvayur Dham"
             className="h-full w-full object-cover photo-cinematic-strong"
           />
@@ -171,13 +181,13 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <img
-              src="/logo-large.png"
-              alt="Guruvayur Dham"
+              src={loginLogo}
+              alt={brandName}
               className="h-12 w-12 object-contain"
             />
             <div>
-              <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
+              <p className="font-serif text-xl font-medium text-ivory">{brandName}</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">{brandTagline}</p>
             </div>
           </div>
 
@@ -246,13 +256,13 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
             <img
-              src="/logo-large.png"
-              alt="Guruvayur Dham"
+              src={loginLogo}
+              alt={brandName}
               className="h-12 w-12 object-contain"
             />
             <div>
-              <p className="font-serif text-xl font-medium text-ivory">Guruvayur Dham</p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">Luxury Pilgrim Stay</p>
+              <p className="font-serif text-xl font-medium text-ivory">{brandName}</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">{brandTagline}</p>
             </div>
           </div>
 
