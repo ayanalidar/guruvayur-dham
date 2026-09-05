@@ -9,22 +9,39 @@ import {
 } from "@/components/ui/accordion";
 import { HelpCircle, MessageCircle } from "lucide-react";
 import { FAQS, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, mapFAQ, type FAQEntry } from "@/lib/use-cms";
 
 export default function FAQ() {
+  const { get } = useContent();
+  // FAQs: prefer CMS, fall back to hardcoded FAQS
+  const cmsFAQs = useCMSList<FAQEntry>("faqs", []);
+  const faqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+
+  const eyebrow = get("faq.eyebrow", "Frequently Asked");
+  const title = get("faq.title", "Your Guruvayur Questions, Answered");
+  const subtitle = get(
+    "faq.subtitle",
+    `We've compiled the ${faqs.length} questions our guests ask most often. Can't find your answer? WhatsApp us any time · we reply within minutes.`
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(",");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "," : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join(",").trim() : "";
+
   return (
     <section id="faq" className="relative scroll-mt-20 bg-background py-20 lg:py-28">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="section-eyebrow">
-            <HelpCircle className="h-3.5 w-3.5" /> Frequently Asked
+            <HelpCircle className="h-3.5 w-3.5" /> {eyebrow}
           </span>
           <h2 className="section-title mt-4">
-            Your Guruvayur Questions,{" "}
-            <span className="text-gradient-saffron">Answered</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            We've compiled the 14 questions our guests ask most often. Can't find your
-            answer? WhatsApp us any time · we reply within minutes.
+            {subtitle}
           </p>
         </div>
 
@@ -36,7 +53,7 @@ export default function FAQ() {
           className="mx-auto mt-10 max-w-3xl"
         >
           <Accordion type="single" collapsible className="space-y-3">
-            {FAQS.map((faq, i) => (
+            {faqs.map((faq, i) => (
               <AccordionItem
                 key={i}
                 value={`item-${i}`}

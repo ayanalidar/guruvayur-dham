@@ -17,6 +17,7 @@ import {
   Send,
 } from "lucide-react";
 import { SITE, CONTACT_REASONS, waLink } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 import {
   Form,
   FormControl,
@@ -49,52 +50,20 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const INFO_CARDS = [
-  {
-    icon: Phone,
-    label: "Call Us",
-    value: SITE.phone,
-    href: `tel:${SITE.phoneRaw}`,
-    sub: "Mon–Sun, 24×7",
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: SITE.phone,
-    href: waLink("Namaskaram! I'd like to enquire about rooms at Guruvayur Dham."),
-    sub: "Fastest reply · under 5 min",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: SITE.email,
-    href: `mailto:${SITE.email}`,
-    sub: "Reply within 4 hours",
-  },
-  {
-    icon: MapPin,
-    label: "Visit",
-    value: SITE.shortAddress,
-    href: SITE.mapLink,
-    sub: "200 m from East Nada gate",
-  },
-  {
-    icon: Clock,
-    label: "Check-in / out",
-    value: `${SITE.checkIn} · ${SITE.checkOut}`,
-    href: "#contact",
-    sub: "Early check-in: ₹200 extra",
-  },
-  {
-    icon: Car,
-    label: "Parking",
-    value: "Free, 25+ vehicles",
-    href: "#contact",
-    sub: "Covered & CCTV-monitored",
-  },
-];
-
 export default function Contact() {
+  const { get } = useContent();
+  const eyebrow = get("contact.eyebrow", "Get in Touch");
+  const title = get("contact.title", "Book Your Stay or Ask Anything");
+  const subtitle = get(
+    "contact.subtitle",
+    "Fill the form below and we'll WhatsApp you back within minutes · or reach us directly through any of the channels here."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 2 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -107,6 +76,64 @@ export default function Contact() {
     },
   });
 
+  // Contact info: prefer content blocks, fall back to SITE.*
+  const phone = get("contact.phone", SITE.phone);
+  const phoneRaw = get("contact.phoneRaw", SITE.phoneRaw);
+  const whatsapp = get("contact.whatsapp", SITE.whatsapp);
+  const email = get("contact.email", SITE.email);
+  const shortAddress = get("contact.shortAddress", SITE.shortAddress);
+  const mapEmbed = get("contact.mapEmbed", SITE.mapEmbed);
+  const mapLink = get("contact.mapLink", SITE.mapLink);
+  const checkInTime = get("contact.checkIn", SITE.checkIn);
+  const checkOutTime = get("contact.checkOut", SITE.checkOut);
+
+  const INFO_CARDS = [
+    {
+      icon: Phone,
+      label: "Call Us",
+      value: phone,
+      href: `tel:${phoneRaw}`,
+      sub: "Mon–Sun, 24×7",
+    },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: phone,
+      href: `https://wa.me/${whatsapp}?text=${encodeURIComponent(
+        "Namaskaram! I'd like to enquire about rooms at Guruvayur Dham."
+      )}`,
+      sub: "Fastest reply · under 5 min",
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: email,
+      href: `mailto:${email}`,
+      sub: "Reply within 4 hours",
+    },
+    {
+      icon: MapPin,
+      label: "Visit",
+      value: shortAddress,
+      href: mapLink,
+      sub: "200 m from East Nada gate",
+    },
+    {
+      icon: Clock,
+      label: "Check-in / out",
+      value: `${checkInTime} · ${checkOutTime}`,
+      href: "#contact",
+      sub: "Early check-in: ₹200 extra",
+    },
+    {
+      icon: Car,
+      label: "Parking",
+      value: "Free, 25+ vehicles",
+      href: "#contact",
+      sub: "Covered & CCTV-monitored",
+    },
+  ];
+
   const onSubmit = (data: FormData) => {
     const msg = `*New Enquiry from Guruvayur Dham Website*
 
@@ -118,7 +145,7 @@ export default function Contact() {
 
 *Message:*
 ${data.message}`;
-    window.open(waLink(msg), "_blank");
+    window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
     toast.success("Opening WhatsApp with your message…", {
       description: "We'll reply within 5 minutes during business hours.",
     });
@@ -129,14 +156,13 @@ ${data.message}`;
     <section id="contact" className="relative scroll-mt-20 bg-muted/30 py-20 lg:py-28">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="section-eyebrow">Get in Touch</span>
+          <span className="section-eyebrow">{eyebrow}</span>
           <h2 className="section-title mt-4">
-            Book Your Stay or{" "}
-            <span className="text-gradient-saffron">Ask Anything</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Fill the form below and we'll WhatsApp you back within minutes · or reach
-            us directly through any of the channels here.
+            {subtitle}
           </p>
         </div>
 
@@ -150,7 +176,7 @@ ${data.message}`;
         >
           <div className="relative h-72 w-full sm:h-96">
             <iframe
-              src={SITE.mapEmbed}
+              src={mapEmbed}
               width="100%"
               height="100%"
               style={{ border: 0 }}

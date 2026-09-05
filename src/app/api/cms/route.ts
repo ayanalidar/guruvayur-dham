@@ -58,6 +58,18 @@ export async function POST(req: NextRequest) {
     case "trustBadges": item = await db.trustBadge.create({ data }); break;
     case "poojas": item = await db.pooja.create({ data }); break;
     case "carousel": item = await db.carouselSlide.create({ data }); break;
+    case "blogPosts":
+      // `content` is an array of paragraphs from the editor; serialize to JSON string
+      item = await db.blogPost.create({
+        data: {
+          ...data,
+          content: Array.isArray(data.content)
+            ? JSON.stringify(data.content)
+            : (typeof data.content === "string" ? data.content : "[]"),
+          published: data.published !== undefined ? data.published : true,
+        },
+      });
+      break;
     default: return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   }
   return NextResponse.json({ item, message: "Added" });
@@ -78,6 +90,17 @@ export async function PATCH(req: NextRequest) {
     case "trustBadges": item = await db.trustBadge.update({ where: { id }, data }); break;
     case "poojas": item = await db.pooja.update({ where: { id }, data }); break;
     case "carousel": item = await db.carouselSlide.update({ where: { id }, data }); break;
+    case "blogPosts":
+      item = await db.blogPost.update({
+        where: { id },
+        data: {
+          ...data,
+          content: Array.isArray(data.content)
+            ? JSON.stringify(data.content)
+            : (data.content !== undefined ? data.content : undefined),
+        },
+      });
+      break;
     default: return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   }
   return NextResponse.json({ item, message: "Updated" });
@@ -99,6 +122,7 @@ export async function DELETE(req: NextRequest) {
     case "trustBadges": await db.trustBadge.delete({ where: { id } }); break;
     case "poojas": await db.pooja.delete({ where: { id } }); break;
     case "carousel": await db.carouselSlide.delete({ where: { id } }); break;
+    case "blogPosts": await db.blogPost.delete({ where: { id } }); break;
     default: return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   }
   return NextResponse.json({ deleted: true });

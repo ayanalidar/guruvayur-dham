@@ -3,9 +3,27 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { WHY_CHOOSE_US } from "@/lib/site-data";
+import { useContent, useCMSList, mapFeature, type Feature } from "@/lib/use-cms";
 import { getIcon } from "./icon-map";
 
 export default function WhyChooseUs() {
+  const { get } = useContent();
+  // Feature cards: prefer CMS, fall back to hardcoded
+  const cmsFeatures = useCMSList<Feature>("features", []);
+  const features = cmsFeatures.length > 0 ? cmsFeatures.map(mapFeature) : WHY_CHOOSE_US;
+
+  const eyebrow = get("whyChooseUs.eyebrow", "Why Pilgrims Choose Us");
+  const title = get("whyChooseUs.title", "More Than a Stay · A Pilgrim Companion");
+  const subtitle = get(
+    "whyChooseUs.subtitle",
+    "We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+  );
+
+  // Split title so the second half gets the gradient style (preserve original visual)
+  const titleParts = title.split("·");
+  const titlePre = titleParts.length > 1 ? titleParts[0].trim() : title;
+  const titleHighlight = titleParts.length > 1 ? "· " + titleParts.slice(1).join("·").trim() : "";
+
   return (
     <section id="why-us" className="relative overflow-hidden bg-background py-20 lg:py-28">
       {/* decorative pattern */}
@@ -14,21 +32,19 @@ export default function WhyChooseUs() {
       <div className="container-x relative">
         {/* Section header */}
         <div className="mx-auto max-w-2xl text-center">
-          <span className="section-eyebrow">Why Pilgrims Choose Us</span>
+          <span className="section-eyebrow">{eyebrow}</span>
           <h2 className="section-title mt-4">
-            More Than a Stay · A{" "}
-            <span className="text-gradient-saffron">Pilgrim Companion</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot
-            water to free temple darshan guidance · is designed around what a pilgrim
-            actually needs.
+            {subtitle}
           </p>
         </div>
 
         {/* Cards grid */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {WHY_CHOOSE_US.map((item, i) => {
+          {features.map((item, i) => {
             const Icon = getIcon(item.icon);
             return (
               <motion.article

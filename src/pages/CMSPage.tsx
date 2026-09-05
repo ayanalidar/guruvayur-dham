@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Image as ImageIcon, Upload, Plus, Trash2, Save, X, RefreshCw,
   Flame, BedDouble, GalleryHorizontal, Loader2, Check, ArrowUp, ArrowDown,
-  CalendarDays, Star, HelpCircle, ShieldCheck,
+  CalendarDays, Star, HelpCircle, ShieldCheck, BookOpen,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -13,7 +13,7 @@ import { GoldFoilText } from "@/components/site/visuals";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges";
+type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts";
 
 export default function CMSPage() {
   const [tab, setTab] = useState<Tab>("rooms");
@@ -42,6 +42,7 @@ export default function CMSPage() {
               { key: "testimonials" as Tab, label: "Reviews", icon: Star },
               { key: "faqs" as Tab, label: "FAQs", icon: HelpCircle },
               { key: "trustBadges" as Tab, label: "Badges", icon: ShieldCheck },
+              { key: "blogPosts" as Tab, label: "Blog", icon: BookOpen },
             ].map((t) => (
               <button
                 key={t.key}
@@ -67,6 +68,7 @@ export default function CMSPage() {
           {tab === "testimonials" && <GenericCMS type="testimonials" title="Testimonials" fields={[{ key: "name", label: "Guest Name" }, { key: "city", label: "City" }, { key: "rating", label: "Rating (1-5)" }, { key: "room", label: "Room (optional)" }, { key: "text", label: "Review Text", textarea: true }]} />}
           {tab === "faqs" && <GenericCMS type="faqs" title="FAQs" fields={[{ key: "question", label: "Question" }, { key: "answer", label: "Answer", textarea: true }]} />}
           {tab === "trustBadges" && <GenericCMS type="trustBadges" title="Trust Badges" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "text", label: "Badge Text" }]} />}
+          {tab === "blogPosts" && <BlogCMS />}
         </div>
       </section>
     </div>
@@ -649,6 +651,259 @@ function GenericCMS({ type, title, fields }: { type: string; title: string; fiel
         ))}
         {items.length === 0 && (
           <p className="py-8 text-center text-sm text-ivory/50">No {title.toLowerCase()} yet. Click "Add" to create one.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============ BLOG CMS (with multi-paragraph content editor) ============ */
+function BlogCMS() {
+  const [items, setItems] = useState<any[]>([]);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newPost, setNewPost] = useState({
+    slug: "",
+    title: "",
+    excerpt: "",
+    category: "Guide",
+    readTime: "5 min",
+    date: new Date().toISOString().slice(0, 10),
+    image: "",
+    content: "",
+  });
+
+  const load = () => {
+    fetch(`/api/cms?type=blogPosts`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => setItems(j.data || []));
+  };
+  useEffect(() => { load(); }, []);
+
+  const slugify = (s: string) =>
+    s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+
+  const addPost = async () => {
+    if (!newPost.title || !newPost.slug) {
+      toast.error("Title and slug are required");
+      return;
+    }
+    const paragraphs = newPost.content
+      .split(/\n\n+/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+    await fetch("/api/cms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "blogPosts",
+        data: {
+          slug: slugify(newPost.slug),
+          title: newPost.title,
+          excerpt: newPost.excerpt,
+          category: newPost.category,
+          readTime: newPost.readTime,
+          date: newPost.date,
+          image: newPost.image,
+          content: JSON.stringify(paragraphs),
+          published: true,
+        },
+      }),
+    });
+    toast.success("Blog post added");
+    setShowAdd(false);
+    setNewPost({
+      slug: "", title: "", excerpt: "", category: "Guide",
+      readTime: "5 min", date: new Date().toISOString().slice(0, 10),
+      image: "", content: "",
+    });
+    load();
+  };
+
+  const deletePost = async (id: string) => {
+    if (!confirm("Delete this blog post?")) return;
+    await fetch(`/api/cms?type=blogPosts&id=${id}`, { method: "DELETE" });
+    toast.success("Deleted");
+    load();
+  };
+
+  const updateField = async (id: string, field: string, value: any) => {
+    let v: any = value;
+    if (field === "content") {
+      const paragraphs = value.split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean);
+      v = JSON.stringify(paragraphs);
+    }
+    await fetch("/api/cms", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "blogPosts", id, data: { [field]: v } }),
+    });
+    toast.success(`${field} updated`);
+    load();
+  };
+
+  const contentToText = (c: string): string => {
+    if (!c) return "";
+    try {
+      const parsed = JSON.parse(c);
+      if (Array.isArray(parsed)) return parsed.join("\n\n");
+      return String(c);
+    } catch {
+      return String(c);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Blog Posts</h2>
+          <p className="mt-1 text-sm text-ivory/60">
+            Add articles · separate paragraphs with a blank line. Changes go live instantly.
+          </p>
+        </div>
+        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+          <Plus className="h-4 w-4" /> New Post
+        </button>
+      </div>
+
+      {showAdd && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+          <div className="card-luxe p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Title</label>
+                <input
+                  value={newPost.title}
+                  onChange={(e) => setNewPost({ ...newPost, title: e.target.value, slug: slugify(e.target.value) })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="Complete Guide to Guruvayur Darshan Timings"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Slug</label>
+                <input
+                  value={newPost.slug}
+                  onChange={(e) => setNewPost({ ...newPost, slug: slugify(e.target.value) })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none font-mono"
+                  placeholder="complete-guide-darshan-timings"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Category</label>
+                <input
+                  value={newPost.category}
+                  onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="Guide / Festival / Travel Tips"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Read Time</label>
+                <input
+                  value={newPost.readTime}
+                  onChange={(e) => setNewPost({ ...newPost, readTime: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="5 min"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Date</label>
+                <input
+                  type="date"
+                  value={newPost.date}
+                  onChange={(e) => setNewPost({ ...newPost, date: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Image URL</label>
+                <div className="mt-1 flex items-center gap-2">
+                  <input
+                    value={newPost.image}
+                    onChange={(e) => setNewPost({ ...newPost, image: e.target.value })}
+                    className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
+                    placeholder="https://..."
+                  />
+                  <ImageUploader label="Upload" onUpload={(url) => setNewPost({ ...newPost, image: url })} />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Excerpt (1–2 sentences shown in card)</label>
+                <textarea
+                  value={newPost.excerpt}
+                  onChange={(e) => setNewPost({ ...newPost, excerpt: e.target.value })}
+                  rows={2}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none"
+                  placeholder="Short summary that appears on the blog card..."
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">
+                  Article Body · separate paragraphs with a blank line
+                </label>
+                <textarea
+                  value={newPost.content}
+                  onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                  rows={8}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none font-mono"
+                  placeholder={"First paragraph...\n\nSecond paragraph...\n\nThird paragraph..."}
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={addPost} className="btn-luxe text-xs">Publish Post</button>
+              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      <div className="mt-6 space-y-3">
+        {items.map((post) => (
+          <div key={post.id} className="card-luxe p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                {post.image && (
+                  <img src={post.image} alt="" className="mb-2 h-16 w-24 rounded-lg object-cover photo-cinematic" />
+                )}
+                <p className="font-mono text-[10px] text-ivory/40">/{post.slug}</p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  <EditableField label="Title" value={post.title} onSave={(v) => updateField(post.id, "title", v)} />
+                  <EditableField label="Category" value={post.category} onSave={(v) => updateField(post.id, "category", v)} />
+                  <EditableField label="Date" value={post.date} onSave={(v) => updateField(post.id, "date", v)} />
+                  <EditableField label="Read Time" value={post.readTime} onSave={(v) => updateField(post.id, "readTime", v)} />
+                  <div className="sm:col-span-2">
+                    <EditableField label="Excerpt" value={post.excerpt} onSave={(v) => updateField(post.id, "excerpt", v)} />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] uppercase tracking-wider text-ivory/50">
+                      Article Body · separate paragraphs with a blank line
+                    </label>
+                    <textarea
+                      defaultValue={contentToText(post.content)}
+                      onBlur={(e) => updateField(post.id, "content", e.target.value)}
+                      rows={6}
+                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none font-mono"
+                    />
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <ImageUploader label="Change Image" onUpload={(url) => updateField(post.id, "image", url)} />
+                </div>
+              </div>
+              <button
+                onClick={() => deletePost(post.id)}
+                className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <p className="py-8 text-center text-sm text-ivory/50">
+            No blog posts yet. Click "New Post" to create one — your existing posts will fall back to hardcoded samples.
+          </p>
         )}
       </div>
     </div>

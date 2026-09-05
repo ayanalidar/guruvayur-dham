@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
 import { TRUST_BADGES, SITE, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, mapTrustBadge, type TrustBadgeItem } from "@/lib/use-cms";
 import { getIcon } from "./icon-map";
 
 const scrollTo = (id: string) => {
@@ -15,6 +16,19 @@ const scrollTo = (id: string) => {
 };
 
 export default function Hero() {
+  const { get } = useContent();
+  // Trust badges: prefer CMS, fall back to hardcoded TRUST_BADGES
+  const cmsBadges = useCMSList<TrustBadgeItem>("trustBadges", []);
+  const badges = cmsBadges.length > 0 ? cmsBadges.map(mapTrustBadge) : TRUST_BADGES;
+
+  const eyebrow = get("hero.eyebrow", "Stay · Pooja · Blessing · Since 1998");
+  const headlinePre = get("hero.headline", "Stay 2 Minutes from");
+  const headlineHighlight = get("hero.headlineHighlight", "Guruvayur Temple");
+  const subheadline = get(
+    "hero.subheadline",
+    "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp confirmation."
+  );
+
   return (
     <section
       id="home"
@@ -54,7 +68,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-light backdrop-blur-sm"
           >
             <span className="h-2 w-2 rounded-full bg-saffron animate-diya" />
-            Nritya · Pooja · Stay · Since 1998
+            {eyebrow}
           </motion.div>
 
           {/* Headline */}
@@ -64,8 +78,8 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl lg:text-6xl"
           >
-            Stay 2 Minutes from{" "}
-            <span className="text-gradient-gold">Guruvayur Temple</span>.
+            {headlinePre}{" "}
+            <span className="text-gradient-gold">{headlineHighlight}</span>.
             Feel the Divine Comfort.
           </motion.h1>
 
@@ -76,9 +90,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-5 max-w-2xl text-lg leading-relaxed text-cream/90 sm:text-xl"
           >
-            Clean AC &amp; non-AC rooms, 24×7 hot water, family-friendly. Walk to East
-            Nada for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant
-            WhatsApp confirmation.
+            {subheadline}
           </motion.p>
 
           {/* CTAs */}
@@ -112,7 +124,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3"
           >
-            {TRUST_BADGES.map((b, i) => {
+            {badges.map((b, i) => {
               const Icon = getIcon(b.icon);
               return (
                 <div

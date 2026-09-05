@@ -17,6 +17,7 @@ const CHANNELS = [
 ];
 
 const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; label: string }> = [
+  /* ----- Site settings ----- */
   { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
   { key: "site.tagline", value: "Stay 2 Minutes from the Divine", category: "site", label: "Tagline" },
   { key: "site.phone", value: "+91 98765 43210", category: "site", label: "Phone" },
@@ -28,25 +29,73 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "site.reviewCount", value: "847", category: "site", label: "Review Count" },
   { key: "site.totalRooms", value: "52", category: "site", label: "Total Rooms" },
   { key: "site.distanceToTemple", value: "2 min walk to East Nada", category: "site", label: "Distance to Temple" },
+
+  /* ----- Hero section ----- */
   { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 1998", category: "hero", label: "Hero Eyebrow" },
-  { key: "hero.headline", value: "Stay 2 Minutes from Guruvayur Temple", category: "hero", label: "Hero Headline" },
+  { key: "hero.headline", value: "Stay 2 Minutes from", category: "hero", label: "Hero Headline (first part)" },
   { key: "hero.headlineHighlight", value: "Guruvayur Temple", category: "hero", label: "Hero Headline Highlight (gold foil)" },
   { key: "hero.subheadline", value: "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.", category: "hero", label: "Hero Subheadline" },
+
+  /* ----- Why Choose Us section ----- */
   { key: "whyChooseUs.eyebrow", value: "Why Pilgrims Choose Us", category: "whyChooseUs", label: "Why Us Eyebrow" },
-  { key: "whyChooseUs.title", value: "More Than a Stay — A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
+  { key: "whyChooseUs.title", value: "More Than a Stay · A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
   { key: "whyChooseUs.subtitle", value: "We've hosted over 50,000 devotees since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
+
+  /* ----- Rooms section ----- */
   { key: "rooms.eyebrow", value: "Rooms & Suites", category: "rooms", label: "Rooms Eyebrow" },
   { key: "rooms.title", value: "Cinematic Dark-Luxe Rooms", category: "rooms", label: "Rooms Title" },
   { key: "rooms.subtitle", value: "From ₹700/night budget rooms to ₹3,500 family suites — every option is sanitised daily and a 2-minute walk from East Nada.", category: "rooms", label: "Rooms Subtitle" },
+
+  /* ----- Pooja section ----- */
   { key: "pooja.eyebrow", value: "Pooja & Offerings", category: "pooja", label: "Pooja Eyebrow" },
   { key: "pooja.title", value: "Guruvayur Pooja Booking — Palpayasam, Thulabharam & More", category: "pooja", label: "Pooja Title" },
   { key: "pooja.subtitle", value: "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue.", category: "pooja", label: "Pooja Subtitle" },
+
+  /* ----- About section ----- */
   { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
   { key: "about.title", value: "A Family-Run Pilgrim Home Since 1998", category: "about", label: "About Title" },
   { key: "about.story", value: "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Warrier — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 52-room property that has welcomed over 50,000 devotees from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Nirmalya darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple tantri's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Choroonu ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer.", category: "about", label: "About Story" },
+
+  /* ----- Contact section ----- */
   { key: "contact.eyebrow", value: "Get in Touch", category: "contact", label: "Contact Eyebrow" },
   { key: "contact.title", value: "Book Your Stay or Ask Anything", category: "contact", label: "Contact Title" },
   { key: "contact.subtitle", value: "Fill the form below and we'll WhatsApp you back within minutes — or reach us directly through any of the channels here.", category: "contact", label: "Contact Subtitle" },
+  { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Phone Number (display)" },
+  { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Phone Number (tel: link — no spaces)" },
+  { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp Number (country code + number, no +)" },
+  { key: "contact.email", value: "stay@guruvayurdham.com", category: "contact", label: "Email Address" },
+  { key: "contact.shortAddress", value: "Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001", category: "contact", label: "Short Address (for cards)" },
+  { key: "contact.mapEmbed", value: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zMjfCsDI5JzQwLjYiTiA3N8KwNDEnMjQuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin", category: "contact", label: "Google Maps Embed URL" },
+  { key: "contact.mapLink", value: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Natwar+Nagar+Dholi+Pyau+Mathura+281001", category: "contact", label: "Google Maps Link (click-to-open)" },
+  { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in Time" },
+  { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out Time" },
+
+  /* ----- Events section ----- */
+  { key: "events.eyebrow", value: "Festivals & Events", category: "events", label: "Events Eyebrow" },
+  { key: "events.title", value: "Plan Your Visit Around Sacred Festivals", category: "events", label: "Events Title" },
+  { key: "events.subtitle", value: "Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates.", category: "events", label: "Events Subtitle" },
+
+  /* ----- Blog section ----- */
+  { key: "blog.eyebrow", value: "Travel Guide & Blog", category: "blog", label: "Blog Eyebrow" },
+  { key: "blog.title", value: "Guruvayur Pilgrim Knowledge Hub", category: "blog", label: "Blog Title" },
+  { key: "blog.subtitle", value: "Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips.", category: "blog", label: "Blog Subtitle" },
+
+  /* ----- Testimonials section ----- */
+  { key: "testimonials.eyebrow", value: "Guest Stories", category: "testimonials", label: "Testimonials Eyebrow" },
+  { key: "testimonials.title", value: "Loved by 50,000+ Pilgrims", category: "testimonials", label: "Testimonials Title" },
+  { key: "testimonials.subtitle", value: "4.9 ★ average rating across Google, Booking.com & MakeMyTrip from 847+ verified reviews.", category: "testimonials", label: "Testimonials Subtitle" },
+
+  /* ----- FAQ section ----- */
+  { key: "faq.eyebrow", value: "Frequently Asked", category: "faq", label: "FAQ Eyebrow" },
+  { key: "faq.title", value: "Your Guruvayur Questions, Answered", category: "faq", label: "FAQ Title" },
+  { key: "faq.subtitle", value: "We've compiled the most common questions our guests ask. Can't find your answer? WhatsApp us any time · we reply within minutes.", category: "faq", label: "FAQ Subtitle" },
+
+  /* ----- Gallery section ----- */
+  { key: "gallery.eyebrow", value: "Photo Gallery", category: "gallery", label: "Gallery Eyebrow" },
+  { key: "gallery.title", value: "Step Inside Guruvayur Dham", category: "gallery", label: "Gallery Title" },
+  { key: "gallery.subtitle", value: "A glimpse of our rooms, temple views, and the warm hospitality that awaits every pilgrim.", category: "gallery", label: "Gallery Subtitle" },
+
+  /* ----- Footer ----- */
   { key: "footer.ctaHeadline", value: "Ready for Divine Comfort, 2 Minutes from the Temple?", category: "footer", label: "Footer CTA Headline" },
   { key: "footer.ctaSubtitle", value: "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, and zero booking fee.", category: "footer", label: "Footer CTA Subtitle" },
 ];

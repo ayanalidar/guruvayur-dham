@@ -3,17 +3,34 @@
 import { motion } from "framer-motion";
 import { CalendarDays, MapPin, ChevronRight, MessageCircle, CalendarClock } from "lucide-react";
 import { EVENTS, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, mapEvent, type EventItem } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
 export default function EventsPage() {
+  const { get } = useContent();
+  const cmsEvents = useCMSList<EventItem>("events", []);
+  const events = cmsEvents.length > 0 ? cmsEvents.map(mapEvent) : EVENTS;
+
+  const eyebrow = get("events.eyebrow", "Festivals & Events");
+  const title = get("events.title", "Plan Your Visit Around Sacred Festivals");
+  const subtitle = get(
+    "events.subtitle",
+    "Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 3 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
+
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Festivals & Events"
+        eyebrow={eyebrow}
         icon={CalendarDays}
-        title={<>Plan Your Visit Around <GoldFoilText>Sacred Festivals</GoldFoilText></>}
-        subtitle="Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates."
+        title={<>{titlePre} {titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "Events" }]}
       />
 
@@ -21,10 +38,10 @@ export default function EventsPage() {
         <OmWatermark className="left-[-6rem] top-32" size="20rem" />
         <div className="container-x relative">
           <div className="grid gap-7 lg:grid-cols-2">
-            {EVENTS.map((ev, i) => {
+            {events.map((ev, i) => {
               const waMsg = `Namaskaram! I'd like to book a room at Guruvayur Dham for ${ev.name} (${ev.date}). Please share availability and rates.`;
               return (
-                <TiltCard key={ev.name} maxTilt={4} className="h-full">
+                <TiltCard key={ev.name + i} maxTilt={4} className="h-full">
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}

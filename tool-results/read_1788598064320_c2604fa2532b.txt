@@ -1,0 +1,657 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useEffect, useState, useRef } from "react";
+     4→     4→import { motion } from "framer-motion";
+     5→     5→import {
+     6→     6→  Image as ImageIcon, Upload, Plus, Trash2, Save, X, RefreshCw,
+     7→     7→  Flame, BedDouble, GalleryHorizontal, Loader2, Check, ArrowUp, ArrowDown,
+     8→     8→  CalendarDays, Star, HelpCircle, ShieldCheck,
+     9→     9→} from "lucide-react";
+    10→    10→import { useHashRoute } from "@/lib/router";
+    11→    11→import PageHeader from "@/components/site/PageHeader";
+    12→    12→import { GoldFoilText } from "@/components/site/visuals";
+    13→    13→import { toast } from "sonner";
+    14→    14→import { cn } from "@/lib/utils";
+    15→    15→
+    16→    16→type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges";
+    17→    17→
+    18→    18→export default function CMSPage() {
+    19→    19→  const [tab, setTab] = useState<Tab>("rooms");
+    20→    20→
+    21→    21→  return (
+    22→    22→    <div className="animate-page-reveal">
+    23→    23→      <PageHeader
+    24→    24→        eyebrow="Content Management"
+    25→    25→        icon={ImageIcon}
+    26→    26→        title={<>CMS <GoldFoilText>Editor</GoldFoilText></>}
+    27→    27→        subtitle="Edit room images, pooja offerings, gallery photos, and hero carousel. Upload your own images — all changes go live instantly."
+    28→    28→        crumbs={[{ label: "Home", route: "/" }, { label: "Admin", route: "/admin" }, { label: "CMS" }]}
+    29→    29→      />
+    30→    30→
+    31→    31→      <section className="bg-ink py-12">
+    32→    32→        <div className="container-x">
+    33→    33→          {/* Tabs */}
+    34→    34→          <div className="mb-6 flex gap-1.5 overflow-x-auto no-scrollbar">
+    35→    35→            {[
+    36→    36→              { key: "rooms" as Tab, label: "Rooms", icon: BedDouble },
+    37→    37→              { key: "poojas" as Tab, label: "Poojas", icon: Flame },
+    38→    38→              { key: "gallery" as Tab, label: "Gallery", icon: ImageIcon },
+    39→    39→              { key: "carousel" as Tab, label: "Carousel", icon: GalleryHorizontal },
+    40→    40→              { key: "features" as Tab, label: "Why Us", icon: Check },
+    41→    41→              { key: "events" as Tab, label: "Events", icon: CalendarDays },
+    42→    42→              { key: "testimonials" as Tab, label: "Reviews", icon: Star },
+    43→    43→              { key: "faqs" as Tab, label: "FAQs", icon: HelpCircle },
+    44→    44→              { key: "trustBadges" as Tab, label: "Badges", icon: ShieldCheck },
+    45→    45→            ].map((t) => (
+    46→    46→              <button
+    47→    47→                key={t.key}
+    48→    48→                onClick={() => setTab(t.key)}
+    49→    49→                className={cn(
+    50→    50→                  "flex flex-shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all",
+    51→    51→                  tab === t.key
+    52→    52→                    ? "border border-champagne/30 bg-champagne/15 text-champagne"
+    53→    53→                    : "border border-champagne/10 text-ivory/60 hover:bg-champagne/5"
+    54→    54→                )}
+    55→    55→              >
+    56→    56→                <t.icon className="h-4 w-4" /> {t.label}
+    57→    57→              </button>
+    58→    58→            ))}
+    59→    59→          </div>
+    60→    60→
+    61→    61→          {tab === "rooms" && <RoomsCMS />}
+    62→    62→          {tab === "poojas" && <PoojaCMS />}
+    63→    63→          {tab === "gallery" && <GalleryCMS />}
+    64→    64→          {tab === "carousel" && <CarouselCMS />}
+    65→    65→          {tab === "features" && <GenericCMS type="features" title="Why Choose Us" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "title", label: "Title" }, { key: "text", label: "Description", textarea: true }]} />}
+    66→    66→          {tab === "events" && <GenericCMS type="events" title="Events & Festivals" fields={[{ key: "name", label: "Event Name" }, { key: "date", label: "Date Display" }, { key: "highlight", label: "Highlight" }, { key: "image", label: "Image URL", image: true }, { key: "description", label: "Description", textarea: true }]} />}
+    67→    67→          {tab === "testimonials" && <GenericCMS type="testimonials" title="Testimonials" fields={[{ key: "name", label: "Guest Name" }, { key: "city", label: "City" }, { key: "rating", label: "Rating (1-5)" }, { key: "room", label: "Room (optional)" }, { key: "text", label: "Review Text", textarea: true }]} />}
+    68→    68→          {tab === "faqs" && <GenericCMS type="faqs" title="FAQs" fields={[{ key: "question", label: "Question" }, { key: "answer", label: "Answer", textarea: true }]} />}
+    69→    69→          {tab === "trustBadges" && <GenericCMS type="trustBadges" title="Trust Badges" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "text", label: "Badge Text" }]} />}
+    70→    70→        </div>
+    71→    71→      </section>
+    72→    72→    </div>
+    73→    73→  );
+    74→    74→}
+    75→    75→
+    76→    76→/* ============ IMAGE UPLOADER COMPONENT ============ */
+    77→    77→function ImageUploader({ onUpload, label }: { onUpload: (url: string) => void; label: string }) {
+    78→    78→  const inputRef = useRef<HTMLInputElement>(null);
+    79→    79→  const [uploading, setUploading] = useState(false);
+    80→    80→
+    81→    81→  const handleFile = async (file: File) => {
+    82→    82→    setUploading(true);
+    83→    83→    try {
+    84→    84→      const formData = new FormData();
+    85→    85→      formData.append("file", file);
+    86→    86→      const r = await fetch("/api/upload", { method: "POST", body: formData });
+    87→    87→      const j = await r.json();
+    88→    88→      if (j.error) {
+    89→    89→        toast.error(j.error);
+    90→    90→      } else {
+    91→    91→        onUpload(j.url);
+    92→    92→        toast.success("Image uploaded");
+    93→    93→      }
+    94→    94→    } catch {
+    95→    95→      toast.error("Upload failed");
+    96→    96→    }
+    97→    97→    setUploading(false);
+    98→    98→  };
+    99→    99→
+   100→   100→  return (
+   101→   101→    <div>
+   102→   102→      <input
+   103→   103→        ref={inputRef}
+   104→   104→        type="file"
+   105→   105→        accept="image/jpeg,image/png,image/webp"
+   106→   106→        className="hidden"
+   107→   107→        onChange={(e) => {
+   108→   108→          const file = e.target.files?.[0];
+   109→   109→          if (file) handleFile(file);
+   110→   110→        }}
+   111→   111→      />
+   112→   112→      <button
+   113→   113→        onClick={() => inputRef.current?.click()}
+   114→   114→        disabled={uploading}
+   115→   115→        className="inline-flex items-center gap-2 rounded-lg border border-champagne/20 bg-ink/50 px-3 py-2 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/10 disabled:opacity-40"
+   116→   116→      >
+   117→   117→        {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+   118→   118→        {uploading ? "Uploading…" : label}
+   119→   119→      </button>
+   120→   120→    </div>
+   121→   121→  );
+   122→   122→}
+   123→   123→
+   124→   124→/* ============ ROOMS CMS ============ */
+   125→   125→function RoomsCMS() {
+   126→   126→  const [rooms, setRooms] = useState<any[]>([]);
+   127→   127→  const [editing, setEditing] = useState<string | null>(null);
+   128→   128→  const [editImage, setEditImage] = useState("");
+   129→   129→
+   130→   130→  const load = () => {
+   131→   131→    fetch("/api/rooms", { cache: "no-store" }).then(r => r.json()).then(j => setRooms(j.rooms || []));
+   132→   132→  };
+   133→   133→  useEffect(() => { load(); }, []);
+   134→   134→
+   135→   135→  const saveImage = async (id: string) => {
+   136→   136→    await fetch("/api/rooms", {
+   137→   137→      method: "PATCH",
+   138→   138→      headers: { "Content-Type": "application/json" },
+   139→   139→      body: JSON.stringify({ id, data: { image: editImage } }),
+   140→   140→    });
+   141→   141→    toast.success("Room image updated — live on website now");
+   142→   142→    setEditing(null);
+   143→   143→    load();
+   144→   144→  };
+   145→   145→
+   146→   146→  return (
+   147→   147→    <div>
+   148→   148→      <h2 className="font-serif text-2xl text-ivory">Room Images & Details</h2>
+   149→   149→      <p className="mt-1 text-sm text-ivory/60">Upload real room photos. Changes appear on the website instantly.</p>
+   150→   150→
+   151→   151→      <div className="mt-6 space-y-4">
+   152→   152→        {rooms.map((room) => (
+   153→   153→          <div key={room.id} className="card-luxe overflow-hidden p-4">
+   154→   154→            <div className="flex flex-col gap-4 sm:flex-row">
+   155→   155→              {/* Image */}
+   156→   156→              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl sm:w-48 flex-shrink-0">
+   157→   157→                <img src={editing === room.id ? editImage : room.image} alt={room.name} className="h-full w-full object-cover photo-cinematic" />
+   158→   158→                {editing === room.id && (
+   159→   159→                  <div className="absolute inset-0 grid place-items-center bg-ink/70">
+   160→   160→                    <ImageUploader label="Upload New Image" onUpload={(url) => setEditImage(url)} />
+   161→   161→                  </div>
+   162→   162→                )}
+   163→   163→              </div>
+   164→   164→
+   165→   165→              {/* Details */}
+   166→   166→              <div className="flex-1">
+   167→   167→                <div className="flex items-start justify-between">
+   168→   168→                  <div>
+   169→   169→                    <p className="font-serif text-lg text-ivory">{room.name}</p>
+   170→   170→                    <p className="text-xs text-ivory/50">{room.type} · ₹{room.price}/night · {room.capacity} guests</p>
+   171→   171→                  </div>
+   172→   172→                  {editing === room.id ? (
+   173→   173→                    <div className="flex gap-2">
+   174→   174→                      <ImageUploader label="Change Image" onUpload={(url) => setEditImage(url)} />
+   175→   175→                      <button onClick={() => saveImage(room.id)} className="rounded-full bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-300 hover:bg-green-500/25">
+   176→   176→                        <Save className="h-3.5 w-3.5" /> Save
+   177→   177→                      </button>
+   178→   178→                      <button onClick={() => setEditing(null)} className="rounded-full bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-300">
+   179→   179→                        <X className="h-3.5 w-3.5" />
+   180→   180→                      </button>
+   181→   181→                    </div>
+   182→   182→                  ) : (
+   183→   183→                    <button onClick={() => { setEditing(room.id); setEditImage(room.image); }} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/10">
+   184→   184→                      <Upload className="h-3.5 w-3.5 mr-1 inline" /> Change Image
+   185→   185→                    </button>
+   186→   186→                  )}
+   187→   187→                </div>
+   188→   188→
+   189→   189→                {/* Image URL display */}
+   190→   190→                <div className="mt-2">
+   191→   191→                  <p className="text-[10px] text-ivory/40 break-all">{editing === room.id ? editImage : room.image}</p>
+   192→   192→                </div>
+   193→   193→
+   194→   194→                {/* Editable fields */}
+   195→   195→                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+   196→   196→                  <EditableField label="Name" value={room.name} onSave={(v) => fetch("/api/rooms", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: room.id, data: { name: v } }) }).then(load)} />
+   197→   197→                  <EditableField label="Price (₹)" value={String(room.price)} type="number" onSave={(v) => fetch("/api/rooms", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: room.id, data: { price: parseInt(v) } }) }).then(load)} />
+   198→   198→                  <EditableField label="Short Description" value={room.shortDesc} onSave={(v) => fetch("/api/rooms", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: room.id, data: { shortDesc: v } }) }).then(load)} />
+   199→   199→                  <EditableField label="Total Units" value={String(room.totalUnits)} type="number" onSave={(v) => fetch("/api/rooms", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: room.id, data: { totalUnits: parseInt(v) } }) }).then(load)} />
+   200→   200→                </div>
+   201→   201→              </div>
+   202→   202→            </div>
+   203→   203→          </div>
+   204→   204→        ))}
+   205→   205→      </div>
+   206→   206→    </div>
+   207→   207→  );
+   208→   208→}
+   209→   209→
+   210→   210→function EditableField({ label, value, type = "text", onSave }: { label: string; value: string; type?: string; onSave: (v: string) => void }) {
+   211→   211→  const [editing, setEditing] = useState(false);
+   212→   212→  const [val, setVal] = useState(value);
+   213→   213→
+   214→   214→  return (
+   215→   215→    <div>
+   216→   216→      <label className="text-[10px] uppercase tracking-wider text-ivory/50">{label}</label>
+   217→   217→      {editing ? (
+   218→   218→        <div className="flex gap-1">
+   219→   219→          <input type={type} value={val} onChange={(e) => setVal(e.target.value)} className="flex-1 rounded-lg border border-champagne/15 bg-ink px-2 py-1 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+   220→   220→          <button onClick={() => { onSave(val); setEditing(false); toast.success(`${label} updated`); }} className="rounded bg-green-500/20 px-2 text-xs text-green-300">
+   221→   221→            <Check className="h-3 w-3" />
+   222→   222→          </button>
+   223→   223→          <button onClick={() => { setVal(value); setEditing(false); }} className="rounded bg-red-500/20 px-2 text-xs text-red-300">
+   224→   224→            <X className="h-3 w-3" />
+   225→   225→          </button>
+   226→   226→        </div>
+   227→   227→      ) : (
+   228→   228→        <button onClick={() => setEditing(true)} className="block w-full truncate text-left text-sm text-ivory hover:text-champagne">
+   229→   229→          {value} <span className="text-[10px] text-ivory/30">✎</span>
+   230→   230→        </button>
+   231→   231→      )}
+   232→   232→    </div>
+   233→   233→  );
+   234→   234→}
+   235→   235→
+   236→   236→/* ============ POOJA CMS ============ */
+   237→   237→function PoojaCMS() {
+   238→   238→  const [poojas, setPoojas] = useState<any[]>([]);
+   239→   239→  const [showAdd, setShowAdd] = useState(false);
+   240→   240→  const [newPooja, setNewPooja] = useState({ name: "", price: 51, duration: "15 min", description: "", prasadam: "", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop", significance: "" });
+   241→   241→
+   242→   242→  const load = () => {
+   243→   243→    fetch("/api/poojas-admin", { cache: "no-store" }).then(r => r.json()).then(j => setPoojas(j.poojas || []));
+   244→   244→  };
+   245→   245→  useEffect(() => { load(); }, []);
+   246→   246→
+   247→   247→  const addPooja = async () => {
+   248→   248→    if (!newPooja.name) { toast.error("Name required"); return; }
+   249→   249→    await fetch("/api/poojas-admin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newPooja) });
+   250→   250→    toast.success("Pooja added");
+   251→   251→    setShowAdd(false);
+   252→   252→    setNewPooja({ name: "", price: 51, duration: "15 min", description: "", prasadam: "", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop", significance: "" });
+   253→   253→    load();
+   254→   254→  };
+   255→   255→
+   256→   256→  const deletePooja = async (id: string) => {
+   257→   257→    if (!confirm("Delete this pooja?")) return;
+   258→   258→    await fetch(`/api/poojas-admin?id=${id}`, { method: "DELETE" });
+   259→   259→    toast.success("Pooja deleted");
+   260→   260→    load();
+   261→   261→  };
+   262→   262→
+   263→   263→  const updateField = async (id: string, field: string, value: any) => {
+   264→   264→    await fetch("/api/poojas-admin", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, data: { [field]: value } }) });
+   265→   265→    toast.success(`${field} updated`);
+   266→   266→    load();
+   267→   267→  };
+   268→   268→
+   269→   269→  return (
+   270→   270→    <div>
+   271→   271→      <div className="flex items-center justify-between">
+   272→   272→        <div>
+   273→   273→          <h2 className="font-serif text-2xl text-ivory">Pooja Offerings</h2>
+   274→   274→          <p className="mt-1 text-sm text-ivory/60">Add, edit, or delete poojas. Changes appear on the website instantly.</p>
+   275→   275→        </div>
+   276→   276→        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+   277→   277→          <Plus className="h-4 w-4" /> Add Pooja
+   278→   278→        </button>
+   279→   279→      </div>
+   280→   280→
+   281→   281→      {/* Add form */}
+   282→   282→      {showAdd && (
+   283→   283→        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+   284→   284→          <div className="card-luxe p-5">
+   285→   285→            <div className="grid gap-3 sm:grid-cols-2">
+   286→   286→              <input value={newPooja.name} onChange={(e) => setNewPooja({ ...newPooja, name: e.target.value })} placeholder="Pooja Name *" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   287→   287→              <input type="number" value={newPooja.price} onChange={(e) => setNewPooja({ ...newPooja, price: parseInt(e.target.value) })} placeholder="Price (₹)" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   288→   288→              <input value={newPooja.duration} onChange={(e) => setNewPooja({ ...newPooja, duration: e.target.value })} placeholder="Duration (e.g. 15 min)" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   289→   289→              <input value={newPooja.prasadam} onChange={(e) => setNewPooja({ ...newPooja, prasadam: e.target.value })} placeholder="Prasadam included" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   290→   290→              <textarea value={newPooja.description} onChange={(e) => setNewPooja({ ...newPooja, description: e.target.value })} placeholder="Description" rows={2} className="sm:col-span-2 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none resize-none" />
+   291→   291→              <textarea value={newPooja.significance} onChange={(e) => setNewPooja({ ...newPooja, significance: e.target.value })} placeholder="Significance" rows={2} className="sm:col-span-2 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none resize-none" />
+   292→   292→              <div className="sm:col-span-2 flex items-center gap-3">
+   293→   293→                <img src={newPooja.image} alt="Preview" className="h-16 w-24 rounded-lg object-cover" />
+   294→   294→                <ImageUploader label="Upload Pooja Image" onUpload={(url) => setNewPooja({ ...newPooja, image: url })} />
+   295→   295→              </div>
+   296→   296→            </div>
+   297→   297→            <div className="mt-4 flex gap-2">
+   298→   298→              <button onClick={addPooja} className="btn-luxe text-xs">Add Pooja</button>
+   299→   299→              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+   300→   300→            </div>
+   301→   301→          </div>
+   302→   302→        </motion.div>
+   303→   303→      )}
+   304→   304→
+   305→   305→      {/* Pooja list */}
+   306→   306→      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+   307→   307→        {poojas.map((p) => (
+   308→   308→          <div key={p.id} className="card-luxe overflow-hidden p-4">
+   309→   309→            <div className="flex gap-3">
+   310→   310→              <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-lg">
+   311→   311→                <img src={p.image} alt={p.name} className="h-full w-full object-cover photo-cinematic" />
+   312→   312→              </div>
+   313→   313→              <div className="flex-1 min-w-0">
+   314→   314→                <div className="flex items-start justify-between">
+   315→   315→                  <div>
+   316→   316→                    <p className="font-serif text-base text-ivory">{p.name}</p>
+   317→   317→                    <p className="text-xs text-gold-foil">₹{p.price} · {p.duration}</p>
+   318→   318→                  </div>
+   319→   319→                  <button onClick={() => deletePooja(p.id)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20">
+   320→   320→                    <Trash2 className="h-3 w-3" />
+   321→   321→                  </button>
+   322→   322→                </div>
+   323→   323→                <p className="mt-1 text-xs text-ivory/50 line-clamp-2">{p.description}</p>
+   324→   324→              </div>
+   325→   325→            </div>
+   326→   326→            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+   327→   327→              <EditableField label="Name" value={p.name} onSave={(v) => updateField(p.id, "name", v)} />
+   328→   328→              <EditableField label="Price" value={String(p.price)} type="number" onSave={(v) => updateField(p.id, "price", parseInt(v))} />
+   329→   329→              <EditableField label="Duration" value={p.duration} onSave={(v) => updateField(p.id, "duration", v)} />
+   330→   330→              <EditableField label="Prasadam" value={p.prasadam} onSave={(v) => updateField(p.id, "prasadam", v)} />
+   331→   331→            </div>
+   332→   332→            <div className="mt-2 flex items-center gap-2">
+   333→   333→              <ImageUploader label="Change Image" onUpload={(url) => updateField(p.id, "image", url)} />
+   334→   334→              <span className="text-[10px] text-ivory/30">{p.image.slice(-30)}</span>
+   335→   335→            </div>
+   336→   336→          </div>
+   337→   337→        ))}
+   338→   338→        {poojas.length === 0 && <p className="py-8 text-center text-sm text-ivory/50">No poojas yet. Click "Add Pooja" to create one.</p>}
+   339→   339→      </div>
+   340→   340→    </div>
+   341→   341→  );
+   342→   342→}
+   343→   343→
+   344→   344→/* ============ GALLERY CMS ============ */
+   345→   345→function GalleryCMS() {
+   346→   346→  const [images, setImages] = useState<any[]>([]);
+   347→   347→  const [tab, setTab] = useState("Rooms");
+   348→   348→
+   349→   349→  const load = () => {
+   350→   350→    fetch(`/api/gallery?tab=${tab}`, { cache: "no-store" }).then(r => r.json()).then(j => setImages(j.images || []));
+   351→   351→  };
+   352→   352→  useEffect(() => { load(); }, [tab]);
+   353→   353→
+   354→   354→  const addImage = async (url: string) => {
+   355→   355→    await fetch("/api/gallery", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tab, src: url, alt: `${tab} photo`, caption: `${tab} at Guruvayur Dham` }) });
+   356→   356→    toast.success("Photo added to gallery");
+   357→   357→    load();
+   358→   358→  };
+   359→   359→
+   360→   360→  const deleteImage = async (id: string) => {
+   361→   361→    if (!confirm("Delete this photo?")) return;
+   362→   362→    await fetch(`/api/gallery?id=${id}`, { method: "DELETE" });
+   363→   363→    toast.success("Photo deleted");
+   364→   364→    load();
+   365→   365→  };
+   366→   366→
+   367→   367→  return (
+   368→   368→    <div>
+   369→   369→      <div className="flex items-center justify-between">
+   370→   370→        <div>
+   371→   371→          <h2 className="font-serif text-2xl text-ivory">Gallery Photos</h2>
+   372→   372→          <p className="mt-1 text-sm text-ivory/60">Upload real photos of your property. They appear in the gallery instantly.</p>
+   373→   373→        </div>
+   374→   374→        <ImageUploader label="Upload Photo" onUpload={addImage} />
+   375→   375→      </div>
+   376→   376→
+   377→   377→      {/* Tab selector */}
+   378→   378→      <div className="mt-4 flex gap-1.5">
+   379→   379→        {["Rooms", "Temple", "Facilities", "Surroundings"].map((t) => (
+   380→   380→          <button key={t} onClick={() => setTab(t)} className={cn("rounded-full px-3 py-1.5 text-xs font-semibold", tab === t ? "border border-champagne/30 bg-champagne/15 text-champagne" : "border border-champagne/10 text-ivory/60")}>
+   381→   381→            {t}
+   382→   382→          </button>
+   383→   383→        ))}
+   384→   384→      </div>
+   385→   385→
+   386→   386→      {/* Image grid */}
+   387→   387→      <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+   388→   388→        {images.map((img) => (
+   389→   389→          <div key={img.id} className="group relative overflow-hidden rounded-xl border border-champagne/10">
+   390→   390→            <img src={img.src} alt={img.alt} className="aspect-square w-full object-cover photo-cinematic" />
+   391→   391→            <div className="absolute inset-0 grid place-items-center bg-ink/70 opacity-0 transition-opacity group-hover:opacity-100">
+   392→   392→              <button onClick={() => deleteImage(img.id)} className="rounded-full bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-300">
+   393→   393→                <Trash2 className="h-3.5 w-3.5 mr-1 inline" /> Delete
+   394→   394→              </button>
+   395→   395→            </div>
+   396→   396→          </div>
+   397→   397→        ))}
+   398→   398→        {images.length === 0 && <p className="col-span-full py-8 text-center text-sm text-ivory/50">No photos in this category. Upload some!</p>}
+   399→   399→      </div>
+   400→   400→    </div>
+   401→   401→  );
+   402→   402→}
+   403→   403→
+   404→   404→/* ============ CAROUSEL CMS ============ */
+   405→   405→function CarouselCMS() {
+   406→   406→  const [slides, setSlides] = useState<any[]>([]);
+   407→   407→  const [showAdd, setShowAdd] = useState(false);
+   408→   408→  const [newSlide, setNewSlide] = useState({ title: "", subtitle: "", image: "", ctaText: "Book Now", ctaLink: "/#/book" });
+   409→   409→
+   410→   410→  const load = () => {
+   411→   411→    fetch("/api/carousel", { cache: "no-store" }).then(r => r.json()).then(j => setSlides(j.slides || []));
+   412→   412→  };
+   413→   413→  useEffect(() => { load(); }, []);
+   414→   414→
+   415→   415→  const addSlide = async () => {
+   416→   416→    if (!newSlide.title || !newSlide.image) { toast.error("Title and image required"); return; }
+   417→   417→    await fetch("/api/carousel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newSlide) });
+   418→   418→    toast.success("Carousel slide added");
+   419→   419→    setShowAdd(false);
+   420→   420→    setNewSlide({ title: "", subtitle: "", image: "", ctaText: "Book Now", ctaLink: "/#/book" });
+   421→   421→    load();
+   422→   422→  };
+   423→   423→
+   424→   424→  const deleteSlide = async (id: string) => {
+   425→   425→    if (!confirm("Delete this slide?")) return;
+   426→   426→    await fetch(`/api/carousel?id=${id}`, { method: "DELETE" });
+   427→   427→    toast.success("Slide deleted");
+   428→   428→    load();
+   429→   429→  };
+   430→   430→
+   431→   431→  const updateField = async (id: string, field: string, value: any) => {
+   432→   432→    await fetch("/api/carousel", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, data: { [field]: value } }) });
+   433→   433→    load();
+   434→   434→  };
+   435→   435→
+   436→   436→  return (
+   437→   437→    <div>
+   438→   438→      <div className="flex items-center justify-between">
+   439→   439→        <div>
+   440→   440→          <h2 className="font-serif text-2xl text-ivory">Hero Carousel</h2>
+   441→   441→          <p className="mt-1 text-sm text-ivory/60">Slides that appear below the hero section. Upload images, add titles and CTAs.</p>
+   442→   442→        </div>
+   443→   443→        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+   444→   444→          <Plus className="h-4 w-4" /> Add Slide
+   445→   445→        </button>
+   446→   446→      </div>
+   447→   447→
+   448→   448→      {showAdd && (
+   449→   449→        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+   450→   450→          <div className="card-luxe p-5">
+   451→   451→            <div className="grid gap-3 sm:grid-cols-2">
+   452→   452→              <input value={newSlide.title} onChange={(e) => setNewSlide({ ...newSlide, title: e.target.value })} placeholder="Slide Title *" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   453→   453→              <input value={newSlide.subtitle} onChange={(e) => setNewSlide({ ...newSlide, subtitle: e.target.value })} placeholder="Subtitle (optional)" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   454→   454→              <input value={newSlide.ctaText} onChange={(e) => setNewSlide({ ...newSlide, ctaText: e.target.value })} placeholder="Button Text" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   455→   455→              <input value={newSlide.ctaLink} onChange={(e) => setNewSlide({ ...newSlide, ctaLink: e.target.value })} placeholder="Button Link" className="rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none" />
+   456→   456→              <div className="sm:col-span-2 flex items-center gap-3">
+   457→   457→                {newSlide.image && <img src={newSlide.image} alt="Preview" className="h-16 w-24 rounded-lg object-cover" />}
+   458→   458→                <ImageUploader label="Upload Slide Image" onUpload={(url) => setNewSlide({ ...newSlide, image: url })} />
+   459→   459→              </div>
+   460→   460→            </div>
+   461→   461→            <div className="mt-4 flex gap-2">
+   462→   462→              <button onClick={addSlide} className="btn-luxe text-xs">Add Slide</button>
+   463→   463→              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+   464→   464→            </div>
+   465→   465→          </div>
+   466→   466→        </motion.div>
+   467→   467→      )}
+   468→   468→
+   469→   469→      <div className="mt-6 space-y-3">
+   470→   470→        {slides.map((s, i) => (
+   471→   471→          <div key={s.id} className="card-luxe overflow-hidden p-4">
+   472→   472→            <div className="flex gap-4">
+   473→   473→              <img src={s.image} alt={s.title} className="h-20 w-32 flex-shrink-0 rounded-lg object-cover photo-cinematic" />
+   474→   474→              <div className="flex-1">
+   475→   475→                <div className="flex items-start justify-between">
+   476→   476→                  <div>
+   477→   477→                    <p className="font-serif text-base text-ivory">{s.title}</p>
+   478→   478→                    <p className="text-xs text-ivory/50">{s.subtitle}</p>
+   479→   479→                    <p className="mt-1 text-xs text-champagne">Button: {s.ctaText} → {s.ctaLink}</p>
+   480→   480→                  </div>
+   481→   481→                  <button onClick={() => deleteSlide(s.id)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300">
+   482→   482→                    <Trash2 className="h-3 w-3" />
+   483→   483→                  </button>
+   484→   484→                </div>
+   485→   485→                <div className="mt-2 flex items-center gap-2">
+   486→   486→                  <ImageUploader label="Change Image" onUpload={(url) => updateField(s.id, "image", url)} />
+   487→   487→                  <EditableField label="Title" value={s.title} onSave={(v) => updateField(s.id, "title", v)} />
+   488→   488→                </div>
+   489→   489→              </div>
+   490→   490→            </div>
+   491→   491→          </div>
+   492→   492→        ))}
+   493→   493→        {slides.length === 0 && (
+   494→   494→          <div className="rounded-xl border border-dashed border-champagne/20 p-8 text-center">
+   495→   495→            <GalleryHorizontal className="mx-auto h-8 w-8 text-ivory/30" />
+   496→   496→            <p className="mt-2 text-sm text-ivory/50">No carousel slides yet. Click "Add Slide" to create one.</p>
+   497→   497→          </div>
+   498→   498→        )}
+   499→   499→      </div>
+   500→   500→    </div>
+   501→   501→  );
+   502→   502→}
+   503→   503→
+   504→   504→/* ============ GENERIC CMS (for features, events, testimonials, faqs, trustBadges) ============ */
+   505→   505→interface CMSField {
+   506→   506→  key: string;
+   507→   507→  label: string;
+   508→   508→  textarea?: boolean;
+   509→   509→  image?: boolean;
+   510→   510→}
+   511→   511→
+   512→   512→function GenericCMS({ type, title, fields }: { type: string; title: string; fields: CMSField[] }) {
+   513→   513→  const [items, setItems] = useState<any[]>([]);
+   514→   514→  const [showAdd, setShowAdd] = useState(false);
+   515→   515→  const [newItem, setNewItem] = useState<Record<string, string>>({});
+   516→   516→
+   517→   517→  const load = () => {
+   518→   518→    fetch(`/api/cms?type=${type}`, { cache: "no-store" })
+   519→   519→      .then(r => r.json())
+   520→   520→      .then(j => setItems(j.data || []));
+   521→   521→  };
+   522→   522→  useEffect(() => { load(); }, [type]);
+   523→   523→
+   524→   524→  const addItem = async () => {
+   525→   525→    const data: any = { ...newItem, sortOrder: items.length };
+   526→   526→    if (newItem.rating) data.rating = parseInt(newItem.rating);
+   527→   527→    await fetch("/api/cms", {
+   528→   528→      method: "POST",
+   529→   529→      headers: { "Content-Type": "application/json" },
+   530→   530→      body: JSON.stringify({ type, data }),
+   531→   531→    });
+   532→   532→    toast.success(`${title} item added`);
+   533→   533→    setShowAdd(false);
+   534→   534→    setNewItem({});
+   535→   535→    load();
+   536→   536→  };
+   537→   537→
+   538→   538→  const deleteItem = async (id: string) => {
+   539→   539→    if (!confirm("Delete this item?")) return;
+   540→   540→    await fetch(`/api/cms?type=${type}&id=${id}`, { method: "DELETE" });
+   541→   541→    toast.success("Deleted");
+   542→   542→    load();
+   543→   543→  };
+   544→   544→
+   545→   545→  const updateField = async (id: string, field: string, value: any) => {
+   546→   546→    const data: any = { [field]: field === "rating" ? parseInt(value) : value };
+   547→   547→    await fetch("/api/cms", {
+   548→   548→      method: "PATCH",
+   549→   549→      headers: { "Content-Type": "application/json" },
+   550→   550→      body: JSON.stringify({ type, id, data }),
+   551→   551→    });
+   552→   552→    toast.success(`${field} updated`);
+   553→   553→    load();
+   554→   554→  };
+   555→   555→
+   556→   556→  return (
+   557→   557→    <div>
+   558→   558→      <div className="flex items-center justify-between">
+   559→   559→        <div>
+   560→   560→          <h2 className="font-serif text-2xl text-ivory">{title}</h2>
+   561→   561→          <p className="mt-1 text-sm text-ivory/60">Add, edit, or delete {title.toLowerCase()}. Changes appear on the website instantly.</p>
+   562→   562→        </div>
+   563→   563→        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+   564→   564→          <Plus className="h-4 w-4" /> Add
+   565→   565→        </button>
+   566→   566→      </div>
+   567→   567→
+   568→   568→      {/* Add form */}
+   569→   569→      {showAdd && (
+   570→   570→        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+   571→   571→          <div className="card-luxe p-5">
+   572→   572→            <div className="grid gap-3 sm:grid-cols-2">
+   573→   573→              {fields.map((f) => (
+   574→   574→                <div key={f.key} className={f.textarea ? "sm:col-span-2" : ""}>
+   575→   575→                  <label className="text-[10px] uppercase tracking-wider text-ivory/50">{f.label}</label>
+   576→   576→                  {f.textarea ? (
+   577→   577→                    <textarea
+   578→   578→                      value={newItem[f.key] || ""}
+   579→   579→                      onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+   580→   580→                      rows={3}
+   581→   581→                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none"
+   582→   582→                      placeholder={f.label}
+   583→   583→                    />
+   584→   584→                  ) : f.image ? (
+   585→   585→                    <div className="mt-1 flex items-center gap-2">
+   586→   586→                      <input
+   587→   587→                        value={newItem[f.key] || ""}
+   588→   588→                        onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+   589→   589→                        className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
+   590→   590→                        placeholder="Image URL or upload"
+   591→   591→                      />
+   592→   592→                      <ImageUploader label="Upload" onUpload={(url) => setNewItem({ ...newItem, [f.key]: url })} />
+   593→   593→                    </div>
+   594→   594→                  ) : (
+   595→   595→                    <input
+   596→   596→                      value={newItem[f.key] || ""}
+   597→   597→                      onChange={(e) => setNewItem({ ...newItem, [f.key]: e.target.value })}
+   598→   598→                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+   599→   599→                      placeholder={f.label}
+   600→   600→                    />
+   601→   601→                  )}
+   602→   602→                </div>
+   603→   603→              ))}
+   604→   604→            </div>
+   605→   605→            <div className="mt-4 flex gap-2">
+   606→   606→              <button onClick={addItem} className="btn-luxe text-xs">Add Item</button>
+   607→   607→              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+   608→   608→            </div>
+   609→   609→          </div>
+   610→   610→        </motion.div>
+   611→   611→      )}
+   612→   612→
+   613→   613→      {/* Items list */}
+   614→   614→      <div className="mt-6 space-y-3">
+   615→   615→        {items.map((item, idx) => (
+   616→   616→          <div key={item.id} className="card-luxe p-4">
+   617→   617→            <div className="flex items-start justify-between gap-4">
+   618→   618→              <div className="flex-1 min-w-0">
+   619→   619→                {/* Show image if exists */}
+   620→   620→                {item.image && (
+   621→   621→                  <img src={item.image} alt="" className="mb-2 h-16 w-24 rounded-lg object-cover photo-cinematic" />
+   622→   622→                )}
+   623→   623→                {/* Inline editable fields */}
+   624→   624→                <div className="grid gap-2 sm:grid-cols-2">
+   625→   625→                  {fields.map((f) => (
+   626→   626→                    <EditableField
+   627→   627→                      key={f.key}
+   628→   628→                      label={f.label}
+   629→   629→                      value={String(item[f.key] || "")}
+   630→   630→                      onSave={(v) => updateField(item.id, f.key, v)}
+   631→   631→                    />
+   632→   632→                  ))}
+   633→   633→                </div>
+   634→   634→                {/* Image upload for image fields */}
+   635→   635→                {fields.some(f => f.image) && (
+   636→   636→                  <div className="mt-2">
+   637→   637→                    <ImageUploader label="Change Image" onUpload={(url) => updateField(item.id, "image", url)} />
+   638→   638→                  </div>
+   639→   639→                )}
+   640→   640→              </div>
+   641→   641→              <button
+   642→   642→                onClick={() => deleteItem(item.id)}
+   643→   643→                className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20"
+   644→   644→              >
+   645→   645→                <Trash2 className="h-3 w-3" />
+   646→   646→              </button>
+   647→   647→            </div>
+   648→   648→          </div>
+   649→   649→        ))}
+   650→   650→        {items.length === 0 && (
+   651→   651→          <p className="py-8 text-center text-sm text-ivory/50">No {title.toLowerCase()} yet. Click "Add" to create one.</p>
+   652→   652→        )}
+   653→   653→      </div>
+   654→   654→    </div>
+   655→   655→  );
+   656→   656→}
+   657→   657→

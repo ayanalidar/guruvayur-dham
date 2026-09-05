@@ -4,27 +4,47 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { TESTIMONIALS, SITE } from "@/lib/site-data";
+import { useContent, useCMSList, mapTestimonial, type TestimonialItem } from "@/lib/use-cms";
 
 export default function Testimonials() {
+  const { get } = useContent();
+  // Testimonials: prefer CMS, fall back to hardcoded TESTIMONIALS
+  const cmsTestimonials = useCMSList<TestimonialItem>("testimonials", []);
+  const testimonials = cmsTestimonials.length > 0 ? cmsTestimonials.map(mapTestimonial) : TESTIMONIALS;
+
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
+  // Reset index if it goes out of bounds when testimonials list changes
+  useEffect(() => {
+    if (idx >= testimonials.length) setIdx(0);
+  }, [testimonials.length, idx]);
+
   const next = useCallback(() => {
     setDir(1);
-    setIdx((i) => (i + 1) % TESTIMONIALS.length);
-  }, []);
+    setIdx((i) => (i + 1) % Math.max(1, testimonials.length));
+  }, [testimonials.length]);
 
   const prev = () => {
     setDir(-1);
-    setIdx((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+    setIdx((i) => (i - 1 + testimonials.length) % Math.max(1, testimonials.length));
   };
 
   useEffect(() => {
+    if (testimonials.length <= 1) return;
     const t = setInterval(next, 6000);
     return () => clearInterval(t);
-  }, [next]);
+  }, [next, testimonials.length]);
 
-  const t = TESTIMONIALS[idx];
+  const eyebrow = get("testimonials.eyebrow", "Guest Stories");
+  const title = get("testimonials.title", "Loved by 50,000+ Pilgrims");
+  const subtitle = get(
+    "testimonials.subtitle",
+    `${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`
+  );
+
+  if (testimonials.length === 0) return null;
+  const t = testimonials[idx];
 
   return (
     <section className="relative overflow-hidden bg-gradient-maroon py-20 text-cream lg:py-28">
@@ -37,14 +57,13 @@ export default function Testimonials() {
       <div className="container-x relative">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light">
-            <Star className="h-3.5 w-3.5 fill-gold-light" /> Guest Stories
+            <Star className="h-3.5 w-3.5 fill-gold-light" /> {eyebrow}
           </span>
           <h2 className="mt-4 font-serif text-3xl leading-tight text-white sm:text-4xl lg:text-5xl">
-            Loved by 50,000+ Pilgrims
+            {title}
           </h2>
           <p className="mt-3 text-cream/80">
-            {SITE.rating} ★ average rating across Google, Booking.com &amp; MakeMyTrip
-            from {SITE.reviewCount}+ verified reviews.
+            {subtitle}
           </p>
         </div>
 
@@ -106,7 +125,7 @@ export default function Testimonials() {
               <ChevronLeft className="h-5 w-5" />
             </button>
             <div className="flex gap-2">
-              {TESTIMONIALS.map((_, i) => (
+              {testimonials.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => {

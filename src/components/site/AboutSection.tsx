@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { CheckCircle2, MapPin, Heart, Award } from "lucide-react";
 import { SITE } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -23,6 +24,23 @@ const HIGHLIGHTS = [
 ];
 
 export default function AboutSection() {
+  const { get } = useContent();
+
+  const eyebrow = get("about.eyebrow", "About Guruvayur Dham");
+  const title = get("about.title", "A Family-Run Pilgrim Home Since 1998");
+  const story = get(
+    "about.story",
+    "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Warrier — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 52-room property that has welcomed over 50,000 devotees from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Nirmalya darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple tantri's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Choroonu ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer."
+  );
+
+  // Split title — "Since 1998" should be the gradient-highlighted part
+  const titleParts = title.split(/Since\s+/i);
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "Since " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts[1] : "";
+
+  // Story paragraphs (split on double-newline)
+  const paragraphs = story.split(/\n\n+/).filter(Boolean);
+
   return (
     <section id="about" className="relative scroll-mt-20 overflow-hidden bg-background py-20 lg:py-28">
       <div className="container-x">
@@ -98,38 +116,16 @@ export default function AboutSection() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <span className="section-eyebrow">About Guruvayur Dham</span>
+            <span className="section-eyebrow">{eyebrow}</span>
             <h2 className="section-title mt-4">
-              A Family-Run Pilgrim Home Since{" "}
-              <span className="text-gradient-saffron">1998</span>
+              {titlePre}
+              {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
             </h2>
 
             <div className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              <p>
-                Guruvayur Dham began as a small four-room lodge in 1998, when our
-                grandfather Shri Krishna Warrier · himself a daily devotee at the temple —
-                noticed that pilgrims arriving from distant states had nowhere clean,
-                affordable, and walking-distance to stay. What started as a single rented
-                house has, over 25 years and three generations, grown into a 52-room
-                property that has welcomed over 50,000 devotees from across India and
-                the diaspora.
-              </p>
-              <p>
-                We are not a hotel · we are a pilgrim home. Every decision, from the
-                3 AM reception shift during Nirmalya darshan to the complimentary chai
-                service before temple visits, is made with the devotee in mind. Our
-                pooja-booking coordinator works directly with the temple tantri's office
-                to secure your slots, and our housekeeping team inspects every room
-                against a 22-point checklist before check-in.
-              </p>
-              <p>
-                Our mission is simple: to make every pilgrim's Guruvayur visit
-                spiritually fulfilling, physically comfortable, and logistically
-                effortless. Whether you're a solo traveller on a quick darshan trip or
-                a multi-generational family here for a child's Choroonu ceremony, you'll
-                find a warm welcome, honest pricing, and the kind of personal care that
-                only a family-run home can offer.
-              </p>
+              {paragraphs.map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
             </div>
 
             {/* Highlights */}

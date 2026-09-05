@@ -124,13 +124,20 @@ export default function SettingsPage() {
 
   const runSeoAudit = async () => {
     setSeoRunning(true);
-    toast.info("Running SEO audit across all pages…");
-    const r = await fetch("/api/seo-audit", { method: "POST" });
-    const j = await r.json();
-    if (j.error) toast.error(j.error);
-    else {
-      toast.success(`SEO audit complete! Average score: ${j.avgScore}/100`);
-      load();
+    toast.info("Running SEO audit — checking base HTML, SPA routes, sitemap, robots.txt, manifest…");
+    try {
+      const r = await fetch("/api/seo-audit", { method: "POST" });
+      const j = await r.json();
+      if (j.error) {
+        toast.error(j.error);
+      } else {
+        toast.success(
+          `SEO audit complete · ${j.audited} items · avg ${j.avgScore}/100 · ${j.totalIssues} issue${j.totalIssues === 1 ? "" : "s"} found`
+        );
+        load();
+      }
+    } catch (e: any) {
+      toast.error(`Audit failed: ${e.message}`);
     }
     setSeoRunning(false);
   };
@@ -168,17 +175,52 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* SEO scores */}
+            {/* SEO scores + issues */}
             {seoData && seoData.audits && seoData.audits.length > 0 && (
-              <div className="mt-4 grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
-                {seoData.audits.slice(0, 10).map((a: any, i: number) => (
-                  <div key={i} className="rounded-lg border border-champagne/10 bg-ink/50 p-3 text-center">
-                    <p className="truncate text-[10px] text-ivory/50">{a.page}</p>
-                    <p className={cn("font-serif text-xl", a.score >= 80 ? "text-green-300" : a.score >= 50 ? "text-yellow-300" : "text-red-300")}>
-                      {a.score}
-                    </p>
-                  </div>
-                ))}
+              <div className="mt-4 space-y-3">
+                {/* Summary line */}
+                <div className="flex flex-wrap items-center gap-4 text-xs text-ivory/60">
+                  <span><strong className="text-ivory">{seoData.total}</strong> audits</span>
+                  <span>Avg score: <strong className={cn((seoData.avgScore || 0) >= 80 ? "text-green-300" : (seoData.avgScore || 0) >= 50 ? "text-yellow-300" : "text-red-300")}>{seoData.avgScore}/100</strong></span>
+                  <span>Total issues: <strong className="text-red-300">{seoData.audits.reduce((s: number, a: any) => s + (a.issues ? JSON.parse(a.issues).length : 0), 0)}</strong></span>
+                </div>
+
+                {/* Per-page score cards */}
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {seoData.audits.slice(0, 14).map((a: any, i: number) => {
+                    const issues: string[] = a.issues ? (() => { try { return JSON.parse(a.issues); } catch { return []; } })() : [];
+                    return (
+                      <details key={i} className="group rounded-lg border border-champagne/10 bg-ink/50 p-3 text-left">
+                        <summary className="cursor-pointer list-none">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="truncate text-[11px] font-medium text-ivory/70">{a.page}</p>
+                            <p className={cn("font-serif text-lg leading-none", a.score >= 80 ? "text-green-300" : a.score >= 50 ? "text-yellow-300" : "text-red-300")}>
+                              {a.score}
+                            </p>
+                          </div>
+                          {issues.length > 0 && (
+                            <p className="mt-1 text-[10px] text-ivory/40">
+                              {issues.length} issue{issues.length === 1 ? "" : "s"} · click to expand
+                            </p>
+                          )}
+                          {issues.length === 0 && (
+                            <p className="mt-1 text-[10px] text-green-300/60">All checks passed</p>
+                          )}
+                        </summary>
+                        {issues.length > 0 && (
+                          <ul className="mt-2 space-y-1 border-t border-champagne/10 pt-2">
+                            {issues.map((iss: string, idx: number) => (
+                              <li key={idx} className="flex items-start gap-1.5 text-[10px] text-ivory/60">
+                                <AlertCircle className="mt-0.5 h-2.5 w-2.5 flex-shrink-0 text-orange-300" />
+                                <span>{iss}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </details>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

@@ -2,14 +2,22 @@
 
 import { motion } from "framer-motion";
 import { Clock, ChevronRight, ArrowLeft, Calendar, BookOpen, MessageCircle } from "lucide-react";
-import { BLOG_POSTS, waLink } from "@/lib/site-data";
+import { BLOG_POSTS, waLink, type BlogPost } from "@/lib/site-data";
+import { useCMSList, mapBlogPost, type BlogPostItem } from "@/lib/use-cms";
 import { useHashRoute } from "@/lib/router";
 import { GoldFoilText, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
 export default function BlogPostPage({ slug }: { slug: string }) {
   const { navigate } = useHashRoute();
-  const post = BLOG_POSTS.find((p) => p.slug === slug) || BLOG_POSTS[0];
-  const related = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
+  // Fetch all posts from CMS (with hardcoded fallback)
+  const cmsPosts = useCMSList<BlogPostItem>("blogPosts", []);
+  const allPosts: BlogPost[] = cmsPosts.length > 0 ? cmsPosts.map(mapBlogPost) : BLOG_POSTS;
+
+  const post = allPosts.find((p) => p.slug === slug) || allPosts[0] || {
+    slug: "", title: "Post not found", excerpt: "", category: "",
+    readTime: "", date: "", image: "", content: [] as string[],
+  };
+  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
     <div className="animate-page-reveal">

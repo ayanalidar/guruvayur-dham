@@ -1,0 +1,742 @@
+     1→     1→// Guruvayur Dham — Prisma schema
+     2→     2→// Learn more: https://pris.ly/d/prisma-schema
+     3→     3→
+     4→     4→generator client {
+     5→     5→  provider = "prisma-client-js"
+     6→     6→}
+     7→     7→
+     8→     8→datasource db {
+     9→     9→  provider = "postgresql"
+    10→    10→  url      = env("DATABASE_URL")
+    11→    11→}
+    12→    12→
+    13→    13→/* ============ ROOMS ============ */
+    14→    14→model Room {
+    15→    15→  id            String       @id @default(cuid())
+    16→    16→  slug          String       @unique
+    17→    17→  name          String
+    18→    18→  type          String       // AC | Non-AC | Family | Deluxe
+    19→    19→  price         Int
+    20→    20→  originalPrice Int?
+    21→    21→  rating        Float        @default(4.7)
+    22→    22→  reviews       Int          @default(0)
+    23→    23→  capacity      Int
+    24→    24→  size          String
+    25→    25→  bedType       String
+    26→    26→  image         String
+    27→    27→  gallery       String       // JSON array of URLs
+    28→    28→  badge         String?
+    29→    29→  description   String
+    30→    30→  shortDesc     String
+    31→    31→  amenities     String       // JSON array of strings
+    32→    32→  totalUnits    Int          @default(1) // how many physical rooms of this type
+    33→    33→  active        Boolean      @default(true)
+    34→    34→  createdAt     DateTime     @default(now())
+    35→    35→  updatedAt     DateTime     @updatedAt
+    36→    36→  bookings      Booking[]
+    37→    37→  rates         RatePlan[]
+    38→    38→  availability  Availability[]
+    39→    39→}
+    40→    40→
+    41→    41→/* ============ BOOKINGS ============ */
+    42→    42→model Booking {
+    43→    43→  id              String          @id @default(cuid())
+    44→    44→  reference       String          @unique // GD-XXXXXX
+    45→    45→  roomId          String
+    46→    46→  room            Room            @relation(fields: [roomId], references: [id])
+    47→    47→  guestName       String
+    48→    48→  guestPhone      String
+    49→    49→  guestEmail      String?
+    50→    50→  checkIn         DateTime
+    51→    51→  checkOut        DateTime
+    52→    52→  nights          Int
+    53→    53→  guests          Int             @default(2)
+    54→    54→  amount          Int             // total in INR
+    55→    55→  status          String          @default("CONFIRMED") // CONFIRMED | CHECKED_IN | CHECKED_OUT | CANCELLED
+    56→    56→  source          String          @default("DIRECT") // DIRECT | WALKIN | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+    57→    57→  channelBookingId String?        // booking id from channel partner
+    58→    58→  notes           String?
+    59→    59→  createdAt       DateTime        @default(now())
+    60→    60→  updatedAt       DateTime        @updatedAt
+    61→    61→  syncLogs        SyncLog[]
+    62→    62→}
+    63→    63→
+    64→    64→/* ============ RATE PLANS (per room, per channel) ============ */
+    65→    65→model RatePlan {
+    66→    66→  id              String         @id @default(cuid())
+    67→    67→  roomId          String
+    68→    68→  room            Room           @relation(fields: [roomId], references: [id])
+    69→    69→  channelPartner  String         // DIRECT | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+    70→    70→  priceModifier   Float          @default(1.0) // multiplier on room.price
+    71→    71→  active          Boolean        @default(true)
+    72→    72→  createdAt       DateTime       @default(now())
+    73→    73→  updatedAt       DateTime       @updatedAt
+    74→    74→
+    75→    75→  @@unique([roomId, channelPartner])
+    76→    76→}
+    77→    77→
+    78→    78→/* ============ CHANNEL PARTNERS ============ */
+    79→    79→model ChannelPartner {
+    80→    80→  id              String         @id @default(cuid())
+    81→    81→  code            String         @unique // BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA
+    82→    82→  name            String
+    83→    83→  logo            String
+    84→    84→  webhookUrl      String         // where we POST block/unblock events
+    85→    85→  apiEndpoint     String         // where we receive their bookings
+    86→    86→  connected       Boolean        @default(true)
+    87→    87→  lastSyncAt      DateTime?
+    88→    88→  totalBookings   Int            @default(0)
+    89→    89→  createdAt       DateTime       @default(now())
+    90→    90→  updatedAt       DateTime       @updatedAt
+    91→    91→}
+    92→    92→
+    93→    93→/* ============ SYNC LOG (audit trail of all channel syncs) ============ */
+    94→    94→model SyncLog {
+    95→    95→  id              String         @id @default(cuid())
+    96→    96→  bookingId       String?
+    97→    97→  booking         Booking?       @relation(fields: [bookingId], references: [id])
+    98→    98→  channel         String         // BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA | DIRECT
+    99→    99→  action          String         // BLOCK | UNBLOCK | BOOKING_RECEIVED | SYNC_ERROR
+   100→   100→  status          String         // SUCCESS | FAILED | PENDING
+   101→   101→  message         String
+   102→   102→  payload         String?        // JSON
+   103→   103→  createdAt       DateTime       @default(now())
+   104→   104→}
+   105→   105→
+   106→   106→/* ============ CONTENT BLOCKS (CMS) ============ */
+   107→   107→// Every editable piece of text on the site has a unique key.
+   108→   108→// Admin edits the value; frontend reads from here.
+   109→   109→model ContentBlock {
+   110→   110→  id              String         @id @default(cuid())
+   111→   111→  key             String         @unique // e.g. "hero.headline", "about.story"
+   112→   112→  value           String         // text content (can be multi-line / JSON)
+   113→   113→  category        String         @default("general") // hero | about | rooms | pooja | contact | nav | footer
+   114→   114→  label           String?        // human-readable label for admin UI
+   115→   115→  updatedAt       DateTime       @updatedAt
+   116→   116→}
+   117→   117→
+   118→   118→/* ============ AVAILABILITY CACHE (per room per day) ============ */
+   119→   119→model Availability {
+   120→   120→  id              String         @id @default(cuid())
+   121→   121→  roomId          String
+   122→   122→  room            Room           @relation(fields: [roomId], references: [id])
+   123→   123→  date            DateTime       // the specific night
+   124→   124→  available       Int            // units still bookable
+   125→   125→  lockedBy        String?        // comma-separated booking refs that hold this date
+   126→   126→  priceOverride   Int?           // dynamic price for this date (null = use room.price)
+   127→   127→  maintenanceNote String?        // if set, room is under maintenance
+   128→   128→  createdAt       DateTime       @default(now())
+   129→   129→  updatedAt       DateTime       @updatedAt
+   130→   130→
+   131→   131→  @@unique([roomId, date])
+   132→   132→}
+   133→   133→
+   134→   134→/* ============ DYNAMIC PRICING RULES ============ */
+   135→   135→model DynamicPricingRule {
+   136→   136→  id              String   @id @default(cuid())
+   137→   137→  name            String   // e.g. "Weekend Surge", "Ekadasi Festival"
+   138→   138→  type            String   // WEEKEND | FESTIVAL | LAST_MINUTE | EARLY_BIRD | SEASONAL
+   139→   139→  multiplier      Float    // 1.3 = 30% surge, 0.8 = 20% off
+   140→   140→  startDate       DateTime?
+   141→   141→  endDate         DateTime?
+   142→   142→  dayOfWeek       String?  // comma-separated: "5,6" for Fri,Sat (null = all days)
+   143→   143→  roomType        String?  // null = all rooms, else filter by type
+   144→   144→  active          Boolean  @default(true)
+   145→   145→  priority        Int      @default(0) // higher = applied first
+   146→   146→  createdAt       DateTime @default(now())
+   147→   147→  updatedAt       DateTime @updatedAt
+   148→   148→}
+   149→   149→
+   150→   150→/* ============ COUPONS & PROMO CODES ============ */
+   151→   151→model Coupon {
+   152→   152→  id              String   @id @default(cuid())
+   153→   153→  code            String   @unique // EARLYBIRD10, EKADASI2026
+   154→   154→  description     String
+   155→   155→  type            String   // PERCENTAGE | FLAT
+   156→   156→  value           Float    // 10 = 10% off, or 200 = ₹200 off
+   157→   157→  maxDiscount     Int?     // cap for percentage coupons
+   158→   158→  minBooking      Int      // minimum booking amount
+   159→   159→  usageLimit      Int      // total times usable (0 = unlimited)
+   160→   160→  usedCount       Int      @default(0)
+   161→   161→  validFrom       DateTime
+   162→   162→  validTo         DateTime
+   163→   163→  active          Boolean  @default(true)
+   164→   164→  createdAt       DateTime @default(now())
+   165→   165→  updatedAt       DateTime @updatedAt
+   166→   166→}
+   167→   167→
+   168→   168→/* ============ WAITING LIST ============ */
+   169→   169→model WaitingList {
+   170→   170→  id              String   @id @default(cuid())
+   171→   171→  roomSlug        String
+   172→   172→  checkIn         DateTime
+   173→   173→  checkOut        DateTime
+   174→   174→  guestName       String
+   175→   175→  guestPhone      String
+   176→   176→  guestEmail      String?
+   177→   177→  guests          Int      @default(2)
+   178→   178→  status          String   @default("WAITING") // WAITING | NOTIFIED | BOOKED | EXPIRED
+   179→   179→  notifiedAt      DateTime?
+   180→   180→  bookingRef      String?  // if converted to booking
+   181→   181→  createdAt       DateTime @default(now())
+   182→   182→  updatedAt       DateTime @updatedAt
+   183→   183→}
+   184→   184→
+   185→   185→/* ============ POOJA BOOKINGS ============ */
+   186→   186→model PoojaBooking {
+   187→   187→  id              String   @id @default(cuid())
+   188→   188→  reference       String   @unique // PB-XXXXXX
+   189→   189→  poojaId         String   // matches pooja.id in site-data
+   190→   190→  poojaName       String
+   191→   191→  guestName       String
+   192→   192→  guestPhone      String
+   193→   193→  guestEmail      String?
+   194→   194→  preferredDate   DateTime
+   195→   195→  amount          Int
+   196→   196→  status          String   @default("SCHEDULED") // SCHEDULED | AT_TEMPLE | COMPLETED | PRASADAM_READY | PICKED_UP | CANCELLED
+   197→   197→  prasadamNote    String?
+   198→   198→  notes           String?
+   199→   199→  createdAt       DateTime @default(now())
+   200→   200→  updatedAt       DateTime @updatedAt
+   201→   201→}
+   202→   202→
+   203→   203→/* ============ REMINDERS (Darshan slots, check-in, etc.) ============ */
+   204→   204→model Reminder {
+   205→   205→  id              String   @id @default(cuid())
+   206→   206→  type            String   // DARSHAN | CHECK_IN | CHECK_OUT | POOJA | FESTIVAL
+   207→   207→  bookingRef      String?
+   208→   208→  guestName       String
+   209→   209→  guestPhone      String
+   210→   210→  message         String
+   211→   211→  scheduledFor    DateTime
+   212→   212→  sent            Boolean  @default(false)
+   213→   213→  sentAt          DateTime?
+   214→   214→  channel         String   @default("WHATSAPP") // WHATSAPP | SMS | EMAIL
+   215→   215→  createdAt       DateTime @default(now())
+   216→   216→}
+   217→   217→
+   218→   218→/* ============ FESTIVAL ALERTS OPT-IN ============ */
+   219→   219→model FestivalAlert {
+   220→   220→  id              String   @id @default(cuid())
+   221→   221→  guestName       String
+   222→   222→  guestPhone      String
+   223→   223→  guestEmail      String?
+   224→   224→  festivals       String   // JSON array of festival names
+   225→   225→  notifyDays      String   @default("30,7,1") // days before
+   226→   226→  active          Boolean  @default(true)
+   227→   227→  createdAt       DateTime @default(now())
+   228→   228→}
+   229→   229→
+   230→   230→/* ============ ITINERARIES ============ */
+   231→   231→model Itinerary {
+   232→   232→  id              String   @id @default(cuid())
+   233→   233→  reference       String   @unique // IT-XXXXXX
+   234→   234→  guestName       String
+   235→   235→  guestPhone      String
+   236→   236→  days            Int
+   237→   237→  startDate       DateTime
+   238→   238→  items           String   // JSON array of {day, time, title, description, type}
+   239→   239→  totalEstimate   Int
+   240→   240→  status          String   @default("DRAFT") // DRAFT | CONFIRMED | COMPLETED
+   241→   241→  createdAt       DateTime @default(now())
+   242→   242→  updatedAt       DateTime @updatedAt
+   243→   243→}
+   244→   244→
+   245→   245→/* ============ CRM: CUSTOMERS ============ */
+   246→   246→model Customer {
+   247→   247→  id              String   @id @default(cuid())
+   248→   248→  name            String
+   249→   249→  phone           String   @unique
+   250→   250→  email           String?
+   251→   251→  city            String?
+   252→   252→  totalBookings   Int      @default(0)
+   253→   253→  totalRevenue    Int      @default(0)
+   254→   254→  loyaltyPoints   Int      @default(0)
+   255→   255→  preferences     String?  // JSON: preferred room type, dietary, etc.
+   256→   256→  notes           String?
+   257→   257→  tags            String?  // comma-separated: VIP, REPEAT, FESTIVAL_GOER
+   258→   258→  createdAt       DateTime @default(now())
+   259→   259→  updatedAt       DateTime @updatedAt
+   260→   260→}
+   261→   261→
+   262→   262→/* ============ HOUSEKEEPING STATUS ============ */
+   263→   263→model HousekeepingStatus {
+   264→   264→  id              String   @id @default(cuid())
+   265→   265→  roomNumber      String   @unique // physical room number, e.g. "101", "102A"
+   266→   266→  roomSlug        String   // links to Room type
+   267→   267→  status          String   @default("READY") // READY | OCCUPIED | DIRTY | CLEANING | INSPECT | MAINTENANCE
+   268→   268→  assignedTo      String?  // housekeeping staff name
+   269→   269→  lastCleanedAt   DateTime?
+   270→   270→  notes           String?
+   271→   271→  updatedAt       DateTime @updatedAt
+   272→   272→}
+   273→   273→
+   274→   274→/* ============ STAFF USERS ============ */
+   275→   275→model StaffUser {
+   276→   276→  id              String   @id @default(cuid())
+   277→   277→  name            String
+   278→   278→  email           String   @unique
+   279→   279→  phone           String?
+   280→   280→  role            String   @default("RECEPTIONIST") // MANAGER | RECEPTIONIST | HOUSEKEEPING | ACCOUNTANT
+   281→   281→  pin             String   // 4-digit PIN for quick login
+   282→   282→  active          Boolean  @default(true)
+   283→   283→  lastLoginAt     DateTime?
+   284→   284→  createdAt       DateTime @default(now())
+   285→   285→  updatedAt       DateTime @updatedAt
+   286→   286→}
+   287→   287→
+   288→   288→/* ============ MAINTENANCE BLOCKS ============ */
+   289→   289→model MaintenanceBlock {
+   290→   290→  id              String   @id @default(cuid())
+   291→   291→  roomSlug        String
+   292→   292→  roomNumber      String?
+   293→   293→  startDate       DateTime
+   294→   294→  endDate         DateTime
+   295→   295→  reason          String   // e.g. "AC repair", "Painting"
+   296→   296→  status          String   @default("SCHEDULED") // SCHEDULED | IN_PROGRESS | COMPLETED
+   297→   297→  cost            Int?
+   298→   298→  notes           String?
+   299→   299→  createdAt       DateTime @default(now())
+   300→   300→  updatedAt       DateTime @updatedAt
+   301→   301→}
+   302→   302→
+   303→   303→/* ============ KITCHEN ORDERS ============ */
+   304→   304→model KitchenOrder {
+   305→   305→  id              String   @id @default(cuid())
+   306→   306→  reference       String   @unique // KO-XXXXXX
+   307→   307→  roomNumber      String
+   308→   308→  guestName       String
+   309→   309→  guestPhone      String?
+   310→   310→  items           String   // JSON array of {itemId, name, qty, price}
+   311→   311→  total           Int
+   312→   312→  status          String   @default("NEW") // NEW | PREPARING | READY | DELIVERED | CANCELLED
+   313→   313→  notes           String?
+   314→   314→  printedAt       DateTime? // when sent to kitchen printer
+   315→   315→  deliveredAt     DateTime?
+   316→   316→  createdAt       DateTime @default(now())
+   317→   317→  updatedAt       DateTime @updatedAt
+   318→   318→}
+   319→   319→
+   320→   320→/* ============ MENU ITEMS ============ */
+   321→   321→model MenuItem {
+   322→   322→  id              String   @id @default(cuid())
+   323→   323→  name            String
+   324→   324→  description     String
+   325→   325→  price           Int
+   326→   326→  category        String   // BREAKFAST | LUNCH | DINNER | SNACKS | BEVERAGES
+   327→   327→  veg             Boolean  @default(true)
+   328→   328→  available       Boolean  @default(true)
+   329→   329→  prepTime        Int      @default(15) // minutes
+   330→   330→  createdAt       DateTime @default(now())
+   331→   331→  updatedAt       DateTime @updatedAt
+   332→   332→}
+   333→   333→
+   334→   334→/* ============ TRAVEL AGENTS (B2B) ============ */
+   335→   335→model TravelAgent {
+   336→   336→  id              String   @id @default(cuid())
+   337→   337→  companyName     String
+   338→   338→  contactName     String
+   339→   339→  phone           String
+   340→   340→  email           String?
+   341→   341→  commissionRate  Float    @default(0.12) // 12% default
+   342→   342→  creditLimit     Int      @default(50000) // deferred payment limit
+   343→   343→  outstanding     Int      @default(0)
+   344→   344→  totalBookings   Int      @default(0)
+   345→   345→  active          Boolean  @default(true)
+   346→   346→  createdAt       DateTime @default(now())
+   347→   347→  updatedAt       DateTime @updatedAt
+   348→   348→}
+   349→   349→
+   350→   350→/* ============ BLOG POSTS (CMS) ============ */
+   351→   351→model BlogPost {
+   352→   352→  id              String   @id @default(cuid())
+   353→   353→  slug            String   @unique
+   354→   354→  title           String
+   355→   355→  excerpt         String
+   356→   356→  category        String
+   357→   357→  readTime        String
+   358→   358→  date            String
+   359→   359→  image           String
+   360→   360→  content         String   // JSON array of paragraphs
+   361→   361→  published       Boolean  @default(true)
+   362→   362→  scheduledAt     DateTime? // if set, auto-publish at this time
+   363→   363→  seoTitle        String?  // custom SEO title
+   364→   364→  seoDescription  String?  // custom meta description
+   365→   365→  seoKeywords     String?  // comma-separated keywords
+   366→   366→  createdAt       DateTime @default(now())
+   367→   367→  updatedAt       DateTime @updatedAt
+   368→   368→}
+   369→   369→
+   370→   370→/* ============ GALLERY IMAGES (CMS) ============ */
+   371→   371→model GalleryImage {
+   372→   372→  id              String   @id @default(cuid())
+   373→   373→  tab             String   // Rooms | Temple | Facilities | Surroundings
+   374→   374→  src             String
+   375→   375→  alt             String
+   376→   376→  caption         String
+   377→   377→  span            String?  // tall | wide | normal
+   378→   378→  sortOrder       Int      @default(0)
+   379→   379→  createdAt       DateTime @default(now())
+   380→   380→  updatedAt       DateTime @updatedAt
+   381→   381→}
+   382→   382→
+   383→   383→/* ============ REVIEW REQUESTS (Google Reviews automation) ============ */
+   384→   384→model ReviewRequest {
+   385→   385→  id              String   @id @default(cuid())
+   386→   386→  bookingRef      String
+   387→   387→  guestName       String
+   388→   388→  guestPhone      String
+   389→   389→  guestEmail      String?
+   390→   390→  sentAt          DateTime?
+   391→   391→  status          String   @default("PENDING") // PENDING | SENT | COMPLETED | SKIPPED
+   392→   392→  reviewLink      String   @default("https://g.page/r/GURUVAYUR_DHAM/review")
+   393→   393→  createdAt       DateTime @default(now())
+   394→   394→}
+   395→   395→
+   396→   396→/* ============ NOTIFICATIONS (broadcast log) ============ */
+   397→   397→model Notification {
+   398→   398→  id              String   @id @default(cuid())
+   399→   399→  type            String   // SMS | EMAIL | WHATSAPP | TELEGRAM
+   400→   400→  recipient       String
+   401→   401→  subject         String?
+   402→   402→  body            String
+   403→   403→  status          String   @default("QUEUED") // QUEUED | SENT | FAILED
+   404→   404→  sentAt          DateTime?
+   405→   405→  relatedRef      String?  // booking or pooja reference
+   406→   406→  createdAt       DateTime @default(now())
+   407→   407→}
+   408→   408→
+   409→   409→/* ============ EARLY-BIRD CAMPAIGNS ============ */
+   410→   410→model EarlyBirdCampaign {
+   411→   411→  id              String   @id @default(cuid())
+   412→   412→  name            String   // "Ekadasi 2026 Early Bird"
+   413→   413→  festivalName    String
+   414→   414→  startDate       DateTime
+   415→   415→  endDate         DateTime
+   416→   416→  discountPercent Float    @default(15)
+   417→   417→  bookingWindowStart DateTime
+   418→   418→  bookingWindowEnd   DateTime
+   419→   419→  active          Boolean  @default(true)
+   420→   420→  createdAt       DateTime @default(now())
+   421→   421→  updatedAt       DateTime @updatedAt
+   422→   422→}
+   423→   423→
+   424→   424→/* ============ USER (Guest + Staff Auth) ============ */
+   425→   425→model User {
+   426→   426→  id              String   @id @default(cuid())
+   427→   427→  name            String
+   428→   428→  email           String?  @unique
+   429→   429→  phone           String?  @unique
+   430→   430→  passwordHash    String?  // null if OTP-only
+   431→   431→  customerId      String?  // link to CRM Customer record
+   432→   432→  role            String   @default("GUEST") // GUEST | STAFF
+   433→   433→  staffId         String?  // if role=STAFF, link to StaffUser
+   434→   434→  lastLoginAt     DateTime?
+   435→   435→  createdAt       DateTime @default(now())
+   436→   436→  updatedAt       DateTime @updatedAt
+   437→   437→  sessions        Session[]
+   438→   438→  passwordResets  PasswordReset[]
+   439→   439→  twoFactor       TwoFactorSecret?
+   440→   440→}
+   441→   441→
+   442→   442→/* ============ SESSION TOKENS ============ */
+   443→   443→model Session {
+   444→   444→  id              String   @id @default(cuid())
+   445→   445→  token           String   @unique
+   446→   446→  userId          String
+   447→   447→  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+   448→   448→  role            String   // GUEST | MANAGER | RECEPTIONIST | HOUSEKEEPING | ACCOUNTANT
+   449→   449→  expiresAt       DateTime
+   450→   450→  createdAt       DateTime @default(now())
+   451→   451→}
+   452→   452→
+   453→   453→/* ============ REVIEWS (Google mirror + manual) ============ */
+   454→   454→model Review {
+   455→   455→  id              String   @id @default(cuid())
+   456→   456→  authorName      String
+   457→   457→  authorAvatar    String?
+   458→   458→  rating          Int      // 1-5
+   459→   459→  text            String
+   460→   460→  reviewDate      DateTime
+   461→   461→  source          String   @default("GOOGLE") // GOOGLE | MANUAL | GUEST_SUBMITTED | BOOKING_COM | MAKEMYTRIP
+   462→   462→  googleReviewId  String?  @unique // for dedup when importing from Google
+   463→   463→  googleProfileUrl String?
+   464→   464→  language        String   @default("en")
+   465→   465→  published       Boolean  @default(true)
+   466→   466→  featured        Boolean  @default(false) // show on homepage
+   467→   467→  // Guest submission fields
+   468→   468→  guestEmail      String?
+   469→   469→  guestPhone      String?
+   470→   470→  roomSlug        String?  // which room they stayed in
+   471→   471→  stayDate        DateTime? // when they stayed
+   472→   472→  moderated       Boolean  @default(false) // has admin reviewed this submission
+   473→   473→  moderatedBy     String?  // staff user ID who moderated
+   474→   474→  moderatedAt     DateTime?
+   475→   475→  createdAt       DateTime @default(now())
+   476→   476→  updatedAt       DateTime @updatedAt
+   477→   477→}
+   478→   478→
+   479→   479→/* ============ AUDIT LOG ============ */
+   480→   480→model AuditLog {
+   481→   481→  id              String   @id @default(cuid())
+   482→   482→  userId          String?  // staff user ID
+   483→   483→  userName        String?
+   484→   484→  action          String   // CREATE | UPDATE | DELETE | LOGIN | LOGOUT | EXPORT
+   485→   485→  entity          String   // BOOKING | ROOM | CONTENT | REVIEW | COUPON | etc.
+   486→   486→  entityId        String?
+   487→   487→  details         String?  // JSON of changes
+   488→   488→  ipAddress       String?
+   489→   489→  userAgent       String?
+   490→   490→  createdAt       DateTime @default(now())
+   491→   491→}
+   492→   492→
+   493→   493→/* ============ PASSWORD RESET ============ */
+   494→   494→model PasswordReset {
+   495→   495→  id              String   @id @default(cuid())
+   496→   496→  userId          String
+   497→   497→  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+   498→   498→  token           String   @unique
+   499→   499→  expiresAt       DateTime
+   500→   500→  used            Boolean  @default(false)
+   501→   501→  createdAt       DateTime @default(now())
+   502→   502→}
+   503→   503→
+   504→   504→/* ============ 2FA (TOTP) ============ */
+   505→   505→model TwoFactorSecret {
+   506→   506→  id              String   @id @default(cuid())
+   507→   507→  userId          String   @unique
+   508→   508→  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+   509→   509→  secret          String   // TOTP secret (base32)
+   510→   510→  enabled         Boolean  @default(false)
+   511→   511→  backupCodes     String?  // JSON array of backup codes
+   512→   512→  createdAt       DateTime @default(now())
+   513→   513→  updatedAt       DateTime @updatedAt
+   514→   514→}
+   515→   515→
+   516→   516→/* ============ PUSH NOTIFICATION SUBSCRIPTIONS ============ */
+   517→   517→model PushSubscription {
+   518→   518→  id              String   @id @default(cuid())
+   519→   519→  userId          String?  // null for anonymous
+   520→   520→  endpoint        String   @unique
+   521→   521→  keys            String   // JSON: { p256dh, auth }
+   522→   522→  userAgent       String?
+   523→   523→  createdAt       DateTime @default(now())
+   524→   524→}
+   525→   525→
+   526→   526→/* ============ A/B TEST VARIANTS ============ */
+   527→   527→model ABTest {
+   528→   528→  id              String   @id @default(cuid())
+   529→   529→  name            String   // "hero_headline_test"
+   530→   530→  description     String?
+   531→   531→  variants        String   // JSON: [{ key, label, weight }]
+   532→   532→  active          Boolean  @default(true)
+   533→   533→  createdAt       DateTime @default(now())
+   534→   534→  updatedAt       DateTime @updatedAt
+   535→   535→}
+   536→   536→
+   537→   537→/* ============ ANALYTICS EVENTS ============ */
+   538→   538→model AnalyticsEvent {
+   539→   539→  id              String   @id @default(cuid())
+   540→   540→  eventType       String   // PAGE_VIEW | BOOKING_STARTED | BOOKING_COMPLETED | ROOM_VIEW | POOJA_VIEW | etc.
+   541→   541→  page            String?  // current path
+   542→   542→  userId          String?  // if logged in
+   543→   543→  sessionId       String?  // browser session
+   544→   544→  properties      String?  // JSON of additional data
+   545→   545→  referrer        String?
+   546→   546→  userAgent       String?
+   547→   547→  ipAddress       String?
+   548→   548→  createdAt       DateTime @default(now())
+   549→   549→}
+   550→   550→
+   551→   551→/* ============ INFLUENCER ============ */
+   552→   552→model Influencer {
+   553→   553→  id              String   @id @default(cuid())
+   554→   554→  name            String
+   555→   555→  email           String   @unique
+   556→   556→  phone           String?
+   557→   557→  socialPlatform  String   // YOUTUBE | INSTAGRAM | TWITTER | BLOG | OTHER
+   558→   558→  socialHandle    String
+   559→   559→  followerCount   Int      @default(0)
+   560→   560→  uniqueCode      String   @unique // e.g. INFLUENCER10
+   561→   561→  commissionRate  Float    @default(0.10) // 10% default
+   562→   562→  totalClicks     Int      @default(0)
+   563→   563→  totalBookings   Int      @default(0)
+   564→   564→  totalCommission Int      @default(0)
+   565→   565→  status          String   @default("PENDING") // PENDING | APPROVED | REJECTED | SUSPENDED
+   566→   566→  notes           String?
+   567→   567→  createdAt       DateTime @default(now())
+   568→   568→  updatedAt       DateTime @updatedAt
+   569→   569→  clicks          InfluencerClick[]
+   570→   570→}
+   571→   571→
+   572→   572→/* ============ INFLUENCER CLICKS ============ */
+   573→   573→model InfluencerClick {
+   574→   574→  id              String   @id @default(cuid())
+   575→   575→  influencerId    String
+   576→   576→  influencer      Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+   577→   577→  ipAddress       String?
+   578→   578→  userAgent       String?
+   579→   579→  referrer        String?
+   580→   580→  convertedToBooking Boolean @default(false)
+   581→   581→  bookingRef      String?
+   582→   582→  createdAt       DateTime @default(now())
+   583→   583→}
+   584→   584→
+   585→   585→/* ============ PERFORMANCE METRICS ============ */
+   586→   586→model PerformanceMetric {
+   587→   587→  id              String   @id @default(cuid())
+   588→   588→  page            String
+   589→   589→  lcp             Float?   // Largest Contentful Paint (ms)
+   590→   590→  fid             Float?   // First Input Delay (ms)
+   591→   591→  cls             Float?   // Cumulative Layout Shift
+   592→   592→  ttfb            Float?   // Time to First Byte (ms)
+   593→   593→  fcp             Float?   // First Contentful Paint (ms)
+   594→   594→  sessionId       String?
+   595→   595→  userAgent       String?
+   596→   596→  connection      String?  // 4g, 3g, wifi
+   597→   597→  createdAt       DateTime @default(now())
+   598→   598→}
+   599→   599→
+   600→   600→/* ============ RATE LIMIT LOG ============ */
+   601→   601→model RateLimitLog {
+   602→   602→  id              String   @id @default(cuid())
+   603→   603→  ipAddress       String
+   604→   604→  endpoint        String
+   605→   605→  method          String
+   606→   606→  blocked         Boolean  @default(false)
+   607→   607→  attempts        Int
+   608→   608→  createdAt       DateTime @default(now())
+   609→   609→}
+   610→   610→
+   611→   611→/* ============ CHANNEL PARTNER CONFIG (dynamic, any OTA) ============ */
+   612→   612→model ChannelConfig {
+   613→   613→  id              String   @id @default(cuid())
+   614→   614→  code            String   @unique // BOOKING_COM, MAKEMYTRIP, GOIBIBO, AGODA, EXPEDIA, MMT_LITE, ETC
+   615→   615→  name            String
+   616→   616→  logo            String?
+   617→   617→  category        String   @default("OTA") // OTA | HOSTING | MESSAGING | PAYMENT | ANALYTICS
+   618→   618→  apiEndpoint     String?  // their API URL for inventory push
+   619→   619→  webhookUrl      String?  // their webhook URL that calls our /api/channel-inbox
+   620→   620→  apiKey          String?  // encrypted in production
+   621→   621→  apiSecret       String?
+   622→   622→  hotelId         String?  // property ID on their platform
+   623→   623→  connected       Boolean  @default(false)
+   624→   624→  lastSyncAt      DateTime?
+   625→   625→  lastSyncStatus  String?  // SUCCESS | FAILED | PENDING
+   626→   626→  lastSyncMessage String?
+   627→   627→  config          String?  // JSON: extra fields specific to this partner
+   628→   628→  createdAt       DateTime @default(now())
+   629→   629→  updatedAt       DateTime @updatedAt
+   630→   630→}
+   631→   631→
+   632→   632→/* ============ SEO AUDIT LOG ============ */
+   633→   633→model SeoAudit {
+   634→   634→  id              String   @id @default(cuid())
+   635→   635→  page            String
+   636→   636→  titleLength     Int?
+   637→   637→  descriptionLength Int?
+   638→   638→  hasH1           Boolean  @default(false)
+   639→   639→  hasSchema       Boolean  @default(false)
+   640→   640→  hasCanonical    Boolean  @default(false)
+   641→   641→  hasOgTags       Boolean  @default(false)
+   642→   642→  imageCount      Int      @default(0)
+   643→   643→  imagesWithoutAlt Int     @default(0)
+   644→   644→  wordCount       Int      @default(0)
+   645→   645→  score           Int      @default(0) // 0-100
+   646→   646→  issues          String?  // JSON array of issues
+   647→   647→  createdAt       DateTime @default(now())
+   648→   648→}
+   649→   649→
+   650→   650→/* ============ POOJA (CMS editable) ============ */
+   651→   651→model Pooja {
+   652→   652→  id              String   @id @default(cuid())
+   653→   653→  name            String
+   654→   654→  price           Int
+   655→   655→  duration        String
+   656→   656→  description     String
+   657→   657→  prasadam        String
+   658→   658→  image           String
+   659→   659→  significance    String
+   660→   660→  active          Boolean  @default(true)
+   661→   661→  sortOrder       Int      @default(0)
+   662→   662→  createdAt       DateTime @default(now())
+   663→   663→  updatedAt       DateTime @updatedAt
+   664→   664→}
+   665→   665→
+   666→   666→/* ============ HERO CAROUSEL SLIDES ============ */
+   667→   667→model CarouselSlide {
+   668→   668→  id              String   @id @default(cuid())
+   669→   669→  title           String
+   670→   670→  subtitle        String?
+   671→   671→  image           String
+   672→   672→  ctaText         String?
+   673→   673→  ctaLink         String?
+   674→   674→  active          Boolean  @default(true)
+   675→   675→  sortOrder       Int      @default(0)
+   676→   676→  createdAt       DateTime @default(now())
+   677→   677→  updatedAt       DateTime @updatedAt
+   678→   678→}
+   679→   679→
+   680→   680→/* ============ WHY CHOOSE US (editable) ============ */
+   681→   681→model Feature {
+   682→   682→  id              String   @id @default(cuid())
+   683→   683→  icon            String
+   684→   684→  title           String
+   685→   685→  text            String
+   686→   686→  active          Boolean  @default(true)
+   687→   687→  sortOrder       Int      @default(0)
+   688→   688→  createdAt       DateTime @default(now())
+   689→   689→  updatedAt       DateTime @updatedAt
+   690→   690→}
+   691→   691→
+   692→   692→/* ============ EVENTS / FESTIVALS (editable) ============ */
+   693→   693→model Event {
+   694→   694→  id              String   @id @default(cuid())
+   695→   695→  name            String
+   696→   696→  date            String
+   697→   697→  dateISO         DateTime?
+   698→   698→  description     String
+   699→   699→  highlight       String
+   700→   700→  image           String
+   701→   701→  active          Boolean  @default(true)
+   702→   702→  sortOrder       Int      @default(0)
+   703→   703→  createdAt       DateTime @default(now())
+   704→   704→  updatedAt       DateTime @updatedAt
+   705→   705→}
+   706→   706→
+   707→   707→/* ============ TESTIMONIALS (editable) ============ */
+   708→   708→model Testimonial {
+   709→   709→  id              String   @id @default(cuid())
+   710→   710→  name            String
+   711→   711→  city            String
+   712→   712→  rating          Int      @default(5)
+   713→   713→  text            String
+   714→   714→  room            String?
+   715→   715→  active          Boolean  @default(true)
+   716→   716→  sortOrder       Int      @default(0)
+   717→   717→  createdAt       DateTime @default(now())
+   718→   718→  updatedAt       DateTime @updatedAt
+   719→   719→}
+   720→   720→
+   721→   721→/* ============ FAQ (editable) ============ */
+   722→   722→model FAQItem {
+   723→   723→  id              String   @id @default(cuid())
+   724→   724→  question        String
+   725→   725→  answer          String
+   726→   726→  active          Boolean  @default(true)
+   727→   727→  sortOrder       Int      @default(0)
+   728→   728→  createdAt       DateTime @default(now())
+   729→   729→  updatedAt       DateTime @updatedAt
+   730→   730→}
+   731→   731→
+   732→   732→/* ============ TRUST BADGES (editable) ============ */
+   733→   733→model TrustBadge {
+   734→   734→  id              String   @id @default(cuid())
+   735→   735→  icon            String
+   736→   736→  text            String
+   737→   737→  active          Boolean  @default(true)
+   738→   738→  sortOrder       Int      @default(0)
+   739→   739→  createdAt       DateTime @default(now())
+   740→   740→  updatedAt       DateTime @updatedAt
+   741→   741→}
+   742→   742→

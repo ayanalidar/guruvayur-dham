@@ -22,6 +22,11 @@ const CATEGORIES = [
   { key: "pooja", label: "Pooja Section" },
   { key: "about", label: "About Section" },
   { key: "contact", label: "Contact Section" },
+  { key: "events", label: "Events Section" },
+  { key: "blog", label: "Blog Section" },
+  { key: "testimonials", label: "Testimonials Section" },
+  { key: "faq", label: "FAQ Section" },
+  { key: "gallery", label: "Gallery Section" },
   { key: "footer", label: "Footer" },
 ];
 

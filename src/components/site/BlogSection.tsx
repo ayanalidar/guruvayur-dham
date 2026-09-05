@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Clock, ChevronRight, ArrowLeft, BookOpen } from "lucide-react";
 import { BLOG_POSTS, type BlogPost } from "@/lib/site-data";
+import { useContent, useCMSList, mapBlogPost, type BlogPostItem } from "@/lib/use-cms";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +23,24 @@ const scrollTo = (id: string) => {
 };
 
 export default function BlogSection() {
+  const { get } = useContent();
+  // Blog posts: prefer CMS, fall back to hardcoded BLOG_POSTS
+  const cmsPosts = useCMSList<BlogPostItem>("blogPosts", []);
+  const posts: BlogPost[] = cmsPosts.length > 0 ? cmsPosts.map(mapBlogPost) : BLOG_POSTS;
+
   const [open, setOpen] = useState<BlogPost | null>(null);
+
+  const eyebrow = get("blog.eyebrow", "Travel Guide & Blog");
+  const title = get("blog.title", "Guruvayur Pilgrim Knowledge Hub");
+  const subtitle = get(
+    "blog.subtitle",
+    "Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 2 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
 
   return (
     <section
@@ -32,21 +50,20 @@ export default function BlogSection() {
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="section-eyebrow">
-            <BookOpen className="h-3.5 w-3.5" /> Travel Guide &amp; Blog
+            <BookOpen className="h-3.5 w-3.5" /> {eyebrow}
           </span>
           <h2 className="section-title mt-4">
-            Guruvayur Pilgrim{" "}
-            <span className="text-gradient-saffron">Knowledge Hub</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Everything you need to know before your visit · darshan timings, dress
-            code, travel routes, festival calendars, and booking tips.
+            {subtitle}
           </p>
         </div>
 
         {/* Featured grid */}
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {BLOG_POSTS.map((post, i) => (
+          {posts.map((post, i) => (
             <motion.article
               key={post.slug}
               initial={{ opacity: 0, y: 30 }}

@@ -4,31 +4,48 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { CalendarDays, MapPin, ChevronRight, MessageCircle } from "lucide-react";
 import { EVENTS, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, mapEvent, type EventItem } from "@/lib/use-cms";
 
 export default function EventsSection() {
+  const { get } = useContent();
+  // Events: prefer CMS, fall back to hardcoded EVENTS
+  const cmsEvents = useCMSList<EventItem>("events", []);
+  const events = cmsEvents.length > 0 ? cmsEvents.map(mapEvent) : EVENTS;
+
+  const eyebrow = get("events.eyebrow", "Festivals & Events");
+  const title = get("events.title", "Plan Your Visit Around Sacred Festivals");
+  const subtitle = get(
+    "events.subtitle",
+    "Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2026 · book rooms 60+ days in advance for festival dates."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 3 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
+
   return (
     <section id="events" className="relative scroll-mt-20 bg-background py-20 lg:py-28">
       <div className="container-x">
         <div className="mx-auto max-w-2xl text-center">
           <span className="section-eyebrow">
-            <CalendarDays className="h-3.5 w-3.5" /> Festivals &amp; Events
+            <CalendarDays className="h-3.5 w-3.5" /> {eyebrow}
           </span>
           <h2 className="section-title mt-4">
-            Plan Your Visit Around{" "}
-            <span className="text-gradient-saffron">Sacred Festivals</span>
+            {titlePre}{" "}
+            {titleHighlight && <span className="text-gradient-saffron">{titleHighlight}</span>}
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Guruvayur's festivals are spiritual experiences of a lifetime. Here are the
-            major events for 2026 · book rooms 60+ days in advance for festival dates.
+            {subtitle}
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          {EVENTS.map((ev, i) => {
+          {events.map((ev, i) => {
             const waMsg = `Namaskaram! I'd like to book a room at Guruvayur Dham for ${ev.name} (${ev.date}). Please share availability and rates.`;
             return (
               <motion.article
-                key={ev.name}
+                key={ev.name + i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}

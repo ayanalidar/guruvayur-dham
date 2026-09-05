@@ -1,0 +1,847 @@
+     1→/**
+     2→ * Central mock-data store for Guruvayur Dham.
+     3→ * Swap these arrays/objects with real CMS / API data later · every component
+     4→ * in src/components/site reads from here, so the rest of the UI stays intact.
+     5→ */
+     6→
+     7→export const SITE = {
+     8→  name: "Guruvayur Dham",
+     9→  tagline: "Stay 2 Minutes from the Divine",
+    10→  phone: "+91-90908 20208",
+    11→  phoneRaw: "+919090820208",
+    12→  whatsapp: "919090820208",
+    13→  email: "stay@guruvayurdham.com",
+    14→  address: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
+    15→  shortAddress: "Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
+    16→  mapEmbed:
+    17→    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zMjfCsDI5JzQwLjYiTiA3N8KwNDEnMjQuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+    18→  mapLink: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Natwar+Nagar+Dholi+Pyau+Mathura+281001",
+    19→  checkIn: "12:00 PM",
+    20→  checkOut: "11:00 AM",
+    21→  rating: 4.9,
+    22→  reviewCount: 847,
+    23→  totalRooms: 52,
+    24→  distanceToTemple: "Near Mata Pathwari Mandir",
+    25→  socials: {
+    26→    facebook: "https://facebook.com/guruvayurdham",
+    27→    instagram: "https://instagram.com/guruvayurdham",
+    28→    youtube: "https://youtube.com/@guruvayurdham",
+    29→    twitter: "https://twitter.com/guruvayurdham",
+    30→  },
+    31→};
+    32→
+    33→export type NavItem = { label: string; href: string; route: string };
+    34→
+    35→export const NAV_ITEMS: NavItem[] = [
+    36→  { label: "Home", href: "#/", route: "/" },
+    37→  { label: "Rooms", href: "#/rooms", route: "/rooms" },
+    38→  { label: "Pooja", href: "#/pooja", route: "/pooja" },
+    39→  { label: "About", href: "#/about", route: "/about" },
+    40→  { label: "Gallery", href: "#/gallery", route: "/gallery" },
+    41→  { label: "Events", href: "#/events", route: "/events" },
+    42→  { label: "Blog", href: "#/blog", route: "/blog" },
+    43→  { label: "FAQ", href: "#/faq", route: "/faq" },
+    44→  { label: "Contact", href: "#/contact", route: "/contact" },
+    45→];
+    46→
+    47→/* ============ HERO TRUST BADGES ============ */
+    48→export const TRUST_BADGES = [
+    49→  { icon: "Star", text: `4.9 Google Rating` },
+    50→  { icon: "Footprints", text: "Near Mata Pathwari Mandir" },
+    51→  { icon: "Car", text: "Free Parking" },
+    52→  { icon: "BedDouble", text: "50+ Rooms" },
+    53→];
+    54→
+    55→/* ============ WHY CHOOSE US ============ */
+    56→export const WHY_CHOOSE_US = [
+    57→  {
+    58→    icon: "MapPin",
+    59→    title: "Walk to the Temple",
+    60→    text: "Just 200 metres from Guruvayur Temple's East Nada gate. Skip the rush-hour traffic and reach the sanctum in two minutes flat · perfect for early-morning Nirmalya Darshan.",
+    61→  },
+    62→  {
+    63→    icon: "BedDouble",
+    64→    title: "Clean, Hygienic Rooms",
+    65→    text: "Daily-sanitised AC and non-AC rooms with fresh linen, 24×7 hot water, attached bathrooms, and family-friendly layouts. Housekeeping inspects every room before check-in.",
+    66→  },
+    67→  {
+    68→    icon: "HeartHandshake",
+    69→    title: "Pilgrim-First Service",
+    70→    text: "Pooja booking assistance, early check-in requests, packed breakfast for darshan, and on-call guidance for first-time visitors. We treat every guest like family.",
+    71→  },
+    72→  {
+    73→    icon: "Wallet",
+    74→    title: "Honest, Transparent Pricing",
+    75→    text: "No hidden charges. Rates start at ₹700/night with clear add-ons for extra person, AC, and early check-in. Pay by UPI, card, or cash · your choice.",
+    76→  },
+    77→  {
+    78→    icon: "ShieldCheck",
+    79→    title: "Safe & Secure Stay",
+    80→    text: "CCTV-monitored premises, 24-hour front desk, secure key access, and a dedicated women-and-children floor. Families travel worry-free at Guruvayur Dham.",
+    81→  },
+    82→  {
+    83→    icon: "Utensils",
+    84→    title: "Pure Veg Meals Nearby",
+    85→    text: "Tie-ups with three pure-veg Brahmin hotels within 200 m. Order to your room or walk over · South Indian thali, filter coffee, and prasadam-friendly menus.",
+    86→  },
+    87→];
+    88→
+    89→/* ============ ROOMS ============ */
+    90→export type RoomType = "AC" | "Non-AC" | "Family" | "Deluxe";
+    91→
+    92→export interface Room {
+    93→  slug: string;
+    94→  name: string;
+    95→  type: RoomType;
+    96→  price: number;
+    97→  originalPrice?: number;
+    98→  rating: number;
+    99→  reviews: number;
+   100→  capacity: number;
+   101→  size: string; // e.g. "240 sq.ft"
+   102→  bedType: string;
+   103→  image: string;
+   104→  gallery: string[];
+   105→  badge?: string;
+   106→  description: string;
+   107→  amenities: string[]; // string keys for amenity icons
+   108→  shortDesc: string;
+   109→}
+   110→
+   111→const AMENITY_KEYS = [
+   112→  "Wifi", "AC", "TV", "Geyser", "Parking", "RoomService", "Laundry", "Lift",
+   113→  "PowerBackup", "CCTV", "HotWater", "AttachedBath",
+   114→] as const;
+   115→export type AmenityKey = (typeof AMENITY_KEYS)[number];
+   116→
+   117→export const ROOMS: Room[] = [
+   118→  {
+   119→    slug: "deluxe-ac-room",
+   120→    name: "Deluxe AC Room",
+   121→    type: "Deluxe",
+   122→    price: 2200,
+   123→    originalPrice: 2800,
+   124→    rating: 4.9,
+   125→    reviews: 213,
+   126→    capacity: 2,
+   127→    size: "260 sq.ft",
+   128→    bedType: "1 King Bed",
+   129→    image:
+   130→      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
+   131→    gallery: [
+   132→      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&h=900&fit=crop",
+   133→      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=900&fit=crop",
+   134→      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&h=900&fit=crop",
+   135→      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1200&h=900&fit=crop",
+   136→      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=900&fit=crop",
+   137→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200&h=900&fit=crop",
+   138→    ],
+   139→    badge: "Most Popular",
+   140→    description:
+   141→      "Our flagship Deluxe AC Room is designed for couples and pilgrim duos who want a touch of comfort after a long temple day. The room features a plush king-size bed dressed in crisp white linen, a wooden headboard, warm saffron accent wall, and a study desk by the window. The en-suite bathroom has a glass shower cubicle, premium fixtures, 24×7 hot water, and complimentary herbal toiletries. A mini-fridge, LED TV with Tamil and Malayalam channels, high-speed WiFi, and an in-room safe round out the experience. Wake up to temple bells and the gentle aroma of incense · that's the Guruvayur Dham morning ritual.",
+   142→    shortDesc:
+   143→      "King bed, AC, premium linen, en-suite bath, mini-fridge, WiFi. Perfect for couples.",
+   144→    amenities: ["AC", "Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "RoomService", "PowerBackup"],
+   145→  },
+   146→  {
+   147→    slug: "standard-ac-room",
+   148→    name: "Standard AC Room",
+   149→    type: "AC",
+   150→    price: 1500,
+   151→    originalPrice: 1900,
+   152→    rating: 4.8,
+   153→    reviews: 187,
+   154→    capacity: 2,
+   155→    size: "200 sq.ft",
+   156→    bedType: "1 Queen Bed",
+   157→    image:
+   158→      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+   159→    gallery: [
+   160→      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=900&fit=crop",
+   161→      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=900&fit=crop",
+   162→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=900&fit=crop",
+   163→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200&h=900&fit=crop",
+   164→      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&h=900&fit=crop",
+   165→    ],
+   166→    badge: "Best Value",
+   167→    description:
+   168→      "A practical, well-appointed AC room for pilgrims who want cool comfort without breaking the bank. The room has a queen-size bed, bedside reading lamps, a wardrobe, and a writing desk. The attached bathroom has a hot-water geyser, fresh towels, and basic toiletries. The room faces the inner courtyard, so it stays quiet even during peak temple hours · ideal for a midday nap between darshan slots. AC, WiFi, and LED TV are standard, and housekeeping cleans every morning by 10 AM unless you place a Do-Not-Disturb tag.",
+   169→    shortDesc:
+   170→      "Queen bed, AC, courtyard-facing, quiet. Great value for couples and solo pilgrims.",
+   171→    amenities: ["AC", "Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "PowerBackup"],
+   172→  },
+   173→  {
+   174→    slug: "non-ac-room",
+   175→    name: "Non-AC Budget Room",
+   176→    type: "Non-AC",
+   177→    price: 700,
+   178→    originalPrice: 950,
+   179→    rating: 4.6,
+   180→    reviews: 142,
+   181→    capacity: 2,
+   182→    size: "160 sq.ft",
+   183→    bedType: "1 Double Bed",
+   184→    image:
+   185→      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop",
+   186→    gallery: [
+   187→      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1200&h=900&fit=crop",
+   188→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200&h=900&fit=crop",
+   189→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=900&fit=crop",
+   190→      "https://images.unsplash.com/photo-1551776235-dde6d482980b?w=1200&h=900&fit=crop",
+   191→    ],
+   192→    description:
+   193→      "Our most affordable room, built for budget-conscious pilgrims and backpackers. The Non-AC Budget Room has a double bed, ceiling fan with remote, large window with cross-ventilation, and a clean attached bathroom with hot water from 5 AM to 10 PM. Linen is changed daily, and the room is professionally cleaned before every check-in. Despite the price, you still get free WiFi, complimentary chai every morning at reception, and the same 2-minute walk to East Nada that every Guruvayur Dham guest enjoys.",
+   194→    shortDesc:
+   195→      "Double bed, ceiling fan, hot water, WiFi. The most affordable way to stay close.",
+   196→    amenities: ["Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "Parking"],
+   197→  },
+   198→  {
+   199→    slug: "family-suite-ac",
+   200→    name: "Family Suite AC",
+   201→    type: "Family",
+   202→    price: 3500,
+   203→    originalPrice: 4200,
+   204→    rating: 4.9,
+   205→    reviews: 96,
+   206→    capacity: 4,
+   207→    size: "380 sq.ft",
+   208→    bedType: "1 King + 2 Single",
+   209→    image:
+   210→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
+   211→    gallery: [
+   212→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=900&fit=crop",
+   213→      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&h=900&fit=crop",
+   214→      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&h=900&fit=crop",
+   215→      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=900&fit=crop",
+   216→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200&h=900&fit=crop",
+   217→      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=900&fit=crop",
+   218→    ],
+   219→    badge: "Best for Families",
+   220→    description:
+   221→      "A spacious two-room suite perfect for families of 3-4 travelling with children or elderly parents. The master bedroom has a king bed; the connecting room has two single beds that can be joined. Both rooms share a large, freshly-renovated bathroom with both shower and bucket-and-mug setup for traditional comfort. The suite includes a small sitting area with a sofa and coffee table, a mini-kitchenette with an electric kettle and cups (filter coffee sachets on request), 55-inch LED TV, and a private balcony overlooking the temple-side garden. AC in both rooms, soundproofed connecting door, and a dedicated housekeeping attendant.",
+   222→    shortDesc:
+   223→      "Two rooms, king + 2 singles, balcony, mini-kitchenette. Spreads the family out comfortably.",
+   224→    amenities: ["AC", "Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "RoomService", "Laundry", "PowerBackup", "Parking"],
+   225→  },
+   226→  {
+   227→    slug: "deluxe-non-ac",
+   228→    name: "Deluxe Non-AC Room",
+   229→    type: "Non-AC",
+   230→    price: 1100,
+   231→    originalPrice: 1400,
+   232→    rating: 4.7,
+   233→    reviews: 118,
+   234→    capacity: 3,
+   235→    size: "210 sq.ft",
+   236→    bedType: "1 Double + 1 Floor Mattress",
+   237→    image:
+   238→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=800&h=600&fit=crop",
+   239→    gallery: [
+   240→      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200&h=900&fit=crop",
+   241→      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1200&h=900&fit=crop",
+   242→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=900&fit=crop",
+   243→      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=900&fit=crop",
+   244→    ],
+   245→    description:
+   246→      "A larger non-AC room ideal for small families or three adults travelling together. Comes with a double bed plus a rolled-out floor mattress (Indian style · perfect for kids), ceiling fan, large louvered windows for cross-breeze, and a freshly tiled attached bathroom with 24×7 hot water. The room has a small puja niche with an idol shelf · many guests light a diya before leaving for darshan. Excellent value for pilgrims who don't need AC but want extra space and the comfort of an attached bathroom.",
+   247→    shortDesc:
+   248→      "Double bed + floor mattress, attached bath, puja niche. Suits families of three.",
+   249→    amenities: ["Wifi", "TV", "Geyser", "HotWater", "AttachedBath", "Parking", "PowerBackup"],
+   250→  },
+   251→  {
+   252→    slug: "ac-dormitory",
+   253→    name: "AC Dormitory Bed",
+   254→    type: "AC",
+   255→    price: 450,
+   256→    rating: 4.5,
+   257→    reviews: 64,
+   258→    capacity: 1,
+   259→    size: "Shared Hall",
+   260→    bedType: "Single Bunk",
+   261→    image:
+   262→      "https://images.unsplash.com/photo-1551776235-dde6d482980b?w=800&h=600&fit=crop",
+   263→    gallery: [
+   264→      "https://images.unsplash.com/photo-1551776235-dde6d482980b?w=1200&h=900&fit=crop",
+   265→      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200&h=900&fit=crop",
+   266→      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1200&h=900&fit=crop",
+   267→    ],
+   268→    description:
+   269→      "Air-conditioned 8-bed dormitory for solo travellers, students, and group pilgrims. Each bed has a personal reading light, charging socket, privacy curtain, and a metal locker for valuables. Separate dorms for men and women, with shared clean bathrooms (4 stalls each) and 24×7 hot water. The dorm has a common lounge with a TV, water dispenser, and a small library of Malayalam and English magazines. Perfect for budget travellers who want AC comfort and the company of fellow devotees without paying for a private room.",
+   270→    shortDesc:
+   271→      "Single bunk in AC hall, personal locker, separate men's & women's dorms.",
+   272→    amenities: ["AC", "Wifi", "HotWater", "CCTV", "PowerBackup", "Parking", "Lift"],
+   273→  },
+   274→];
+   275→
+   276→/* ============ POOJA & OFFERINGS ============ */
+   277→export interface Pooja {
+   278→  id: string;
+   279→  name: string;
+   280→  price: number;
+   281→  duration: string;
+   282→  description: string;
+   283→  prasadam: string;
+   284→  image: string;
+   285→  significance: string;
+   286→}
+   287→
+   288→export const POOJAS: Pooja[] = [
+   289→  {
+   290→    id: "mangala-aarti",
+   291→    name: "Mangala Aarti",
+   292→    price: 51,
+   293→    duration: "15 min",
+   294→    description:
+   295→      "The first morning aarti offered to the deity before sunrise. Devotees can sponsor this auspicious aarti in their name. Includes chanting of morning prayers and lamp offering.",
+   296→    prasadam: "Blessed flowers + sweets",
+   297→    image:
+   298→      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
+   299→    significance:
+   300→      "Mangala Aarti marks the awakening of the deity. Sponsoring it is believed to bring prosperity and new beginnings.",
+   301→  },
+   302→  {
+   303→    id: "abhishek",
+   304→    name: "Abhishek (Holy Bath)",
+   305→    price: 1100,
+   306→    duration: "45 min",
+   307→    description:
+   308→      "The sacred bathing ceremony of the deity with milk, curd, ghee, honey, and Ganga Jal (Panchamrit). Performed by the temple priest with Vedic chanting.",
+   309→    prasadam: "Panchamrit + blessed flowers",
+   310→    image:
+   311→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+   312→    significance:
+   313→      "Abhishek is considered one of the most powerful offerings for spiritual purification and fulfilling heartfelt wishes.",
+   314→  },
+   315→  {
+   316→    id: "rajbhog-aarti",
+   317→    name: "Rajbhog Aarti",
+   318→    price: 251,
+   319→    duration: "30 min",
+   320→    description:
+   321→      "The midday royal offering where the deity is served a grand meal of 56 bhogs (Chhappan Bhog). Devotees can sponsor this elaborate feast in their family's name.",
+   322→    prasadam: "Blessed sweets + food prasadam",
+   323→    image:
+   324→      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
+   325→    significance:
+   326→      "Rajbhog represents offering the best to the Lord. Sponsoring it is believed to bring abundance and remove scarcity.",
+   327→  },
+   328→  {
+   329→    id: "sandhya-aarti",
+   330→    name: "Sandhya Aarti",
+   331→    price: 101,
+   332→    duration: "20 min",
+   333→    description:
+   334→      "The evening lamp ceremony at sunset. Multiple diyas are lit and waved before the deity while devotional hymns are sung. A deeply moving experience.",
+   335→    prasadam: "Blessed lamp wick + flowers",
+   336→    image:
+   337→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+   338→    significance:
+   339→      "Sandhya Aarti marks the transition from day to night. Sponsoring it brings peace and harmony to the family.",
+   340→  },
+   341→  {
+   342→    id: "pushpanjali",
+   343→    name: "Pushpanjali (Flower Offering)",
+   344→    price: 21,
+   345→    duration: "10 min",
+   346→    description:
+   347→      "A simple flower offering at the sanctum. The priest showers flowers on the deity while chanting your name. Perfect for visitors on a short schedule.",
+   348→    prasadam: "Blessed flowers",
+   349→    image:
+   350→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+   351→    significance:
+   352→      "The simplest and most affordable offering. Recommended for first-time visitors and daily devotion.",
+   353→  },
+   354→  {
+   355→    id: "phool-bangla",
+   356→    name: "Phool Bangla (Flower Palace)",
+   357→    price: 5100,
+   358→    duration: "2 hours",
+   359→    description:
+   360→      "An elaborate decoration where the entire sanctum is adorned with thousands of fresh flowers, creating a floral palace for the deity. A spectacular visual offering.",
+   361→    prasadam: "Special prasadam + blessed flowers",
+   362→    image:
+   363→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
+   364→    significance:
+   365→      "Phool Bangla is a grand offering popular during festivals and special occasions. Sponsors are blessed with beauty, harmony, and joy.",
+   366→  },
+   367→  {
+   368→    id: "annadan",
+   369→    name: "Annadan (Food Donation)",
+   370→    price: 2100,
+   371→    duration: "Full day",
+   372→    description:
+   373→      "Sponsor a full day of meals for pilgrims and devotees at the temple annakshetra. Feeds approximately 100 people with pure vegetarian prasadam meals.",
+   374→    prasadam: "Blessed food prasadam",
+   375→    image:
+   376→      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
+   377→    significance:
+   378→      "Annadan is considered the highest form of donation in Hindu tradition. 'Annadan is Mahadan' — feeding devotees brings infinite blessings.",
+   379→  },
+   380→];
+   381→
+   382→/* ============ PLAN YOUR DARSHAN ============ */
+   383→export const DARSHAN_CARDS = [
+   384→  {
+   385→    icon: "Clock",
+   386→    title: "Temple Timings",
+   387→    text: "Nirmalyam 3:00 AM • Seeveli 7:30 AM • General Darshan till 9:15 PM",
+   388→    cta: "View Full Schedule",
+   389→    href: "#blog",
+   390→    accent: "saffron",
+   391→  },
+   392→  {
+   393→    icon: "Flame",
+   394→    title: "Pooja Booking",
+   395→    text: "Palpayasam, Thulabharam, Choroonu, Archana & more. Book in 60 seconds.",
+   396→    cta: "Book a Pooja",
+   397→    href: "#pooja",
+   398→    accent: "maroon",
+   399→  },
+   400→  {
+   401→    icon: "CalendarDays",
+   402→    title: "Festival Calendar",
+   403→    text: "Utsavam, Ashtami Rohini, Ekadasi · plan your visit around major festivals.",
+   404→    cta: "View Festivals",
+   405→    href: "#events",
+   406→    accent: "gold",
+   407→  },
+   408→];
+   409→
+   410→/* ============ TESTIMONIALS ============ */
+   411→export interface Testimonial {
+   412→  name: string;
+   413→  city: string;
+   414→  rating: number;
+   415→  text: string;
+   416→  avatar?: string;
+   417→  room?: string;
+   418→}
+   419→
+   420→export const TESTIMONIALS: Testimonial[] = [
+   421→  {
+   422→    name: "Anand Krishnan",
+   423→    city: "Chennai",
+   424→    rating: 5,
+   425→    text: "Stayed for two nights during Ekadasi. The room was spotless, the staff arranged our 3 AM Nirmalya Darshan slot, and we were inside the temple in literally four minutes from check-out. The filter coffee at reception was a beautiful touch. Will come back every year.",
+   426→    room: "Deluxe AC Room",
+   427→  },
+   428→  {
+   429→    name: "Lakshmi Pillai",
+   430→    city: "Bengaluru",
+   431→    rating: 5,
+   432→    text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked, and the staff kept a wheelchair ready for amma. They even booked our Thulabharam pooja in advance. Felt like staying with relatives, not at a hotel.",
+   433→    room: "Family Suite AC",
+   434→  },
+   435→  {
+   436→    name: "Rajesh Menon",
+   437→    city: "Mumbai",
+   438→    rating: 5,
+   439→    text: "Booked the budget non-AC room for a quick darshan trip. Honestly didn't expect much for ₹700, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
+   440→    room: "Non-AC Budget Room",
+   441→  },
+   442→  {
+   443→    name: "Sunita Nair",
+   444→    city: "Kolkata",
+   445→    rating: 5,
+   446→    text: "We did our daughter's Choroonu here. The Guruvayur Dham team coordinated with the temple tantri, arranged the prasadam kit, and even booked a photographer. The whole ceremony felt sacred and stress-free. Forever grateful.",
+   447→    room: "Deluxe AC Room",
+   448→  },
+   449→  {
+   450→    name: "Vinod Sharma",
+   451→    city: "Delhi",
+   452→    rating: 4,
+   453→    text: "Excellent location and very honest pricing. The AC room was comfortable, WiFi worked well, and check-in was instant via WhatsApp. Slight noise from East Nada Road during festival evening, but nothing earplugs can't fix. Would recommend.",
+   454→    room: "Standard AC Room",
+   455→  },
+   456→];
+   457→
+   458→/* ============ GALLERY ============ */
+   459→export const GALLERY_TABS = [
+   460→  "Rooms",
+   461→  "Temple",
+   462→  "Facilities",
+   463→  "Surroundings",
+   464→] as const;
+   465→export type GalleryTab = (typeof GALLERY_TABS)[number];
+   466→
+   467→export interface GalleryImage {
+   468→  tab: GalleryTab;
+   469→  src: string;
+   470→  alt: string;
+   471→  caption: string;
+   472→  span?: "tall" | "wide" | "normal";
+   473→}
+   474→
+   475→export const GALLERY_IMAGES: GalleryImage[] = [
+   476→  {
+   477→    tab: "Rooms",
+   478→    src: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=800&fit=crop",
+   479→    alt: "Deluxe AC room with king bed and saffron accent wall at Guruvayur Dham",
+   480→    caption: "Deluxe AC Room · king bed, premium linen",
+   481→    span: "tall",
+   482→  },
+   483→  {
+   484→    tab: "Rooms",
+   485→    src: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+   486→    alt: "Standard AC room interior with queen bed",
+   487→    caption: "Standard AC Room · quiet courtyard view",
+   488→  },
+   489→  {
+   490→    tab: "Rooms",
+   491→    src: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
+   492→    alt: "Family suite living area at Guruvayur Dham",
+   493→    caption: "Family Suite · separate sitting area",
+   494→    span: "wide",
+   495→  },
+   496→  {
+   497→    tab: "Temple",
+   498→    src: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=800&fit=crop",
+   499→    alt: "Guruvayur Temple gopuram at sunrise",
+   500→    caption: "Guruvayur Temple East Nada · 2 min walk",
+   501→    span: "tall",
+   502→  },
+   503→  {
+   504→    tab: "Temple",
+   505→    src: "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=800&h=600&fit=crop",
+   506→    alt: "Temple oil lamps and diya arrangement",
+   507→    caption: "Evening deeparadhana lamps",
+   508→  },
+   509→  {
+   510→    tab: "Temple",
+   511→    src: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+   512→    alt: "Marigold and jasmine garlands for pooja",
+   513→    caption: "Fresh pooja garlands at dawn",
+   514→    span: "wide",
+   515→  },
+   516→  {
+   517→    tab: "Facilities",
+   518→    src: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
+   519→    alt: "Reception lobby of Guruvayur Dham",
+   520→    caption: "24×7 reception with pilgrim helpdesk",
+   521→  },
+   522→  {
+   523→    tab: "Facilities",
+   524→    src: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=800&fit=crop",
+   525→    alt: "Pure veg restaurant interior near the property",
+   526→    caption: "Tie-up pure-veg restaurant next door",
+   527→    span: "tall",
+   528→  },
+   529→  {
+   530→    tab: "Facilities",
+   531→    src: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800&h=600&fit=crop",
+   532→    alt: "Parking area with cars at Guruvayur Dham",
+   533→    caption: "Free secure parking for 25+ vehicles",
+   534→    span: "wide",
+   535→  },
+   536→  {
+   537→    tab: "Surroundings",
+   538→    src: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=600&fit=crop",
+   539→    alt: "Kerala backwater near Guruvayur",
+   540→    caption: "Nearby Punnathur Kotta elephant sanctuary",
+   541→  },
+   542→  {
+   543→    tab: "Surroundings",
+   544→    src: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800&h=800&fit=crop",
+   545→    alt: "Temple pond and surrounding architecture",
+   546→    caption: "Rudratheertham temple tank",
+   547→    span: "tall",
+   548→  },
+   549→  {
+   550→    tab: "Surroundings",
+   551→    src: "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
+   552→    alt: "Street market near Guruvayur temple",
+   553→    caption: "East Nada bazaar · souvenirs and prasadam",
+   554→    span: "wide",
+   555→  },
+   556→];
+   557→
+   558→/* ============ EVENTS & FESTIVALS ============ */
+   559→export interface FestEvent {
+   560→  name: string;
+   561→  date: string;
+   562→  dateISO: string;
+   563→  description: string;
+   564→  highlight: string;
+   565→  image: string;
+   566→}
+   567→
+   568→export const EVENTS: FestEvent[] = [
+   569→  {
+   570→    name: "Guruvayur Utsavam",
+   571→    date: "Feb 26 – Mar 7, 2026",
+   572→    dateISO: "2026-02-26",
+   573→    description:
+   574→      "The annual 10-day festival of Guruvayur Temple. Each day features a grand procession of Lord Guruvayurappan atop caparisoned elephants, accompanied by traditional Kerala percussion (Panchavadyam and Melam). The festival concludes with the Aarattu holy dip ceremony at the Rudratheertham temple tank. Rooms sell out 3 months in advance · book early.",
+   575→    highlight: "Grand elephant procession + Aarattu",
+   576→    image:
+   577→      "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=800&h=600&fit=crop",
+   578→  },
+   579→  {
+   580→    name: "Ashtami Rohini",
+   581→    date: "Aug 25, 2026",
+   582→    dateISO: "2026-08-25",
+   583→    description:
+   584→      "Sri Krishna Jayanti · the birth anniversary of Lord Krishna, of whom Guruvayurappan is a form. The temple is decorated with flowers and lights, and a special abhishekam is performed at midnight. Children dressed as little Krishnas line up for darshan · a heart-melting sight. Special Palpayasam is distributed to all devotees.",
+   585→    highlight: "Midnight Krishna abhishekam + children's procession",
+   586→    image:
+   587→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+   588→  },
+   589→  {
+   590→    name: "Guruvayur Ekadasi",
+   591→    date: "Dec 8, 2026",
+   592→    dateISO: "2026-12-08",
+   593→    description:
+   594→      "The most important Ekadasi of the year at Guruvayur · commemorates the installation of the idol by Guru (Brihaspati) and Vayu. The famous Chembai Sangeetholsavam, a 10-day Carnatic music festival honouring the legendary Chembai Vaidyanatha Bhagavathar, concludes on this night with a mass chorus of hundreds of musicians singing at the temple hall.",
+   595→    highlight: "Chembai Sangeetholsavam grand finale chorus",
+   596→    image:
+   597→      "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=600&fit=crop",
+   598→  },
+   599→  {
+   600→    name: "Vishu",
+   601→    date: "Apr 14, 2026",
+   602→    dateISO: "2026-04-14",
+   603→    description:
+   604→      "The Malayalam New Year · devotees throng to see the Vishukkani, the auspicious first sight arranged in front of Lord Guruvayurappan with rice, gold, flowers, and a mirror. The temple opens at 2:30 AM for Vishukkani darshan. Families traditionally start the year with the Lord's darshan, making this one of our busiest single days.",
+   605→    highlight: "Vishukkani darshan at 2:30 AM",
+   606→    image:
+   607→      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&h=600&fit=crop",
+   608→  },
+   609→  {
+   610→    name: "Mandala Pooja Season",
+   611→    date: "Nov 16 – Dec 27, 2026",
+   612→    dateISO: "2026-11-16",
+   613→    description:
+   614→      "The 41-day Mandalam pilgrimage season · Sabarimala pilgrims break their journey at Guruvayur for darshan and Ayyappa pooja. Special ayyappa abhishekams, mala-dharana ceremonies, and kettunira arrangements are available at the temple. Guruvayur Dham offers extended check-out (2 PM) and packed meals for pilgrim groups during this season.",
+   615→    highlight: "41-day Sabarimala pilgrimage stopover",
+   616→    image:
+   617→      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+   618→  },
+   619→  {
+   620→    name: "Sree Krishna Jayanthi Kalam",
+   621→    date: "Year-round",
+   622→    dateISO: "2026-01-01",
+   623→    description:
+   624→      "Throughout the year, Guruvayur Dham hosts special monthly Krishna Jayanthi celebrations on Rohini nakshatra day, with bhajan sessions, prasadam distribution, and discounted room rates for group bookings of 10+ pilgrims. Ask our front desk about the next Rohini date when you check in.",
+   625→    highlight: "Monthly Rohini-day bhajan + group discounts",
+   626→    image:
+   627→      "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
+   628→  },
+   629→];
+   630→
+   631→/* ============ BLOG POSTS ============ */
+   632→export interface BlogPost {
+   633→  slug: string;
+   634→  title: string;
+   635→  excerpt: string;
+   636→  category: string;
+   637→  readTime: string;
+   638→  date: string;
+   639→  image: string;
+   640→  content: string[]; // paragraphs
+   641→}
+   642→
+   643→export const BLOG_POSTS: BlogPost[] = [
+   644→  {
+   645→    slug: "guruvayur-temple-darshan-timings",
+   646→    title: "Guruvayur Temple Darshan Timings · Complete 2026 Guide",
+   647→    excerpt:
+   648→      "Nirmalyam at 3 AM to closing at 9:15 PM · here's the full darshan schedule, special pooja slots, and when to go for the shortest queue.",
+   649→    category: "Temple Guide",
+   650→    readTime: "5 min",
+   651→    date: "Jan 12, 2026",
+   652→    image:
+   653→      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=500&fit=crop",
+   654→    content: [
+   655→      "Guruvayur Temple opens at 3:00 AM every day with the Nirmalya Darshan · the most sacred darshan of the day, when the idol is still adorned with the previous night's flowers and the holy sandalwood paste. This darshan is considered extremely auspicious and is a must for first-time visitors who can manage the early wake-up. The queue starts forming from 2:15 AM, but during festival days and weekends, pilgrims line up as early as 1:30 AM.",
+   656→      "After Nirmalyam, the sanctum closes briefly for the Seeveli procession at 7:30 AM, where Lord Guruvayurappan is taken around the inner pradakshina path on the back of an elephant. The idol is then bathed and re-dressed for the morning Usha Pooja. General darshan resumes around 8:30 AM and continues with brief interruptions for each major pooja · Usha Pooja, Ethirettu Pooja, Pantheerady Pooja, and Ucha Pooja · until the temple closes at 12:30 PM for the afternoon break.",
+   657→      "The temple reopens at 4:30 PM for the evening session, which is when most casual visitors arrive. The highlight of the evening is the Deeparadhana at 6:15 PM · the lamp-lighting ceremony where hundreds of oil lamps are simultaneously lit around the sanctum, and the idol is shown in full aarti splendour. This is the most crowded darshan of the day; expect at least a 90-minute queue during peak season.",
+   658→      "If you want the shortest queue, the best slots are (1) Nirmalyam at 3:00 AM, (2) just after Ucha Pooja at 12:00 PM when the afternoon crowd hasn't built up, and (3) the 7:30 PM post-deeparadhana slot when many families have left for dinner. Avoid weekends, full-moon days, and Ekadasi unless you have a special reason · the crowd on those days can be 5-10× a regular weekday.",
+   659→      "Special darshan tickets (₹100 per person) are available at the temple counter and let you skip part of the general queue. Senior citizens above 65, pregnant women, and parents with infants under 1 year get a free priority darshan line on the right side of the sanctum · show an ID at the gate. Guruvayur Dham's reception can guide you on the day's expected crowd levels and help you pick the right slot before you leave for the temple.",
+   660→    ],
+   661→  },
+   662→  {
+   663→    slug: "dress-code-guruvayur-temple",
+   664→    title: "Dress Code for Guruvayur Temple · What to Wear (and Avoid)",
+   665→    excerpt:
+   666→      "Men must remove their upper garment. Women must wear saree or salwar. Here's the complete dress code, with practical tips for first-timers.",
+   667→    category: "Temple Guide",
+   668→    readTime: "4 min",
+   669→    date: "Jan 8, 2026",
+   670→    image:
+   671→      "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=500&fit=crop",
+   672→    content: [
+   673→      "Guruvayur Temple enforces a strict traditional dress code rooted in Kerala temple custom. Men must wear a mundu (dhoti) or veshti · a single piece of cotton cloth wrapped around the waist, reaching the ankles. Upper garments (shirts, kurtas, t-shirts) must be removed before entering the inner sanctum. Men may keep a small towel or angavastram on the shoulder, but the chest must remain bare. This rule applies to all men, regardless of age, religion, or nationality, with no exceptions.",
+   674→      "Women must wear either a saree, a salwar kameez with dupatta, or a long skirt and blouse. Trousers, jeans, leggings, and short tops are not permitted inside the sanctum. Girls below 12 may wear frocks. Many women pilgrims carry a spare saree in their bag and change in the dedicated dressing rooms near the East Nada entrance · Guruvayur Dham also keeps a few spare sarees and mundus at the reception for guests who arrive unprepared, available against a refundable deposit.",
+   675→      "Footwear must be removed at the designated counters near each temple gate. There are three footwear deposit counters · East Nada, West Nada, and South Nada · and each charges a nominal ₹2-5 per pair. Socks are allowed inside the temple if the marble floor gets too hot during the day, but many traditional pilgrims prefer to walk barefoot as a mark of devotion. The temple floor is washed daily and is generally clean, but during monsoon (June-September) it can get slippery.",
+   676→      "Avoid wearing black clothing on festival days · Kerala tradition associates black with Lord Ayyappa and certain Shaivite rituals, and some temple staff may politely turn you away. White, saffron, cream, and pastel shades are the safest and most respectful choices. Leather items (belts, wallets, bags) are allowed but many devotees prefer to leave them at their rooms. Mobile phones must be switched off inside the sanctum · there are free locker facilities outside the gates.",
+   677→      "Children below 10 do not have to follow the dress code strictly, but traditional clothes are appreciated. Photography is strictly prohibited inside the temple complex · leave your camera at the room. Guruvayur Dham provides a free locker in every room for valuables, and our reception can store larger items if needed. The dress code may seem strict to first-time visitors, but it preserves the sanctity that makes Guruvayur special · embrace it as part of the pilgrimage.",
+   678→    ],
+   679→  },
+   680→  {
+   681→    slug: "how-to-reach-guruvayur",
+   682→    title: "How to Reach Guruvayur · By Air, Train, Bus & Car",
+   683→    excerpt:
+   684→      "Nearest airport is Kochi (87 km). Nearest major railhead is Thrissur (29 km). Complete routes with travel time and cost for every mode.",
+   685→    category: "Travel Guide",
+   686→    readTime: "6 min",
+   687→    date: "Jan 5, 2026",
+   688→    image:
+   689→      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
+   690→    content: [
+   691→      "Guruvayur is in Thrissur district of central Kerala, well-connected by rail, road, and the nearest airports. The town is small and walkable · once you arrive, you can cover the temple, the elephant sanctuary, and the main market on foot. Here's a breakdown of every travel option with realistic travel times, costs, and the best routes we recommend to Guruvayur Dham guests.",
+   692→      "By air: The nearest international airport is Cochin International Airport (COK), about 87 km south of Guruvayur · a 2-hour taxi ride costing ₹2,500-3,500 depending on the time of day. Pre-paid taxis are available at the airport 24×7, and most drivers know Guruvayur Dham by name. Alternatively, you can take the airport metro to Aluva railway station (30 min, ₹60), then a direct train to Guruvayur (90 min, ₹50-150). For those coming from the north, Calicut International Airport (CCJ) is 100 km away · roughly a 2.5-hour drive.",
+   693→      "By train: Guruvayur has its own railway station (GUV), a small terminus about 1 km from the temple, with direct daily trains from Chennai, Mumbai, Bangalore, Thiruvananthapuram, and several Kerala towns. The most convenient connection is from Thrissur Junction (TCR), 29 km away · Thrissur is on the main Konkan-Mangalore line and is connected to every major Indian city. From Thrissur, local trains run to Guruvayur every 2 hours (₹25, 45 min), and taxis charge ₹600-800. Guruvayur Dham offers a complimentary pickup from Guruvayur railway station for guests staying 2+ nights · just WhatsApp us your train details in advance.",
+   694→      "By bus: Kerala State Road Transport Corporation (KSRTC) operates direct buses to Guruvayur from all major Kerala cities · Thrissur (every 15 min, ₹45, 1 hour), Kochi (every 30 min, ₹120, 2.5 hours), Kozhikode (every hour, ₹150, 3 hours), and Thiruvananthapuram (3 daily, ₹280, 6 hours). Private inter-city sleeper buses from Bangalore (8 hours, ₹800-1200) and Chennai (12 hours, ₹1200-1800) arrive at the nearby Thrissur KSRTC stand, from where you take a local bus or taxi. The Guruvayur bus stand is 800 m from the temple · an easy 10-minute walk with light luggage.",
+   695→      "By car: Self-drive from Kochi takes the NH-66 north via Angamaly, Chalakudy, and Kodungallur · a scenic 2-hour drive through coconut groves and backwaters. From Bangalore, the route is Salem-Coimbatore-Palakkad-Thrissur-Guruvayur, about 410 km and a 9-hour drive with breaks. Free parking for 25+ vehicles is available at Guruvayur Dham · reserve your spot on WhatsApp before arrival, especially during festival season when street parking is impossible to find.",
+   696→      "Local transport within Guruvayur is mostly by auto-rickshaw (₹30 minimum, ₹50-80 for short hops) and the occasional e-rickshaw. Most pilgrim points · temple, elephant sanctuary, Rudratheertham tank, and the main market · are within a 1-km radius of the temple and walkable. For day trips to nearby Athirappilly Waterfalls (60 km), Kerala Kalamandalam (35 km), or Palayur Church (25 km), hire a taxi from the stand near the West Nada · typical rates are ₹1,800-2,500 for a full-day 8-hour trip.",
+   697→    ],
+   698→  },
+   699→  {
+   700→    slug: "best-time-to-visit-guruvayur",
+   701→    title: "Best Time to Visit Guruvayur · Weather, Crowds & Festivals",
+   702→    excerpt:
+   703→      "October to February is ideal weather. December-January is peak festival season. Monsoon (June-September) is peaceful and green.",
+   704→    category: "Travel Guide",
+   705→    readTime: "5 min",
+   706→    date: "Jan 3, 2026",
+   707→    image:
+   708→      "https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?w=800&h=500&fit=crop",
+   709→    content: [
+   710→      "Guruvayur enjoys a tropical monsoon climate with three distinct seasons · winter (October-February), summer (March-May), and monsoon (June-September). Each season has its own character, and the best time to visit depends on what you're looking for: comfortable weather, fewer crowds, or the chance to witness a major festival.",
+   711→      "Winter (October to February) is the peak pilgrim season · and for good reason. Daytime temperatures hover around 28-32°C with low humidity, mornings are pleasant at 22°C, and rainfall is rare. This is also when most major festivals fall: Guruvayur Utsavam (Feb-Mar), Mandala Pooja season (Nov-Dec), Guruvayur Ekadasi (Dec), and Vishu (Apr 14, technically spring but with winter-like weather). Expect heavy crowds on weekends and festival days; book rooms at least 2 months in advance. Guruvayur Dham is fully booked for Ekadasi and Vishu by early October.",
+   712→      "Summer (March to May) is hot and humid · daytime temperatures reach 35-38°C with high humidity that makes the heat feel more intense. The temple is less crowded, but the marble floor inside the sanctum gets uncomfortably hot underfoot by noon, so morning and evening darshan are strongly preferred. This is when our AC rooms see the highest demand. Hotel rates drop 20-30% in this season, and you can often get a same-day room without prior booking on weekdays. Carry an umbrella, light cotton clothes, and a water bottle · heatstroke is a real risk for elderly pilgrims walking from distant parking.",
+   713→      "Monsoon (June to September) is the most underrated season · and our personal favourite for a quiet pilgrimage. Kerala receives heavy rain from June onwards, and Guruvayur turns lush green. The temple is far less crowded (you can sometimes walk straight into the sanctum on weekday evenings), rooms are discounted 25-40%, and the post-rain smell of the temple grounds is magical. The downsides: occasional flooding of East Nada Road, limited elephant processions (Seeveli is shorter during heavy rain), and the risk of train delays. Carry a sturdy umbrella, waterproof footwear, and pack clothes in plastic bags inside your luggage.",
+   714→      "If you must pick one week of the year: the first week of December is the sweet spot · the Mandala-Makaravilakku season has ended the peak Sabarimala rush but Guruvayur Ekadasi hasn't yet arrived, weather is pleasant, and the temple is decorated for the upcoming festival. The second-best pick is the last week of February · right after Utsavam concludes, when the temple is freshly cleaned, the weather is still cool, and the festival crowds have thinned out.",
+   715→      "Avoid if possible: Vishu (Apr 14), Guruvayur Ekadasi (Dec), and the Utsavam closing day · unless you specifically want to attend these festivals, the crowds are overwhelming for casual visitors. Also avoid the second Saturday of every month · special abhishekam days draw large crowds from across Kerala. Guruvayur Dham's WhatsApp broadcast sends weekly crowd forecasts to all opted-in guests; message us at +91 98765 43210 with 'forecast' to subscribe.",
+   716→    ],
+   717→  },
+   718→  {
+   719→    slug: "places-to-visit-near-guruvayur",
+   720→    title: "Top 10 Places to Visit Near Guruvayur (Within 60 km)",
+   721→    excerpt:
+   722→      "Punnathur Kotta elephant sanctuary, Athirappilly Falls, Kerala Kalamandalam · the best day-trips from Guruvayur, with timings and entry fees.",
+   723→    category: "Travel Guide",
+   724→    readTime: "7 min",
+   725→    date: "Dec 30, 2025",
+   726→    image:
+   727→      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
+   728→    content: [
+   729→      "Guruvayur is more than just the temple · the surrounding region of central Kerala is packed with cultural, natural, and spiritual attractions that make for excellent day trips. After your darshan and pooja, consider spending an extra day or two exploring these gems, all within an hour's drive from Guruvayur Dham. Most can be covered in 4-6 hour round trips; the front desk can arrange a trusted taxi for ₹1,800-2,500 per day.",
+   730→      "1. Punnathur Kotta Elephant Sanctuary (3 km, 15 min): The most popular nearby attraction · an ancestral palace converted into a sanctuary for the temple's 50+ elephants. Walk through the courtyard, watch the elephants being bathed and fed (mornings are best), and learn about the role of elephants in Kerala temple festivals. Entry ₹10, open 9 AM to 5 PM, closed on certain festival days · check before you go. Guruvayur Dham is walking distance from here.",
+   731→      "2. Athirappilly & Vazhachal Waterfalls (60 km, 1.5 hours): Kerala's largest waterfall · 80 ft of the Chalakudy River cascading into a dramatic gorge, surrounded by dense Sholayar forest. Often called the 'Niagara of India', it's a popular filming location for Indian cinema. Combine with the smaller Vazhachal Falls 5 km downstream. Entry ₹50, best visited July-February (during monsoon the falls are spectacular but access can be restricted). Plan a half-day trip; carry lunch, as food options near the falls are limited.",
+   732→      "3. Kerala Kalamandalam (35 km, 1 hour): A deemed university for Indian performing arts, founded in 1930 by poet Vallathol Narayana Menon. Watch students train in Kathakali, Mohiniyattam, Koodiyattam, and traditional Kerala percussion. Guided tours run twice daily (9:30 AM and 3 PM) and include a 45-minute performance demonstration. Entry ₹250 with camera. A must for culture enthusiasts · budget at least 3 hours for the visit.",
+   733→      "4. Vadakkunnathan Temple, Thrissur (29 km, 45 min): An ancient Shiva temple dating back over 1,000 years, with classical Kerala architecture and murals. The temple is the focal point of the famous Thrissur Pooram festival (April-May). Note: same dress code as Guruvayur (men bare-chested, women in saree/salwar). Non-Hindus are not allowed inside the sanctum but can walk around the outer walls. Free entry.",
+   734→      "5. Paramekkavu & Thiruvambadi Temples, Thrissur (29 km): The two rival Bhagavathy temples whose elephant processions are the heart of Thrissur Pooram. Both temples have beautiful architecture and are open to all visitors. Combine with a walk around the Thrissur Round (the circular road around Vadakkunnathan) for a great half-day cultural circuit.",
+   735→      "6. Palayur Church / St. Thomas Church (25 km, 40 min): One of the seven churches founded by St. Thomas the Apostle in 52 AD · among the oldest churches in India. The current building dates to 1607 but the original baptismal pond is still preserved. A significant Christian pilgrimage site and an interesting interfaith visit from Guruvayur. Open daily 7 AM to 7 PM, free entry.",
+   736→      "7. Peechi Dam & Wildlife Sanctuary (25 km, 45 min): A scenic dam and botanical garden with boating facilities, plus a 125-sq-km wildlife sanctuary known for its bird population. The Peechi-Vazhani Wildlife Sanctuary offers guided treks (₹200, advance booking required) · leopards, bison, and over 100 bird species have been recorded. Best visited November-March.",
+   737→      "8. Shakthan Thampuran Palace, Thrissur (29 km): A 18th-century palace of the Cochin royal family, now a museum with galleries on royal history, sculpture, and a valuable coin collection. Built in a mix of Dutch and traditional Kerala architecture. Entry ₹20, open 9 AM to 5 PM (closed Mondays). Allow 90 minutes.",
+   738→      "9. Chavakkad Beach (25 km, 40 min): A clean, less-crowded beach at the mouth of the Chettuva River · great for sunset, with a historic lighthouse and a backwater boating option. The nearby Blangad beach is even quieter. Avoid swimming here as currents are strong; enjoy the view, the seafood shacks, and the sunset photography.",
+   739→      "10. Vadanappally Beach & Snehatheeram Beach (30 km, 45 min): Snehatheeram ('Love Shore') won the Best Beach in India award in 2010 · a long crescent of golden sand with a cliff-top park. The sunset view here is one of the best in Kerala. Pair with Vadanappally for a relaxed evening trip; both beaches have basic amenities and are family-friendly.",
+   740→    ],
+   741→  },
+   742→  {
+   743→    slug: "guruvayur-room-booking-tips",
+   744→    title: "Guruvayur Room Booking Tips · 12 Things Every Pilgrim Should Know",
+   745→    excerpt:
+   746→      "When to book, how to avoid scams, what to ask before paying, and how to score the best deal on rooms near the temple.",
+   747→    category: "Booking Tips",
+   748→    readTime: "6 min",
+   749→    date: "Dec 28, 2025",
+   750→    image:
+   751→      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=500&fit=crop",
+   752→    content: [
+   753→      "Booking a room in Guruvayur is straightforward once you know what to look for, but the surge of pilgrims during festival season attracts its share of overpricing, false location claims, and bait-and-switch listings. After hosting thousands of pilgrims at Guruvayur Dham, here are the 12 things we wish every guest knew before booking.",
+   754→      "1. Verify the actual walking distance to East Nada. Many properties claim 'walking distance' or 'near temple' but are 2-3 km away. Ask for the exact distance in metres · anything beyond 500 m means a 7+ minute walk, which is exhausting for elderly pilgrims and dangerous at 2:30 AM for Nirmalyam darshan. Guruvayur Dham is 200 m from East Nada · verify any property on Google Maps before paying.",
+   755→      "2. Book 60+ days ahead for festival dates. Guruvayur Ekadasi (Dec), Vishu (Apr 14), and Utsavam (Feb-Mar) see 10× the normal pilgrim crowd. All reputable properties within 1 km of the temple are sold out by mid-October. Last-minute bookings on these dates either pay 3× the normal rate or land you in a far-flung lodge with no AC.",
+   756→      "3. Always confirm AC actually works. Many budget listings advertise 'AC room' but the AC is either broken or switched off between 11 PM and 5 AM 'to save power'. Ask explicitly: 'Is the AC 24×7? Does it have a remote in the room?' At Guruvayur Dham, every AC room has a working remote and 24×7 cooling · no excuses.",
+   757→      "4. Ask about 24×7 hot water. Standard in every hotel, but many budget lodges in Guruvayur run the geyser only from 5 AM to 9 AM. If you want a shower after the noon darshan or before evening deeparadhana, you need 24-hour hot water. Confirm in writing before booking.",
+   758→      "5. Check the actual check-in/check-out times. Standard is 12 PM check-in, 11 AM check-out · but some properties push 24-hour check-out (i.e., check-out at the same time as check-in) which can ruin your schedule if you arrive early morning. Guruvayur Dham offers flexible early check-in for ₹200 extra when the room is ready.",
+   759→      "6. Avoid paying the full amount as advance. Reputable properties take 10-25% as booking advance via UPI or bank transfer and the balance on arrival. Anyone demanding 100% advance via personal UPI (not a business account) is a red flag · it's almost impossible to get a refund if they don't honour the booking.",
+   760→      "7. Verify the room photos are recent. Many listings on aggregator sites use stock or doctored photos. Ask the property to send a fresh WhatsApp photo of the exact room number being booked. At Guruvayur Dham, every room has a unique number and live photos are available on request.",
+   761→      "8. Confirm parking if you're driving. During festival days, on-street parking near the temple is impossible. Many properties list 'parking available' but mean 'parking on the street 500 m away'. Ask specifically: 'Do you have on-premise parking? Is it covered? Is there a charge?' Guruvayur Dham has free covered parking for 25+ vehicles.",
+   762→      "9. Ask about lift access if you're on a higher floor. Many older Guruvayur properties are 3-4 storeys with no lift · a serious problem for elderly pilgrims and those with knee issues. If you have mobility concerns, insist on a ground or first-floor room with lift access.",
+   763→      "10. Don't fall for 'temple view' claims. The actual temple is visible only from a handful of rooftop terraces within 200 m · most 'temple view' rooms just face the temple-side road. A real temple view (where you can see the gopuram from the window) is rare and commands a 30-50% premium. Ask for a photo of the actual view from the room window.",
+   764→      "11. Book poojas in advance, not at the temple. Major poojas like Thulabharam, Choroonu, and Bhagavatha Sapthaham have 2-3 week waiting lists. Your accommodation should help you book these in advance · Guruvayur Dham's reception does this free for all guests. Don't pay extra 'agents' who offer to do this for a commission.",
+   765→      "12. Save the property's WhatsApp number. WhatsApp is the fastest way to reach the front desk for room service, early check-out, taxi booking, or any issue. Phone calls during peak hours may go unanswered. Save our number +91 98765 43210 for direct WhatsApp booking and 24×7 support · average response time under 5 minutes.",
+   766→    ],
+   767→  },
+   768→];
+   769→
+   770→/* ============ FAQS ============ */
+   771→export const FAQS = [
+   772→  {
+   773→    q: "How far is Guruvayur Dham from Guruvayur Temple?",
+   774→    a: "We are exactly 200 metres (a 2-minute walk) from the temple's East Nada gate. You can see the temple gopuram from our rooftop terrace, and the walk is on a flat, well-lit road · safe even at 3 AM for Nirmalyam darshan.",
+   775→  },
+   776→  {
+   777→    q: "What are the check-in and check-out times?",
+   778→    a: "Standard check-in is 12:00 PM and check-out is 11:00 AM. Early check-in (from 8 AM) is available for ₹200 extra if the room is ready. Late check-out till 2 PM is ₹300; half-day extension till 6 PM is ₹600.",
+   779→  },
+   780→  {
+   781→    q: "Do you offer free pickup from the railway station or bus stand?",
+   782→    a: "Yes, complimentary pickup from Guruvayur Railway Station (1 km) is included for guests staying 2 or more nights. Just WhatsApp us your train details 2 hours before arrival. Pickup from Thrissur Junction (29 km) is ₹600.",
+   783→  },
+   784→  {
+   785→    q: "Is parking free? Do you have space for buses?",
+   786→    a: "Yes · we have free covered parking for 25 cars and 5 bikes inside the property. For tempo travellers and buses, we arrange dedicated parking at a partner lot 300 m away for ₹200/night.",
+   787→  },
+   788→  {
+   789→    q: "Can I book a pooja through you? Which poojas are available?",
+   790→    a: "Absolutely · we book all major Guruvayur temple poojas on behalf of our guests at the official temple rate, with no commission. Popular options include Palpayasam (₹50), Archana (₹100), Pushpanjali (₹75), Thulabharam (₹1,500), Choroonu (₹800), and Bhagavatha Sapthaham (₹5,000). Browse the Pooja section above and click 'Book This Pooja' on WhatsApp.",
+   791→  },
+   792→  {
+   793→    q: "What is the dress code for the temple?",
+   794→    a: "Men must wear a mundu/dhoti and remove their upper garment before entering the sanctum. Women must wear a saree or salwar kameez with dupatta. We keep spare mundus and sarees at reception (refundable ₹100 deposit) for guests who arrive unprepared. Children under 10 have a relaxed dress code.",
+   795→  },
+   796→  {
+   797→    q: "Do you serve food at the property?",
+   798→    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg Brahmin hotels within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary filter coffee and chai are served at reception every morning from 6 to 8 AM.",
+   799→  },
+   800→  {
+   801→    q: "Are pets allowed?",
+   802→    a: "Unfortunately, no. The temple vicinity is a pet-free zone by municipal regulation, and our own insurance does not cover pets on the premises. We can recommend a trusted pet boarding facility in Thrissur (29 km) if you're travelling with a pet.",
+   803→  },
+   804→  {
+   805→    q: "Do you have a lift? My mother has knee issues.",
+   806→    a: "Yes, all four floors are served by a 6-passenger elevator with backup power. We also have two ground-floor rooms specifically designed for elderly and mobility-impaired guests · request these at the time of booking and we'll prioritise them.",
+   807→  },
+   808→  {
+   809→    q: "Can I get a refund if I cancel my booking?",
+   810→    a: "Cancellations made 7+ days before check-in: 90% refund. 3-6 days before: 50% refund. Less than 72 hours before: no refund. Festival dates (Ekadasi, Vishu, Utsavam) have a strict no-refund policy but can be rescheduled within 60 days at no charge.",
+   811→  },
+   812→  {
+   813→    q: "Is WiFi free? How fast is it?",
+   814→    a: "Yes · free, unlimited WiFi throughout the property, including rooms. Speeds are 50-100 Mbps (sufficient for video calls, Netflix, and remote work). Power backup covers the WiFi router, so it stays online during outages.",
+   815→  },
+   816→  {
+   817→    q: "Do you accept international guests and foreign currency?",
+   818→    a: "Yes, we welcome guests of all nationalities. We accept payment in INR via UPI, cards (Visa/Mastercard/RuPay), and cash. For foreign currency, we direct you to the licensed forex counter next door. Our staff speaks English, Hindi, Malayalam, and Tamil.",
+   819→  },
+   820→  {
+   821→    q: "Can I store my luggage after check-out?",
+   822→    a: "Of course · free luggage storage for up to 8 hours after check-out, in a locked room at reception. Perfect for a final darshan or shopping before your train. Just collect your bags before 9 PM.",
+   823→  },
+   824→  {
+   825→    q: "Do you offer group discounts for pilgrim batches?",
+   826→    a: "Yes · groups of 10+ guests staying 2+ nights get 15% off the total bill, plus a complimentary group darshan briefing and packed breakfast on the first morning. School and college pilgrimage groups get an additional 5% off. WhatsApp us for group quotes.",
+   827→  },
+   828→];
+   829→
+   830→/* ============ CONTACT REASONS ============ */
+   831→export const CONTACT_REASONS = [
+   832→  "General Enquiry",
+   833→  "Room Booking",
+   834→  "Pooja Booking",
+   835→  "Group / Pilgrimage Booking",
+   836→  "Festival Season Booking",
+   837→  "Feedback / Complaint",
+   838→];
+   839→
+   840→/* ============ HELPERS ============ */
+   841→export function formatINR(amount: number): string {
+   842→  return "₹" + amount.toLocaleString("en-IN");
+   843→}
+   844→
+   845→export const waLink = (message: string) =>
+   846→  `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+   847→

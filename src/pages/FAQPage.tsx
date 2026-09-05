@@ -6,17 +6,34 @@ import {
 } from "@/components/ui/accordion";
 import { HelpCircle, MessageCircle } from "lucide-react";
 import { FAQS, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, mapFAQ, type FAQEntry } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
 export default function FAQPage() {
+  const { get } = useContent();
+  const cmsFAQs = useCMSList<FAQEntry>("faqs", []);
+  const faqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
+
+  const eyebrow = get("faq.eyebrow", "Frequently Asked");
+  const title = get("faq.title", "Your Guruvayur Questions, Answered");
+  const subtitle = get(
+    "faq.subtitle",
+    `We've compiled the ${faqs.length} questions our guests ask most often. Can't find your answer? WhatsApp us any time · we reply within minutes.`
+  );
+
+  // Split title for gradient on second half (after comma)
+  const titleParts = title.split(",");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "," : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join(",").trim() : "";
+
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Frequently Asked"
+        eyebrow={eyebrow}
         icon={HelpCircle}
-        title={<>Your Guruvayur Questions, <GoldFoilText>Answered</GoldFoilText></>}
-        subtitle="We've compiled the 14 questions our guests ask most often. Can't find your answer? WhatsApp us any time · we reply within minutes."
+        title={<>{titlePre} {titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "FAQ" }]}
       />
 
@@ -31,7 +48,7 @@ export default function FAQPage() {
             className="mx-auto max-w-3xl"
           >
             <Accordion type="single" collapsible className="space-y-3">
-              {FAQS.map((faq, i) => (
+              {faqs.map((faq, i) => (
                 <AccordionItem
                   key={i}
                   value={`item-${i}`}

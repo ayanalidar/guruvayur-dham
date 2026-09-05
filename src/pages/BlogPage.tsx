@@ -3,21 +3,54 @@
 import { motion } from "framer-motion";
 import { Clock, ChevronRight, BookOpen, ArrowUpRight, MessageCircle } from "lucide-react";
 import { BLOG_POSTS, waLink, type BlogPost } from "@/lib/site-data";
+import { useContent, useCMSList, mapBlogPost, type BlogPostItem } from "@/lib/use-cms";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, MandalaDivider, SectionHeader } from "@/components/site/visuals";
 
 export default function BlogPage() {
   const { navigate } = useHashRoute();
-  const [featured, ...rest] = BLOG_POSTS;
+  const { get } = useContent();
+
+  const cmsPosts = useCMSList<BlogPostItem>("blogPosts", []);
+  const posts: BlogPost[] = cmsPosts.length > 0 ? cmsPosts.map(mapBlogPost) : BLOG_POSTS;
+
+  const [featured, ...rest] = posts.length > 0 ? posts : [{ slug: "", title: "", excerpt: "", category: "", readTime: "", date: "", image: "", content: [] as string[] }];
+
+  const eyebrow = get("blog.eyebrow", "Travel Guide & Blog");
+  const title = get("blog.title", "Guruvayur Pilgrim Knowledge Hub");
+  const subtitle = get(
+    "blog.subtitle",
+    "Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips."
+  );
+
+  // Split title for gradient on second half
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 2 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
+
+  if (posts.length === 0) {
+    return (
+      <div className="animate-page-reveal">
+        <PageHeader
+          eyebrow={eyebrow}
+          icon={BookOpen}
+          title={<>{titlePre} {titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+          subtitle={subtitle}
+          crumbs={[{ label: "Home", route: "/" }, { label: "Blog" }]}
+        />
+        <section className="bg-ink py-24 text-center text-ivory/60">No blog posts yet — check back soon.</section>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Travel Guide & Blog"
+        eyebrow={eyebrow}
         icon={BookOpen}
-        title={<>Guruvayur Pilgrim <GoldFoilText>Knowledge Hub</GoldFoilText></>}
-        subtitle="Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips."
+        title={<>{titlePre} {titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "Blog" }]}
       />
 
