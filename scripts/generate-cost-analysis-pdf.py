@@ -157,7 +157,7 @@ story.append(make_table([
     ['Monthly running cost', 'Rs 100 - 1,100'],
     ['Equivalent SaaS monthly cost', 'Rs 15,000 - 40,000/month'],
     ['Break-even vs SaaS', '1 - 2 months'],
-    ['What you actually paid', 'Rs 0 (built with AI)'],
+    ['What you actually paid', 'Rs 55,000 (built by GuardianX)'],
 ], col_widths=[70*mm, 100*mm]))
 story.append(PageBreak())
 
@@ -362,7 +362,7 @@ story.append(Paragraph(
 ))
 story.append(make_table([
     ['Question', 'Answer'],
-    ['What did it actually cost you?', 'Rs 0 (built with AI assistance)'],
+    ['What did it actually cost you?', 'Rs 55,000 (built by GuardianX)'],
     ['What would it cost to build from scratch?', 'Rs 2.5 - 4 lakhs (freelancer) / Rs 5-12 lakhs (agency)'],
     ['What\'s the realistic market value?', 'Rs 4 - 8 lakhs'],
     ['What\'s the monthly running cost?', 'Rs 100 - 1,100 (mostly free tiers)'],
