@@ -13,6 +13,7 @@ import {
 import { useHashRoute } from "@/lib/router";
 import { getIcon } from "@/components/site/icon-map";
 import PageHeader from "@/components/site/PageHeader";
+import ParticleLogo from "@/components/site/ParticleLogo";
 import { GoldFoilText, TiltCard, MagneticButton, SectionHeader, MandalaDivider } from "@/components/site/visuals";
 import { BedDouble } from "lucide-react";
 
@@ -72,6 +73,20 @@ export default function RoomsPage() {
         subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada."
         crumbs={[{ label: "Home", route: "/" }, { label: "Rooms" }]}
       />
+
+      {/* Particle logo — animated gold particles orbiting the Guruvayur Dham mark.
+          Aesthetic reference: academy.guardianx.cloud (logo + glow + radial halo),
+          adapted to the site's champagne/gold palette. */}
+      <div className="pointer-events-none relative z-10 -mt-4 flex justify-center lg:-mt-8 lg:justify-end lg:pr-12">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.6, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="pointer-events-auto"
+        >
+          <ParticleLogo size={120} glow="#D4AF37" particleCount={54} />
+        </motion.div>
+      </div>
 
       {/* Sticky filter bar */}
       <div className="sticky top-16 z-30 border-y border-champagne/10 bg-ink-soft/90 backdrop-blur-md lg:top-20">
