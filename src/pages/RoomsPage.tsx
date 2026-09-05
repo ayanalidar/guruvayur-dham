@@ -269,14 +269,12 @@ function RoomCard({ room, liveAvailable, onView }: { room: Room; liveAvailable?:
                 >
                   <Eye className="h-3.5 w-3.5" /> View
                 </button>
-                <a
-                  href={waLink(waMsg)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => navigate(`/rooms/${room.slug}`)}
                   className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-champagne to-gold-deep px-4 py-2 text-xs font-semibold text-ink transition-transform hover:scale-105"
                 >
                   <MessageCircle className="h-3.5 w-3.5" /> Book
-                </a>
+                </button>
               </div>
             </div>
           </div>

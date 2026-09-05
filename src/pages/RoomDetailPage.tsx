@@ -141,8 +141,8 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
               )}
 
               <div className="mt-6 flex flex-col gap-3">
-                <MagneticButton href={waLink(waMsg)}>
-                  <MessageCircle className="h-5 w-5" /> Check Availability on WhatsApp
+                <MagneticButton onClick={() => navigate("/book")}>
+                  <MessageCircle className="h-5 w-5" /> Book This Room
                 </MagneticButton>
                 <button
                   onClick={() => navigate("/rooms")}
@@ -212,16 +212,14 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
               <div className="mt-6 border-t border-champagne/10 pt-5">
                 <p className="text-sm font-semibold text-ivory">Quick Book</p>
                 <p className="mt-1 text-xs text-ivory/60">
-                  Skip the form · message us directly for instant confirmation.
+                  Book online now · instant confirmation.
                 </p>
-                <a
-                  href={waLink(waMsg)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => navigate("/book")}
                   className="btn-luxe mt-3 w-full"
                 >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp Now
-                </a>
+                  Book Now
+                </button>
               </div>
             </div>
           </div>

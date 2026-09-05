@@ -646,3 +646,33 @@ model SeoAudit {
   issues          String?  // JSON array of issues
   createdAt       DateTime @default(now())
 }
+
+/* ============ POOJA (CMS editable) ============ */
+model Pooja {
+  id              String   @id @default(cuid())
+  name            String
+  price           Int
+  duration        String
+  description     String
+  prasadam        String
+  image           String
+  significance    String
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+/* ============ HERO CAROUSEL SLIDES ============ */
+model CarouselSlide {
+  id              String   @id @default(cuid())
+  title           String
+  subtitle        String?
+  image           String
+  ctaText         String?
+  ctaLink         String?
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

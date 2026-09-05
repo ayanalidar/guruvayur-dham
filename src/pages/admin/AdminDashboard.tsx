@@ -58,9 +58,10 @@ export default function AdminDashboard() {
       />
       <section className="bg-ink py-12 lg:py-16">
         <div className="container-x">
-          <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
             <AdminNavCard icon={CalendarDays} label="All Bookings" desc="View & manage" onClick={() => navigate("/admin/bookings")} />
             <AdminNavCard icon={FileText} label="Edit Content" desc="All site text" onClick={() => navigate("/admin/content")} />
+            <AdminNavCard icon={Settings} label="CMS / Images" desc="Upload photos, edit rooms" onClick={() => navigate("/cms")} />
             <AdminNavCard icon={BedDouble} label="Manage Rooms" desc="Prices & availability" onClick={() => navigate("/admin/rooms")} />
             <AdminNavCard icon={Radio} label="Channels" desc="Sync & webhooks" onClick={() => navigate("/admin/channels")} />
             <AdminNavCard icon={Settings} label="Settings" desc="API keys, SEO, partners" onClick={() => navigate("/settings")} />
