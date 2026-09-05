@@ -103,7 +103,9 @@ export default function Home() {
     if (path === "/influencer") return <InfluencerPortalPage />;
     if (path === "/policies") return <PolicyPage />;
     // SEO landing pages (festivals, hotels-near, darshan-timings)
-    if (SEO_PAGE_SLUGS.includes(path)) return <SEOPage slug={path} />;
+    // Router returns paths with a leading slash (e.g. "/janmashtami"),
+    // but SEO_PAGE_SLUGS has no slash (e.g. "janmashtami"), so strip it.
+    if (SEO_PAGE_SLUGS.includes(path.replace(/^\//, ""))) return <SEOPage slug={path.replace(/^\//, "")} />;
     if (path === "/settings") return <AdminGuard><SettingsPage /></AdminGuard>;
     if (path === "/cms") return <AdminGuard><CMSPage /></AdminGuard>;
     if (path === "/reset-password") return <LoginPage />; // handled via query param
