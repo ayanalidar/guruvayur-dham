@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard } from "lucide-react";
+import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard, ChevronDown, BookOpen, MapPin, Calendar } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
+import { SEO_PAGES, getSEOPagesByCategory } from "@/lib/seo-pages";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,7 @@ export default function Navbar() {
   const { get } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [guidesOpen, setGuidesOpen] = useState(false);
 
   // Brand info from CMS (with hardcoded fallbacks)
   const brandName = get("site.name", "Guruvayur Dham");
@@ -92,6 +94,71 @@ export default function Navbar() {
               </li>
             );
           })}
+          {/* Guides dropdown */}
+          <li
+            className="relative"
+            onMouseEnter={() => setGuidesOpen(true)}
+            onMouseLeave={() => setGuidesOpen(false)}
+          >
+            <button
+              onClick={() => setGuidesOpen((v) => !v)}
+              className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-ivory/70 transition-colors hover:text-ivory"
+            >
+              <BookOpen className="h-3.5 w-3.5" /> Guides
+              <ChevronDown className={cn("h-3 w-3 transition-transform", guidesOpen && "rotate-180")} />
+            </button>
+            <AnimatePresence>
+              {guidesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute left-0 top-full mt-1 w-72 rounded-2xl border border-champagne/15 bg-ink-card p-3 shadow-luxe-lg"
+                >
+                  {/* Festivals */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <Calendar className="h-3 w-3" /> Festivals
+                  </p>
+                  {getSEOPagesByCategory("festivals").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                  {/* Hotels Near */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-3 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <MapPin className="h-3 w-3" /> Hotels Near
+                  </p>
+                  {getSEOPagesByCategory("hotels-near").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                  {/* Darshan Timings */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-3 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <BookOpen className="h-3 w-3" /> Darshan Timings
+                  </p>
+                  {getSEOPagesByCategory("darshan-timings").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </li>
         </ul>
 
         {/* Desktop CTAs */}
@@ -168,6 +235,19 @@ export default function Navbar() {
                   </li>
                 );
               })}
+              {/* Guides — mobile accordion */}
+              <li className="mt-2 border-t border-champagne/10 pt-2">
+                <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-champagne/60">Guides</p>
+                {SEO_PAGES.map((p) => (
+                  <button
+                    key={p.slug}
+                    onClick={() => go(p.slug)}
+                    className="block w-full rounded-lg px-4 py-2 text-left text-sm text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                  >
+                    {p.navLabel}
+                  </button>
+                ))}
+              </li>
               <li className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={`tel:${phoneRaw}`}

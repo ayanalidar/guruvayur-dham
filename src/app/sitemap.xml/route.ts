@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { SEO_PAGES } from "@/lib/seo-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -8,14 +9,10 @@ const SITE_URL = "https://www.guruvayurdham.com";
 /**
  * GET /sitemap.xml
  *
- * Dynamic sitemap. Lists the base hash-routed SPA pages plus dynamic
- * blog-post URLs. (Search engines can't follow hash routes, so we list
- * them as plain paths and rely on the SPA's router to interpret them.)
- *
- * Routes:
- *   - / (home)
- *   - /rooms, /pooja, /about, /gallery, /events, /blog, /faq, /contact
- *   - /blog/<slug> for every published BlogPost
+ * Dynamic sitemap. Lists:
+ *   - Base SPA hash routes (home, rooms, pooja, etc.)
+ *   - All SEO landing pages (festivals, hotels-near, darshan-timings)
+ *   - Dynamic blog post URLs
  */
 export async function GET() {
   const today = new Date().toISOString().slice(0, 10);
@@ -32,6 +29,13 @@ export async function GET() {
     { path: "/#/faq", priority: "0.6", changefreq: "monthly" },
     { path: "/#/contact", priority: "0.7", changefreq: "monthly" },
   ];
+
+  // SEO landing pages — festivals, hotels-near, darshan-timings
+  const seoRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = SEO_PAGES.map((p) => ({
+    path: `/#/${p.slug}`,
+    priority: p.category === "festivals" ? "0.9" : p.category === "hotels-near" ? "0.85" : "0.8",
+    changefreq: p.category === "festivals" ? "monthly" : "weekly",
+  }));
 
   // Dynamic blog post routes
   let blogRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = [];
@@ -51,7 +55,7 @@ export async function GET() {
     // DB unavailable — skip blog posts
   }
 
-  const allRoutes = [...staticRoutes, ...blogRoutes];
+  const allRoutes = [...staticRoutes, ...seoRoutes, ...blogRoutes];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

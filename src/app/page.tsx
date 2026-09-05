@@ -38,6 +38,8 @@ import InfluencerPortalPage from "@/pages/InfluencerPortalPage";
 import PolicyPage from "@/pages/PolicyPage";
 import SettingsPage from "@/pages/SettingsPage";
 import CMSPage from "@/pages/CMSPage";
+import SEOPage from "@/pages/SEOPage";
+import { SEO_PAGE_SLUGS } from "@/lib/seo-pages";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
@@ -100,6 +102,8 @@ export default function Home() {
     if (path === "/review") return <ReviewSubmitPage />;
     if (path === "/influencer") return <InfluencerPortalPage />;
     if (path === "/policies") return <PolicyPage />;
+    // SEO landing pages (festivals, hotels-near, darshan-timings)
+    if (SEO_PAGE_SLUGS.includes(path)) return <SEOPage slug={path} />;
     if (path === "/settings") return <AdminGuard><SettingsPage /></AdminGuard>;
     if (path === "/cms") return <AdminGuard><CMSPage /></AdminGuard>;
     if (path === "/reset-password") return <LoginPage />; // handled via query param
