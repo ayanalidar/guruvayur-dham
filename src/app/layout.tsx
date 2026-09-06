@@ -6,6 +6,7 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import ServiceWorkerRegister from "@/components/site/ServiceWorkerRegister";
 import { ThemeProvider } from "@/lib/theme-context";
 import { I18nProvider } from "@/lib/i18n/context";
+import ErrorBoundary from "@/components/site/ErrorBoundary";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -224,10 +225,12 @@ export default function RootLayout({
       >
         <I18nProvider>
           <ThemeProvider>
-            <ServiceWorkerRegister />
-            {children}
-            <Toaster />
-            <SonnerToaster position="top-center" richColors />
+            <ErrorBoundary>
+              <ServiceWorkerRegister />
+              {children}
+              <Toaster />
+              <SonnerToaster position="top-center" richColors />
+            </ErrorBoundary>
           </ThemeProvider>
         </I18nProvider>
       </body>
