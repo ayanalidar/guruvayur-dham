@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { SEO_PAGES } from "@/lib/seo-pages";
+import { ALL_SEO_PAGES } from "@/lib/seo-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +31,7 @@ export async function GET() {
   ];
 
   // SEO landing pages — festivals, hotels-near, darshan-timings
-  const seoRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = SEO_PAGES.map((p) => ({
+  const seoRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = ALL_SEO_PAGES.map((p) => ({
     path: `/#/${p.slug}`,
     priority: p.category === "festivals" ? "0.9" : p.category === "hotels-near" ? "0.85" : "0.8",
     changefreq: p.category === "festivals" ? "monthly" : "weekly",

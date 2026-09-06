@@ -165,25 +165,20 @@ export default function LoginPage() {
     <div className="min-h-screen bg-ink lg:grid lg:grid-cols-2 lg:pt-0">
       {/* ===== LEFT: Brand visual (desktop only) ===== */}
       <div className="relative hidden overflow-hidden lg:block">
-        {/* Background */}
-        <div className="absolute inset-0">
-          <img
-            src={loginBgImage}
-            alt="Guruvayur Dham"
-            className="h-full w-full object-cover photo-cinematic-strong"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink/60 to-transparent" />
-        </div>
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink-soft to-ink" />
+        {/* Subtle radial glow behind logo */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-champagne/8 blur-3xl" />
 
         {/* Content */}
         <div className="relative flex h-full flex-col justify-between p-12">
-          {/* Logo */}
+          {/* Top: small logo + brand name */}
           <div className="flex items-center gap-3">
             <img
               src={loginLogo}
               alt={brandName}
               className="h-12 w-12 object-contain"
+              style={{ filter: "drop-shadow(0 0 8px rgba(212,175,55,0.3))" }}
             />
             <div>
               <p className="font-serif text-xl font-medium text-ivory">{brandName}</p>
@@ -191,48 +186,38 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Center content */}
-          <div className="max-w-md">
+          {/* Center: large logo */}
+          <div className="flex flex-col items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <img
+                src="/guruyavur.png"
+                alt={brandName}
+                className="h-64 w-64 object-contain"
+                style={{ filter: "drop-shadow(0 0 24px rgba(212,175,55,0.25))" }}
+                draggable={false}
+              />
+            </motion.div>
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="font-serif text-5xl leading-[1.05] text-ivory"
-              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="mt-6 font-serif text-4xl leading-tight text-ivory text-center"
             >
               Begin Your<br />
               <span className="text-gold-foil">Sacred Journey</span>
             </motion.h1>
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-5 text-base leading-relaxed text-ivory/70"
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="mt-4 text-center text-sm leading-relaxed text-ivory/60 max-w-sm"
             >
-              Book luxury rooms, manage your pooja bookings, track loyalty points, and access exclusive features. All in one place.
+              Book luxury rooms, manage pooja bookings, and access exclusive features. All in one place.
             </motion.p>
-
-            {/* Features */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-8 space-y-3"
-            >
-              {[
-                { icon: Star, text: "Instant booking with live availability" },
-                { icon: Bell, text: "Festival alerts & darshan reminders" },
-                { icon: ShieldCheck, text: "Secure payments via Razorpay" },
-                { icon: MapPin, text: SITE.shortAddress },
-              ].map((f, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-ivory/80">
-                  <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full border border-champagne/20 bg-ink/50 backdrop-blur-sm">
-                    <f.icon className="h-4 w-4 text-champagne" />
-                  </span>
-                  {f.text}
-                </div>
-              ))}
-            </motion.div>
           </div>
 
           {/* Bottom: rating + contact */}

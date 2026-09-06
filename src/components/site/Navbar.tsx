@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard, ChevronDown, BookOpen, MapPin, Calendar } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
-import { SEO_PAGES, getSEOPagesByCategory } from "@/lib/seo-pages";
+import { SEO_PAGES, getSEOPagesByCategory, ALL_SEO_PAGES } from "@/lib/seo-pages";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
@@ -114,7 +114,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute left-0 top-full mt-1 w-72 rounded-2xl border border-champagne/15 bg-ink-card p-3 shadow-luxe-lg"
+                  className="absolute left-0 top-full mt-1 w-80 max-h-[80vh] overflow-y-auto rounded-2xl border border-champagne/15 bg-ink-card p-3 shadow-luxe-lg"
                 >
                   {/* Festivals */}
                   <p className="flex items-center gap-1.5 px-2 pb-1 pt-1 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
@@ -147,6 +147,45 @@ export default function Navbar() {
                     <BookOpen className="h-3 w-3" /> Darshan Timings
                   </p>
                   {getSEOPagesByCategory("darshan-timings").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                  {/* How to Reach */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-3 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <MapPin className="h-3 w-3" /> How to Reach
+                  </p>
+                  {getSEOPagesByCategory("how-to-reach").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                  {/* Pooja Guides */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-3 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <Calendar className="h-3 w-3" /> Pooja Guides
+                  </p>
+                  {getSEOPagesByCategory("pooja-guides").map((p) => (
+                    <button
+                      key={p.slug}
+                      onClick={() => go(p.slug)}
+                      className="block w-full rounded-lg px-2 py-1.5 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                    >
+                      {p.navLabel}
+                    </button>
+                  ))}
+                  {/* Travel Guides */}
+                  <p className="flex items-center gap-1.5 px-2 pb-1 pt-3 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    <BookOpen className="h-3 w-3" /> Travel Guides
+                  </p>
+                  {getSEOPagesByCategory("travel-guides").map((p) => (
                     <button
                       key={p.slug}
                       onClick={() => go(p.slug)}
@@ -238,7 +277,7 @@ export default function Navbar() {
               {/* Guides — mobile accordion */}
               <li className="mt-2 border-t border-champagne/10 pt-2">
                 <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-champagne/60">Guides</p>
-                {SEO_PAGES.map((p) => (
+                {ALL_SEO_PAGES.map((p) => (
                   <button
                     key={p.slug}
                     onClick={() => go(p.slug)}

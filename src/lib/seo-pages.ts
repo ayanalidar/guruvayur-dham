@@ -21,7 +21,7 @@
  *   3. The sitemap + navbar pick it up automatically from this config
  */
 
-export type SEOPageCategory = "festivals" | "hotels-near" | "darshan-timings";
+export type SEOPageCategory = "festivals" | "hotels-near" | "darshan-timings" | "how-to-reach" | "pooja-guides" | "travel-guides";
 
 export type SEOPage = {
   slug: string;
@@ -914,15 +914,21 @@ export const SEO_PAGES: SEOPage[] = [
   },
 ];
 
+// ─── Phase 2: 22 additional SEO pages (how-to-reach, pooja-guides, travel-guides) ───
+import { SEO_PAGES_PHASE2 } from "./seo-pages-phase2";
+
+// Merge Phase 1 + Phase 2
+export const ALL_SEO_PAGES = [...SEO_PAGES, ...SEO_PAGES_PHASE2];
+
 // Helper: get all SEO page slugs (for routing + sitemap)
-export const SEO_PAGE_SLUGS = SEO_PAGES.map((p) => p.slug);
+export const SEO_PAGE_SLUGS = ALL_SEO_PAGES.map((p) => p.slug);
 
 // Helper: get a page by slug
 export function getSEOPage(slug: string): SEOPage | undefined {
-  return SEO_PAGES.find((p) => p.slug === slug);
+  return ALL_SEO_PAGES.find((p) => p.slug === slug);
 }
 
 // Helper: get pages by category (for navbar grouping)
 export function getSEOPagesByCategory(category: SEOPageCategory): SEOPage[] {
-  return SEO_PAGES.filter((p) => p.category === category);
+  return ALL_SEO_PAGES.filter((p) => p.category === category);
 }
