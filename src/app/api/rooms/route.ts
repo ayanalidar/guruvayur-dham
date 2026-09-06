@@ -14,7 +14,10 @@ export async function GET(req: NextRequest) {
     orderBy: { price: "asc" },
     include: { rates: true },
   });
-  return NextResponse.json({ rooms: rooms.map(serializeRoom) });
+  return NextResponse.json(
+    { rooms: rooms.map(serializeRoom) },
+    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+  );
 }
 
 // PATCH /api/rooms · update a room (price, name, description, etc.)

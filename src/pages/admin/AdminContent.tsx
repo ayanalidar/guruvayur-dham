@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import { fetchContent, updateContent } from "@/lib/api-client";
+import { invalidateCMSCache } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText } from "@/components/site/visuals";
 import { cn } from "@/lib/utils";
@@ -130,6 +131,7 @@ export default function AdminContent() {
     setSaving(true);
     try {
       await updateContent(updates);
+      invalidateCMSCache(); // Clear in-memory cache so public pages see changes
       toast.success(`Saved ${updates.length} change${updates.length > 1 ? "s" : ""}. Visible on the website now.`);
       await load();
     } catch (e) {

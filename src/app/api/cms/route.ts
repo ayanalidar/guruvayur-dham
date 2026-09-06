@@ -40,7 +40,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   }
 
-  return NextResponse.json({ data });
+  return NextResponse.json(
+    { data },
+    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+  );
 }
 
 /**

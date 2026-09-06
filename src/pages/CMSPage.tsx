@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Image as ImageIcon, Upload, Plus, Trash2, Save, X, RefreshCw,
   Flame, BedDouble, GalleryHorizontal, Loader2, Check, ArrowUp, ArrowDown,
-  CalendarDays, Star, HelpCircle, ShieldCheck, BookOpen, FileText,
+  CalendarDays, Star, HelpCircle, ShieldCheck, BookOpen, FileText, Settings,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -13,8 +13,9 @@ import { GoldFoilText } from "@/components/site/visuals";
 import { SEO_PAGES, getSEOPage } from "@/lib/seo-pages";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { invalidateCMSCache } from "@/lib/use-cms";
 
-type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts" | "seoPages";
+type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts" | "seoPages" | "pricingRules";
 
 export default function CMSPage() {
   const [tab, setTab] = useState<Tab>("rooms");
@@ -45,6 +46,7 @@ export default function CMSPage() {
               { key: "trustBadges" as Tab, label: "Badges", icon: ShieldCheck },
               { key: "blogPosts" as Tab, label: "Blog", icon: BookOpen },
               { key: "seoPages" as Tab, label: "SEO Pages", icon: FileText },
+              { key: "pricingRules" as Tab, label: "Pricing", icon: Settings },
             ].map((t) => (
               <button
                 key={t.key}
@@ -72,6 +74,7 @@ export default function CMSPage() {
           {tab === "trustBadges" && <GenericCMS type="trustBadges" title="Trust Badges" fields={[{ key: "icon", label: "Icon (lucide name)" }, { key: "text", label: "Badge Text" }]} />}
           {tab === "blogPosts" && <BlogCMS />}
           {tab === "seoPages" && <SEOPagesCMS />}
+          {tab === "pricingRules" && <PricingRulesCMS />}
         </div>
       </section>
     </div>
@@ -146,6 +149,7 @@ function RoomsCMS() {
   });
 
   const load = () => {
+    invalidateCMSCache();
     fetch("/api/rooms", { cache: "no-store" }).then(r => r.json()).then(j => setRooms(j.rooms || []));
   };
   useEffect(() => { load(); }, []);
@@ -168,7 +172,7 @@ function RoomsCMS() {
       toast.error(j.error);
       return;
     }
-    toast.success("Room added — visible on website now");
+    toast.success("Room added"); invalidateCMSCache();// — visible on website now");
     setShowAdd(false);
     setNewRoom({
       name: "", slug: "", type: "AC", price: 1500, capacity: 2,
@@ -408,6 +412,7 @@ function PoojaCMS() {
   const [newPooja, setNewPooja] = useState({ name: "", price: 51, duration: "15 min", description: "", prasadam: "", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop", significance: "" });
 
   const load = () => {
+    invalidateCMSCache();
     fetch("/api/poojas-admin", { cache: "no-store" }).then(r => r.json()).then(j => setPoojas(j.poojas || []));
   };
   useEffect(() => { load(); }, []);
@@ -515,6 +520,7 @@ function GalleryCMS() {
   const [tab, setTab] = useState("Rooms");
 
   const load = () => {
+    invalidateCMSCache();
     fetch(`/api/gallery?tab=${tab}`, { cache: "no-store" }).then(r => r.json()).then(j => setImages(j.images || []));
   };
   useEffect(() => { load(); }, [tab]);
@@ -576,6 +582,7 @@ function CarouselCMS() {
   const [newSlide, setNewSlide] = useState({ title: "", subtitle: "", image: "", ctaText: "Book Now", ctaLink: "/#/book" });
 
   const load = () => {
+    invalidateCMSCache();
     fetch("/api/carousel", { cache: "no-store" }).then(r => r.json()).then(j => setSlides(j.slides || []));
   };
   useEffect(() => { load(); }, []);
@@ -683,6 +690,7 @@ function GenericCMS({ type, title, fields }: { type: string; title: string; fiel
   const [newItem, setNewItem] = useState<Record<string, string>>({});
 
   const load = () => {
+    invalidateCMSCache();
     fetch(`/api/cms?type=${type}`, { cache: "no-store" })
       .then(r => r.json())
       .then(j => setItems(j.data || []));
@@ -839,6 +847,7 @@ function BlogCMS() {
   });
 
   const load = () => {
+    invalidateCMSCache();
     fetch(`/api/cms?type=blogPosts`, { cache: "no-store" })
       .then(r => r.json())
       .then(j => setItems(j.data || []));
@@ -1085,6 +1094,7 @@ function SEOPagesCMS() {
   const [draft, setDraft] = useState<any>(null);
 
   const load = async () => {
+    invalidateCMSCache();
     const r = await fetch("/api/content", { cache: "no-store" });
     const j = await r.json();
     setContentMap(j.map || {});
@@ -1317,4 +1327,176 @@ function toDraft(page: any) {
     })),
     _faqs: page.faqs || [],
   };
+}
+
+/* ============ PRICING RULES CMS (dynamic pricing editor) ============ */
+function PricingRulesCMS() {
+  const [rules, setRules] = useState<any[]>([]);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newRule, setNewRule] = useState({
+    name: "",
+    type: "WEEKEND",
+    multiplier: 1.3,
+    startDate: "",
+    endDate: "",
+    dayOfWeek: "5,6",
+    roomType: "",
+    active: true,
+    priority: 0,
+  });
+
+  const load = () => {
+    invalidateCMSCache();
+    fetch("/api/pricing-rules", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => setRules(j.rules || []));
+  };
+  useEffect(() => { load(); }, []);
+
+  const addRule = async () => {
+    if (!newRule.name) { toast.error("Name required"); return; }
+    await fetch("/api/pricing-rules", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newRule),
+    });
+    toast.success("Pricing rule added");
+    setShowAdd(false);
+    setNewRule({ name: "", type: "WEEKEND", multiplier: 1.3, startDate: "", endDate: "", dayOfWeek: "5,6", roomType: "", active: true, priority: 0 });
+    load();
+  };
+
+  const deleteRule = async (id: string) => {
+    if (!confirm("Delete this pricing rule?")) return;
+    await fetch(`/api/pricing-rules?id=${id}`, { method: "DELETE" });
+    toast.success("Rule deleted");
+    load();
+  };
+
+  const updateField = async (id: string, field: string, value: any) => {
+    await fetch("/api/pricing-rules", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, data: { [field]: value } }),
+    });
+    toast.success(`${field} updated`);
+    load();
+  };
+
+  const ruleTypes = ["WEEKEND", "FESTIVAL", "LAST_MINUTE", "EARLY_BIRD", "SEASONAL"];
+  const roomTypes = ["", "AC", "Non-AC", "Family", "Deluxe"];
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-serif text-2xl text-ivory">Dynamic Pricing Rules</h2>
+          <p className="mt-1 text-sm text-ivory/60">Control surge pricing, discounts, and seasonal rates. Rules auto-apply to all bookings.</p>
+        </div>
+        <button onClick={() => setShowAdd(!showAdd)} className="btn-luxe text-xs">
+          <Plus className="h-4 w-4" /> Add Rule
+        </button>
+      </div>
+
+      {/* Add rule form */}
+      {showAdd && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-4 overflow-hidden">
+          <div className="card-luxe p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Rule Name</label>
+                <input value={newRule.name} onChange={e => setNewRule({ ...newRule, name: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="Weekend Surge" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Type</label>
+                <select value={newRule.type} onChange={e => setNewRule({ ...newRule, type: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none">
+                  {ruleTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Multiplier (1.3 = 30% surge, 0.8 = 20% off)</label>
+                <input type="number" step="0.1" value={newRule.multiplier} onChange={e => setNewRule({ ...newRule, multiplier: parseFloat(e.target.value) })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="1.3" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Priority (higher = applied first)</label>
+                <input type="number" value={newRule.priority} onChange={e => setNewRule({ ...newRule, priority: parseInt(e.target.value) })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="0" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Start Date (optional)</label>
+                <input type="date" value={newRule.startDate} onChange={e => setNewRule({ ...newRule, startDate: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">End Date (optional)</label>
+                <input type="date" value={newRule.endDate} onChange={e => setNewRule({ ...newRule, endDate: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Days of Week (comma-separated: 0=Sun, 5=Fri, 6=Sat)</label>
+                <input value={newRule.dayOfWeek} onChange={e => setNewRule({ ...newRule, dayOfWeek: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="5,6" />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Room Type (blank = all rooms)</label>
+                <select value={newRule.roomType} onChange={e => setNewRule({ ...newRule, roomType: e.target.value })} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none">
+                  {roomTypes.map(t => <option key={t} value={t}>{t || "All Rooms"}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={addRule} className="btn-luxe text-xs">Create Rule</button>
+              <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe text-xs">Cancel</button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Rules list */}
+      <div className="mt-6 space-y-3">
+        {rules.map((rule) => (
+          <div key={rule.id} className="card-luxe p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-serif text-lg text-ivory">{rule.name}</p>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${rule.active ? "bg-green-500/15 text-green-300" : "bg-ivory/10 text-ivory/40"}`}>
+                    {rule.active ? "Active" : "Inactive"}
+                  </span>
+                  <span className="rounded-full bg-champagne/10 px-2 py-0.5 text-[10px] font-bold text-champagne">{rule.type}</span>
+                </div>
+                <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-wider text-ivory/50">Multiplier</label>
+                    <input type="number" step="0.1" defaultValue={rule.multiplier} onBlur={e => updateField(rule.id, "multiplier", e.target.value)} className="mt-0.5 w-full rounded-lg border border-champagne/15 bg-ink px-2 py-1 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-wider text-ivory/50">Days (0-6)</label>
+                    <input defaultValue={rule.dayOfWeek || ""} onBlur={e => updateField(rule.id, "dayOfWeek", e.target.value)} className="mt-0.5 w-full rounded-lg border border-champagne/15 bg-ink px-2 py-1 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="All" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-wider text-ivory/50">Room Type</label>
+                    <input defaultValue={rule.roomType || ""} onBlur={e => updateField(rule.id, "roomType", e.target.value)} className="mt-0.5 w-full rounded-lg border border-champagne/15 bg-ink px-2 py-1 text-sm text-ivory focus:border-champagne/40 focus:outline-none" placeholder="All" />
+                  </div>
+                </div>
+                {(rule.startDate || rule.endDate) && (
+                  <p className="mt-2 text-xs text-ivory/40">
+                    {rule.startDate ? `From: ${new Date(rule.startDate).toLocaleDateString("en-IN")}` : ""} {rule.endDate ? `To: ${new Date(rule.endDate).toLocaleDateString("en-IN")}` : ""}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <button onClick={() => updateField(rule.id, "active", !rule.active)} className={`rounded-full px-3 py-1 text-[10px] font-semibold ${rule.active ? "bg-green-500/15 text-green-300" : "bg-ivory/10 text-ivory/50"}`}>
+                  {rule.active ? "Active" : "Inactive"}
+                </button>
+                <button onClick={() => deleteRule(rule.id)} className="rounded-full bg-red-500/10 px-2 py-1 text-[10px] font-semibold text-red-300 hover:bg-red-500/20">
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {rules.length === 0 && (
+          <p className="py-8 text-center text-sm text-ivory/50">No pricing rules yet. Click "Add Rule" to create surge pricing, discounts, or seasonal rates.</p>
+        )}
+      </div>
+    </div>
+  );
 }

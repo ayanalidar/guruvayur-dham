@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
   // convert to key->value map for easy frontend use
   const map: Record<string, string> = {};
   for (const b of blocks) map[b.key] = b.value;
-  return NextResponse.json({ blocks, map });
+  return NextResponse.json(
+    { blocks, map },
+    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+  );
 }
 
 // PATCH /api/content · update one or more content blocks
