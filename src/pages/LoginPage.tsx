@@ -216,8 +216,30 @@ export default function LoginPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="mt-4 text-center text-sm leading-relaxed text-ivory/60 max-w-sm"
             >
-              Book luxury rooms, manage pooja bookings, and access exclusive features. All in one place.
+              Book luxury rooms, manage your pooja bookings, track loyalty points, and access exclusive features. All in one place.
             </motion.p>
+
+            {/* Features */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-8 space-y-3"
+            >
+              {[
+                { icon: Star, text: "Instant booking with live availability" },
+                { icon: Bell, text: "Festival alerts & darshan reminders" },
+                { icon: ShieldCheck, text: "Secure payments via Razorpay" },
+                { icon: MapPin, text: SITE.shortAddress },
+              ].map((f, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-ivory/80">
+                  <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full border border-champagne/20 bg-ink/50 backdrop-blur-sm">
+                    <f.icon className="h-4 w-4 text-champagne" />
+                  </span>
+                  {f.text}
+                </div>
+              ))}
+            </motion.div>
           </div>
 
           {/* Bottom: rating + contact */}
