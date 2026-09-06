@@ -13,6 +13,51 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { Upload, Loader2 } from "lucide-react";
+
+// Check if a content block key is an image field
+function isImageField(key: string): boolean {
+  const lower = key.toLowerCase();
+  return lower.includes("image") || lower.includes("logo") || lower.includes("bgimage") || lower.includes("hero.bg");
+}
+
+// Inline image uploader for AdminContent
+function ContentImageUploader({ onUpload }: { onUpload: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const handleFile = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const r = await fetch("/api/upload", { method: "POST", body: formData });
+      const j = await r.json();
+      if (j.error) {
+        toast.error(j.error);
+      } else {
+        onUpload(j.url);
+        toast.success("Image uploaded");
+      }
+    } catch {
+      toast.error("Upload failed");
+    }
+    setUploading(false);
+  };
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-champagne/20 px-3 py-1.5 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/10">
+      {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+      {uploading ? "Uploading..." : "Upload"}
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFile(file);
+        }}
+      />
+    </label>
+  );
+}
 
 const CATEGORIES = [
   { key: "site", label: "Site Settings" },
@@ -172,10 +217,22 @@ export default function AdminContent() {
                           className="resize-y"
                         />
                       ) : (
-                        <Input
-                          value={drafts[b.key] || ""}
-                          onChange={(e) => setDrafts({ ...drafts, [b.key]: e.target.value })}
-                        />
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={drafts[b.key] || ""}
+                            onChange={(e) => setDrafts({ ...drafts, [b.key]: e.target.value })}
+                            className="flex-1"
+                          />
+                          {isImageField(b.key) && (
+                            <ContentImageUploader onUpload={(url) => setDrafts({ ...drafts, [b.key]: url })} />
+                          )}
+                        </div>
+                      )}
+                      {/* Image preview for image fields */}
+                      {isImageField(b.key) && drafts[b.key] && (
+                        <div className="mt-2 overflow-hidden rounded-lg border border-champagne/10">
+                          <img src={drafts[b.key]} alt="" className="h-24 w-full object-cover" />
+                        </div>
                       )}
                     </div>
                   );
