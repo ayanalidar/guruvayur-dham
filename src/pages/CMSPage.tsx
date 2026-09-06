@@ -144,7 +144,9 @@ function RoomsCMS() {
     size: "200 sq.ft",
     bedType: "1 Double Bed",
     shortDesc: "",
-    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+    description: "",
+    image: "",
+    badge: "",
     totalUnits: 1,
   });
 
@@ -177,19 +179,12 @@ function RoomsCMS() {
     setNewRoom({
       name: "", slug: "", type: "AC", price: 1500, capacity: 2,
       size: "200 sq.ft", bedType: "1 Double Bed", shortDesc: "",
-      image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
-      totalUnits: 1,
+      description: "", image: "", badge: "", totalUnits: 1,
     });
     load();
   };
 
   const saveImage = async (id: string) => {
-    // Don't save base64 data URLs to the DB — they're too large and break
-    // the rooms page rendering. Show an error guiding the user to use Blob.
-    if (editImage.startsWith("data:")) {
-      toast.error("Image was stored as base64 (temporary). For permanent storage, set up Vercel Blob: Dashboard → Storage → Create Blob Store → add BLOB_READ_WRITE_TOKEN env var. Or use a direct image URL instead of uploading.");
-      return;
-    }
     await fetch("/api/rooms", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -306,16 +301,38 @@ function RoomsCMS() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Image URL</label>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Description (shown on room detail page)</label>
+                <textarea
+                  value={newRoom.description}
+                  onChange={(e) => setNewRoom({ ...newRoom, description: e.target.value })}
+                  rows={3}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none"
+                  placeholder="Detailed description of the room, amenities, view, etc."
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Badge (e.g. 'Most Popular')</label>
+                <input
+                  value={newRoom.badge}
+                  onChange={(e) => setNewRoom({ ...newRoom, badge: e.target.value })}
+                  className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                  placeholder="Most Popular"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Room Image</label>
                 <div className="mt-1 flex items-center gap-2">
                   <input
                     value={newRoom.image}
                     onChange={(e) => setNewRoom({ ...newRoom, image: e.target.value })}
                     className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
-                    placeholder="https://..."
+                    placeholder="Upload or paste image URL"
                   />
                   <ImageUploader label="Upload" onUpload={(url) => setNewRoom({ ...newRoom, image: url })} />
                 </div>
+                {newRoom.image && !newRoom.image.startsWith("data:") && (
+                  <img src={newRoom.image} alt="Preview" className="mt-2 h-20 w-32 rounded-lg object-cover" />
+                )}
               </div>
             </div>
             <div className="mt-4 flex gap-2">
@@ -364,11 +381,12 @@ function RoomsCMS() {
                   )}
                 </div>
 
-                {/* Image URL display — hide if base64 data URL (too long) */}
+                {/* Image URL display — hide only if base64 data URL */}
                 {(() => {
                   const url = editing === room.id ? editImage : room.image;
                   if (!url || url.startsWith("data:")) return null;
-                  return <p className="text-[10px] text-ivory/40 break-all">{url}</p>;
+                  const displayUrl = url.length > 60 ? url.substring(0, 57) + "..." : url;
+                  return <p className="mt-1 text-[10px] text-ivory/40 truncate">{displayUrl}</p>;
                 })()}
 
                 {/* Editable fields */}
