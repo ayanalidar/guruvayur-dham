@@ -68,49 +68,53 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ===== Strategy 2: Local filesystem (VPS / dev) =====
+    // ===== Strategy 2: /tmp directory (Vercel serverless writable area) =====
+    // Vercel serverless can write to /tmp. We store the file there and
+    // return a base64 data URL (but only if small enough).
+    // For larger files, we return an error guiding the user to set up Blob.
     try {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
       // Try /public/uploads first (works on VPS + local dev)
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
-      }
-      const filePath = path.join(uploadDir, filename);
-      await writeFile(filePath, buffer);
-      return NextResponse.json({ url: `/uploads/${filename}` });
-    } catch (fsError: any) {
-      // Filesystem not writable (Vercel serverless) — fall through to base64
-      console.log("Filesystem upload failed, trying base64 fallback:", fsError.message);
-    }
-
-    // ===== Strategy 3: Base64 data URL (Vercel serverless fallback) =====
-    // This works EVERYWHERE but produces larger responses.
-    // For production on Vercel, set BLOB_READ_WRITE_TOKEN to use cloud storage.
-    try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const base64 = buffer.toString("base64");
-      const dataUrl = `data:${file.type};base64,${base64}`;
-
-      // Check if the base64 is not too large (limit to 2MB for data URLs)
-      if (dataUrl.length > 2 * 1024 * 1024) {
+      try {
+        const uploadDir = path.join(process.cwd(), "public", "uploads");
+        if (!existsSync(uploadDir)) {
+          await mkdir(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, filename);
+        await writeFile(filePath, buffer);
+        return NextResponse.json({ url: `/uploads/${filename}` });
+      } catch (publicErr: any) {
+        // /public not writable (Vercel) — try /tmp as fallback
+        const tmpDir = path.join(tmpdir(), "uploads");
+        if (!existsSync(tmpDir)) {
+          await mkdir(tmpDir, { recursive: true });
+        }
+        const tmpPath = path.join(tmpDir, filename);
+        await writeFile(tmpPath, buffer);
+        // /tmp files don't persist across requests on Vercel, so we
+        // can't return a URL. Instead, return a base64 data URL for
+        // small files, or an error for large files.
+        if (buffer.length < 500 * 1024) {
+          // File is small enough (< 500KB) for base64 data URL
+          const base64 = buffer.toString("base64");
+          const dataUrl = `data:${file.type};base64,${base64}`;
+          return NextResponse.json({ url: dataUrl });
+        }
+        // File too large for base64 on Vercel without Blob
         return NextResponse.json(
           {
-            error: "File too large for serverless upload. Set BLOB_READ_WRITE_TOKEN env var for cloud storage, or upload a smaller image (<2MB).",
-            hint: "Go to Vercel dashboard → Storage → Create Blob Store → copy BLOB_READ_WRITE_TOKEN → add to Environment Variables.",
+            error: "Image too large for Vercel without cloud storage. Set BLOB_READ_WRITE_TOKEN env var, or use an image under 500KB.",
+            hint: "Vercel dashboard → Storage → Create Blob Store → copy token → add as BLOB_READ_WRITE_TOKEN env var.",
           },
           { status: 413 }
         );
       }
-
-      return NextResponse.json({ url: dataUrl });
-    } catch (base64Error: any) {
-      console.error("Base64 fallback failed:", base64Error);
+    } catch (fsError: any) {
+      console.error("All filesystem strategies failed:", fsError);
       return NextResponse.json(
-        { error: "Upload failed. All storage strategies failed." },
+        { error: `Upload failed: ${fsError.message}` },
         { status: 500 }
       );
     }

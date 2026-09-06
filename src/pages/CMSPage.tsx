@@ -184,6 +184,12 @@ function RoomsCMS() {
   };
 
   const saveImage = async (id: string) => {
+    // Don't save base64 data URLs to the DB — they're too large and break
+    // the rooms page rendering. Show an error guiding the user to use Blob.
+    if (editImage.startsWith("data:")) {
+      toast.error("Image was stored as base64 (temporary). For permanent storage, set up Vercel Blob: Dashboard → Storage → Create Blob Store → add BLOB_READ_WRITE_TOKEN env var. Or use a direct image URL instead of uploading.");
+      return;
+    }
     await fetch("/api/rooms", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -358,10 +364,12 @@ function RoomsCMS() {
                   )}
                 </div>
 
-                {/* Image URL display */}
-                <div className="mt-2">
-                  <p className="text-[10px] text-ivory/40 break-all">{editing === room.id ? editImage : room.image}</p>
-                </div>
+                {/* Image URL display — hide if base64 data URL (too long) */}
+                {(() => {
+                  const url = editing === room.id ? editImage : room.image;
+                  if (!url || url.startsWith("data:")) return null;
+                  return <p className="text-[10px] text-ivory/40 break-all">{url}</p>;
+                })()}
 
                 {/* Editable fields */}
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">

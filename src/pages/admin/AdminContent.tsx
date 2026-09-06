@@ -231,7 +231,7 @@ export default function AdminContent() {
                         </div>
                       )}
                       {/* Image preview for image fields */}
-                      {isImageField(b.key) && drafts[b.key] && (
+                      {isImageField(b.key) && drafts[b.key] && !drafts[b.key].startsWith("data:") && (
                         <div className="mt-2 overflow-hidden rounded-lg border border-champagne/10">
                           <img src={drafts[b.key]} alt="" className="h-24 w-full object-cover" />
                         </div>
