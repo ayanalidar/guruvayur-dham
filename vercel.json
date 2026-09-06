@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/reviews/checkout-funnel",
+      "path": "/api/reviews/checkout-funnel?hours=24",
       "schedule": "30 7 * * *"
     }
   ]

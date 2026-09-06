@@ -62,9 +62,8 @@ export async function POST(req: NextRequest) {
     if (!staff || !staff.active) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
-    // For staff, check against a stored password (use PIN as fallback for demo)
-    // In production, staff would have proper passwordHash
-    if (password !== staff.pin && password !== "admin123") {
+    // For staff, check against stored PIN (production should use passwordHash)
+    if (password !== staff.pin) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
     let user = await db.user.findFirst({ where: { staffId: staff.id } });
