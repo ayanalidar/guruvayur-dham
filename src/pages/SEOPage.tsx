@@ -262,7 +262,7 @@ export default function SEOPage({ slug }: { slug: string }) {
 
             {/* Sidebar (1/3 width) — sticky CTA */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 space-y-4">
+              <div className="lg:sticky lg:top-24 space-y-4">
                 {/* Booking CTA */}
                 <div className="card-luxe p-6">
                   <h3 className="font-serif text-xl text-ivory">

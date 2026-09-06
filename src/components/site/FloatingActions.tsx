@@ -19,7 +19,7 @@ export default function FloatingActions() {
 
   return (
     <>
-      {/* Floating WhatsApp — for enquiries, not bookings */}
+      {/* Floating WhatsApp — desktop only (mobile uses bottom bar + WhatsAppChat widget) */}
       <motion.a
         href={waLink("Namaskaram! I have a question about Guruvayur Dham.")}
         target="_blank"
@@ -28,7 +28,7 @@ export default function FloatingActions() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2, type: "spring", stiffness: 260, damping: 18 }}
-        className="fixed bottom-24 right-4 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-luxe-lg animate-pulse-ring sm:bottom-6 lg:right-6"
+        className="fixed bottom-6 right-6 z-50 hidden h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-luxe-lg animate-pulse-ring sm:grid"
       >
         <MessageCircle className="h-7 w-7" fill="white" stroke="#25D366" strokeWidth={1.5} />
       </motion.a>

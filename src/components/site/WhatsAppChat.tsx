@@ -60,6 +60,8 @@ export default function WhatsAppChat() {
     if (hasAutoOpened.current) return;
     const seen = sessionStorage.getItem("gd-chat-autoopened");
     if (seen) return;
+    // Don't auto-open on mobile — it covers too much screen
+    if (window.innerWidth < 640) return;
     const t = setTimeout(() => {
       if (messages.length === 0 && !open) {
         setOpen(true);
@@ -141,7 +143,7 @@ export default function WhatsAppChat() {
         animate={{ scale: 1, rotate: 0 }}
         transition={{ delay: 1.5, type: "spring", stiffness: 260, damping: 20 }}
         onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 transition-transform hover:scale-110"
+        className="fixed bottom-20 right-4 z-50 grid h-14 w-14 place-items-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 transition-transform hover:scale-110 sm:bottom-6 sm:right-6"
         aria-label={open ? "Close chat" : "Open chat"}
       >
         <AnimatePresence mode="wait">
@@ -174,7 +176,7 @@ export default function WhatsAppChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[32rem] w-[22rem] flex-col overflow-hidden rounded-2xl border border-champagne/20 bg-ink shadow-2xl"
+            className="fixed bottom-36 right-4 z-50 flex h-[60vh] max-h-[32rem] w-[calc(100vw-2rem)] sm:bottom-24 sm:right-6 sm:h-[32rem] sm:w-[22rem] flex-col overflow-hidden rounded-2xl border border-champagne/20 bg-ink shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-champagne/10 bg-ink-soft p-4">
@@ -190,7 +192,7 @@ export default function WhatsAppChat() {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="grid h-8 w-8 place-items-center rounded-full text-ivory/50 hover:bg-champagne/10 hover:text-ivory"
+                className="grid h-10 w-10 place-items-center rounded-full text-ivory/50 hover:bg-champagne/10 hover:text-ivory"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -208,7 +210,7 @@ export default function WhatsAppChat() {
                       <button
                         key={q}
                         onClick={() => send(q)}
-                        className="rounded-full border border-champagne/20 bg-champagne/5 px-3 py-1 text-[11px] text-champagne transition-colors hover:bg-champagne/15"
+                        className="rounded-full border border-champagne/20 bg-champagne/5 px-3 py-2 text-[11px] text-champagne transition-colors hover:bg-champagne/15"
                       >
                         {q}
                       </button>
@@ -276,7 +278,7 @@ export default function WhatsAppChat() {
               <button
                 onClick={() => send()}
                 disabled={loading || !input.trim()}
-                className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full bg-green-500 text-white transition-colors hover:bg-green-600 disabled:opacity-40"
+                className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-full bg-green-500 text-white transition-colors hover:bg-green-600 disabled:opacity-40"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>

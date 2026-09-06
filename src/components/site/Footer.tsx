@@ -207,7 +207,7 @@ export default function Footer() {
       <div className="border-t border-champagne/10">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-ivory/50 sm:flex-row">
           <p>© {new Date().getFullYear()} {brandName}. {t('footer.craftedWith') || "Crafted with devotion"}</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <button onClick={() => navigate("/privacy")} className="hover:text-champagne">{t('footer.privacyPolicy') || "Privacy Policy"}</button>
             <button onClick={() => navigate("/terms")} className="hover:text-champagne">{t('footer.terms') || "Terms of Service"}</button>
             <button onClick={() => navigate("/policies")} className="hover:text-champagne">{t('footer.policies') || "Booking Policies"}</button>

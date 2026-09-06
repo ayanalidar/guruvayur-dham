@@ -255,7 +255,7 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="overflow-hidden glass-strong lg:hidden"
           >
-            <ul className="container-x flex flex-col gap-1 py-4">
+            <ul className="container-x flex max-h-[calc(100vh-4rem)] flex-col gap-1 overflow-y-auto py-4">
               {NAV_ITEMS.map((item) => {
                 const active = isRouteActive(path, item.route);
                 return (
@@ -276,16 +276,23 @@ export default function Navbar() {
               })}
               {/* Guides — mobile accordion */}
               <li className="mt-2 border-t border-champagne/10 pt-2">
-                <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-champagne/60">Guides</p>
-                {ALL_SEO_PAGES.map((p) => (
-                  <button
-                    key={p.slug}
-                    onClick={() => go(p.slug)}
-                    className="block w-full rounded-lg px-4 py-2 text-left text-sm text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
-                  >
-                    {p.navLabel}
-                  </button>
-                ))}
+                <details className="group">
+                  <summary className="cursor-pointer list-none px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-champagne/60">
+                    Guides ({ALL_SEO_PAGES.length} pages)
+                    <ChevronDown className="inline h-3 w-3 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="max-h-60 overflow-y-auto">
+                    {ALL_SEO_PAGES.map((p) => (
+                      <button
+                        key={p.slug}
+                        onClick={() => go(p.slug)}
+                        className="block w-full rounded-lg px-6 py-2 text-left text-xs text-ivory/60 transition-colors hover:bg-champagne/5 hover:text-champagne"
+                      >
+                        {p.navLabel}
+                      </button>
+                    ))}
+                  </div>
+                </details>
               </li>
               <li className="mt-3 grid grid-cols-2 gap-2">
                 <a

@@ -1,0 +1,707 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useRef, useState } from "react";
+     4→     4→import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
+     5→     5→import { ChevronRight, Star, ArrowUpRight, MapPin, Sparkles, Quote, Phone } from "lucide-react";
+     6→     6→import {
+     7→     7→  TRUST_BADGES,
+     8→     8→  WHY_CHOOSE_US,
+     9→     9→  ROOMS,
+    10→    10→  DARSHAN_CARDS,
+    11→    11→  POOJAS,
+    12→    12→  TESTIMONIALS,
+    13→    13→  SITE,
+    14→    14→  formatINR,
+    15→    15→  waLink,
+    16→    16→} from "@/lib/site-data";
+    17→    17→import { useHashRoute } from "@/lib/router";
+    18→    18→import { getIcon } from "@/components/site/icon-map";
+    19→    19→import {
+    20→    20→  GoldFoilText,
+    21→    21→  MandalaDivider,
+    22→    22→  FloatingDiyas,
+    23→    23→  OmWatermark,
+    24→    24→  MagneticButton,
+    25→    25→  CountUp,
+    26→    26→  TiltCard,
+    27→    27→  Marquee,
+    28→    28→  ImageReveal,
+    29→    29→  SectionHeader,
+    30→    30→} from "@/components/site/visuals";
+    31→    31→import ReviewsWidget from "@/components/site/ReviewsWidget";
+    32→    32→import { useI18n } from "@/lib/i18n/context";
+    33→    33→
+    34→    34→export default function HomePage() {
+    35→    35→  const { navigate } = useHashRoute();
+    36→    36→  const { t } = useI18n();
+    37→    37→
+    38→    38→  return (
+    39→    39→    <div className="animate-page-reveal">
+    40→    40→      <Hero />
+    41→    41→      <MarqueeStrip />
+    42→    42→      <WhyChooseUs />
+    43→    43→      <RoomPreviews />
+    44→    44→      <PlanDarshan />
+    45→    45→      <PoojaPreview />
+    46→    46→      <ReviewsWidget />
+    47→    47→      <Testimonials />
+    48→    48→      <AboutTeaser />
+    49→    49→      <FinalCTA />
+    50→    50→    </div>
+    51→    51→  );
+    52→    52→}
+    53→    53→
+    54→    54→/* ============ HERO · 3D TILT CARDS ============ */
+    55→    55→function Hero() {
+    56→    56→  const { navigate } = useHashRoute();
+    57→    57→  const containerRef = useRef<HTMLDivElement>(null);
+    58→    58→  const mx = useMotionValue(0);
+    59→    59→  const my = useMotionValue(0);
+    60→    60→  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), { stiffness: 200, damping: 20 });
+    61→    61→  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-12, 12]), { stiffness: 200, damping: 20 });
+    62→    62→
+    63→    63→  const onMove = (e: React.MouseEvent) => {
+    64→    64→    const el = containerRef.current;
+    65→    65→    if (!el) return;
+    66→    66→    const rect = el.getBoundingClientRect();
+    67→    67→    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    68→    68→    my.set((e.clientY - rect.top) / rect.height - 0.5);
+    69→    69→  };
+    70→    70→  const onLeave = () => {
+    71→    71→    mx.set(0);
+    72→    72→    my.set(0);
+    73→    73→  };
+    74→    74→
+    75→    75→  return (
+    76→    76→    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-ink">
+    77→    77→      {/* Background image with Ken Burns */}
+    78→    78→      <div className="absolute inset-0 -z-10">
+    79→    79→        <div className="absolute inset-0 animate-kenburns">
+    80→    80→          <img
+    81→    81→            src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"
+    82→    82→            alt="Guruvayur Temple gopuram at golden hour"
+    83→    83→            className="h-full w-full object-cover photo-cinematic-strong"
+    84→    84→          />
+    85→    85→        </div>
+    86→    86→        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
+    87→    87→        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
+    88→    88→      </div>
+    89→    89→
+    90→    90→      {/* Floating diya particles */}
+    91→    91→      <FloatingDiyas count={18} />
+    92→    92→
+    93→    93→      {/* Decorative Om */}
+    94→    94→      <OmWatermark className="right-[-4rem] top-1/4" size="22rem" />
+    95→    95→
+    96→    96→      <div className="container-x relative z-10 grid items-center gap-12 py-28 lg:grid-cols-2 lg:gap-8">
+    97→    97→        {/* Left · text content */}
+    98→    98→        <div>
+    99→    99→          <motion.div
+   100→   100→            initial={{ opacity: 0, y: 20 }}
+   101→   101→            animate={{ opacity: 1, y: 0 }}
+   102→   102→            transition={{ duration: 0.6 }}
+   103→   103→            className="inline-flex items-center gap-2 rounded-full border border-champagne/25 bg-ink-soft/50 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-champagne backdrop-blur-md"
+   104→   104→          >
+   105→   105→            <span className="h-1.5 w-1.5 animate-diya rounded-full bg-saffron" />
+   106→   106→            Stay · Pooja · Blessing · Since 1998
+   107→   107→          </motion.div>
+   108→   108→
+   109→   109→          <motion.h1
+   110→   110→            initial={{ opacity: 0, x: -40 }}
+   111→   111→            animate={{ opacity: 1, x: 0 }}
+   112→   112→            transition={{ duration: 0.7, delay: 0.1 }}
+   113→   113→            className="mt-6 font-serif text-[2.5rem] leading-[1.05] tracking-tight text-ivory sm:text-6xl lg:text-[4.5rem]"
+   114→   114→            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+   115→   115→          >
+   116→   116→            Stay 2 Minutes
+   117→   117→            <br />
+   118→   118→            from <GoldFoilText>Guruvayur Temple</GoldFoilText>
+   119→   119→          </motion.h1>
+   120→   120→
+   121→   121→          <motion.p
+   122→   122→            initial={{ opacity: 0, x: -40 }}
+   123→   123→            animate={{ opacity: 1, x: 0 }}
+   124→   124→            transition={{ duration: 0.7, delay: 0.2 }}
+   125→   125→            className="mt-6 max-w-xl text-base leading-relaxed text-ivory/80 sm:text-lg"
+   126→   126→          >
+   127→   127→            Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada
+   128→   128→            for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp
+   129→   129→            confirmation.
+   130→   130→          </motion.p>
+   131→   131→
+   132→   132→          <motion.div
+   133→   133→            initial={{ opacity: 0, y: 20 }}
+   134→   134→            animate={{ opacity: 1, y: 0 }}
+   135→   135→            transition={{ duration: 0.6, delay: 0.35 }}
+   136→   136→            className="mt-8 flex flex-wrap gap-3"
+   137→   137→          >
+   138→   138→            <MagneticButton
+   139→   139→              href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
+   140→   140→            >
+   141→   141→              Book Now <ChevronRight className="h-4 w-4" />
+   142→   142→            </MagneticButton>
+   143→   143→            <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>
+   144→   144→              View Rooms <ArrowUpRight className="h-4 w-4" />
+   145→   145→            </MagneticButton>
+   146→   146→          </motion.div>
+   147→   147→
+   148→   148→          {/* Trust badges */}
+   149→   149→          <motion.div
+   150→   150→            initial={{ opacity: 0, y: 20 }}
+   151→   151→            animate={{ opacity: 1, y: 0 }}
+   152→   152→            transition={{ duration: 0.6, delay: 0.5 }}
+   153→   153→            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3"
+   154→   154→          >
+   155→   155→            {TRUST_BADGES.map((b, i) => {
+   156→   156→              const Icon = getIcon(b.icon);
+   157→   157→              return (
+   158→   158→                <div key={i} className="flex items-center gap-2 text-sm font-medium text-ivory/90">
+   159→   159→                  <span className="grid h-8 w-8 place-items-center rounded-full border border-champagne/20 bg-ink-soft/50 backdrop-blur-sm">
+   160→   160→                    <Icon className="h-4 w-4 text-champagne" />
+   161→   161→                  </span>
+   162→   162→                  {b.text}
+   163→   163→                </div>
+   164→   164→              );
+   165→   165→            })}
+   166→   166→          </motion.div>
+   167→   167→        </div>
+   168→   168→
+   169→   169→        {/* Right · 3D tilt image cards */}
+   170→   170→        <motion.div
+   171→   171→          ref={containerRef}
+   172→   172→          onMouseMove={onMove}
+   173→   173→          onMouseLeave={onLeave}
+   174→   174→          initial={{ opacity: 0, scale: 0.9 }}
+   175→   175→          animate={{ opacity: 1, scale: 1 }}
+   176→   176→          transition={{ duration: 0.8, delay: 0.3 }}
+   177→   177→          className="relative hidden h-[560px] lg:block"
+   178→   178→          style={{ perspective: 1200 }}
+   179→   179→        >
+   180→   180→          <motion.div
+   181→   181→            style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
+   182→   182→            className="relative h-full w-full"
+   183→   183→          >
+   184→   184→            {/* Card 1 · main temple */}
+   185→   185→            <div
+   186→   186→              className="absolute right-0 top-8 h-72 w-64 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
+   187→   187→              style={{ transform: "translateZ(80px)" }}
+   188→   188→            >
+   189→   189→              <img
+   190→   190→                src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&h=800&fit=crop"
+   191→   191→                alt="Guruvayur Temple gopuram"
+   192→   192→                className="h-full w-full object-cover photo-cinematic"
+   193→   193→              />
+   194→   194→              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+   195→   195→              <div className="absolute bottom-3 left-3 right-3">
+   196→   196→                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">2 min walk</p>
+   197→   197→                <p className="font-serif text-base text-ivory">East Nada Gate</p>
+   198→   198→              </div>
+   199→   199→            </div>
+   200→   200→
+   201→   201→            {/* Card 2 · room */}
+   202→   202→            <div
+   203→   203→              className="absolute left-0 top-32 h-64 w-56 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
+   204→   204→              style={{ transform: "translateZ(40px)" }}
+   205→   205→            >
+   206→   206→              <img
+   207→   207→                src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=500&h=700&fit=crop"
+   208→   208→                alt="Deluxe AC Room at Guruvayur Dham"
+   209→   209→                className="h-full w-full object-cover photo-cinematic"
+   210→   210→              />
+   211→   211→              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+   212→   212→              <div className="absolute bottom-3 left-3 right-3">
+   213→   213→                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹700</p>
+   214→   214→                <p className="font-serif text-base text-ivory">52 Luxury Rooms</p>
+   215→   215→              </div>
+   216→   216→            </div>
+   217→   217→
+   218→   218→            {/* Card 3 · pooja */}
+   219→   219→            <div
+   220→   220→              className="absolute bottom-0 right-12 h-48 w-48 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
+   221→   221→              style={{ transform: "translateZ(120px)" }}
+   222→   222→            >
+   223→   223→              <img
+   224→   224→                src="https://images.unsplash.com/photo-1591025207163-942350e47db2?w=400&h=400&fit=crop"
+   225→   225→                alt="Pooja offerings at Guruvayur Temple"
+   226→   226→                className="h-full w-full object-cover photo-cinematic"
+   227→   227→              />
+   228→   228→              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+   229→   229→              <div className="absolute bottom-3 left-3 right-3">
+   230→   230→                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">Zero commission</p>
+   231→   231→                <p className="font-serif text-base text-ivory">Pooja Booking</p>
+   232→   232→              </div>
+   233→   233→            </div>
+   234→   234→
+   235→   235→            {/* Floating star stat */}
+   236→   236→            <div
+   237→   237→              className="absolute left-8 top-0 rounded-2xl border border-champagne/20 bg-ink-card/80 p-4 backdrop-blur-md shadow-luxe-lg"
+   238→   238→              style={{ transform: "translateZ(160px)" }}
+   239→   239→            >
+   240→   240→              <div className="flex items-center gap-1">
+   241→   241→                {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-gold text-gold" />)}
+   242→   242→              </div>
+   243→   243→              <p className="mt-1 font-serif text-2xl text-gold-foil">4.9</p>
+   244→   244→              <p className="text-[10px] text-ivory/60">847 reviews</p>
+   245→   245→            </div>
+   246→   246→          </motion.div>
+   247→   247→        </motion.div>
+   248→   248→      </div>
+   249→   249→
+   250→   250→      {/* Scroll indicator */}
+   251→   251→      <motion.div
+   252→   252→        initial={{ opacity: 0 }}
+   253→   253→        animate={{ opacity: 1 }}
+   254→   254→        transition={{ delay: 1.5 }}
+   255→   255→        className="absolute bottom-24 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-ivory/50 lg:flex"
+   256→   256→      >
+   257→   257→        <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+   258→   258→        <div className="flex h-9 w-5 items-start justify-center rounded-full border border-champagne/30 p-1">
+   259→   259→          <motion.span
+   260→   260→            animate={{ y: [0, 10, 0] }}
+   261→   261→            transition={{ duration: 1.6, repeat: Infinity }}
+   262→   262→            className="h-1.5 w-1 rounded-full bg-champagne"
+   263→   263→          />
+   264→   264→        </div>
+   265→   265→      </motion.div>
+   266→   266→    </section>
+   267→   267→  );
+   268→   268→}
+   269→   269→
+   270→   270→/* ============ MARQUEE STRIP ============ */
+   271→   271→function MarqueeStrip() {
+   272→   272→  return (
+   273→   273→    <Marquee
+   274→   274→      items={[
+   275→   275→        "Palpayasam",
+   276→   276→        "Thulabharam",
+   277→   277→        "Choroonu",
+   278→   278→        "Walk to East Nada",
+   279→   279→        "4.9 ★ Google Rating",
+   280→   280→        "24×7 Hot Water",
+   281→   281→        "Free Parking",
+   282→   282→        "Pooja Booking",
+   283→   283→        "Family Suites",
+   284→   284→        "Since 1998",
+   285→   285→      ]}
+   286→   286→    />
+   287→   287→  );
+   288→   288→}
+   289→   289→
+   290→   290→/* ============ WHY CHOOSE US ============ */
+   291→   291→function WhyChooseUs() {
+   292→   292→  const { t } = useI18n();
+   293→   293→  const { navigate } = useHashRoute();
+   294→   294→  return (
+   295→   295→    <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
+   296→   296→      <OmWatermark className="left-[-6rem] top-20" size="18rem" />
+   297→   297→      <div className="container-x relative">
+   298→   298→        <SectionHeader
+   299→   299→          eyebrow={t("section.whyUs")}
+   300→   300→          title={<>More Than a Stay · A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
+   301→   301→          subtitle="We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+   302→   302→        />
+   303→   303→
+   304→   304→        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+   305→   305→          {WHY_CHOOSE_US.map((item, i) => {
+   306→   306→            const Icon = getIcon(item.icon);
+   307→   307→            return (
+   308→   308→              <TiltCard key={i} maxTilt={6} className="h-full">
+   309→   309→                <motion.div
+   310→   310→                  initial={{ opacity: 0, y: 30 }}
+   311→   311→                  whileInView={{ opacity: 1, y: 0 }}
+   312→   312→                  viewport={{ once: true, margin: "-60px" }}
+   313→   313→                  transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
+   314→   314→                  className="card-luxe group h-full p-7"
+   315→   315→                >
+   316→   316→                  <span className="grid h-14 w-14 place-items-center rounded-2xl border border-champagne/20 bg-gradient-to-br from-champagne/15 to-transparent text-champagne transition-transform duration-300 group-hover:scale-110">
+   317→   317→                    <Icon className="h-6 w-6" />
+   318→   318→                  </span>
+   319→   319→                  <h3 className="mt-5 font-serif text-xl text-ivory">{item.title}</h3>
+   320→   320→                  <p className="mt-2 text-sm leading-relaxed text-ivory/60">{item.text}</p>
+   321→   321→                </motion.div>
+   322→   322→              </TiltCard>
+   323→   323→            );
+   324→   324→          })}
+   325→   325→        </div>
+   326→   326→
+   327→   327→        {/* Stats strip with count-up */}
+   328→   328→        <motion.div
+   329→   329→          initial={{ opacity: 0, y: 30 }}
+   330→   330→          whileInView={{ opacity: 1, y: 0 }}
+   331→   331→          viewport={{ once: true }}
+   332→   332→          transition={{ duration: 0.6 }}
+   333→   333→          className="mt-16 grid grid-cols-2 gap-4 rounded-3xl border border-champagne/15 bg-ink-card p-8 sm:grid-cols-4 lg:p-10"
+   334→   334→        >
+   335→   335→          {[
+   336→   336→            { value: 52, suffix: "", label: "AC & non-AC rooms" },
+   337→   337→            { value: 25, suffix: "+", label: "years of service" },
+   338→   338→            { value: 1000, suffix: "+", label: "happy guests" },
+   339→   339→            { value: 4.9, suffix: " ★", label: "Google rating", decimals: 1 },
+   340→   340→          ].map((s, i) => (
+   341→   341→            <div key={i} className="text-center">
+   342→   342→              <p className="font-serif text-4xl text-gold-foil sm:text-5xl">
+   343→   343→                <CountUp to={s.value} suffix={s.suffix} decimals={s.decimals || 0} />
+   344→   344→              </p>
+   345→   345→              <p className="mt-1 text-xs uppercase tracking-[0.15em] text-ivory/60">{s.label}</p>
+   346→   346→            </div>
+   347→   347→          ))}
+   348→   348→        </motion.div>
+   349→   349→      </div>
+   350→   350→    </section>
+   351→   351→  );
+   352→   352→}
+   353→   353→
+   354→   354→/* ============ ROOM PREVIEWS ============ */
+   355→   355→function RoomPreviews() {
+   356→   356→  const { t } = useI18n();
+   357→   357→  const { navigate } = useHashRoute();
+   358→   358→  const featured = ROOMS.slice(0, 4);
+   359→   359→
+   360→   360→  return (
+   361→   361→    <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
+   362→   362→      <div className="container-x">
+   363→   363→        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+   364→   364→          <SectionHeader
+   365→   365→            align="left"
+   366→   366→            eyebrow={t("section.rooms")}
+   367→   367→            title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
+   368→   368→            subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from East Nada."
+   369→   369→            className="!mx-0"
+   370→   370→          />
+   371→   371→          <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>
+   372→   372→            View All Rooms <ArrowUpRight className="h-4 w-4" />
+   373→   373→          </MagneticButton>
+   374→   374→        </div>
+   375→   375→
+   376→   376→        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+   377→   377→          {featured.map((room, i) => (
+   378→   378→            <motion.div
+   379→   379→              key={room.slug}
+   380→   380→              initial={{ opacity: 0, y: 30 }}
+   381→   381→              whileInView={{ opacity: 1, y: 0 }}
+   382→   382→              viewport={{ once: true, margin: "-60px" }}
+   383→   383→              transition={{ duration: 0.5, delay: i * 0.08 }}
+   384→   384→            >
+   385→   385→              <RoomPreviewCard room={room} onClick={() => navigate(`/rooms/${room.slug}`)} />
+   386→   386→            </motion.div>
+   387→   387→          ))}
+   388→   388→        </div>
+   389→   389→      </div>
+   390→   390→    </section>
+   391→   391→  );
+   392→   392→}
+   393→   393→
+   394→   394→function RoomPreviewCard({ room, onClick }: { room: typeof ROOMS[number]; onClick: () => void }) {
+   395→   395→  return (
+   396→   396→    <TiltCard maxTilt={6} className="h-full">
+   397→   397→      <button
+   398→   398→        onClick={onClick}
+   399→   399→        className="card-luxe group block h-full w-full overflow-hidden text-left"
+   400→   400→      >
+   401→   401→        <div className="relative aspect-[4/5] overflow-hidden">
+   402→   402→          <img
+   403→   403→            src={room.image}
+   404→   404→            alt={`${room.name} at Guruvayur Dham`}
+   405→   405→            className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
+   406→   406→          />
+   407→   407→          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+   408→   408→          {room.badge && (
+   409→   409→            <span className="absolute left-3 top-3 rounded-full border border-champagne/30 bg-ink/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-champagne backdrop-blur-md">
+   410→   410→              {room.badge}
+   411→   411→            </span>
+   412→   412→          )}
+   413→   413→          <div className="absolute bottom-3 left-3 right-3">
+   414→   414→            <p className="text-[10px] uppercase tracking-[0.2em] text-champagne/80">{room.type}</p>
+   415→   415→            <p className="font-serif text-lg text-ivory">{room.name}</p>
+   416→   416→            <div className="mt-1 flex items-center justify-between">
+   417→   417→              <div className="flex items-center gap-1 text-xs">
+   418→   418→                <Star className="h-3 w-3 fill-gold text-gold" />
+   419→   419→                <span className="font-semibold text-ivory">{room.rating}</span>
+   420→   420→                <span className="text-ivory/50">({room.reviews})</span>
+   421→   421→              </div>
+   422→   422→              <p className="font-serif text-base text-gold-foil">{formatINR(room.price)}</p>
+   423→   423→            </div>
+   424→   424→          </div>
+   425→   425→        </div>
+   426→   426→      </button>
+   427→   427→    </TiltCard>
+   428→   428→  );
+   429→   429→}
+   430→   430→
+   431→   431→/* ============ PLAN DARSHAN ============ */
+   432→   432→function PlanDarshan() {
+   433→   433→  const { t } = useI18n();
+   434→   434→  const { navigate } = useHashRoute();
+   435→   435→  const routes = ["/blog", "/pooja", "/events"];
+   436→   436→
+   437→   437→  return (
+   438→   438→    <section className="relative bg-ink py-24 lg:py-32">
+   439→   439→      <div className="container-x">
+   440→   440→        <SectionHeader
+   441→   441→          eyebrow={t("section.darshan")}
+   442→   442→          title={<>Everything You Need for a <GoldFoilText>Blessed Visit</GoldFoilText></>}
+   443→   443→          subtitle="From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
+   444→   444→        />
+   445→   445→        <div className="mt-12 grid gap-6 md:grid-cols-3">
+   446→   446→          {DARSHAN_CARDS.map((card, i) => {
+   447→   447→            const Icon = getIcon(card.icon);
+   448→   448→            return (
+   449→   449→              <TiltCard key={i} maxTilt={5}>
+   450→   450→                <motion.button
+   451→   451→                  initial={{ opacity: 0, y: 30 }}
+   452→   452→                  whileInView={{ opacity: 1, y: 0 }}
+   453→   453→                  viewport={{ once: true, margin: "-60px" }}
+   454→   454→                  transition={{ duration: 0.5, delay: i * 0.1 }}
+   455→   455→                  onClick={() => navigate(routes[i])}
+   456→   456→                  className="card-luxe group relative h-full w-full overflow-hidden p-8 text-left"
+   457→   457→                >
+   458→   458→                  <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-champagne/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+   459→   459→                  <span className="grid h-16 w-16 place-items-center rounded-2xl border border-champagne/25 bg-gradient-to-br from-champagne/15 to-transparent text-champagne transition-transform duration-300 group-hover:scale-110">
+   460→   460→                    <Icon className="h-7 w-7" />
+   461→   461→                  </span>
+   462→   462→                  <h3 className="mt-5 font-serif text-2xl text-ivory">{card.title}</h3>
+   463→   463→                  <p className="mt-2 text-sm text-ivory/60">{card.text}</p>
+   464→   464→                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-champagne">
+   465→   465→                    {card.cta}
+   466→   466→                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+   467→   467→                  </span>
+   468→   468→                </motion.button>
+   469→   469→              </TiltCard>
+   470→   470→            );
+   471→   471→          })}
+   472→   472→        </div>
+   473→   473→      </div>
+   474→   474→    </section>
+   475→   475→  );
+   476→   476→}
+   477→   477→
+   478→   478→/* ============ POOJA PREVIEW ============ */
+   479→   479→function PoojaPreview() {
+   480→   480→  const { t } = useI18n();
+   481→   481→  const { navigate } = useHashRoute();
+   482→   482→  const featured = POOJAS.slice(0, 3);
+   483→   483→
+   484→   484→  return (
+   485→   485→    <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
+   486→   486→      <OmWatermark className="right-[-6rem] top-32" size="20rem" />
+   487→   487→      <div className="container-x relative">
+   488→   488→        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+   489→   489→          <SectionHeader
+   490→   490→            align="left"
+   491→   491→            eyebrow={t("section.pooja")}
+   492→   492→            title={<>Book Sacred Poojas at <GoldFoilText>Temple Rates</GoldFoilText></>}
+   493→   493→            subtitle="Zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf."
+   494→   494→            className="!mx-0"
+   495→   495→          />
+   496→   496→          <MagneticButton variant="ghost" onClick={() => navigate("/pooja")}>
+   497→   497→            View All Poojas <ArrowUpRight className="h-4 w-4" />
+   498→   498→          </MagneticButton>
+   499→   499→        </div>
+   500→   500→
+   501→   501→        <div className="mt-12 grid gap-6 md:grid-cols-3">
+   502→   502→          {featured.map((pooja, i) => (
+   503→   503→            <motion.div
+   504→   504→              key={pooja.id}
+   505→   505→              initial={{ opacity: 0, y: 30 }}
+   506→   506→              whileInView={{ opacity: 1, y: 0 }}
+   507→   507→              viewport={{ once: true, margin: "-60px" }}
+   508→   508→              transition={{ duration: 0.5, delay: i * 0.1 }}
+   509→   509→              className="card-luxe group overflow-hidden"
+   510→   510→            >
+   511→   511→              <div className="relative aspect-[16/10] overflow-hidden">
+   512→   512→                <img
+   513→   513→                  src={pooja.image}
+   514→   514→                  alt={`${pooja.name} pooja at Guruvayur Temple`}
+   515→   515→                  className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
+   516→   516→                />
+   517→   517→                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+   518→   518→                <span className="absolute bottom-3 right-3 rounded-full border border-champagne/30 bg-ink/70 px-3 py-1 text-xs font-bold text-gold-foil backdrop-blur-md">
+   519→   519→                  {formatINR(pooja.price)}
+   520→   520→                </span>
+   521→   521→              </div>
+   522→   522→              <div className="p-6">
+   523→   523→                <h3 className="font-serif text-xl text-ivory">{pooja.name}</h3>
+   524→   524→                <p className="mt-2 text-sm text-ivory/60 line-clamp-2">{pooja.description}</p>
+   525→   525→                <a
+   526→   526→                  href={waLink(`Namaskaram! I'd like to book the "${pooja.name}" pooja at Guruvayur Temple through Guruvayur Dham.`)}
+   527→   527→                  target="_blank"
+   528→   528→                  rel="noopener noreferrer"
+   529→   529→                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-champagne hover:text-champagne-bright"
+   530→   530→                >
+   531→   531→                  Book This Pooja <ChevronRight className="h-4 w-4" />
+   532→   532→                </a>
+   533→   533→              </div>
+   534→   534→            </motion.div>
+   535→   535→          ))}
+   536→   536→        </div>
+   537→   537→      </div>
+   538→   538→    </section>
+   539→   539→  );
+   540→   540→}
+   541→   541→
+   542→   542→/* ============ TESTIMONIALS ============ */
+   543→   543→function Testimonials() {
+   544→   544→  const { t } = useI18n();
+   545→   545→  const [idx, setIdx] = useState(0);
+   546→   546→  const testimonial = TESTIMONIALS[idx];
+   547→   547→
+   548→   548→  return (
+   549→   549→    <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
+   550→   550→      <FloatingDiyas count={8} />
+   551→   551→      <div className="container-x relative">
+   552→   552→        <SectionHeader
+   553→   553→          eyebrow={t("section.testimonials")}
+   554→   554→          title={<>Loved by <GoldFoilText>50,000+ Pilgrims</GoldFoilText></>}
+   555→   555→          subtitle={`${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`}
+   556→   556→        />
+   557→   557→
+   558→   558→        <motion.div
+   559→   559→          key={idx}
+   560→   560→          initial={{ opacity: 0, y: 30 }}
+   561→   561→          animate={{ opacity: 1, y: 0 }}
+   562→   562→          transition={{ duration: 0.6 }}
+   563→   563→          className="mx-auto mt-12 max-w-3xl"
+   564→   564→        >
+   565→   565→          <div className="relative rounded-3xl border border-champagne/15 bg-ink-card p-8 backdrop-blur-md sm:p-12">
+   566→   566→            <Quote className="h-12 w-12 text-champagne/40" fill="currentColor" />
+   567→   567→            <p className="mt-4 font-serif text-xl leading-relaxed text-ivory sm:text-2xl">
+   568→   568→              "{testimonial.text}"
+   569→   569→            </p>
+   570→   570→            <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+   571→   571→              <div className="flex items-center gap-3">
+   572→   572→                <span className="grid h-12 w-12 place-items-center rounded-full border border-champagne/25 bg-gradient-to-br from-champagne/15 to-transparent font-serif text-lg text-gold-foil">
+   573→   573→                  {testimonial.name.charAt(0)}
+   574→   574→                </span>
+   575→   575→                <div>
+   576→   576→                  <p className="font-semibold text-ivory">{testimonial.name}</p>
+   577→   577→                  <p className="text-xs text-ivory/50">{testimonial.city}{testimonial.room && ` · ${testimonial.room}`}</p>
+   578→   578→                </div>
+   579→   579→              </div>
+   580→   580→              <div className="flex gap-0.5">
+   581→   581→                {Array.from({ length: 5 }).map((_, i) => (
+   582→   582→                  <Star key={i} className={`h-4 w-4 ${i < testimonial.rating ? "fill-gold text-gold" : "fill-ivory/10 text-ivory/10"}`} />
+   583→   583→                ))}
+   584→   584→              </div>
+   585→   585→            </div>
+   586→   586→          </div>
+   587→   587→
+   588→   588→          <div className="mt-6 flex items-center justify-center gap-2">
+   589→   589→            {TESTIMONIALS.map((_, i) => (
+   590→   590→              <button
+   591→   591→                key={i}
+   592→   592→                onClick={() => setIdx(i)}
+   593→   593→                aria-label={`Testimonial ${i + 1}`}
+   594→   594→                className={`h-2 rounded-full transition-all ${i === idx ? "w-8 bg-champagne" : "w-2 bg-ivory/20 hover:bg-ivory/40"}`}
+   595→   595→              />
+   596→   596→            ))}
+   597→   597→          </div>
+   598→   598→        </motion.div>
+   599→   599→      </div>
+   600→   600→    </section>
+   601→   601→  );
+   602→   602→}
+   603→   603→
+   604→   604→/* ============ ABOUT TEASER ============ */
+   605→   605→function AboutTeaser() {
+   606→   606→  const { t } = useI18n();
+   607→   607→  const { navigate } = useHashRoute();
+   608→   608→
+   609→   609→  return (
+   610→   610→    <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
+   611→   611→      <div className="container-x">
+   612→   612→        <div className="grid items-center gap-12 lg:grid-cols-2">
+   613→   613→          {/* Image collage */}
+   614→   614→          <div className="relative">
+   615→   615→            <ImageReveal
+   616→   616→              src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=1000&fit=crop"
+   617→   617→              alt="Guruvayur Dham reception"
+   618→   618→              className="aspect-[4/5] rounded-3xl border border-champagne/15 shadow-luxe-lg"
+   619→   619→            />
+   620→   620→            <motion.div
+   621→   621→              initial={{ opacity: 0, scale: 0.8 }}
+   622→   622→              whileInView={{ opacity: 1, scale: 1 }}
+   623→   623→              viewport={{ once: true }}
+   624→   624→              transition={{ duration: 0.5, delay: 0.3 }}
+   625→   625→              className="absolute -bottom-6 -right-4 rounded-2xl border border-champagne/20 bg-ink-card p-5 shadow-luxe-lg backdrop-blur-md sm:-right-6"
+   626→   626→            >
+   627→   627→              <p className="font-serif text-3xl text-gold-foil">25+</p>
+   628→   628→              <p className="text-xs uppercase tracking-[0.15em] text-ivory/60">Years of Service</p>
+   629→   629→            </motion.div>
+   630→   630→          </div>
+   631→   631→
+   632→   632→          {/* Text */}
+   633→   633→          <div>
+   634→   634→            <SectionHeader
+   635→   635→              align="left"
+   636→   636→              eyebrow={t("section.about")}
+   637→   637→              title={<>A Family-Run Pilgrim Home Since <GoldFoilText>1998</GoldFoilText></>}
+   638→   638→              className="!mx-0"
+   639→   639→            />
+   640→   640→            <p className="mt-5 text-base leading-relaxed text-ivory/70">
+   641→   641→              Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather
+   642→   642→              noticed that pilgrims arriving from distant states had nowhere clean, affordable,
+   643→   643→              and walking-distance to stay. Over 25 years and three generations, it has grown
+   644→   644→              into a 52-room boutique property that has welcomed over 50,000 devotees.
+   645→   645→            </p>
+   646→   646→            <p className="mt-4 text-base leading-relaxed text-ivory/70">
+   647→   647→              We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
+   648→   648→              reception shift during Nirmalya darshan to the complimentary chai before temple
+   649→   649→              visits, is made with the devotee in mind.
+   650→   650→            </p>
+   651→   651→            <div className="mt-7">
+   652→   652→              <MagneticButton variant="ghost" onClick={() => navigate("/about")}>
+   653→   653→                Read Our Story <ArrowUpRight className="h-4 w-4" />
+   654→   654→              </MagneticButton>
+   655→   655→            </div>
+   656→   656→          </div>
+   657→   657→        </div>
+   658→   658→      </div>
+   659→   659→    </section>
+   660→   660→  );
+   661→   661→}
+   662→   662→
+   663→   663→/* ============ FINAL CTA ============ */
+   664→   664→function FinalCTA() {
+   665→   665→  const { t } = useI18n();
+   666→   666→  return (
+   667→   667→    <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
+   668→   668→      <FloatingDiyas count={12} />
+   669→   669→      <OmWatermark className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" size="24rem" />
+   670→   670→      <div className="container-x relative">
+   671→   671→        <motion.div
+   672→   672→          initial={{ opacity: 0, y: 30 }}
+   673→   673→          whileInView={{ opacity: 1, y: 0 }}
+   674→   674→          viewport={{ once: true }}
+   675→   675→          transition={{ duration: 0.6 }}
+   676→   676→          className="mx-auto max-w-3xl text-center"
+   677→   677→        >
+   678→   678→          <span className="section-eyebrow">
+   679→   679→            <Sparkles className="h-3.5 w-3.5" /> Begin Your Journey
+   680→   680→          </span>
+   681→   681→          <h2 className="section-title mt-5">
+   682→   682→            Your <GoldFoilText>Divine Comfort</GoldFoilText> Awaits
+   683→   683→          </h2>
+   684→   684→          <p className="section-subtitle mt-5">
+   685→   685→            Book your luxury pilgrim stay today. Instant WhatsApp confirmation, zero booking
+   686→   686→            fee, and the warmest welcome in Guruvayur.
+   687→   687→          </p>
+   688→   688→          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+   689→   689→            <MagneticButton
+   690→   690→              href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
+   691→   691→            >
+   692→   692→              Book on WhatsApp <ChevronRight className="h-4 w-4" />
+   693→   693→            </MagneticButton>
+   694→   694→            <MagneticButton variant="ghost" href={`tel:${SITE.phoneRaw}`}>
+   695→   695→              <Phone className="h-4 w-4" /> Call Us
+   696→   696→            </MagneticButton>
+   697→   697→          </div>
+   698→   698→          <div className="mt-8 flex items-center justify-center gap-2 text-sm text-ivory/50">
+   699→   699→            <MapPin className="h-4 w-4 text-champagne" />
+   700→   700→            {SITE.shortAddress}
+   701→   701→          </div>
+   702→   702→        </motion.div>
+   703→   703→      </div>
+   704→   704→    </section>
+   705→   705→  );
+   706→   706→}
+   707→   707→

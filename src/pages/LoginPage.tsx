@@ -258,18 +258,36 @@ export default function LoginPage() {
       </div>
 
       {/* ===== RIGHT: Login form ===== */}
-      <div className="flex min-h-screen items-center justify-center px-4 pb-12 pt-24 lg:min-h-screen lg:pt-0">
+      <div className="flex min-h-screen items-center justify-center px-4 pb-12 pt-8 sm:pt-12 lg:min-h-screen lg:pt-0">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
+          {/* Mobile logo + features */}
+          <div className="mb-8 flex flex-col items-center gap-4 lg:hidden">
             <img
-              src={loginLogo}
+              src="/guruyavur.png"
               alt={brandName}
-              className="h-12 w-12 object-contain"
+              className="h-24 w-24 object-contain"
+              style={{ filter: "drop-shadow(0 0 12px rgba(212,175,55,0.2))" }}
+              draggable={false}
             />
-            <div>
-              <p className="font-serif text-xl font-medium text-ivory">{brandName}</p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/70">{brandTagline}</p>
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {[0,1,2,3,4].map(i => <Star key={i} className="h-3.5 w-3.5 fill-gold text-gold" />)}
+              </div>
+              <span className="text-xs text-ivory/60">{SITE.rating} · {SITE.reviewCount}+ reviews</span>
+            </div>
+            {/* Mobile features */}
+            <div className="grid w-full grid-cols-2 gap-2">
+              {[
+                { icon: Star, text: "Instant booking" },
+                { icon: Bell, text: "Festival alerts" },
+                { icon: ShieldCheck, text: "Secure payments" },
+                { icon: MapPin, text: SITE.shortAddress.substring(0, 30) + "..." },
+              ].map((f, i) => (
+                <div key={i} className="flex items-center gap-1.5 rounded-lg border border-champagne/10 bg-ink/50 px-2 py-1.5 text-[10px] text-ivory/70">
+                  <f.icon className="h-3 w-3 flex-shrink-0 text-champagne" />
+                  <span className="truncate">{f.text}</span>
+                </div>
+              ))}
             </div>
           </div>
 
