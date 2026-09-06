@@ -30,6 +30,16 @@ import { db } from "@/lib/db";
  */
 
 export async function POST(req: NextRequest) {
+  // CRON_SECRET check — prevents unauthorized triggering
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    const authHeader = req.headers.get("authorization") || "";
+    const queryKey = req.nextUrl.searchParams.get("key") || "";
+    if (authHeader !== `Bearer ${cronSecret}` && queryKey !== cronSecret) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   const dryRun = req.nextUrl.searchParams.get("dryRun") === "1";
   const hoursParam = req.nextUrl.searchParams.get("hours");
   const hoursAgo = hoursParam ? parseFloat(hoursParam) : 2;
@@ -58,6 +68,16 @@ export async function POST(req: NextRequest) {
   let skippedCount = 0;
 
   for (const booking of eligibleBookings) {
+    // Skip bookings without a valid phone number
+    if (!booking.guestPhone || booking.guestPhone.trim().length < 10) {
+      skippedCount++;
+      results.push({
+        bookingRef: booking.reference,
+        guestName: booking.guestName,
+        status: "skipped_no_phone",
+      });
+      continue;
+    }
     // Check if we already sent a review request for this booking
     const existing = await db.reviewRequest.findFirst({
       where: { bookingRef: booking.reference },

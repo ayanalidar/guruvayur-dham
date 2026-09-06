@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const { event, data } = await req.json();
   try {
-    const r = await fetch("http://localhost:3003/broadcast", {
+    const r = await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ event, data }),

@@ -9,6 +9,7 @@ import {
   Phone, MessageCircle, Mail, MapPin, Clock, BedDouble, Car, Send,
 } from "lucide-react";
 import { SITE, CONTACT_REASONS, waLink } from "@/lib/site-data";
+import { useContent } from "@/lib/use-cms";
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
@@ -40,10 +41,28 @@ const INFO_CARDS = [
 ];
 
 export default function ContactPage() {
+  const { get } = useContent();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", phone: "", reason: "", checkIn: "", checkOut: "", message: "" },
   });
+
+  const eyebrow = get("contact.eyebrow", "Get in Touch");
+  const title = get("contact.title", "Book Your Stay or Ask Anything");
+  const subtitle = get("contact.subtitle", "Fill the form below and we'll WhatsApp you back within minutes · or reach us directly through any of the channels here.");
+  const phone = get("contact.phone", SITE.phone);
+  const phoneRaw = get("contact.phoneRaw", SITE.phoneRaw);
+  const whatsapp = get("contact.whatsapp", SITE.whatsapp);
+  const email = get("contact.email", SITE.email);
+  const shortAddress = get("contact.shortAddress", SITE.shortAddress);
+  const mapEmbed = get("contact.mapEmbed", SITE.mapEmbed);
+  const mapLink = get("contact.mapLink", SITE.mapLink);
+  const checkInTime = get("contact.checkIn", SITE.checkIn);
+  const checkOutTime = get("contact.checkOut", SITE.checkOut);
+
+  const titleParts = title.split(" ");
+  const titleHighlight = titleParts.length > 2 ? titleParts.slice(-2).join(" ") : "";
+  const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
 
   const onSubmit = (data: FormData) => {
     const msg = `*New Enquiry from Guruvayur Dham Website*
@@ -56,7 +75,7 @@ export default function ContactPage() {
 
 *Message:*
 ${data.message}`;
-    window.open(waLink(msg), "_blank");
+    window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
     toast.success("Opening WhatsApp with your message…", { description: "We'll reply within 5 minutes during business hours." });
     form.reset();
   };
@@ -64,10 +83,10 @@ ${data.message}`;
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Get in Touch"
+        eyebrow={eyebrow}
         icon={MessageCircle}
-        title={<>Book Your Stay or <GoldFoilText>Ask Anything</GoldFoilText></>}
-        subtitle="Fill the form below and we'll WhatsApp you back within minutes · or reach us directly through any of the channels here."
+        title={<>{titlePre} {titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "Contact" }]}
       />
 

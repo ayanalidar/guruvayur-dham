@@ -11,6 +11,8 @@ import {
   type RoomType,
 } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
+import { useContent } from "@/lib/use-cms";
+import { fetchRooms } from "@/lib/api-client";
 import { getIcon } from "@/components/site/icon-map";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, SectionHeader, MandalaDivider } from "@/components/site/visuals";
@@ -32,10 +34,45 @@ const OCCUPANCY_FILTERS = [
 
 export default function RoomsPage() {
   const { navigate } = useHashRoute();
+  const { get } = useContent();
   const [typeF, setTypeF] = useState<RoomType | "All">("All");
   const [budgetF, setBudgetF] = useState(0);
   const [occF, setOccF] = useState(0);
   const [liveAvail, setLiveAvail] = useState<Record<string, number>>({});
+  const [cmsRooms, setCmsRooms] = useState<Room[] | null>(null);
+
+  // Fetch rooms from CMS (Prisma)
+  useEffect(() => {
+    let active = true;
+    fetchRooms().then((data) => {
+      if (!active) return;
+      if (Array.isArray(data) && data.length > 0) {
+        // Convert CMS room format to the Room type site-data exports
+        const mapped: Room[] = data.map((r: any) => ({
+          slug: r.slug,
+          name: r.name,
+          type: r.type as RoomType,
+          price: r.price,
+          originalPrice: r.originalPrice ?? undefined,
+          rating: r.rating,
+          reviews: r.reviews,
+          capacity: r.capacity,
+          size: r.size,
+          bedType: r.bedType,
+          image: r.image,
+          gallery: Array.isArray(r.gallery) ? r.gallery : (() => { try { return JSON.parse(r.gallery || "[]"); } catch { return []; } })(),
+          badge: r.badge ?? undefined,
+          description: r.description,
+          shortDesc: r.shortDesc,
+          amenities: Array.isArray(r.amenities) ? r.amenities : (() => { try { return JSON.parse(r.amenities || "[]"); } catch { return []; } })(),
+        }));
+        setCmsRooms(mapped);
+      } else {
+        setCmsRooms(null);
+      }
+    }).catch(() => active && setCmsRooms(null));
+    return () => { active = false; };
+  }, []);
 
   // Fetch live availability for all rooms (today)
   useEffect(() => {
@@ -53,23 +90,30 @@ export default function RoomsPage() {
     return () => { active = false; };
   }, []);
 
+  // Use CMS rooms if available, fall back to hardcoded ROOMS
+  const allRooms = cmsRooms || ROOMS;
+
   const filtered = useMemo(() => {
-    return ROOMS.filter((r) => {
+    return allRooms.filter((r) => {
       if (typeF !== "All" && r.type !== typeF) return false;
       const b = BUDGET_FILTERS[budgetF];
       if (r.price < b.min || r.price > b.max) return false;
       if (r.capacity < OCCUPANCY_FILTERS[occF].min) return false;
       return true;
     });
-  }, [typeF, budgetF, occF]);
+  }, [allRooms, typeF, budgetF, occF]);
+
+  const eyebrow = get("rooms.eyebrow", "Rooms & Suites");
+  const title = get("rooms.title", "Cinematic Dark-Luxe Rooms in Guruvayur");
+  const subtitle = get("rooms.subtitle", "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada.");
 
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Rooms & Suites"
+        eyebrow={eyebrow}
         icon={BedDouble}
-        title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText> in Guruvayur</>}
-        subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada."
+        title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "Rooms" }]}
       />
 
@@ -100,7 +144,7 @@ export default function RoomsPage() {
       <section className="bg-ink py-16 lg:py-20">
         <div className="container-x">
           <p className="mb-6 text-sm text-ivory/50">
-            Showing <span className="font-semibold text-ivory">{filtered.length}</span> of {ROOMS.length} rooms
+            Showing <span className="font-semibold text-ivory">{filtered.length}</span> of {allRooms.length} rooms
           </p>
 
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, MapPin, Heart, Award, ChevronRight, ArrowUpRight } from "lucide-react";
 import { SITE } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
+import { useContent } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, ImageReveal, MandalaDivider, MagneticButton, CountUp, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
@@ -18,14 +19,25 @@ const HIGHLIGHTS = [
 
 export default function AboutPage() {
   const { navigate } = useHashRoute();
+  const { get } = useContent();
+
+  const eyebrow = get("about.eyebrow", "About Guruvayur Dham");
+  const title = get("about.title", "A Family-Run Pilgrim Home Since 1998");
+  const story = get("about.story", "What began as a four-room lodge has, over 25 years and three generations, grown into a 52-room boutique property welcoming over 50,000 devotees from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Nirmalya darshan to the complimentary chai service before temple visits, is made with the devotee in mind.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless.");
+  const paragraphs = story.split(/\n\n+/).filter(Boolean);
+
+  // Split title for gold foil
+  const titleParts = title.split(/Since\s+/i);
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "Since " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts[1] : "";
 
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="About Guruvayur Dham"
+        eyebrow={eyebrow}
         icon={Heart}
-        title={<>A Family-Run Pilgrim Home Since <GoldFoilText>1998</GoldFoilText></>}
-        subtitle="What began as a four-room lodge has, over 25 years and three generations, grown into a 52-room boutique property welcoming over 50,000 devotees from across India and the diaspora."
+        title={<>{titlePre}{titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={paragraphs[0] || ""}
         crumbs={[{ label: "Home", route: "/" }, { label: "About" }]}
       />
 

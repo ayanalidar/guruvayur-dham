@@ -233,7 +233,7 @@ export async function POST(req: NextRequest) {
 
   // ====== BROADCAST REAL-TIME EVENT ======
   // Notify all connected admin dashboards about the new booking
-  fetch("http://localhost:3003/broadcast", {
+  fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

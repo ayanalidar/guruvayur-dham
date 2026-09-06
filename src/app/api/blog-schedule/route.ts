@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Broadcast
-  fetch("http://localhost:3003/broadcast", {
+  fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -74,7 +74,7 @@ export async function PATCH() {
     published++;
 
     // Broadcast publish event
-    fetch("http://localhost:3003/broadcast", {
+    fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

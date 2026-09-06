@@ -1,19 +1,34 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, Gift, ChevronRight, Sparkles, Flame, MessageCircle } from "lucide-react";
 import { POOJAS, formatINR, waLink } from "@/lib/site-data";
+import { useContent, useCMSList, type Pooja } from "@/lib/use-cms";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, MandalaDivider, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
 export default function PoojaPage() {
+  const { get } = useContent();
+  const cmsPoojas = useCMSList<Pooja>("poojas", []);
+  const poojas = cmsPoojas.length > 0 ? cmsPoojas : POOJAS;
+
+  const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
+  const title = get("pooja.title", "Guruvayur Pooja Booking · Palpayasam, Thulabharam & More");
+  const subtitle = get("pooja.subtitle", "Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room.");
+
+  // Split title for gold foil highlight
+  const titleParts = title.split("·");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "· " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("·").trim() : "";
+
   return (
     <div className="animate-page-reveal">
       <PageHeader
-        eyebrow="Pooja & Offerings"
+        eyebrow={eyebrow}
         icon={Flame}
-        title={<>Guruvayur Pooja Booking · <GoldFoilText>Palpayasam, Thulabharam &amp; More</GoldFoilText></>}
-        subtitle="Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room."
+        title={<>{titlePre}{titleHighlight && <GoldFoilText>{titleHighlight}</GoldFoilText>}</>}
+        subtitle={subtitle}
         crumbs={[{ label: "Home", route: "/" }, { label: "Pooja" }]}
       />
 
@@ -45,7 +60,7 @@ export default function PoojaPage() {
         <OmWatermark className="right-[-6rem] top-20" size="20rem" />
         <div className="container-x relative">
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {POOJAS.map((pooja, i) => {
+            {poojas.map((pooja, i) => {
               const waMsg = `Namaskaram! I'd like to book the "${pooja.name}" pooja (${formatINR(pooja.price)}) at Guruvayur Temple through Guruvayur Dham. Please share next available date.`;
               return (
                 <TiltCard key={pooja.id} maxTilt={5} className="h-full">

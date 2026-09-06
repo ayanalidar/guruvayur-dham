@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Broadcast real-time update via WebSocket
-  fetch("http://localhost:3003/broadcast", {
+  fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -100,7 +100,7 @@ export async function PATCH(req: NextRequest) {
   });
 
   // Broadcast update
-  fetch("http://localhost:3003/broadcast", {
+  fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

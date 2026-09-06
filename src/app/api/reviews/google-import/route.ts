@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Broadcast real-time update
-  fetch("http://localhost:3003/broadcast", {
+  fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

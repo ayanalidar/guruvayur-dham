@@ -17,7 +17,7 @@ RUN apk add --no-cache libc6-compat
 COPY package.json bun.lock* yarn.lock* package-lock.json* ./
 
 # Install dependencies (use npm for compatibility)
-RUN npm ci --omit=false || npm install
+RUN npm ci || npm install
 
 # ---- Builder stage ----
 FROM node:20-alpine AS builder

@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to)
+// GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
+// ?search searches guestName, guestPhone, guestEmail, and reference fields
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const status = searchParams.get("status");
   const source = searchParams.get("source");
   const from = searchParams.get("from");
   const to = searchParams.get("to");
+  const search = searchParams.get("search");
 
   const where: any = {};
   if (status) where.status = status;
@@ -16,6 +18,15 @@ export async function GET(req: NextRequest) {
     where.checkIn = {};
     if (from) where.checkIn.gte = new Date(from);
     if (to) where.checkIn.lte = new Date(to);
+  }
+  // Search filter — matches guest name, phone, email, or booking reference
+  if (search) {
+    where.OR = [
+      { guestName: { contains: search, mode: "insensitive" } },
+      { guestPhone: { contains: search } },
+      { guestEmail: { contains: search, mode: "insensitive" } },
+      { reference: { contains: search, mode: "insensitive" } },
+    ];
   }
 
   const bookings = await db.booking.findMany({

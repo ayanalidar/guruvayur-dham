@@ -92,6 +92,20 @@ services:
     networks:
       - guruvayur-net
 
+  # ---- Realtime service (WebSocket for live updates) ----
+  realtime:
+    build:
+      context: ./mini-services/realtime
+      dockerfile: Dockerfile
+    container_name: guruvayur-realtime
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+    ports:
+      - "127.0.0.1:3003:3003"
+    networks:
+      - guruvayur-net
+
   # ---- Review funnel cron (runs every 15 min) ----
   cron:
     build:
