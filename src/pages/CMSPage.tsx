@@ -195,6 +195,18 @@ function RoomsCMS() {
     load();
   };
 
+  const deleteRoom = async (id: string, name: string) => {
+    if (!confirm(`Delete "${name}"? This will remove the room, its availability, and rate plans. Existing bookings will be preserved for audit.`)) return;
+    const r = await fetch(`/api/rooms?id=${id}`, { method: "DELETE" });
+    const j = await r.json();
+    if (j.error) {
+      toast.error(j.error);
+      return;
+    }
+    toast.success(`"${name}" deleted`);
+    load();
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -375,9 +387,14 @@ function RoomsCMS() {
                       </button>
                     </div>
                   ) : (
-                    <button onClick={() => { setEditing(room.id); setEditImage(room.image); }} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/10">
-                      <Upload className="h-3.5 w-3.5 mr-1 inline" /> Change Image
-                    </button>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setEditing(room.id); setEditImage(room.image); }} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/10">
+                        <Upload className="h-3.5 w-3.5 mr-1 inline" /> Change Image
+                      </button>
+                      <button onClick={() => deleteRoom(room.id, room.name)} className="rounded-full bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-500/20">
+                        <Trash2 className="h-3.5 w-3.5 mr-1 inline" /> Delete
+                      </button>
+                    </div>
                   )}
                 </div>
 

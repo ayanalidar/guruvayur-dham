@@ -110,3 +110,39 @@ function serializeRoom(r: any) {
     rates: r.rates || [],
   };
 }
+
+// DELETE /api/rooms?id=xxx — deletes a room and all related data
+// (availability, rate plans, sync logs). Bookings are preserved for
+// audit trail but the room reference is cleared.
+export async function DELETE(req: NextRequest) {
+  const id = req.nextUrl.searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  // Check for active bookings on this room
+  const activeBookings = await db.booking.count({
+    where: {
+      roomId: id,
+      status: { in: ["CONFIRMED", "PENDING"] },
+      checkOut: { gte: new Date() },
+    },
+  });
+
+  if (activeBookings > 0) {
+    return NextResponse.json(
+      { error: `Cannot delete: ${activeBookings} active booking(s) for this room. Cancel or complete them first.` },
+      { status: 409 }
+    );
+  }
+
+  // Delete related data first (foreign key constraints)
+  await db.availability.deleteMany({ where: { roomId: id } });
+  await db.ratePlan.deleteMany({ where: { roomId: id } });
+  await db.syncLog.deleteMany({ where: { booking: { roomId: id } } }).catch(() => {});
+  // Delete bookings for this room (historical data, no longer needed if room is deleted)
+  await db.booking.deleteMany({ where: { roomId: id } }).catch(() => {});
+
+  // Delete the room
+  await db.room.delete({ where: { id } });
+
+  return NextResponse.json({ deleted: true, message: "Room deleted successfully" });
+}
