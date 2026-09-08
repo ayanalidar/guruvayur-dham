@@ -914,11 +914,12 @@ export const SEO_PAGES: SEOPage[] = [
   },
 ];
 
-// ─── Phase 2: 22 additional SEO pages (how-to-reach, pooja-guides, travel-guides) ───
+// ─── Phase 2: 22 additional SEO pages ───
 import { SEO_PAGES_PHASE2 } from "./seo-pages-phase2";
+import { SEO_PAGES_PHASE3 } from "./seo-pages-phase3";
 
-// Merge Phase 1 + Phase 2
-export const ALL_SEO_PAGES = [...SEO_PAGES, ...SEO_PAGES_PHASE2];
+// Merge Phase 1 + Phase 2 + Phase 3
+export const ALL_SEO_PAGES = [...SEO_PAGES, ...SEO_PAGES_PHASE2, ...SEO_PAGES_PHASE3];
 
 // Helper: get all SEO page slugs (for routing + sitemap)
 export const SEO_PAGE_SLUGS = ALL_SEO_PAGES.map((p) => p.slug);
