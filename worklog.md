@@ -218,3 +218,57 @@ Stage Summary:
 - 8 deviations documented above — please review and override if needed.
 - Recommend follow-up: (a) fix refund→waiting-list internal call regression, (b) verify kitchen-orders POST and pooja-bookings POST are intended to be staff-only (otherwise move guest-facing variants to /api/guest-* routes), (c) add requireStaff to channel-config PUT/DELETE which were not in the spec list but are clearly admin operations.
 
+
+---
+Task ID: P2-P3
+Agent: main
+Task: Full bug audit + fix Phase 2 (security hardening) + Phase 3 (config sanity)
+
+Work Log:
+Phase 1 (already pushed in 7e2631e):
+- chmod -x all 212 .ts/.tsx files (mode 755 -> 644)
+- Fixed .env: SQLite URL -> Postgres URL (matches schema.prisma)
+- Added REALTIME_URL + SMTP vars to .env.example
+
+Phase 2 (security hardening):
+- Added requireStaff(req, roles?) + requireUser(req) helpers to src/lib/auth.ts
+- Subagent patched 33 admin API routes with requireStaff guards (62 handlers total)
+- Main agent fixed 3 regressions found by subagent:
+  * bookings POST: removed guard (guest self-booking via /book flow)
+  * kitchen-orders POST: removed guard (guest QR code in rooms)
+  * refund's internal fetch to /api/waiting-list PATCH: now forwards session cookie
+- bookings POST + kitchen-orders POST: added rateLimit instead (5/min + 10/min)
+- /api/staff complete rewrite:
+  * GET: requires staff auth, excludes pin field
+  * POST/PATCH: requires MANAGER, whitelists fields, validates role + PIN format
+  * PUT (PIN login): rate-limited to 5/min/IP
+- oauth.ts: removed hardcoded 'demo-secret-key-guruvayur-dham' fallback
+  * Production: throws if NEXTAUTH_SECRET unset
+  * Dev: random per-process secret
+- reviews/checkout-funnel: CRON_SECRET now fails closed (was: silently open)
+- docker-compose cron: wget now sends Authorization: Bearer header
+- docker-compose app service: added REALTIME_URL, SMTP_HOST/PORT/USER/PASS/FROM_EMAIL,
+  BLOB_READ_WRITE_TOKEN env vars
+- /api/upload, /api/refund, /api/email/send, /api/rate-limit: now require staff auth
+- /api/health-monitor: redacts DB error messages (strips connection strings,
+  passwords, Prisma internals)
+- vercel.json: cron schedule changed from '30 7 * * *' (daily) to '*/15 * * * *'
+- Fixed all 8 ESLint set-state-in-effect errors using queueMicrotask pattern
+  (Testimonials.tsx, WhatsAppChat.tsx x2, CMSPage.tsx x2, ErrorBoundary.tsx x2)
+
+Phase 3 (config sanity):
+- next.config.ts: ignoreBuildErrors: false, reactStrictMode: true,
+  removed source.unsplash.com (deprecated), removed redundant deviceSizes/imageSizes
+- OAuthButtons.tsx: demo OAuth no longer uses hardcoded 'oauthdemo123' password;
+  generates random per-session password
+- use-web-vitals.ts: removed '| true' dead conditional (was always tracking)
+- channel-sync.ts: SIMULATED marker prefixed to channel sync messages
+- Renamed scripts/generate-platform-report-pdf.ts -> .py (was a Python file
+  misnamed as .ts, broke eslint parsing)
+
+Stage Summary:
+- 49 files changed, 618 insertions(+), 72 deletions(-)
+- 0 TypeScript errors, 0 ESLint errors, 59/59 preflight checks pass
+- All 8 critical security issues + 10 high-severity issues resolved
+- 9 medium issues resolved
+- Committed as a3b0cbf, pushed to origin/main
