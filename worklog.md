@@ -102,3 +102,23 @@ Stage Summary:
 - New component: src/components/site/ParticleLogo.tsx (~470 lines).
 - Updated file: src/pages/LoginPage.tsx (import added + 2 logo placements swapped).
 - Effect is live on /login for both desktop and mobile breakpoints.
+
+---
+Task ID: ParticleLogo-2
+Agent: main
+Task: Add the same particle-logo effect to the homepage hero.
+
+Work Log:
+- Inspected HomePage + Hero components. Hero is text-driven (eyebrow + headline + subheadline + CTAs + badges + rating chip on the left); only the floating diya decoration used the right side.
+- Edited src/components/site/Hero.tsx:
+  * Imported ParticleLogo.
+  * Replaced the floating diya div (right-8 top-32, lg:block, 80×80) with a 300px ParticleLogo positioned absolute right-12 top-1/2, vertically centered, xl:block (desktop ≥1280px only).
+  * Wrapper uses pointer-events-none so the logo never blocks clicks to underlying CTAs, but window-level mousemove tracking still drives the shatter.
+  * Wrapped in motion.div with fade+scale-in (delay 0.4s) to match the hero's entrance choreography.
+- Verified: tsc --noEmit → 0 errors. eslint → 0 errors.
+- Committed as 06a8fb9, pushed to origin/main.
+
+Stage Summary:
+- ParticleLogo now appears in 3 places: login (desktop 256px + mobile 96px) + homepage hero (300px, xl+).
+- The component is fully reusable via <ParticleLogo src="..." size={...} interactive showGlow />.
+- Mobile/tablet users on the homepage won't see the particle logo (kept the existing text-only hero layout for them — adding a 300px canvas would crowd small viewports).
