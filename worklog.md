@@ -122,3 +122,26 @@ Stage Summary:
 - ParticleLogo now appears in 3 places: login (desktop 256px + mobile 96px) + homepage hero (300px, xl+).
 - The component is fully reusable via <ParticleLogo src="..." size={...} interactive showGlow />.
 - Mobile/tablet users on the homepage won't see the particle logo (kept the existing text-only hero layout for them — adding a 300px canvas would crowd small viewports).
+
+---
+Task ID: ParticleLogo-3
+Agent: main
+Task: Remove the particle logo from login page and homepage (user feedback: logo wasn't visible/legible).
+
+Work Log:
+- Reverted src/components/site/Hero.tsx:
+  * Removed ParticleLogo import.
+  * Restored the original floating diya decoration (right-8 top-32, lg:block, 80×80).
+- Reverted src/pages/LoginPage.tsx:
+  * Removed ParticleLogo import.
+  * Restored both original static <img> tags:
+    - Desktop: <img src="/guruyavur.png" className="h-64 w-64 object-contain" /> with drop-shadow gold glow
+    - Mobile:  <img src="/guruyavur.png" className="h-24 w-24 object-contain" /> with drop-shadow gold glow
+- Deleted src/components/site/ParticleLogo.tsx (no longer referenced anywhere).
+- Verified: tsc --noEmit → 0 errors. eslint → 0 errors. grep ParticleLogo src/ → no matches.
+- Committed as cbff577, pushed to origin/main.
+
+Stage Summary:
+- Login page and homepage are back to their pre-experiment state.
+- ParticleLogo component is fully removed from the codebase.
+- History is preserved (the two feat commits + this revert) so the work isn't lost — can be revisited later with a different approach if desired.
