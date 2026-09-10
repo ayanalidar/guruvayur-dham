@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/night-audit?date=2026-09-04 · generates end-of-day report
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const dateParam = req.nextUrl.searchParams.get("date");
   const today = dateParam ? new Date(dateParam) : new Date();
   today.setHours(0, 0, 0, 0);

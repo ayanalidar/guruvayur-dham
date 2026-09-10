@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // POST /api/refund · process refund for a booking
 // body: { bookingId, reason }
@@ -9,6 +10,9 @@ import { db } from "@/lib/db";
 // - <72 hours: no refund
 // - Festival dates: no refund (but can reschedule within 60 days)
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const { bookingId, reason } = await req.json();
   const booking = await db.booking.findUnique({
     where: { id: bookingId },
@@ -82,10 +86,16 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Notify waitlist (auto-notify next person in line)
+  // Notify waitlist (auto-notify next person in line).
+  // Forward the session cookie so the waitlist PATCH endpoint (which requires
+  // staff auth) accepts the internal server-to-server call.
+  const cookie = req.headers.get("cookie") || "";
   await fetch(`${req.nextUrl.origin}/api/waiting-list`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(cookie ? { cookie } : {}),
+    },
     body: JSON.stringify({
       roomSlug: booking.room.slug,
       checkIn: booking.checkIn,

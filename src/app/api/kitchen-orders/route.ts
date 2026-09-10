@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 // GET /api/kitchen-orders · list all orders
 export async function GET(req: NextRequest) {
@@ -14,8 +16,12 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ orders });
 }
 
-// POST /api/kitchen-orders · create new order (from QR code in room)
+// POST /api/kitchen-orders · create new order (from QR code in room — guests)
 export async function POST(req: NextRequest) {
+  // Rate limit guest orders to prevent spam (10 per minute per IP).
+  const rl = rateLimit(req, { window: 60, max: 10 });
+  if (!rl.ok) return NextResponse.json({ error: "Too many orders. Please wait a minute." }, { status: 429 });
+
   const body = await req.json();
   const { roomNumber, guestName, guestPhone, items, notes } = body;
   if (!roomNumber || !guestName || !items || !Array.isArray(items) || items.length === 0) {
@@ -66,6 +72,9 @@ export async function POST(req: NextRequest) {
 // PATCH /api/kitchen-orders · update status (NEW → PREPARING → READY → DELIVERED)
 // When status becomes PREPARING, mark as printed (sent to kitchen printer)
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, status } = await req.json();
   const data: any = { status };
   if (status === "PREPARING") data.printedAt = new Date();

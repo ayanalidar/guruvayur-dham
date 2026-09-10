@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/influencers
@@ -74,6 +75,9 @@ export async function POST(req: NextRequest) {
  * body: { id, data: { status?, commissionRate?, notes? } }
  */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const influencer = await db.influencer.update({ where: { id }, data });
   return NextResponse.json({ influencer });

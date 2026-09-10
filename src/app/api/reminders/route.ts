@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/reminders · list pending reminders
 export async function GET(req: NextRequest) {
@@ -16,6 +17,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/reminders · create a reminder
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { type, bookingRef, guestName, guestPhone, message, scheduledFor, channel } = body;
   const reminder = await db.reminder.create({
@@ -30,6 +34,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/reminders · mark as sent (and create notification log)
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id } = await req.json();
   const reminder = await db.reminder.update({
     where: { id },

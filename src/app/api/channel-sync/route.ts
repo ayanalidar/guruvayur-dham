@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/channel-sync · list sync logs (audit trail)
 export async function GET(req: NextRequest) {
@@ -23,6 +24,9 @@ export async function GET(req: NextRequest) {
 // POST /api/channel-sync · manual re-sync of a booking to all channels
 // body: { bookingId }
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { bookingId } = await req.json();
   const booking = await db.booking.findUnique({
     where: { id: bookingId },

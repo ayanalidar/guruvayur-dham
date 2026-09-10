@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 import { tmpdir } from "os";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * POST /api/upload
@@ -23,6 +24,9 @@ import { tmpdir } from "os";
  * For VPS: no env var needed, uses local filesystem.
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

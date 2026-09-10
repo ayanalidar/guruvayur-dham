@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/channel-config
@@ -31,6 +32,9 @@ export async function GET(req: NextRequest) {
  * body: { code, name, category, apiEndpoint?, webhookUrl?, apiKey?, apiSecret?, hotelId?, config? }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { code, name, category, apiEndpoint, webhookUrl, apiKey, apiSecret, hotelId, config } = body;
 
@@ -67,6 +71,9 @@ export async function POST(req: NextRequest) {
  * body: { id, data: { apiKey?, apiSecret?, hotelId?, connected?, apiEndpoint?, webhookUrl? } }
  */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
 
   // If apiKey or apiSecret provided, mark as connected

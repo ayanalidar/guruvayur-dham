@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/maintenance · list maintenance blocks
 export async function GET() {
@@ -9,6 +10,9 @@ export async function GET() {
 
 // POST /api/maintenance · create maintenance block (also blocks availability + sets housekeeping status)
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER"]);
+  if (error) return error;
+
   const body = await req.json();
   const { roomSlug, roomNumber, startDate, endDate, reason, cost, notes } = body;
 
@@ -65,6 +69,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/maintenance · update status (SCHEDULED → IN_PROGRESS → COMPLETED)
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, status } = await req.json();
   const block = await db.maintenanceBlock.update({ where: { id }, data: { status } });
   return NextResponse.json({ block });

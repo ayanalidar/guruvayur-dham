@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/channel-partners · list all channel partners with stats
 export async function GET() {
@@ -38,6 +39,9 @@ export async function GET() {
 // PATCH /api/channel-partners · connect/disconnect a channel
 // body: { code, connected: boolean }
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { code, connected } = await req.json();
   const partner = await db.channelPartner.update({
     where: { code },

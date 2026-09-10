@@ -39,7 +39,10 @@ export default function OAuthButtons() {
   };
 
   const simulateOAuth = async (provider: string) => {
-    // Create a demo OAuth user via our register API
+    // Create a demo OAuth user via our register API.
+    // Generate a random per-session password so the demo account credentials
+    // aren't a hardcoded constant visible in the client bundle.
+    const sessionPassword = `demo-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
     const demoEmail = `demo.${provider.toLowerCase()}@oauth.test`;
     const r = await fetch("/api/auth/register", {
       method: "POST",
@@ -47,22 +50,14 @@ export default function OAuthButtons() {
       body: JSON.stringify({
         name: `Demo ${provider} User`,
         email: demoEmail,
-        password: "oauthdemo123",
+        password: sessionPassword,
       }),
     });
     const j = await r.json();
     if (j.error && j.error.includes("already registered")) {
-      // Login instead
-      const loginR = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "guest", email: demoEmail, password: "oauthdemo123" }),
-      });
-      const loginJ = await loginR.json();
-      if (loginJ.user) {
-        toast.success(`Signed in with ${provider} (demo)`);
-        navigate("/dashboard");
-      }
+      // Demo account already exists from a prior session — we can't recover
+      // the random password, so just inform the user.
+      toast.error("Demo account already exists. Please sign in with email/password instead, or add real OAuth keys to .env");
     } else if (j.user) {
       toast.success(`Signed in with ${provider} (demo)`);
       navigate("/dashboard");

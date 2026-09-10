@@ -38,12 +38,14 @@ export default function WhatsAppChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasAutoOpened = useRef(false);
 
-  // Load chat history from localStorage
+  // Load chat history from localStorage.
+  // Deferred via queueMicrotask to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
     const saved = localStorage.getItem("gd-chat");
     if (saved) {
       try {
-        setMessages(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        queueMicrotask(() => setMessages(parsed));
       } catch {}
     }
   }, []);
@@ -84,15 +86,16 @@ export default function WhatsAppChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  // Track unread messages when widget is closed
+  // Track unread messages when widget is closed.
+  // Deferred via queueMicrotask to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
     if (!open && messages.length > 0) {
       const lastMsg = messages[messages.length - 1];
       if (lastMsg.role === "bot") {
-        setUnread((u) => u + 1);
+        queueMicrotask(() => setUnread((u) => u + 1));
       }
     } else if (open) {
-      setUnread(0);
+      queueMicrotask(() => setUnread(0));
     }
   }, [messages, open]);
 

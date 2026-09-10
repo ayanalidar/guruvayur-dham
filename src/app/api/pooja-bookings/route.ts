@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/pooja-bookings · list all pooja bookings
 export async function GET(req: NextRequest) {
@@ -15,6 +16,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/pooja-bookings · create a pooja booking
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { poojaId, poojaName, guestName, guestPhone, guestEmail, preferredDate, amount, notes } = body;
   if (!poojaId || !poojaName || !guestName || !guestPhone || !preferredDate || !amount) {
@@ -50,6 +54,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/pooja-bookings · update pooja status (e.g., SCHEDULED → AT_TEMPLE → COMPLETED → PRASADAM_READY)
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, status, prasadamNote } = await req.json();
   const booking = await db.poojaBooking.update({
     where: { id },

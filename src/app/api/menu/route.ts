@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/menu · list all menu items
 export async function GET(req: NextRequest) {
@@ -12,6 +13,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/menu · create new menu item
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const item = await db.menuItem.create({ data: body });
   return NextResponse.json({ item });
@@ -19,6 +23,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/menu · update menu item
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const item = await db.menuItem.update({ where: { id }, data });
   return NextResponse.json({ item });
@@ -26,6 +33,9 @@ export async function PATCH(req: NextRequest) {
 
 // DELETE /api/menu?id=xxx
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await db.menuItem.delete({ where: { id } });

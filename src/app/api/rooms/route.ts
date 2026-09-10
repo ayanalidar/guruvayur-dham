@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/rooms · fetch all rooms (with live availability count for next 30 days)
 export async function GET(req: NextRequest) {
@@ -23,6 +24,9 @@ export async function GET(req: NextRequest) {
 // PATCH /api/rooms · update a room (price, name, description, etc.)
 // body: { id, data: { ...fields }
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { id, data } = body;
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
@@ -33,6 +37,9 @@ export async function PATCH(req: NextRequest) {
 // POST /api/rooms · create a new room
 // body: { slug, name, type, price, capacity, size, bedType, image, description, shortDesc, ... }
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
 
   // Validate required fields
@@ -115,6 +122,9 @@ function serializeRoom(r: any) {
 // (availability, rate plans, sync logs). Bookings are preserved for
 // audit trail but the room reference is cleared.
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 

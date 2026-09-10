@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/notifications · list all notifications (SMS/Email/WhatsApp log)
 export async function GET(req: NextRequest) {
@@ -17,6 +18,9 @@ export async function GET(req: NextRequest) {
 // POST /api/notifications · manually send a notification (simulated)
 // body: { type: "SMS"|"EMAIL"|"WHATSAPP", recipient, subject?, body }
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { type, recipient, subject, body } = await req.json();
   if (!type || !recipient || !body) {
     return NextResponse.json({ error: "type, recipient, body required" }, { status: 400 });

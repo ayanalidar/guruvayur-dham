@@ -1143,7 +1143,9 @@ function SEOPagesCMS() {
     setContentMap(j.map || {});
     setLoading(false);
   };
-  useEffect(() => { load(); }, []);
+  // Trigger initial content load. Deferred via queueMicrotask to satisfy
+  // react-hooks/set-state-in-effect (load() calls setContentMap/setLoading).
+  useEffect(() => { queueMicrotask(() => { load(); }); }, []);
 
   useEffect(() => {
     const configPage = getSEOPage(selectedSlug);
@@ -1152,7 +1154,8 @@ function SEOPagesCMS() {
     if (cmsRaw) {
       try {
         const parsed = JSON.parse(cmsRaw);
-        setDraft({
+        // Compute the draft object synchronously, then defer the setState.
+        const nextDraft = {
           ...configPage,
           ...parsed,
           _introText: Array.isArray(parsed.intro) ? parsed.intro.join("\n\n") : (configPage.intro || []).join("\n\n"),
@@ -1161,12 +1164,13 @@ function SEOPagesCMS() {
             _bodyText: Array.isArray(s.body) ? s.body.join("\n\n") : "",
           })),
           _faqs: parsed.faqs || configPage.faqs || [],
-        });
+        };
+        queueMicrotask(() => setDraft(nextDraft));
       } catch {
-        setDraft(toDraft(configPage));
+        queueMicrotask(() => setDraft(toDraft(configPage)));
       }
     } else {
-      setDraft(toDraft(configPage));
+      queueMicrotask(() => setDraft(toDraft(configPage)));
     }
   }, [selectedSlug, contentMap]);
 

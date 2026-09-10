@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/housekeeping · list all rooms with status
 export async function GET(req: NextRequest) {
@@ -16,6 +17,9 @@ export async function GET(req: NextRequest) {
 // PATCH /api/housekeeping · update room status
 // body: { roomNumber, status, assignedTo?, notes? }
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { roomNumber, status, assignedTo, notes } = await req.json();
   const data: any = { status };
   if (assignedTo !== undefined) data.assignedTo = assignedTo;
@@ -30,6 +34,9 @@ export async function PATCH(req: NextRequest) {
 
 // POST /api/housekeeping · bulk update (e.g., mark all dirty rooms as cleaning)
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { fromStatus, toStatus, assignedTo } = await req.json();
   const result = await db.housekeepingStatus.updateMany({
     where: { status: fromStatus },

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * POST /api/email/send
@@ -10,6 +11,9 @@ import { db } from "@/lib/db";
  * Env vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   try {
     const { to, subject, body, type = "GENERAL" } = await req.json();
     if (!to || !subject || !body) {

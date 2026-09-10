@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Simple password hashing using Node's crypto (no external dependency).
@@ -79,6 +80,76 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
     },
     role: session.role,
   };
+}
+
+/**
+ * Require an authenticated staff user (or specific roles) for an API route.
+ * Returns `{ session, error }` — if `error` is set, return it directly.
+ *
+ * Usage:
+ *   import { requireStaff } from "@/lib/auth";
+ *
+ *   export async function POST(req: NextRequest) {
+ *     const { session, error } = await requireStaff(req);
+ *     if (error) return error;
+ *     // session.user.id, session.role are now guaranteed
+ *     ...
+ *   }
+ *
+ *   // Restrict to specific roles:
+ *   const { session, error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+ */
+export async function requireStaff(
+  req: NextRequest,
+  roles?: string[]
+): Promise<{
+  session: { user: any; role: string } | null;
+  error: NextResponse | null;
+}> {
+  const session = await getUserFromRequest(req);
+  if (!session) {
+    return {
+      session: null,
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+
+  // Staff roles = anything except GUEST.
+  if (session.role === "GUEST") {
+    return {
+      session: null,
+      error: NextResponse.json({ error: "Forbidden — staff access required" }, { status: 403 }),
+    };
+  }
+
+  if (roles && roles.length > 0 && !roles.includes(session.role)) {
+    return {
+      session: null,
+      error: NextResponse.json(
+        { error: `Forbidden — requires one of: ${roles.join(", ")}` },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return { session, error: null };
+}
+
+/**
+ * Require any authenticated user (staff OR guest) for an API route.
+ */
+export async function requireUser(req: NextRequest): Promise<{
+  session: { user: any; role: string } | null;
+  error: NextResponse | null;
+}> {
+  const session = await getUserFromRequest(req);
+  if (!session) {
+    return {
+      session: null,
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+  return { session, error: null };
 }
 
 /**

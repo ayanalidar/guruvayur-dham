@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/export?type=bookings|customers|revenue|channel-sync|pooja-bookings|kitchen-orders
 // Returns CSV data for download
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const type = req.nextUrl.searchParams.get("type") || "bookings";
   const from = req.nextUrl.searchParams.get("from");
   const to = req.nextUrl.searchParams.get("to");

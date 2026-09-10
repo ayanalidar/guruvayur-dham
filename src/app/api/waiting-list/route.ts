@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/waiting-list · list all waitlist entries
 export async function GET(req: NextRequest) {
@@ -45,6 +46,9 @@ export async function POST(req: NextRequest) {
 // PATCH /api/waiting-list · notify next person in waitlist (when cancellation happens)
 // body: { roomSlug, checkIn, checkOut }
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { roomSlug, checkIn, checkOut } = await req.json();
   // Find the next person in line for this room/date range
   const next = await db.waitingList.findFirst({

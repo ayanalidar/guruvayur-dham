@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/pricing-rules — Returns all dynamic pricing rules
@@ -18,6 +19,9 @@ export async function GET() {
  * POST /api/pricing-rules — Create a new dynamic pricing rule
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const rule = await db.dynamicPricingRule.create({
     data: {
@@ -40,6 +44,9 @@ export async function POST(req: NextRequest) {
  * body: { id, data: { ...fields } }
  */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
@@ -65,6 +72,9 @@ export async function PATCH(req: NextRequest) {
  * DELETE /api/pricing-rules?id=xxx
  */
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await db.dynamicPricingRule.delete({ where: { id } });

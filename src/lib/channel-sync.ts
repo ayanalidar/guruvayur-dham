@@ -139,13 +139,15 @@ async function callChannelApi(
   channel: { code: string; name: string; webhookUrl: string; apiEndpoint: string },
   payload: { action: "BLOCK" | "UNBLOCK"; roomSlug: string; checkIn: Date; checkOut: Date; bookingRef: string }
 ): Promise<{ success: boolean; message: string }> {
-  // TODO: Implement real channel API calls here.
-  // For now, we simulate a successful sync with a small delay.
+  // TODO: Implement real channel API calls here (Booking.com / MMT / Goibibo / Agoda).
+  // For now, we simulate a successful sync with a small delay. The "[SIMULATED]"
+  // prefix in the message makes it obvious in the admin dashboard that no real
+  // sync happened — prevents false-positive "SUCCESS" rows from masking real issues.
   await new Promise((r) => setTimeout(r, 100 + Math.random() * 150));
 
   return {
     success: true,
-    message: `Simulated ${payload.action} on ${channel.name} for ${payload.roomSlug} (${payload.checkIn.toDateString()} → ${payload.checkOut.toDateString()})`,
+    message: `[SIMULATED] ${payload.action} on ${channel.name} for ${payload.roomSlug} (${payload.checkIn.toDateString()} → ${payload.checkOut.toDateString()}) — no real channel API call made`,
   };
 }
 

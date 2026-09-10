@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limiter";
 
 // GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
 // ?search searches guestName, guestPhone, guestEmail, and reference fields
@@ -38,10 +39,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ bookings });
 }
 
-// POST /api/bookings · create a new booking (from any source)
+// POST /api/bookings · create a new booking (from any source — guests via /book, staff, channel managers)
 // body: { roomSlug, guestName, guestPhone, guestEmail?, checkIn, checkOut, guests, source, channelBookingId?, notes? }
 // This is the CORE function · when a booking is made here, it broadcasts BLOCK to all channels.
 export async function POST(req: NextRequest) {
+  // Rate limit guest self-bookings to prevent spam (5 per minute per IP).
+  const rl = rateLimit(req, { window: 60, max: 5 });
+  if (!rl.ok) return NextResponse.json({ error: "Too many booking attempts. Please wait a minute." }, { status: 429 });
+
   const body = await req.json();
   const {
     roomSlug, guestName, guestPhone, guestEmail,

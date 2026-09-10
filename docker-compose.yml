@@ -66,6 +66,13 @@ services:
       WHATSAPP_ACCESS_TOKEN: ${WHATSAPP_ACCESS_TOKEN}
       NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${NEXT_PUBLIC_VAPID_PUBLIC_KEY}
       CRON_SECRET: ${CRON_SECRET}
+      REALTIME_URL: http://realtime:3003
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      FROM_EMAIL: ${FROM_EMAIL:-}
+      BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN:-}
     volumes:
       # Persistent volume for uploaded images (local filesystem storage)
       - uploads_data:/app/public/uploads
@@ -128,7 +135,7 @@ services:
         echo 'Starting review-funnel cron (every 15 min)...';
         while true; do
           echo \"[$(date)] Running review funnel...\";
-          wget --post-data='' -qO- http://app:3000/api/reviews/checkout-funnel 2>&1 || true;
+          wget --header=\"Authorization: Bearer ${CRON_SECRET}\" --post-data='' -qO- http://app:3000/api/reviews/checkout-funnel 2>&1 || true;
           sleep 900;
         done
       "

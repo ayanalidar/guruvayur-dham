@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/blog-schedule
@@ -25,6 +26,9 @@ export async function GET() {
  * body: { postId, scheduledAt }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { postId, scheduledAt } = await req.json();
 
   const post = await db.blogPost.update({
@@ -101,6 +105,9 @@ export async function PATCH() {
  * body: { postId, seoTitle, seoDescription, seoKeywords }
  */
 export async function PUT(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { postId, seoTitle, seoDescription, seoKeywords } = await req.json();
 
   const post = await db.blogPost.update({

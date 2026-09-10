@@ -27,7 +27,20 @@ const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const facebookClientId = process.env.FACEBOOK_CLIENT_ID;
 const facebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET;
-const nextAuthSecret = process.env.NEXTAUTH_SECRET || "demo-secret-key-guruvayur-dham";
+// Fail-closed: if NEXTAUTH_SECRET is not set, refuse to start rather than
+// falling back to a hardcoded public string (which would let anyone forge
+// session tokens). The only exception is local dev (NODE_ENV !== "production")
+// where we generate a random per-process secret for convenience.
+const nextAuthSecret = process.env.NEXTAUTH_SECRET
+  || (process.env.NODE_ENV !== "production"
+    ? `dev-only-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`
+    : "");
+if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_SECRET) {
+  throw new Error(
+    "NEXTAUTH_SECRET environment variable is required in production. " +
+    "Generate one with: openssl rand -base64 32"
+  );
+}
 
 const providers: any[] = [];
 

@@ -2,13 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Do NOT ignore TS build errors — they should fail the build, not ship to prod.
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  reactStrictMode: false,
+  // Enable React strict mode in dev — surfaces more bugs early.
+  reactStrictMode: true,
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "source.unsplash.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "z.ai" },
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
@@ -16,8 +17,6 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
-    deviceSizes: [360, 375, 414, 640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   async headers() {
     return [

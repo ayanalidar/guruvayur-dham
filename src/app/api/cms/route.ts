@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/cms?type=events
@@ -51,6 +52,9 @@ export async function GET(req: NextRequest) {
  * body: { type, data: { ...fields } }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { type, data } = await req.json();
   let item: any;
   switch (type) {
@@ -83,6 +87,9 @@ export async function POST(req: NextRequest) {
  * body: { type, id, data: { ...fields } }
  */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { type, id, data } = await req.json();
   let item: any;
   switch (type) {
@@ -113,6 +120,9 @@ export async function PATCH(req: NextRequest) {
  * DELETE /api/cms?type=xxx&id=yyy
  */
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const type = req.nextUrl.searchParams.get("type");
   const id = req.nextUrl.searchParams.get("id");
   if (!type || !id) return NextResponse.json({ error: "type and id required" }, { status: 400 });

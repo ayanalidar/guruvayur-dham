@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/content · fetch all content blocks (or by ?category=)
 export async function GET(req: NextRequest) {
@@ -19,6 +20,9 @@ export async function GET(req: NextRequest) {
 // PATCH /api/content · update one or more content blocks
 // body: { updates: [{ key, value }, ...] }
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { updates }: { updates: Array<{ key: string; value: string }> } = body;
   if (!Array.isArray(updates)) {

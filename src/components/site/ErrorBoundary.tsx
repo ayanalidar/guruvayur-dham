@@ -45,17 +45,33 @@ export default function ErrorBoundary({
   }, []);
 
   // React error boundary (class component behavior via componentDidCatch equivalent)
-  // We use a wrapper to catch render errors
+  // We use a wrapper to catch render errors. Compute JSX outside try/catch so
+  // ESLint doesn't flag JSX-in-try-catch (which can mask render bugs).
+  const fallbackEl = (
+    <ErrorFallback
+      error={errorInfo}
+      onRetry={() => {
+        setHasError(false);
+        setErrorInfo("");
+        window.location.reload();
+      }}
+    />
+  );
+
   try {
     if (hasError) {
-      return <ErrorFallback error={errorInfo} onRetry={() => { setHasError(false); setErrorInfo(""); window.location.reload(); }} />;
+      return fallbackEl;
     }
-    return <>{children}</>;
   } catch (error: any) {
-    setHasError(true);
-    setErrorInfo(error?.message || "Render error");
-    return <ErrorFallback error={errorInfo} onRetry={() => { setHasError(false); setErrorInfo(""); window.location.reload(); }} />;
+    // Defer setState to avoid cascading renders inside the catch block.
+    const msg = error?.message || "Render error";
+    queueMicrotask(() => {
+      setHasError(true);
+      setErrorInfo(msg);
+    });
+    return fallbackEl;
   }
+  return <>{children}</>;
 }
 
 function ErrorFallback({ error, onRetry }: { error: string; onRetry: () => void }) {

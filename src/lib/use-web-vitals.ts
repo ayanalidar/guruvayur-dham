@@ -19,8 +19,8 @@ export function useWebVitals() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Only track in production or if explicitly enabled
-    const shouldTrack = process.env.NODE_ENV === "production" || true; // always track for demo
+    // Only track in production — dev traffic just adds noise.
+    const shouldTrack = process.env.NODE_ENV === "production";
 
     if (!shouldTrack) return;
 

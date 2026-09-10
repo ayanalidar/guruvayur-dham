@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/audit-log
@@ -7,6 +8,9 @@ import { db } from "@/lib/db";
  * Query: ?limit=50, ?entity=BOOKING, ?userId=xxx
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { searchParams } = req.nextUrl;
   const limit = parseInt(searchParams.get("limit") || "50");
   const entity = searchParams.get("entity");

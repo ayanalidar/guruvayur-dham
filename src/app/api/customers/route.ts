@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/customers · list all customers (CRM)
 export async function GET(req: NextRequest) {
@@ -25,6 +26,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/customers · create or update customer (upsert by phone)
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { name, phone, email, city, preferences, notes, tags } = body;
   const customer = await db.customer.upsert({
@@ -37,6 +41,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/customers · update customer
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const customer = await db.customer.update({ where: { id }, data });
   return NextResponse.json({ customer });
@@ -44,6 +51,9 @@ export async function PATCH(req: NextRequest) {
 
 // PUT /api/customers · record a booking for a customer (increments totals)
 export async function PUT(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { phone, bookingAmount, loyaltyPoints } = await req.json();
   const customer = await db.customer.upsert({
     where: { phone },

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/travel-agents · list all B2B agents
 export async function GET() {
@@ -9,6 +10,9 @@ export async function GET() {
 
 // POST /api/travel-agents · create new agent
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const agent = await db.travelAgent.create({ data: body });
   return NextResponse.json({ agent });
@@ -16,6 +20,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/travel-agents · update agent
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const agent = await db.travelAgent.update({ where: { id }, data });
   return NextResponse.json({ agent });

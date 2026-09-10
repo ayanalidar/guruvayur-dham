@@ -30,14 +30,20 @@ import { db } from "@/lib/db";
  */
 
 export async function POST(req: NextRequest) {
-  // CRON_SECRET check — prevents unauthorized triggering
+  // CRON_SECRET check — fail-closed (if secret is unset, refuse all requests).
+  // This prevents unauthorized triggering of WhatsApp review messages.
+  // Vercel Cron sets CRON_SECRET automatically; on VPS, set it in .env.
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const authHeader = req.headers.get("authorization") || "";
-    const queryKey = req.nextUrl.searchParams.get("key") || "";
-    if (authHeader !== `Bearer ${cronSecret}` && queryKey !== cronSecret) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: "Server misconfiguration: CRON_SECRET not set. Review funnel disabled." },
+      { status: 503 }
+    );
+  }
+  const authHeader = req.headers.get("authorization") || "";
+  const queryKey = req.nextUrl.searchParams.get("key") || "";
+  if (authHeader !== `Bearer ${cronSecret}` && queryKey !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const dryRun = req.nextUrl.searchParams.get("dryRun") === "1";

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/gallery · list all (optionally by tab)
 export async function GET(req: NextRequest) {
@@ -15,6 +16,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/gallery · add image
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const image = await db.galleryImage.create({ data: body });
   return NextResponse.json({ image });
@@ -22,6 +26,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/gallery · update image
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const image = await db.galleryImage.update({ where: { id }, data });
   return NextResponse.json({ image });
@@ -29,6 +36,9 @@ export async function PATCH(req: NextRequest) {
 
 // DELETE /api/gallery?id=xxx
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await db.galleryImage.delete({ where: { id } });

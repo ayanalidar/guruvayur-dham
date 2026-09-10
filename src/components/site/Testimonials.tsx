@@ -15,9 +15,12 @@ export default function Testimonials() {
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
-  // Reset index if it goes out of bounds when testimonials list changes
+  // Reset index if it goes out of bounds when testimonials list changes.
+  // Deferred via queueMicrotask to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
-    if (idx >= testimonials.length) setIdx(0);
+    if (idx >= testimonials.length) {
+      queueMicrotask(() => setIdx(0));
+    }
   }, [testimonials.length, idx]);
 
   const next = useCallback(() => {

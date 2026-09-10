@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/blog-posts · list all (or by slug)
 export async function GET(req: NextRequest) {
@@ -18,6 +19,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/blog-posts · create new post
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { title, excerpt, category, readTime, image, content, published } = body;
   const slug = body.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -36,6 +40,9 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/blog-posts · update post
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   if (data.content && Array.isArray(data.content)) data.content = JSON.stringify(data.content);
   const post = await db.blogPost.update({ where: { id }, data });
@@ -44,6 +51,9 @@ export async function PATCH(req: NextRequest) {
 
 // DELETE /api/blog-posts?id=xxx
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await db.blogPost.delete({ where: { id } });
