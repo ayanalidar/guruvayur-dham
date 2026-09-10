@@ -6,7 +6,6 @@ import Image from "next/image";
 import { TRUST_BADGES, SITE, waLink } from "@/lib/site-data";
 import { useContent, useCMSList, mapTrustBadge, type TrustBadgeItem } from "@/lib/use-cms";
 import { getIcon } from "./icon-map";
-import ParticleLogo from "./ParticleLogo";
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -57,22 +56,12 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-maroon-dark/80 via-transparent to-maroon-dark/30" />
       </div>
 
-      {/* Particle logo — right side focal point (desktop only) */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-        className="pointer-events-none absolute right-12 top-1/2 z-10 hidden -translate-y-1/2 xl:block"
-      >
-        <ParticleLogo
-          src="/guruyavur.png"
-          size={300}
-          interactive
-          showGlow
-          fallbackClassName="object-contain"
-          alt="Guruvayur Dham"
-        />
-      </motion.div>
+      {/* Floating decorative diya */}
+      <div className="pointer-events-none absolute right-8 top-32 hidden animate-float lg:block">
+        <div className="relative grid h-20 w-20 place-items-center rounded-full bg-gradient-gold shadow-gold animate-diya">
+          <span className="font-serif text-3xl text-maroon-dark">🪔</span>
+        </div>
+      </div>
 
       <div className="container-x relative z-10 py-24">
         <div className="max-w-3xl">
