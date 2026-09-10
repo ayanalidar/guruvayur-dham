@@ -11,6 +11,7 @@ import { useHashRoute } from "@/lib/router";
 import { SITE, waLink } from "@/lib/site-data";
 import { useContent } from "@/lib/use-cms";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
+import ParticleLogo from "@/components/site/ParticleLogo";
 import OAuthButtons from "@/components/site/OAuthButtons";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
@@ -193,12 +194,13 @@ export default function LoginPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img
+              <ParticleLogo
                 src="/guruyavur.png"
+                size={256}
+                interactive
+                showGlow
+                fallbackClassName="h-64 w-64 object-contain"
                 alt={brandName}
-                className="h-64 w-64 object-contain"
-                style={{ filter: "drop-shadow(0 0 24px rgba(212,175,55,0.25))" }}
-                draggable={false}
               />
             </motion.div>
             <motion.h1
@@ -262,12 +264,13 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo + features */}
           <div className="mb-8 flex flex-col items-center gap-4 lg:hidden">
-            <img
+            <ParticleLogo
               src="/guruyavur.png"
+              size={96}
+              interactive
+              showGlow
+              fallbackClassName="h-24 w-24 object-contain"
               alt={brandName}
-              className="h-24 w-24 object-contain"
-              style={{ filter: "drop-shadow(0 0 12px rgba(212,175,55,0.2))" }}
-              draggable={false}
             />
             <div className="flex items-center gap-2">
               <div className="flex">

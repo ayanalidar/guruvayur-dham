@@ -75,3 +75,30 @@ Stage Summary:
 - All 22 pre-existing typecheck errors fixed (zero errors remaining).
 - Production DB seeded with 67 content blocks + 42 CMS list items (features/events/testimonials/faqs/trustBadges/poojas). Site is fully CMS-driven.
 - Artifacts: 4 new files (sitemap.xml/route.ts, robots.txt/route.ts, JsonLd.tsx), 11 modified files (PoojaSection, Gallery, Rooms, PlanYourDarshan, Navbar, Footer, layout.tsx, use-cms.ts, translations.ts, seed.ts, AdminContent.tsx, tsconfig.json, plus 7 typecheck-error fixes in API routes/lib).
+
+---
+Task ID: ParticleLogo-1
+Agent: main
+Task: Add particle-logo effect (same features as https://academy.guardianx.cloud/particle-logo-demo.html) to the Guruvayur Dham login page logo.
+
+Work Log:
+- Fetched and studied the reference demo (383-line standalone HTML).
+- Created /home/z/my-project/src/components/site/ParticleLogo.tsx:
+  * Canvas-based particle system sampling non-transparent pixels from /guruyavur.png.
+  * 3 phases: ASSEMBLY (scattered ring → spring to target, staggered easing) → IDLE (perlin-ish noise + opacity flicker) → MOUSE (cursor repels nearby particles, hover brightness).
+  * Brand-tuned glow: champagne/gold (rgba(212,175,55,...)) instead of purple/blue.
+  * Auto-scaling particle count: 650 mobile, 1100 tablet, 2000 desktop.
+  * DPR capped at 2; rAF paused on visibilitychange; debounced resize.
+  * Honours prefers-reduced-motion (skips assembly + idle noise).
+  * SSR-safe: renders <img> fallback if canvas unavailable or image fails.
+  * ESLint-clean: deferred setState calls via queueMicrotask.
+- Wired ParticleLogo into LoginPage.tsx:
+  * Desktop: replaced static <img h-64 w-64> in motion.div with <ParticleLogo size={256} />.
+  * Mobile: replaced static <img h-24 w-24> with <ParticleLogo size={96} />.
+  * Both keep fallbackClassName for graceful fallback.
+- Verified: npx tsc --noEmit → 0 errors. npx eslint → 0 errors.
+
+Stage Summary:
+- New component: src/components/site/ParticleLogo.tsx (~470 lines).
+- Updated file: src/pages/LoginPage.tsx (import added + 2 logo placements swapped).
+- Effect is live on /login for both desktop and mobile breakpoints.

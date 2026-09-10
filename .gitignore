@@ -57,3 +57,7 @@ server.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch / tool output (do not commit)
+tool-results/
+particle-logo-demo.html
