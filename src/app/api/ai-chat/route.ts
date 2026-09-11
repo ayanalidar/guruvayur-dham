@@ -81,7 +81,7 @@ If you don't know something, say so honestly and suggest the guest WhatsApp us a
   } catch (error: any) {
     return NextResponse.json({
       reply: `Namaskaram! I'm having trouble connecting right now. For immediate assistance, please WhatsApp us at +91-90908 20208 — we reply within 5 minutes.`,
-      error: error.message,
+      error: "Request failed",
     });
   }
 }

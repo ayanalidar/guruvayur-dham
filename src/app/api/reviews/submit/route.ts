@@ -1,11 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/reviews/submit
  * Rate limited: 3 reviews per hour per IP
+ *
+ * Phase4-Zod-Gaps: replaced manual `if (!authorName || ...)` checks with
+ * Zod safeParse. All PII fields are now bounded (email/phone/name/text/title
+ * capped, rating coerced to int 1-5). `stayDate` is kept permissive (max 50
+ * chars) to preserve the existing DB write below.
  */
+const SubmitReviewSchema = z.object({
+  authorName: z.string().min(1).max(200),
+  authorEmail: z.string().email().max(200).optional(),
+  authorPhone: z.string().max(30).optional(),
+  roomSlug: z.string().min(1).max(200),
+  rating: z.coerce.number().int().min(1).max(5),
+  text: z.string().min(1).max(2000),
+  title: z.string().max(200).optional(),
+  bookingRef: z.string().max(50).optional(),
+  stayDate: z.string().max(50).optional(), // preserved from prior logic
+});
+
 export async function POST(req: NextRequest) {
   // Rate limit: 3 reviews per hour
   const rl = await rateLimit(req, { window: 3600, max: 3, key: "review:submit" });
@@ -16,21 +34,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = await req.json();
-  const { authorName, authorEmail, authorPhone, rating, text, roomSlug, stayDate } = body;
-
-  if (!authorName || !rating || !text) {
-    return NextResponse.json({ error: "Name, rating, and review text are required" }, { status: 400 });
+  const parsed = SubmitReviewSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
-  if (rating < 1 || rating > 5) {
-    return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 });
-  }
-  if (text.length < 10) {
-    return NextResponse.json({ error: "Review must be at least 10 characters" }, { status: 400 });
-  }
-  if (text.length > 2000) {
-    return NextResponse.json({ error: "Review must be under 2000 characters" }, { status: 400 });
-  }
+  const { authorName, authorEmail, authorPhone, rating, text, roomSlug, stayDate } = parsed.data;
 
   const review = await db.review.create({
     data: {

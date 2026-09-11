@@ -643,3 +643,19 @@ Stage Summary:
 - ESLint verification: `npx eslint <12 files>` → 0 errors, 0 warnings
 - All existing business logic preserved 1:1 below the schema-validation blocks
 - Auth checks (requireStaff) run BEFORE the new validation, BEFORE any DB query
+
+
+---
+Task ID: Phase4-Zod-Gaps
+Agent: subagent
+Task: Add Zod validation to 3 routes missing it (M13-M15)
+
+Work Log:
+- Patched: analytics POST, whatsapp-bot POST, reviews/submit POST
+
+Stage Summary:
+- All 3 routes now validate input shape via Zod safeParse
+- Analytics: eventType enum + 10KB properties size guard
+- whatsapp-bot: message max 2000 chars (prevents DB bloat)
+- reviews/submit: rating 1-5, text max 2000 chars, all PII fields bounded
+

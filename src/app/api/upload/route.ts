@@ -126,6 +126,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ url: `/uploads/${filename}` });
     } catch (publicErr: any) {
       // /public not writable (Vercel) — try /tmp + base64 fallback.
+      // SECURITY (Round 3 M18 fix): refuse uploads >100KB on Vercel-without-Blob
+      // to prevent bandwidth DoS (was: returned base64 data URL for files up to
+      // 500KB, ~670KB response body per request — repeatable bandwidth abuse).
+      if (cleanBuffer.length > 100 * 1024) {
+        return NextResponse.json(
+          {
+            error: "Image too large for Vercel without cloud storage (max 100KB). Set BLOB_READ_WRITE_TOKEN env var, or use an image under 100KB.",
+            hint: "Vercel dashboard → Storage → Create Blob Store → copy token → add as BLOB_READ_WRITE_TOKEN env var.",
+          },
+          { status: 413 }
+        );
+      }
       const tmpDir = path.join(tmpdir(), "uploads");
       if (!existsSync(tmpDir)) {
         await mkdir(tmpDir, { recursive: true });
@@ -133,20 +145,10 @@ export async function POST(req: NextRequest) {
       const tmpPath = path.join(tmpDir, filename);
       await writeFile(tmpPath, cleanBuffer);
       // /tmp files don't persist across requests on Vercel, so we return
-      // a base64 data URL for small files, or an error for large files.
-      if (cleanBuffer.length < 500 * 1024) {
-        const base64 = cleanBuffer.toString("base64");
-        const dataUrl = `data:image/jpeg;base64,${base64}`;
-        return NextResponse.json({ url: dataUrl });
-      }
-      // File too large for base64 on Vercel without Blob.
-      return NextResponse.json(
-        {
-          error: "Image too large for Vercel without cloud storage. Set BLOB_READ_WRITE_TOKEN env var, or use an image under 500KB.",
-          hint: "Vercel dashboard → Storage → Create Blob Store → copy token → add as BLOB_READ_WRITE_TOKEN env var.",
-        },
-        { status: 413 }
-      );
+      // a base64 data URL (only for small files now, ≤100KB).
+      const base64 = cleanBuffer.toString("base64");
+      const dataUrl = `data:image/jpeg;base64,${base64}`;
+      return NextResponse.json({ url: dataUrl });
     }
   } catch (error: any) {
     console.error("Upload error:", error.message);

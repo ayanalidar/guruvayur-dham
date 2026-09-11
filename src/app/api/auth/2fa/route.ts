@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 import crypto from "crypto";
 
 /**
@@ -104,6 +105,14 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const { session, error } = await requireUser(req);
   if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // SECURITY (Round 3 M9 fix): rate limit TOTP verification to 5/min/IP —
+  // prevents brute-forcing the 6-digit code (1M combinations, ~3 hours at
+  // 100 req/s without this limit).
+  const rl = await rateLimit(req, { window: 60, max: 5, key: "auth:2fa:verify" });
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many 2FA attempts. Please wait a minute." }, { status: 429 });
+  }
 
   const userId = session.user.id;
   const { code } = await req.json();

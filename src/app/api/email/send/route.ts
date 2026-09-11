@@ -56,7 +56,12 @@ export async function POST(req: NextRequest) {
           await transporter.sendMail({
             from: `"Guruvayur Dham" <${fromEmail}>`,
             to, subject, text: body,
-            html: body.replace(/\n/g, "<br>"),
+            // SECURITY (Round 3 M21 fix): HTML-escape the body before
+            // injecting <br> tags. Was: body.replace(/\n/g, "<br>") — if
+            // staff passed a customer-supplied value as body (e.g. contact
+            // form message), it would be rendered as HTML in the recipient's
+            // email client (stored XSS in mail client).
+            html: escapeHtml(body).replace(/\n/g, "<br>"),
           });
           await db.notification.update({
             where: { id: notification.id },
@@ -74,8 +79,22 @@ export async function POST(req: NextRequest) {
       message: "Email queued. Set SMTP_HOST, SMTP_USER, SMTP_PASS, FROM_EMAIL env vars to enable sending.",
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // SECURITY (Round 3 M4 fix): don't leak internal error messages.
+    console.error("Email send error:", error.message);
+    return NextResponse.json({ error: "Email send failed" }, { status: 500 });
   }
+}
+
+/**
+ * Escape HTML special characters to prevent XSS in email HTML bodies.
+ */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /** GET /api/email/send — list recent email notifications */

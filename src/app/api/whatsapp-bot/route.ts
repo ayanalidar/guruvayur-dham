@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { chat } from "@/lib/ai/provider";
 import { rateLimit } from "@/lib/rate-limiter";
@@ -13,13 +14,27 @@ import { rateLimit } from "@/lib/rate-limiter";
 //   Instead, asks the user for their booking reference (GD-XXXX) — which is
 //   a secret known only to the actual guest. Was: anyone could pass any
 //   phone number and learn that person's booking reference, dates, amount.
+//
+// Phase4-Zod-Gaps: added ChatSchema.safeParse — caps message at 2000 chars
+// (was unbounded → AI prompt-injection / DB bloat vector).
+const ChatSchema = z.object({
+  phone: z.string().max(30).optional(),
+  message: z.string().min(1).max(2000),
+});
+
 export async function POST(req: NextRequest) {
   // Rate limit — 20 messages/min per IP.
   const rl = await rateLimit(req, { window: 60, max: 20, key: "whatsapp-bot" });
   if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
 
-  const { phone, message } = await req.json();
-  if (!message) return NextResponse.json({ error: "Message required" }, { status: 400 });
+  const parsed = ChatSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { phone, message } = parsed.data;
 
   const msg = message.toLowerCase().trim();
   let reply = "";
@@ -79,7 +94,7 @@ export async function POST(req: NextRequest) {
   await db.notification.create({
     data: {
       type: "WHATSAPP",
-      recipient: phone,
+      recipient: phone ?? "unknown",
       body: `[IN] ${message}\n[OUT] ${reply}`,
       status: "SENT",
       sentAt: new Date(),

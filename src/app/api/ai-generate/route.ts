@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     return NextResponse.json({
       error: "Content generation failed",
-      message: error.message,
+      message: "Generation failed",
     }, { status: 500 });
   }
 }

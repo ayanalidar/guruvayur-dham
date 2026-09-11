@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
+
+/**
+ * POST /api/analytics body schema.
+ * eventType is a known enum OR any custom string capped at 50 chars (so
+ * callers can introduce new event names without a deploy, but can't blow
+ * up the DB column with a 10KB blob).
+ * properties is a free-form object but size-guarded to 10KB below.
+ */
+const TrackEventSchema = z.object({
+  eventType: z.enum([
+    "PAGE_VIEW", "BOOKING_STARTED", "BOOKING_COMPLETED",
+    "ROOM_VIEW", "POOJA_VIEW", "CTA_CLICK", "SEARCH",
+    "SCROLL_DEPTH", "SESSION_START", "SESSION_END",
+  ]).or(z.string().max(50)), // allow custom events but cap length
+  page: z.string().max(500).optional(),
+  properties: z.record(z.string(), z.any()).optional(),
+});
 
 /**
  * GET /api/analytics
@@ -164,7 +182,24 @@ export async function POST(req: NextRequest) {
   const rl = await rateLimit(req, { window: 60, max: 60, key: "analytics:track" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
-  const { eventType, page, properties } = await req.json();
+  const parsed = TrackEventSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { eventType, page, properties } = parsed.data;
+
+  // Size guard: reject oversized properties payloads (prevents DB bloat from
+  // a single malicious event with a 10MB properties blob). 10KB is plenty
+  // for any legitimate analytics payload (we only store ~30 fields max).
+  if (properties && JSON.stringify(properties).length >= 10000) {
+    return NextResponse.json(
+      { error: "Properties payload too large (max 10KB)" },
+      { status: 400 }
+    );
+  }
 
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
   const ua = req.headers.get("user-agent") || "unknown";

@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
         googleReviewCount: data.result?.user_ratings_total,
       });
     } catch (e: any) {
-      return NextResponse.json({ error: e.message }, { status: 500 });
+      return NextResponse.json({ error: "Request failed" }, { status: 500 });
     }
   }
 

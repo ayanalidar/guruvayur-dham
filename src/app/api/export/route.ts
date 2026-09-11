@@ -36,7 +36,8 @@ export async function GET(req: NextRequest) {
       break;
     }
     case "customers": {
-      const customers = await db.customer.findMany({ orderBy: { totalRevenue: "desc" } });
+      // M2 fix: cap to 10000 rows to prevent unbounded memory use.
+      const customers = await db.customer.findMany({ orderBy: { totalRevenue: "desc" }, take: 10000 });
       csv = "Name,Phone,Email,City,Total Bookings,Total Revenue,Loyalty Points,Tags,Created At\n";
       for (const c of customers) {
         csv += `${esc(c.name)},${esc(c.phone)},${esc(c.email || "")},${esc(c.city || "")},${c.totalBookings},${c.totalRevenue},${c.loyaltyPoints},${esc(c.tags || "")},${new Date(c.createdAt).toLocaleDateString("en-IN")}\n`;
@@ -44,9 +45,11 @@ export async function GET(req: NextRequest) {
       break;
     }
     case "revenue": {
+      // M2 fix: cap to 10000 rows.
       const bookings = await db.booking.findMany({
         where: { status: { in: ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"] } },
         orderBy: { checkIn: "asc" },
+        take: 10000,
       });
       csv = "Date,Reference,Guest,Source,Amount\n";
       for (const b of bookings) {
@@ -67,7 +70,8 @@ export async function GET(req: NextRequest) {
       break;
     }
     case "pooja-bookings": {
-      const poojas = await db.poojaBooking.findMany({ orderBy: { preferredDate: "desc" } });
+      // M2 fix: cap to 10000 rows.
+      const poojas = await db.poojaBooking.findMany({ orderBy: { preferredDate: "desc" }, take: 10000 });
       csv = "Reference,Pooja,Guest,Phone,Preferred Date,Amount,Status,Created At\n";
       for (const p of poojas) {
         csv += `${p.reference},${esc(p.poojaName)},${esc(p.guestName)},${esc(p.guestPhone)},${new Date(p.preferredDate).toLocaleDateString("en-IN")},${p.amount},${p.status},${new Date(p.createdAt).toLocaleDateString("en-IN")}\n`;
@@ -84,7 +88,8 @@ export async function GET(req: NextRequest) {
       break;
     }
     case "travel-agents": {
-      const agents = await db.travelAgent.findMany({ orderBy: { totalBookings: "desc" } });
+      // M2 fix: cap to 10000 rows.
+      const agents = await db.travelAgent.findMany({ orderBy: { totalBookings: "desc" }, take: 10000 });
       csv = "Company,Contact,Phone,Email,Commission Rate,Credit Limit,Outstanding,Total Bookings\n";
       for (const a of agents) {
         csv += `${esc(a.companyName)},${esc(a.contactName)},${esc(a.phone)},${esc(a.email || "")},${(a.commissionRate * 100).toFixed(1)}%,${a.creditLimit},${a.outstanding},${a.totalBookings}\n`;
@@ -103,9 +108,23 @@ export async function GET(req: NextRequest) {
   });
 }
 
+/**
+ * Escape a CSV cell value.
+ *
+ * SECURITY (Round 3 M1 fix): CSV formula injection — prefix cells starting
+ * with =, +, -, @, tab, or carriage return with a single quote so Excel /
+ * LibreOffice treat them as text instead of executing them as formulas.
+ * Without this, a guest registering with name='=HYPERLINK("http://evil.com")'
+ * would appear in the CSV with that formula intact; opening in Excel would
+ * execute it (data exfiltration / malware dropper).
+ */
 function esc(s: string | null | undefined): string {
   if (!s) return "";
-  const str = String(s);
+  let str = String(s);
+  // M1 fix: CSV injection guard.
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
   if (str.includes(",") || str.includes('"') || str.includes("\n")) {
     return `"${str.replace(/"/g, '""')}"`;
   }

@@ -102,9 +102,30 @@ export async function POST(req: NextRequest) {
 
     const from = message.from; // phone number
     const text = message.text?.body || "";
+    const messageId = message.id; // Meta's unique message ID
 
     if (!text) {
       return NextResponse.json({ status: "ok" });
+    }
+
+    // SECURITY (Round 3 M12 fix): idempotency on messageId. Meta retries
+    // webhook delivery on 5xx responses — without this check, a retried
+    // webhook would create a duplicate Notification row + send a duplicate
+    // WhatsApp reply to the guest. We use the Notification.relatedRef field
+    // (already exists) to store the messageId and check for existing rows
+    // before processing.
+    if (messageId) {
+      const existing = await db.notification.findFirst({
+        where: {
+          type: "WHATSAPP",
+          relatedRef: `WA-${messageId}`,
+        },
+        select: { id: true },
+      });
+      if (existing) {
+        // Already processed — acknowledge but don't re-process.
+        return NextResponse.json({ status: "ok", duplicate: true });
+      }
     }
 
     // Process the message using the same intent logic as /api/whatsapp-bot
@@ -122,6 +143,7 @@ export async function POST(req: NextRequest) {
         body: `[IN] ${text}\n[OUT] ${reply}`,
         status: "SENT",
         sentAt: new Date(),
+        relatedRef: messageId ? `WA-${messageId}` : undefined,
       },
     });
 

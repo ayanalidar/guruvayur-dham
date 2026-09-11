@@ -13,8 +13,17 @@ export async function POST(req: NextRequest) {
   if (!token || !newPassword) {
     return NextResponse.json({ error: "Token and new password required" }, { status: 400 });
   }
-  if (newPassword.length < 6) {
-    return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 });
+  // SECURITY (Round 3 M5 fix): use the same strong password policy as register
+  // (was: only 6-char minimum — could reset to "123456" defeating registration policy).
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+  }
+  if (!/[a-zA-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+    return NextResponse.json({ error: "Password must contain both letters and numbers" }, { status: 400 });
+  }
+  const COMMON_PASSWORDS = ["password", "password1", "password123", "12345678", "qwerty", "letmein"];
+  if (COMMON_PASSWORDS.includes(newPassword.toLowerCase())) {
+    return NextResponse.json({ error: "Password is too common — choose a stronger one" }, { status: 400 });
   }
 
   const reset = await db.passwordReset.findUnique({

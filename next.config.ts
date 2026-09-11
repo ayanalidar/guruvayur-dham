@@ -41,17 +41,22 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
           // Content-Security-Policy — restricts where scripts/styles/images/connect
           // can come from. 'unsafe-inline' needed for Next.js inline styles + the
-          // theme-init script; 'unsafe-eval' needed for some dev tooling.
-          // frame-ancestors 'none' = same as X-Frame-Options DENY but CSP-level.
+          // theme-init script.
+          // SECURITY (Round 3 M10+M11 fix):
+          // - 'unsafe-eval' only in dev (Next.js dev tooling needs it; not in prod)
+          // - WebSocket connect-src restricted to REALTIME_ALLOWED_ORIGIN env var
+          //   (was: wss: ws: wildcards allowed any WebSocket — XSS exfil risk)
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""}`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: https: blob:",
-              "connect-src 'self' https://graph.facebook.com https://api.razorpay.com wss: ws:",
+              process.env.REALTIME_ALLOWED_ORIGIN
+                ? `connect-src 'self' https://graph.facebook.com https://api.razorpay.com ${process.env.REALTIME_ALLOWED_ORIGIN} wss://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host} ws://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host}`
+                : "connect-src 'self' https://graph.facebook.com https://api.razorpay.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
