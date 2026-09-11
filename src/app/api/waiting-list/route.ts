@@ -21,6 +21,9 @@ const NotifyWaitingListSchema = z.object({
 
 // GET /api/waiting-list · list all waitlist entries
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
   if (status) where.status = status;

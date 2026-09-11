@@ -15,7 +15,22 @@ const CreatePoojaSchema = z.object({
 
 const UpdatePoojaSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of Pooja columns.
+  // id/createdAt/updatedAt are server-controlled. Spec listed `category` (no
+  // such column) and omitted prasadam/image/significance/sortOrder — adapted
+  // to real Prisma field names so the admin UI's PATCH {name|price|duration|
+  // prasadam|image|...} continues to work.
+  data: z.object({
+    name: z.string().max(200).optional(),
+    description: z.string().max(2000).optional(),
+    price: z.coerce.number().min(0).optional(),
+    duration: z.string().max(100).optional(),
+    prasadam: z.string().max(500).optional(),
+    image: z.string().max(2000).optional(),
+    significance: z.string().max(2000).optional(),
+    sortOrder: z.coerce.number().int().min(0).optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 // GET /api/poojas-admin — list all poojas
@@ -53,7 +68,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const pooja = await db.pooja.update({ where: { id }, data: data as any });
+  const pooja = await db.pooja.update({ where: { id }, data });
   return NextResponse.json({ pooja, message: "Pooja updated" });
 }
 

@@ -15,7 +15,19 @@ const CreateCarouselSchema = z.object({
 
 const UpdateCarouselSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of CarouselSlide
+  // columns. id/createdAt/updatedAt are server-controlled. Spec listed `link`
+  // and `order` but Prisma model uses `ctaLink` and `sortOrder` — using the
+  // real field names so the admin UI's PATCH { image|title|... } keeps working.
+  data: z.object({
+    title: z.string().max(200).optional(),
+    subtitle: z.string().max(500).optional(),
+    image: z.string().max(2000).optional(),
+    ctaText: z.string().max(100).optional(),
+    ctaLink: z.string().max(500).optional(),
+    sortOrder: z.coerce.number().int().min(0).optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 // GET — list all slides
@@ -56,7 +68,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const slide = await db.carouselSlide.update({ where: { id }, data: data as any });
+  const slide = await db.carouselSlide.update({ where: { id }, data });
   return NextResponse.json({ slide, message: "Slide updated" });
 }
 

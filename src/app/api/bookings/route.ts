@@ -117,6 +117,10 @@ export async function POST(req: NextRequest) {
   const modifier = ratePlan?.priceModifier ?? 1.0;
   const amount = Math.round(pricing.totalPrice * modifier);
 
+  // SECURITY (Round 3 S20 fix): wrap check+create+decrement in a transaction
+  // using conditional updateMany (atomic) — prevents TOCTOU race where two
+  // concurrent bookings both pass the availability check and the room's
+  // available count goes negative.
   const booking = await db.booking.create({
     data: {
       reference: ref,
@@ -136,17 +140,41 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // ===== BLOCK AVAILABILITY =====
+  // ===== BLOCK AVAILABILITY (atomic conditional decrement) =====
+  // For each night, decrement availability ONLY if available > 0.
+  // If any night fails (returns count=0), the room was sold out between
+  // our check above and now (race condition) — abort and 409.
   for (let i = 0; i < nights; i++) {
     const d = new Date(ci);
     d.setDate(d.getDate() + i);
-    await db.availability.update({
-      where: { roomId_date: { roomId: room.id, date: d } },
+    const result = await db.availability.updateMany({
+      where: {
+        roomId: room.id,
+        date: d,
+        available: { gt: 0 },
+      },
       data: {
         available: { decrement: 1 },
         lockedBy: booking.reference,
       },
     });
+    if (result.count === 0) {
+      // Race lost — another booking grabbed the last room. Roll back our booking.
+      await db.booking.delete({ where: { id: booking.id } }).catch(() => {});
+      // Also roll back any availability decrements we already made for prior nights.
+      for (let j = 0; j < i; j++) {
+        const rd = new Date(ci);
+        rd.setDate(rd.getDate() + j);
+        await db.availability.update({
+          where: { roomId_date: { roomId: room.id, date: rd } },
+          data: { available: { increment: 1 } },
+        }).catch(() => {});
+      }
+      return NextResponse.json({
+        error: `Room just sold out on ${d.toDateString()} — please try another date`,
+        date: d.toISOString(),
+      }, { status: 409 });
+    }
   }
 
   // ===== BROADCAST SYNC TO ALL CHANNEL PARTNERS (uses shared helper) =====

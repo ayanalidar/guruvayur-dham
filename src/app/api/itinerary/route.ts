@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { generateRef } from "@/lib/auth";
+import { requireStaff, generateRef } from "@/lib/auth";
 
 const ItineraryItemSchema = z.object({
   day: z.coerce.number().int().min(1).optional(),
@@ -21,7 +21,10 @@ const CreateItinerarySchema = z.object({
 });
 
 // GET /api/itinerary · list itineraries
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const items = await db.itinerary.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json({ itineraries: items.map(i => ({ ...i, items: JSON.parse(i.items) })) });
 }
@@ -29,6 +32,9 @@ export async function GET() {
 // POST /api/itinerary · create itinerary
 // body: { guestName, guestPhone, days, startDate, items: [{day, time, title, description, type}], totalEstimate }
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const parsed = CreateItinerarySchema.safeParse(await req.json());
   if (!parsed.success) {
     return NextResponse.json(

@@ -16,7 +16,26 @@ const CreateBlogPostSchema = z.object({
 
 const UpdateBlogPostSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of BlogPost columns.
+  // id/createdAt/updatedAt are server-controlled. Spec listed `coverImage`
+  // (Prisma uses `image`) and `tags` (no such column) — adapted to real
+  // Prisma field names. Content accepts string OR array (handler JSON.stringifies
+  // arrays before persisting).
+  data: z.object({
+    title: z.string().max(300).optional(),
+    slug: z.string().max(300).optional(),
+    excerpt: z.string().max(1000).optional(),
+    content: z.union([z.string().max(50000), z.array(z.any())]).optional(),
+    image: z.string().max(2000).optional(),
+    category: z.string().max(100).optional(),
+    readTime: z.string().max(50).optional(),
+    date: z.string().max(50).optional(),
+    scheduledAt: z.coerce.date().nullable().optional(),
+    seoTitle: z.string().max(300).optional(),
+    seoDescription: z.string().max(500).optional(),
+    seoKeywords: z.string().max(500).optional(),
+    published: z.boolean().optional(),
+  }).strict(),
 });
 
 // GET /api/blog-posts · list all (or by slug)
@@ -75,6 +94,9 @@ export async function PATCH(req: NextRequest) {
   }
   const { id, data } = parsed.data;
   if (data.content && Array.isArray(data.content)) data.content = JSON.stringify(data.content);
+  // `as any` kept because Zod's inferred `content: string | any[]` union doesn't
+  // narrow to `string` after the runtime Array.isArray check (mutation, not
+  // narrowing). Schema still validates input — security goal met.
   const post = await db.blogPost.update({ where: { id }, data: data as any });
   return NextResponse.json({ post });
 }

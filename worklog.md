@@ -480,3 +480,166 @@ Stage Summary:
   mustChangePassword) — Vercel auto-applies via prisma db push on next deploy
 - Vulnerabilities: 90 → 9 (3 critical + 48 high → 0 critical + 5 high)
 - All commits pushed to origin/main (8ba832d is HEAD)
+
+---
+Task ID: Phase2-RequireStaff-Batch
+Agent: subagent
+Task: Add requireStaff + rate limits to 16 routes (Round 3 S7-S27)
+
+Work Log:
+- Patched (added requireStaff guard at top of GET/POST handler):
+  1. src/app/api/kitchen-orders/route.ts — GET (leaks guest name/phone/room)
+  2. src/app/api/waiting-list/route.ts — GET (leaks guest contact info; POST stays public for guest join)
+  3. src/app/api/pooja-bookings/route.ts — GET (leaks pooja booking PII)
+  4. src/app/api/reminders/route.ts — GET (leaks guest phone + booking refs)
+  5. src/app/api/itinerary/route.ts — GET + POST (POST also gated — admin tool, not guest-facing)
+  6. src/app/api/channel-sync/route.ts — GET (leaks sync logs with guest names)
+  7. src/app/api/email/send/route.ts — GET (leaks recipient email addresses; signature changed from GET() → GET(req))
+  8. src/app/api/festival-alerts/route.ts — GET (leaks subscriber PII; added requireStaff import; signature changed GET() → GET(req))
+  9. src/app/api/metrics/route.ts — GET (leaks performance metrics + user agents; added requireStaff import)
+  10. src/app/api/coupons/route.ts — GET (leaks all coupon codes; PUT stays public for checkout validation; signature changed GET() → GET(req))
+  11. src/app/api/travel-agents/route.ts — GET (leaks B2B partner contact + financial data; used requireStaff(req, ["MANAGER","ACCOUNTANT"]); signature changed GET() → GET(req))
+
+- Patched (added rateLimit at top of handler):
+  12. src/app/api/walkin/route.ts — POST: rateLimit({ window:60, max:5, key:"walkin" }) (same abuse surface as /api/bookings POST)
+  13. src/app/api/influencer-track/route.ts — GET: rateLimit({ window:60, max:10, key:"influencer-track" }) (GET is state-changing — creates click row, increments click count)
+  14. src/app/api/ai-generate/route.ts — POST: requireStaff(req) + rateLimit({ window:60, max:10, key:"ai-generate" }) (Groq/z-ai API cost abuse)
+  15. src/app/api/reviews/google-import/route.ts — POST: requireStaff(req) + rateLimit({ window:3600, max:3, key:"google-import" }) (Google Places API quota burn)
+
+- Patched (role restriction + PII strip):
+  16. src/app/api/channel-webhook/[code]/route.ts — GET now requires requireStaff(req, ["MANAGER","ACCOUNTANT"]) (was unscoped requireStaff); webhookUrl response now strips ?key=SECRET via URL().searchParams.delete("key") with try/catch fallback to raw value
+
+- Skipped: none (all 16 routes patched per spec)
+
+Stage Summary:
+- 11 public GET endpoints leaking PII now require staff auth
+- 4 endpoints with no rate limit now have rate limits (2 of those also require staff)
+- /api/channel-webhook GET restricted to MANAGER+ACCOUNTANT + ?key= stripped from webhookUrl
+- /api/ai-generate + /api/reviews/google-import now require staff + rate limited
+- TypeScript verification: `npx tsc --noEmit` → 0 errors
+- ESLint verification: `npx eslint <16 files>` → 0 errors, 0 warnings
+- All existing logic below the auth/rate-limit guards preserved 1:1
+- Auth checks run BEFORE any DB query (no PII leak path even on 401/403/429)
+
+---
+Task ID: Phase2-MassAssignment-Cleanup
+Agent: subagent
+Task: Replace z.record(z.string(), z.any()) + .passthrough() with explicit schemas (S22+S23)
+
+Work Log:
+- Patched (replaced z.record(z.string(), z.any()) + .passthrough() with explicit
+  per-model Zod whitelists using .strict() so unknown fields 400 instead of
+  silently dropped or persisted):
+  1.  src/app/api/customers/route.ts — PATCH data: name/phone/email/city/
+      preferences/notes/tags. Removed `as any` cast. Financial fields
+      (totalRevenue, loyaltyPoints, totalBookings) no longer writable via PATCH.
+  2.  src/app/api/coupons/route.ts — PATCH data: description/type/value/
+      maxDiscount/minBooking/usageLimit/validFrom/validTo/active. Removed
+      `as any`. `code` (immutable identifier) and `usedCount` (server-incremented
+      by markCouponUsed) are no longer writable via PATCH. Added `active` beyond
+      spec list because the existing CreateCouponSchema and admin UI both rely
+      on it as a legitimate toggle (deactivate without delete).
+  3.  src/app/api/menu/route.ts — PATCH data: name/description/price/category/
+      veg/prepTime/available. Removed `as any`. Note: spec listed `image` but
+      Prisma MenuItem has NO image column — omitted to avoid runtime Prisma
+      validation errors.
+  4.  src/app/api/rooms/route.ts — PATCH data: slug/name/type/price/originalPrice/
+      rating/reviews/capacity/size/bedType/image/gallery/badge/description/
+      shortDesc/amenities/totalUnits/active. Removed `as any`. Spec listed
+      `images` (not a real Prisma field) — used actual `image` + `gallery`
+      instead. Spec whitelist was too narrow (missing shortDesc/totalUnits
+      which the admin UI PATCHes); expanded to all user-editable Prisma columns.
+  5.  src/app/api/carousel/route.ts — PATCH data: title/subtitle/image/ctaText/
+      ctaLink/sortOrder/active. Removed `as any`. Spec listed `link`/`order`
+      (not real Prisma fields) — used actual `ctaLink`/`sortOrder` instead so
+      the admin UI's updateField(s.id, "image"|"title", v) keeps working.
+  6.  src/app/api/gallery/route.ts — removed `.passthrough()` from
+      CreateGalleryImageSchema + added `.strict()`. PATCH data:
+      tab/src/alt/caption/span/sortOrder/active. Removed `as any`. The previous
+      schema included `title`/`image`/`category` (not real Prisma fields) —
+      dropped them so Prisma doesn't 400 on unknown keys.
+  7.  src/app/api/blog-posts/route.ts — PATCH data: title/slug/excerpt/content/
+      image/category/readTime/date/scheduledAt/seoTitle/seoDescription/seoKeywords/
+      published. `as any` kept on Prisma call (Zod inferred `content: string |
+      any[]` union can't narrow after the runtime Array.isArray mutation step).
+      Spec listed `coverImage`/`tags` (no such Prisma columns) — used `image`
+      instead; dropped `tags`. Schema still validates input shape — security
+      goal met.
+  8.  src/app/api/poojas-admin/route.ts — PATCH data: name/description/price/
+      duration/prasadam/image/significance/sortOrder/active. Removed `as any`.
+      Spec listed `category` (no such column) and omitted prasadam/image/
+      significance/sortOrder (all UI-editable) — adapted to real Prisma fields.
+  9.  src/app/api/cms/route.ts — added 8 per-type explicit data schemas
+      (FeaturesDataSchema, EventsDataSchema, TestimonialsDataSchema,
+      FaqsDataSchema, TrustBadgesDataSchema, PoojasDataSchema,
+      CarouselDataSchema, BlogPostsDataSchema) all with .strict(). Created two
+      lookup tables: CmsCreateDataSchemas (required fields per Prisma model)
+      and CmsPatchDataSchemas (all-optional via .partial(), .strict() preserved).
+      POST and PATCH handlers now safeParse `data` against the per-type schema
+      BEFORE the type switch — rejects id/createdAt/updatedAt and any other
+      non-whitelisted field with a 400. `as any` cast after validation since
+      the union type from the lookup table can't be narrowed by TS inside
+      switch (runtime validation already enforced).
+  10. src/app/api/channel-config/route.ts — added `.strict()` to the
+      UpdateChannelConfigSchema.data object (was already explicit except for
+      `config`). Added 10KB size guard for the free-form `config` JSON blob
+      in the PATCH handler: JSON.stringify(config).length > 10000 → 400. Also
+      stringifies the config object before persisting (Prisma's config column
+      is String?, not Json?). `as any` kept on Prisma call (config type
+      mismatch with Prisma's expected string input).
+  11. src/app/api/travel-agents/route.ts — removed `.passthrough()` from
+      CreateTravelAgentSchema + added `.strict()`. PATCH data: companyName/
+      contactName/phone/email/commissionRate/creditLimit/active. Removed
+      `as any`. Financial fields (outstanding, totalBookings — server-incremented
+      via PUT record-booking flow) are no longer writable via PATCH.
+  12. src/app/api/influencers/route.ts — confirmed `.passthrough()` is NOT
+      used (already uses explicit z.object with .strict() shape via the
+      UpdateInfluencerSchema). No changes needed.
+
+- Deviations from spec / items for main agent to review:
+  1. **Spec field names don't match Prisma columns in 5 schemas** (carousel,
+     gallery, blog-posts, poojas-admin, rooms). Spec used `link`/`order`
+     (carousel), `coverImage`/`tags` (blog-posts), `category` (poojas-admin),
+     `images` (rooms), `title`/`image`/`category` (gallery POST). All replaced
+     with the actual Prisma column names so the schemas are functional. Without
+     these adaptations, .strict() would either reject legitimate UI requests
+     or pass fields Prisma would reject at runtime.
+  2. **Spec whitelists were too narrow for 2 schemas** (rooms, poojas-admin).
+     Spec omitted shortDesc/totalUnits (rooms) and prasadam/image/significance/
+     sortOrder (poojas) — all of which the admin UI PATCHes. Expanded to all
+     user-editable Prisma columns. Server-controlled fields (id, createdAt,
+     updatedAt, financial totals) remain excluded.
+  3. **Coupons PATCH**: added `active` beyond spec's 8-field list. The existing
+     CreateCouponSchema + admin UI both treat `active` as a legitimate
+     deactivate-without-delete toggle. Spec was probably an oversight.
+  4. **CMS route**: implemented as a per-type lookup table
+     (CmsCreateDataSchemas / CmsPatchDataSchemas) rather than a discriminated
+     union. Reason: the existing switch-case handler doesn't narrow TS types
+     per case, so a discriminated union would have required invasive
+     refactoring. The lookup-table approach achieves the same security goal
+     (per-type whitelist with .strict()) with one extra safeParse per request.
+  5. **`as any` kept in 3 places** (blog-posts PATCH, cms POST+PATCH after
+     per-type validation, channel-config PATCH). All 3 are documented inline
+     with the reason. The Zod schemas still validate input shape — the `as
+     any` is purely to satisfy TS's structural type system where Zod's
+     inferred type doesn't exactly match Prisma's expected input (typically
+     because of union types or null/undefined distinctions). Per task spec:
+     "you can keep `as any` ONLY if the schema is otherwise correct".
+
+Stage Summary:
+- 12 PATCH endpoints no longer accept arbitrary fields via z.record(z.string(), z.any())
+- Financial/server-controlled fields no longer writable via PATCH:
+  - Customer: totalRevenue, loyaltyPoints, totalBookings
+  - Coupon: usedCount, code (immutable)
+  - TravelAgent: outstanding, totalBookings
+  - All models: id, createdAt, updatedAt
+- .passthrough() removed from travel-agents + gallery (was keeping unknown fields)
+- CMS endpoint now enforces per-type whitelists (features/events/testimonials/
+  faqs/trustBadges/poojas/carousel/blogPosts) — previously one size-fits-all
+  z.record(z.string(), z.any())
+- channel-config: 10KB size guard on free-form `config` blob prevents DB bloat
+  / secret smuggling via PATCH
+- TypeScript verification: `npx tsc --noEmit` → 0 errors
+- ESLint verification: `npx eslint <12 files>` → 0 errors, 0 warnings
+- All existing business logic preserved 1:1 below the schema-validation blocks
+- Auth checks (requireStaff) run BEFORE the new validation, BEFORE any DB query

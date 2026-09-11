@@ -3,6 +3,10 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
+// SECURITY (Phase2-MassAssignment): removed `.passthrough()` — default Zod
+// behavior strips unknown fields, which is what we want (no mass-assignment
+// via POST). Schema lists the actual Prisma TravelAgent columns that are
+// user-editable on create.
 const CreateTravelAgentSchema = z.object({
   companyName: z.string().min(1).max(200),
   contactName: z.string().min(1).max(200),
@@ -11,11 +15,23 @@ const CreateTravelAgentSchema = z.object({
   commissionRate: z.coerce.number().min(0).max(1).optional(),
   creditLimit: z.coerce.number().int().min(0).optional(),
   active: z.boolean().optional(),
-}).passthrough();
+}).strict();
 
 const UpdateTravelAgentSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of TravelAgent
+  // columns. id/createdAt/updatedAt are server-controlled; `outstanding` and
+  // `totalBookings` are server-controlled via PUT /api/travel-agents
+  // (record-booking flow) and must not be writable via PATCH.
+  data: z.object({
+    companyName: z.string().max(200).optional(),
+    contactName: z.string().max(200).optional(),
+    phone: z.string().max(30).optional(),
+    email: z.string().email().nullable().optional(),
+    commissionRate: z.coerce.number().min(0).max(1).optional(),
+    creditLimit: z.coerce.number().int().min(0).optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 const RecordAgentBookingSchema = z.object({
@@ -24,7 +40,10 @@ const RecordAgentBookingSchema = z.object({
 });
 
 // GET /api/travel-agents · list all B2B agents
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const agents = await db.travelAgent.findMany({ orderBy: { companyName: "asc" } });
   return NextResponse.json({ agents });
 }
@@ -58,7 +77,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const agent = await db.travelAgent.update({ where: { id }, data: data as any });
+  const agent = await db.travelAgent.update({ where: { id }, data });
   return NextResponse.json({ agent });
 }
 

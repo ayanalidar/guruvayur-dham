@@ -16,7 +16,19 @@ const CreateMenuItemSchema = z.object({
 
 const UpdateMenuItemSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of MenuItem columns.
+  // No `image` field — Prisma MenuItem has no image column (image is only on
+  // Room/Pooja/Carousel/BlogPost/GalleryImage). id/createdAt/updatedAt are
+  // server-controlled.
+  data: z.object({
+    name: z.string().max(200).optional(),
+    description: z.string().max(1000).optional(),
+    price: z.coerce.number().min(0).optional(),
+    category: z.string().max(100).optional(),
+    veg: z.boolean().optional(),
+    prepTime: z.coerce.number().int().min(0).optional(),
+    available: z.boolean().optional(),
+  }).strict(),
 });
 
 // GET /api/menu · list all menu items
@@ -57,7 +69,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const item = await db.menuItem.update({ where: { id }, data: data as any });
+  const item = await db.menuItem.update({ where: { id }, data });
   return NextResponse.json({ item });
 }
 

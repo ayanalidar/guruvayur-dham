@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/festival-alerts · list opt-ins
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const alerts = await db.festivalAlert.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json({ alerts: alerts.map(a => ({ ...a, festivals: JSON.parse(a.festivals) })) });
 }

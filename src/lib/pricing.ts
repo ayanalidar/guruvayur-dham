@@ -171,13 +171,43 @@ export async function validateCoupon(code: string, bookingAmount: number): Promi
 }
 
 /**
- * Mark coupon as used (increment usedCount)
+ * Mark coupon as used (increment usedCount) — atomic conditional update.
+ *
+ * SECURITY (Round 3 S21 fix): uses updateMany with a `usedCount < usageLimit`
+ * condition instead of read-then-increment. Two concurrent bookings for a
+ * coupon with usageLimit=10, usedCount=9 would both pass validateCoupon()
+ * and both increment → usedCount=11, breaking the limit. With updateMany,
+ * only one succeeds; the other gets count=0 and we throw to abort.
+ *
+ * @throws Error("COUPON_LIMIT_REACHED") if the coupon's usage limit is hit.
  */
-export async function markCouponUsed(code: string) {
-  await db.coupon.update({
-    where: { code: code.toUpperCase() },
+export async function markCouponUsed(code: string): Promise<void> {
+  const upperCode = code.toUpperCase();
+  // First fetch the coupon to get usageLimit (we need it for the conditional).
+  const coupon = await db.coupon.findUnique({ where: { code: upperCode } });
+  if (!coupon) {
+    throw new Error("COUPON_NOT_FOUND");
+  }
+  // If no limit (usageLimit=0 means unlimited), just increment.
+  if (coupon.usageLimit <= 0) {
+    await db.coupon.update({
+      where: { code: upperCode },
+      data: { usedCount: { increment: 1 } },
+    });
+    return;
+  }
+  // Conditional update — only increments if under the limit.
+  const result = await db.coupon.updateMany({
+    where: {
+      code: upperCode,
+      usedCount: { lt: coupon.usageLimit },
+    },
     data: { usedCount: { increment: 1 } },
   });
+  if (result.count === 0) {
+    // Race lost — another booking grabbed the last usage slot.
+    throw new Error("COUPON_LIMIT_REACHED");
+  }
 }
 
 /**

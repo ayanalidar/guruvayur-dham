@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { generateRef } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 const CreateWalkinSchema = z.object({
   roomSlug: z.string().min(1).max(200),
@@ -18,6 +19,10 @@ const CreateWalkinSchema = z.object({
 // This is the same as POST /api/bookings but with source=WALKIN hardcoded
 // and it ALSO broadcasts to all channel partners to block inventory
 export async function POST(req: NextRequest) {
+  // Rate limit walk-in creation (same abuse surface as /api/bookings POST).
+  const rl = rateLimit(req, { window: 60, max: 5, key: "walkin" });
+  if (!rl.ok) return NextResponse.json({ error: "Too many walk-in requests. Please wait a minute." }, { status: 429 });
+
   const parsed = CreateWalkinSchema.safeParse(await req.json());
   if (!parsed.success) {
     return NextResponse.json(

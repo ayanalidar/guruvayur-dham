@@ -3,6 +3,9 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
+// SECURITY (Phase2-MassAssignment): removed `.passthrough()` — default Zod
+// behavior strips unknown fields, which is what we want (no mass-assignment
+// via POST). Schema lists the actual Prisma GalleryImage columns.
 const CreateGalleryImageSchema = z.object({
   tab: z.string().min(1).max(100),
   src: z.string().min(1).max(1000),
@@ -10,15 +13,22 @@ const CreateGalleryImageSchema = z.object({
   caption: z.string().max(1000).optional(),
   span: z.string().max(50).optional(),
   sortOrder: z.coerce.number().int().min(0).optional(),
-  title: z.string().max(200).optional(),
-  image: z.string().max(1000).optional(),
-  category: z.string().max(100).optional(),
   active: z.boolean().optional(),
-}).passthrough();
+}).strict();
 
 const UpdateGalleryImageSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of GalleryImage
+  // columns. id/createdAt/updatedAt are server-controlled.
+  data: z.object({
+    tab: z.string().max(100).optional(),
+    src: z.string().max(1000).optional(),
+    alt: z.string().max(500).optional(),
+    caption: z.string().max(1000).optional(),
+    span: z.string().max(50).optional(),
+    sortOrder: z.coerce.number().int().min(0).optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 // GET /api/gallery · list all (optionally by tab)
@@ -62,7 +72,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const image = await db.galleryImage.update({ where: { id }, data: data as any });
+  const image = await db.galleryImage.update({ where: { id }, data });
   return NextResponse.json({ image });
 }
 

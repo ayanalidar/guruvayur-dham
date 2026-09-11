@@ -31,6 +31,9 @@ const UpdatePoojaBookingSchema = z.object({
 
 // GET /api/pooja-bookings · list all pooja bookings
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
   if (status) where.status = status;

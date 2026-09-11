@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * GET /api/influencer-track?code=GDRAJ42
@@ -10,6 +11,12 @@ import { requireStaff } from "@/lib/auth";
  * with a referral code triggers a click track.
  */
 export async function GET(req: NextRequest) {
+  // Rate limit click tracking (GET is state-changing — creates click row,
+  // increments click count). Without this, anyone can script massive click
+  // fraud against any influencer code.
+  const rl = rateLimit(req, { window: 60, max: 10, key: "influencer-track" });
+  if (!rl.ok) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 });
+
   const code = req.nextUrl.searchParams.get("code");
   if (!code) {
     return NextResponse.json({ error: "code required" }, { status: 400 });

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateContent } from "@/lib/ai/provider";
+import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/ai-generate
@@ -10,6 +12,13 @@ import { generateContent } from "@/lib/ai/provider";
  * type: "blog" | "room-description" | "seo-meta" | "pooja-description" | "email" | "social" | "custom"
  */
 export async function POST(req: NextRequest) {
+  // AI generation calls Groq / z-ai SDK (paid API). Require staff + rate-limit
+  // to prevent cost-abuse via repeated automated calls.
+  const { error } = await requireStaff(req);
+  if (error) return error;
+  const rl = rateLimit(req, { window: 60, max: 10, key: "ai-generate" });
+  if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded. Please wait before generating more content." }, { status: 429 });
+
   const { type, prompt, context } = await req.json();
 
   if (!prompt) {

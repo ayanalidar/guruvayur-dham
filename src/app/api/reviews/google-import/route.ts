@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/reviews/google-import
@@ -146,6 +148,13 @@ const DEMO_REVIEWS = [
 ];
 
 export async function POST(req: NextRequest) {
+  // Google Places API calls burn quota (paid). Require staff + rate-limit
+  // strictly (3/hour) to prevent quota-exhaustion abuse.
+  const { error } = await requireStaff(req);
+  if (error) return error;
+  const rl = rateLimit(req, { window: 3600, max: 3, key: "google-import" });
+  if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded. Google import is limited to 3 calls per hour." }, { status: 429 });
+
   const { placeId, shareUrl } = await req.json();
 
   const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;

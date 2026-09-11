@@ -79,7 +79,10 @@ export async function POST(req: NextRequest) {
 }
 
 /** GET /api/email/send — list recent email notifications */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const notifications = await db.notification.findMany({
     where: { type: "EMAIL" },
     orderBy: { createdAt: "desc" },

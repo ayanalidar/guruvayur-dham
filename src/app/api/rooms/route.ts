@@ -24,7 +24,31 @@ export async function GET(req: NextRequest) {
 
 const UpdateRoomSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of Room columns.
+  // id/createdAt/updatedAt are server-controlled. Note: Prisma model uses
+  // `image` (singular) and `gallery` (JSON array of URLs as string), not
+  // `images` — spec list adapted to actual Prisma field names so the admin
+  // UI's PATCH {name|price|shortDesc|totalUnits|image|...} continues to work.
+  data: z.object({
+    slug: z.string().max(200).optional(),
+    name: z.string().max(200).optional(),
+    type: z.string().max(100).optional(),
+    price: z.coerce.number().min(0).optional(),
+    originalPrice: z.coerce.number().min(0).nullable().optional(),
+    rating: z.coerce.number().min(0).max(5).optional(),
+    reviews: z.coerce.number().int().min(0).optional(),
+    capacity: z.coerce.number().int().min(1).optional(),
+    size: z.string().max(100).optional(),
+    bedType: z.string().max(100).optional(),
+    image: z.string().max(2000).optional(),
+    gallery: z.string().max(10000).optional(),
+    badge: z.string().max(100).nullable().optional(),
+    description: z.string().max(5000).optional(),
+    shortDesc: z.string().max(500).optional(),
+    amenities: z.string().max(2000).optional(),
+    totalUnits: z.coerce.number().int().min(1).optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 // PATCH /api/rooms · update a room (price, name, description, etc.)
@@ -41,7 +65,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const room = await db.room.update({ where: { id }, data: data as any });
+  const room = await db.room.update({ where: { id }, data });
   return NextResponse.json({ room: serializeRoom(room) });
 }
 

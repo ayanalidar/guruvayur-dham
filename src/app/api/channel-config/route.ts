@@ -2,6 +2,66 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { URL } from "url";
+
+/**
+ * SSRF guard — validates an API endpoint URL before the server fetches it.
+ *
+ * SECURITY (Round 3 S19 fix): rejects URLs that would let a MANAGER probe
+ * internal services or exfiltrate the channel API key to attacker-controlled
+ * servers via the Authorization header.
+ *
+ * Rules:
+ * - Must be a valid http(s) URL
+ * - Must be HTTPS in production (NODE_ENV=production)
+ * - Must NOT resolve to a private/loopback/link-local IP range
+ * - Hostname must NOT be 'localhost', '127.0.0.1', '::1', or any IP literal
+ *   in 10/8, 172.16/12, 192.168/16, 169.254/16, fc00::/7 ranges
+ *
+ * Note: this is a hostname-string check. For full protection against DNS
+ * rebinding, also resolve the hostname and check the IP — but Node's fetch
+ * doesn't expose the resolved IP. Production deployments behind Cloudflare
+ * or Vercel already block private-IP egress.
+ */
+function isSafeApiEndpoint(rawUrl: string): { ok: boolean; reason?: string } {
+  let u: URL;
+  try {
+    u = new URL(rawUrl);
+  } catch {
+    return { ok: false, reason: "Invalid URL format" };
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") {
+    return { ok: false, reason: "Only http/https URLs allowed" };
+  }
+  if (process.env.NODE_ENV === "production" && u.protocol !== "https:") {
+    return { ok: false, reason: "HTTPS required in production" };
+  }
+  const host = u.hostname.toLowerCase();
+  // Reject obvious internal hostnames.
+  const blockedHosts = ["localhost", "ip6-localhost", "metadata.google.internal"];
+  if (blockedHosts.includes(host)) {
+    return { ok: false, reason: `Blocked hostname: ${host}` };
+  }
+  // Reject IP literals in private ranges.
+  const ipv4Match = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4Match) {
+    const [, a, b] = ipv4Match.map(Number) as unknown as number[];
+    if (a === 10) return { ok: false, reason: "Private IP range (10.x) blocked" };
+    if (a === 127) return { ok: false, reason: "Loopback IP (127.x) blocked" };
+    if (a === 169 && b === 254) return { ok: false, reason: "Link-local IP (169.254.x) blocked — AWS metadata endpoint" };
+    if (a === 172 && b >= 16 && b <= 31) return { ok: false, reason: "Private IP range (172.16-31.x) blocked" };
+    if (a === 192 && b === 168) return { ok: false, reason: "Private IP range (192.168.x) blocked" };
+    if (a === 0) return { ok: false, reason: "Reserved IP range (0.x) blocked" };
+  }
+  // Reject IPv6 loopback / unique local.
+  if (host === "::1" || host === "0:0:0:0:0:0:0:1") {
+    return { ok: false, reason: "IPv6 loopback blocked" };
+  }
+  if (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80")) {
+    return { ok: false, reason: "IPv6 private/link-local blocked" };
+  }
+  return { ok: true };
+}
 
 const CreateChannelConfigSchema = z.object({
   code: z.string().min(1).max(50),
@@ -17,6 +77,13 @@ const CreateChannelConfigSchema = z.object({
 
 const UpdateChannelConfigSchema = z.object({
   id: z.string().min(1),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist of ChannelConfig
+  // columns. id/createdAt/updatedAt are server-controlled; lastSyncAt /
+  // lastSyncStatus / lastSyncMessage are server-set by the PUT
+  // (test-connection) flow and must not be writable via PATCH. .strict()
+  // rejects any unknown field. `config` stays as z.record(z.string(), z.any())
+  // because it is a free-form per-channel JSON blob, but the PATCH handler
+  // enforces a 10KB size guard before persisting (Phase2-MassAssignment).
   data: z.object({
     name: z.string().max(200).optional(),
     category: z.string().max(100).optional(),
@@ -27,7 +94,7 @@ const UpdateChannelConfigSchema = z.object({
     hotelId: z.string().max(200).optional(),
     config: z.record(z.string(), z.any()).optional(),
     connected: z.boolean().optional(),
-  }),
+  }).strict(),
 });
 
 const TestConnectionSchema = z.object({
@@ -144,9 +211,28 @@ export async function PATCH(req: NextRequest) {
     data.connected = true;
   }
 
+  // SECURITY (Phase2-MassAssignment): size-guard the free-form `config` blob
+  // (10KB max). Prevents a MANAGER from storing arbitrarily large JSON in
+  // the DB column (could bloat the table or smuggle secrets). Prisma's
+  // ChannelConfig.config column is `String?` (JSON serialized), so we also
+  // stringify the object here before persisting.
+  const prismaData: Record<string, unknown> = { ...data };
+  if (data.config !== undefined) {
+    const configStr = typeof data.config === "string"
+      ? data.config
+      : JSON.stringify(data.config);
+    if (configStr.length > 10000) {
+      return NextResponse.json(
+        { error: "config blob exceeds 10KB limit" },
+        { status: 400 }
+      );
+    }
+    prismaData.config = configStr;
+  }
+
   const config = await db.channelConfig.update({
     where: { id },
-    data: data as any,
+    data: prismaData as any,
   });
 
   return NextResponse.json({ config, message: "Channel updated" });
@@ -194,6 +280,16 @@ export async function PUT(req: NextRequest) {
     let message = "";
 
     if (config.apiEndpoint) {
+      // SECURITY (Round 3 S19 fix): SSRF allowlist — reject private/internal
+      // IP ranges and require HTTPS. Prevents a malicious/compromised MANAGER
+      // from probing internal services (e.g. http://169.254.169.254/ for AWS
+      // metadata, http://localhost:5432 for DB) or exfiltrating the channel
+      // API key to their own server via the Authorization header.
+      const urlCheck = isSafeApiEndpoint(config.apiEndpoint);
+      if (!urlCheck.ok) {
+        return NextResponse.json({ error: urlCheck.reason }, { status: 400 });
+      }
+
       // Try a real GET request to their API
       const headers: Record<string, string> = {};
       if (config.apiKey) headers["Authorization"] = `Bearer ${config.apiKey}`;
@@ -203,12 +299,13 @@ export async function PUT(req: NextRequest) {
         method: "GET",
         headers,
         signal: AbortSignal.timeout(10000),
+        redirect: "error", // don't follow redirects (could redirect to internal IPs)
       }).catch(e => ({ ok: false, status: 0, statusText: e.message }));
 
-      success = res.ok;
+      success = (res as any).ok;
       message = success
-        ? `Connected successfully (HTTP ${res.status})`
-        : `Connection failed: ${res.statusText || "HTTP " + res.status}`;
+        ? `Connected successfully (HTTP ${(res as any).status})`
+        : `Connection failed: ${(res as any).statusText || "HTTP " + (res as any).status}`;
     } else {
       // No endpoint — simulate success if key exists
       success = true;

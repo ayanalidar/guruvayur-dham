@@ -246,7 +246,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  const { error } = await requireStaff(req);
+  // SECURITY: restrict to MANAGER + ACCOUNTANT — the response leaks webhook URL
+  // (with ?key= secret stripped below) and channel partner setup details.
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
   if (error) return error;
 
   const channelCode = params.code.toUpperCase();
@@ -261,13 +263,23 @@ export async function GET(
     );
   }
 
+  // SECURITY: strip ?key=SECRET from webhookUrl before returning — the key
+  // is the channel's webhook auth secret and must not be exposed in any
+  // API response. (The setup instructions tell admins where to find it.)
+  let safeWebhookUrl = channel.webhookUrl;
+  try {
+    const u = new URL(channel.webhookUrl);
+    u.searchParams.delete("key");
+    safeWebhookUrl = u.toString();
+  } catch {}
+
   return NextResponse.json({
     code: channel.code,
     name: channel.name,
     connected: channel.connected,
     lastSyncAt: channel.lastSyncAt,
     totalBookings: channel.totalBookings,
-    webhookUrl: channel.webhookUrl,
+    webhookUrl: safeWebhookUrl,
     setup: {
       instructions: `Configure this webhook URL in your ${channel.name} partner dashboard:`,
       url: `https://guruvayurdham.com/api/channel-webhook/${channelCode}`,

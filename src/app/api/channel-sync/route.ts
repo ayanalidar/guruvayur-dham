@@ -4,6 +4,9 @@ import { requireStaff } from "@/lib/auth";
 
 // GET /api/channel-sync · list sync logs (audit trail)
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { searchParams } = req.nextUrl;
   const limit = parseInt(searchParams.get("limit") || "50");
   const channel = searchParams.get("channel");

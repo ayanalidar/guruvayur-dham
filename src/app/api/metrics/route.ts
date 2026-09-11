@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/metrics
@@ -7,6 +8,9 @@ import { db } from "@/lib/db";
  * Query: ?days=7, ?page=/
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { searchParams } = req.nextUrl;
   const days = parseInt(searchParams.get("days") || "7");
   const page = searchParams.get("page");

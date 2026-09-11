@@ -35,6 +35,9 @@ const MarkReminderSentSchema = z.object({
 
 // GET /api/reminders · list pending reminders
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const sent = req.nextUrl.searchParams.get("sent") === "true";
   const where: any = {};
   if (req.nextUrl.searchParams.get("sent") !== null) where.sent = sent;

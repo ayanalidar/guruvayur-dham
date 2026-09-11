@@ -21,7 +21,20 @@ const CreateCouponSchema = z.object({
 
 const UpdateCouponSchema = z.object({
   id: z.string().min(1),
-  data: z.record(z.string(), z.any()),
+  // SECURITY (Phase2-MassAssignment): explicit whitelist — `code` is immutable
+  // after creation (it's the user-facing identifier) and `usedCount` is
+  // server-controlled (incremented by markCouponUsed on each redemption).
+  data: z.object({
+    description: z.string().max(500).optional(),
+    type: z.enum(["PERCENTAGE", "FLAT"]).optional(),
+    value: z.coerce.number().min(0).max(100).optional(),
+    maxDiscount: z.coerce.number().min(0).nullable().optional(),
+    minBooking: z.coerce.number().min(0).optional(),
+    usageLimit: z.coerce.number().int().min(0).optional(),
+    validFrom: z.coerce.date().optional(),
+    validTo: z.coerce.date().optional(),
+    active: z.boolean().optional(),
+  }).strict(),
 });
 
 const ValidateCouponSchema = z.object({
@@ -30,7 +43,10 @@ const ValidateCouponSchema = z.object({
 });
 
 // GET /api/coupons · list all coupons
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const coupons = await db.coupon.findMany({ orderBy: { code: "asc" } });
   return NextResponse.json({ coupons });
 }
@@ -64,7 +80,7 @@ export async function PATCH(req: NextRequest) {
     );
   }
   const { id, data } = parsed.data;
-  const coupon = await db.coupon.update({ where: { id }, data: data as any });
+  const coupon = await db.coupon.update({ where: { id }, data });
   return NextResponse.json({ coupon });
 }
 
