@@ -198,7 +198,10 @@ async function sendWhatsAppMessage(to: string, message: string): Promise<boolean
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
   if (!token || !phoneNumberId) {
-    console.log("📱 [DEV] WhatsApp message not sent (env vars not set):", message.slice(0, 80));
+    // Only log in dev — PII in prod logs is risky.
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[DEV] WhatsApp message not sent (env vars not set):", message.slice(0, 80));
+    }
     return false; // queued, not sent
   }
 

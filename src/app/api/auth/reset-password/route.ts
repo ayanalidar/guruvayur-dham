@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   await db.user.update({
     where: { id: reset.userId },
     data: {
-      passwordHash: hashPassword(newPassword),
+      passwordHash: await hashPassword(newPassword),
       // SECURITY (Phase C M5): set tokensInvalidatedAt so any pre-existing
       // sessions (e.g. attacker's session if password was compromised) are
       // rejected at the getUserFromRequest layer. Belt-and-braces on top

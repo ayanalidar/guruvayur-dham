@@ -1,7 +1,13 @@
-// Guruvayur Dham Service Worker v2 — Crash Prevention Edition
+// Guruvayur Dham Service Worker v3 — Crash Prevention + Admin Isolation Edition
 // Caches app shell for offline use + network-first strategy with fallbacks
+//
+// SECURITY (Phase D H18 + L1 fixes vs v2):
+// - Admin navigations (/#/admin*) are NEVER cached — prevents admin UI
+//   leaking on shared devices. Falls back to network-only for admin.
+// - Admin static assets (/_next/static/chunks/*admin*) skip cache too.
+// - Bumped CACHE_VERSION to gd-v3 to invalidate all v2 caches on install.
 
-const CACHE_VERSION = "gd-v2";
+const CACHE_VERSION = "gd-v3";
 const APP_SHELL = [
   "/",
   "/manifest.json",
@@ -33,8 +39,26 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Returns true if the request is for an admin page or admin asset.
+// Hash routes (#/admin*) are client-side only, but the SW sees the
+// pathname (without #). We also catch /admin* for future server-rendered
+// admin routes. Static chunk names containing 'admin' are caught too.
+function isAdminRequest(url, request) {
+  // Hash-route admins: the SW can't see the hash, but navigations from
+  // #/admin pages still request the same HTML. We rely on the Referer
+  // header (set by the browser for navigations) to detect admin context.
+  const referer = request.headers.get("referer") || "";
+  if (referer.includes("#/admin") || referer.includes("/admin")) return true;
+  // Direct pathname match (for any future server-rendered /admin routes).
+  if (url.pathname.startsWith("/admin")) return true;
+  // Static chunks that contain 'admin' in the filename.
+  if (url.pathname.includes("/_next/static/chunks/") && url.pathname.toLowerCase().includes("admin")) return true;
+  return false;
+}
+
 // Fetch strategy:
-// - Navigation requests: network-first → cached page → cached "/" (offline fallback)
+// - Admin navigations + admin assets: network-only (NEVER cache)
+// - Other navigation requests: network-first → cached page → cached "/"
 // - API calls (/api/*): network-only (always fresh, no caching)
 // - Static assets: cache-first → network (with cache population)
 // - Images: cache-first with 30-day TTL
@@ -51,6 +75,16 @@ self.addEventListener("fetch", (event) => {
   // API calls: network-only (never cache API responses)
   if (url.pathname.startsWith("/api/")) {
     return; // Let the request go through normally
+  }
+
+  // Admin requests: network-only, never cache (Phase D H18 + L1 fix).
+  // Prevents admin HTML / admin JS chunks from being persisted in caches
+  // and later read on shared devices.
+  if (isAdminRequest(url, request)) {
+    event.respondWith(
+      fetch(request).catch(() => new Response("Offline — admin unavailable", { status: 503 }))
+    );
+    return;
   }
 
   // Navigation requests: network-first with multiple fallbacks

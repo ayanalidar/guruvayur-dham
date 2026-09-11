@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limiter";
-import { requireStaff } from "@/lib/auth";
+import { requireStaff, generateRef } from "@/lib/auth";
 
 // GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
 // ?search searches guestName, guestPhone, guestEmail, and reference fields
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ===== CREATE BOOKING =====
-  const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("GD");
   // Calculate amount based on source (apply channel markup if from channel)
   const ratePlan = await db.ratePlan.findUnique({
     where: { roomId_channelPartner: { roomId: room.id, channelPartner: source } },

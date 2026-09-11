@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
+import { generateRef } from "@/lib/auth";
 
 /**
  * POST /api/guest-booking
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ===== 5. CREATE BOOKING =====
-  const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("GD");
   const booking = await db.booking.create({
     data: {
       reference: ref,

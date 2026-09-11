@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { generateRef } from "@/lib/auth";
 
 // POST /api/walkin · create a walk-in booking (front desk use)
 // This is the same as POST /api/bookings but with source=WALKIN hardcoded
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Create booking · WALKIN source, no channel markup
-  const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("GD");
   const amount = room.price * nights;
 
   const booking = await db.booking.create({

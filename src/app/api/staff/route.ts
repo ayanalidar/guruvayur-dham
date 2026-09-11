@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
       return NextResponse.json({ error: "Password must contain both letters and numbers" }, { status: 400 });
     }
-    hashedPassword = hashPassword(password);
+    hashedPassword = await hashPassword(password);
   }
 
   // Check for duplicate email.
@@ -126,7 +126,7 @@ export async function PATCH(req: NextRequest) {
     if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
       return NextResponse.json({ error: "Password must contain both letters and numbers" }, { status: 400 });
     }
-    updateData.passwordHash = hashPassword(password);
+    updateData.passwordHash = await hashPassword(password);
     // Setting a new password clears mustChangePassword.
     updateData.mustChangePassword = false;
   }

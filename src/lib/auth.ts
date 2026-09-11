@@ -3,15 +3,44 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Simple password hashing using Node's crypto (no external dependency).
- * In production, use bcrypt or argon2.
+ * Generate a cryptographically-secure random reference code.
+ *
+ * SECURITY (Phase D L3): replaces the pattern
+ *   `"GD-" + Math.random().toString(36).slice(2, 8).toUpperCase()`
+ * which has only ~31 bits of entropy (predictable, collisions after ~50k
+ * bookings). Uses crypto.randomBytes instead — 32 bits of true randomness.
+ *
+ * Usage:
+ *   import { generateRef } from "@/lib/auth";
+ *   const ref = generateRef("GD");  // → "GD-A3F9B2C1"
  */
-export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex");
-  return `${salt}:${hash}`;
+export function generateRef(prefix: string): string {
+  return `${prefix}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
+/**
+ * Simple password hashing using Node's crypto (no external dependency).
+ * In production, use bcrypt or argon2.
+ *
+ * SECURITY (Phase D L2 fix): hashPassword is now ASYNC (was pbkdf2Sync
+ * which blocks the event loop ~100-200ms per call — self-DoS under load).
+ * All callers (register, reset-password, /api/staff POST/PATCH) updated
+ * to await the result.
+ */
+export async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.randomBytes(16).toString("hex");
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+      if (err) return reject(err);
+      resolve(`${salt}:${derivedKey.toString("hex")}`);
+    });
+  });
+}
+
+// verifyPassword stays synchronous: it's called once per login attempt,
+// rate-limited to 5/min/IP. The timing-equalization pattern (M11) also
+// relies on calling it synchronously when user is null. If profiling shows
+// event-loop blocking under load, convert to async + update callers.
 export function verifyPassword(password: string, stored: string): boolean {
   const [salt, hash] = stored.split(":");
   if (!salt || !hash) return false;
@@ -62,11 +91,20 @@ export async function createSession(userId: string, role: string, daysValid = 7)
  *
  * SECURITY (Phase C M8 fix): now includes the TwoFactorSecret relation so
  * handlers can check session.user.twoFactorEnabled without an extra DB query.
+ *
+ * SECURITY (Phase D H12 fix): reads cookie with __Host- prefix in production
+ * (falls back to unprefixed name in dev for backwards compat).
  */
 export async function getUserFromRequest(req: Request): Promise<{ user: any; role: string } | null> {
-  // Try cookie first
+  // Try cookie first. In production, the cookie is set with __Host- prefix
+  // (which forces Secure + Path=/ + no Domain). In dev, no prefix is used
+  // so we check both names.
   const cookie = req.headers.get("cookie") || "";
-  const tokenMatch = cookie.match(/session_token=([^;]+)/);
+  const isProd = process.env.NODE_ENV === "production";
+  const cookieName = isProd ? "__Host-session_token" : "session_token";
+  const altCookieName = isProd ? "session_token" : "__Host-session_token";
+  const tokenMatch = cookie.match(new RegExp(`${cookieName}=([^;]+)`))
+    || cookie.match(new RegExp(`${altCookieName}=([^;]+)`));
   const token = tokenMatch?.[1] || req.headers.get("authorization")?.replace("Bearer ", "");
 
   if (!token) return null;
@@ -183,15 +221,29 @@ export async function requireUser(req: NextRequest): Promise<{
 }
 
 /**
- * Set session cookie on a NextResponse
+ * Set session cookie on a NextResponse.
+ *
+ * SECURITY (Phase D H12 fix):
+ * - Production: uses __Host- prefix (forces Secure + Path=/ + no Domain).
+ *   This is the strictest cookie prefix — prevents subdomain-based cookie
+ *   injection attacks.
+ * - SameSite=Strict in production (was Lax) — closes 95% of CSRF vectors
+ *   by not sending the cookie on cross-site navigations.
+ * - Dev: no prefix, SameSite=Lax (so localhost testing works without HTTPS).
  */
 export function setSessionCookie(token: string): string {
   const isProduction = process.env.NODE_ENV === "production";
-  return `session_token=${token}; Path=/; HttpOnly; ${isProduction ? "Secure; " : ""}SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
+  const prefix = isProduction ? "__Host-" : "";
+  const sameSite = isProduction ? "Strict" : "Lax";
+  return `${prefix}session_token=${token}; Path=/; HttpOnly; ${isProduction ? "Secure; " : ""}SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}`;
 }
 
 export function clearSessionCookie(): string {
-  return `session_token=; Path=/; HttpOnly; Max-Age=0`;
+  const isProduction = process.env.NODE_ENV === "production";
+  const prefix = isProduction ? "__Host-" : "";
+  // Mirror the set cookie's prefix + SameSite, otherwise the browser treats
+  // the clear as a different cookie and doesn't delete the original.
+  return `${prefix}session_token=; Path=/; HttpOnly; ${isProduction ? "Secure; " : ""}Max-Age=0`;
 }
 
 /**

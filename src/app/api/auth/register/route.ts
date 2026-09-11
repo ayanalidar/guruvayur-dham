@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       name,
       email,
       phone: phone || null,
-      passwordHash: hashPassword(password),
+      passwordHash: await hashPassword(password),
       role: "GUEST",
     },
   });

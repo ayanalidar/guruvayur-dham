@@ -86,12 +86,19 @@ export default function PWAEnhancements() {
       }
 
       const reg = await navigator.serviceWorker.ready;
+      // SECURITY (Phase D L8): require NEXT_PUBLIC_VAPID_PUBLIC_KEY env var.
+      // Was: fell back to Google's well-known demo key whose private key is
+      // public — anyone could send push notifications to all subscribers.
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidKey) {
+        console.warn("Push notifications disabled — NEXT_PUBLIC_VAPID_PUBLIC_KEY env var not set.");
+        setShowPushPrompt(false);
+        localStorage.setItem("push-prompt-dismissed", "true");
+        return;
+      }
       const subscription = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
-          "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U" // demo key
-        ) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey) as BufferSource,
       });
 
       // Send subscription to server

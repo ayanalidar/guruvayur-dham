@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { generateRef } from "@/lib/auth";
 
 // GET /api/itinerary · list itineraries
 export async function GET() {
@@ -11,7 +12,7 @@ export async function GET() {
 // body: { guestName, guestPhone, days, startDate, items: [{day, time, title, description, type}], totalEstimate }
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const ref = "IT-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("IT");
   const itinerary = await db.itinerary.create({
     data: {
       reference: ref,

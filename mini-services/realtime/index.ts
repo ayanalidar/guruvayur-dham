@@ -14,6 +14,12 @@
  * - stats:update — periodic broadcast of dashboard stats
  *
  * Frontend connects via: io("/?XTransformPort=3003")
+ *
+ * SECURITY (Phase D C5 + M18 fixes):
+ * - CORS now restricts to REALTIME_ALLOWED_ORIGIN env var (was: * which
+ *   let anyone POST to /broadcast from a browser).
+ * - /broadcast and /broadcast-room now rate-limited to 30 requests/min/IP
+ *   (prevents a compromised staff token from DoSing all dashboards).
  */
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { Server } from "socket.io";
@@ -22,12 +28,48 @@ import { Server } from "socket.io";
 const roomViewers = new Map<string, Set<string>>();
 const socketRoom = new Map<string, string>();
 
+// ====== Rate limiter (simple in-memory) ======
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+function rateLimit(ip: string, max = 30, windowSec = 60): boolean {
+  const now = Date.now();
+  const key = `broadcast:${ip}`;
+  const existing = rateLimitMap.get(key);
+  if (!existing || existing.resetAt < now) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + windowSec * 1000 });
+    return true;
+  }
+  existing.count++;
+  return existing.count <= max;
+}
+
+// ====== CORS helper ======
+function getAllowedOrigin(): string | null {
+  // REALTIME_ALLOWED_ORIGIN should be set to your deployment origin
+  // (e.g. https://guruvayurdham.com). On VPS docker-compose, the app
+  // container reaches the realtime service directly (not via browser), so
+  // CORS doesn't apply. For browser-side connections (frontend), set
+  // REALTIME_ALLOWED_ORIGIN.
+  return process.env.REALTIME_ALLOWED_ORIGIN || null;
+}
+
+function setCorsHeaders(res: ServerResponse) {
+  const origin = getAllowedOrigin();
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Vary", "Origin");
+  } else {
+    // No origin configured — deny cross-origin requests entirely.
+    // (Same-origin requests from the frontend don't need CORS headers.)
+    res.setHeader("Access-Control-Allow-Origin", "null");
+  }
+}
+
 // ====== HTTP handler (runs before Socket.io for non-socket requests) ======
 function httpRequestHandler(req: IncomingMessage, res: ServerResponse) {
   // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  setCorsHeaders(res);
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -49,6 +91,13 @@ function httpRequestHandler(req: IncomingMessage, res: ServerResponse) {
   }
 
   if (req.method === "POST" && req.url === "/broadcast") {
+    // Rate limit — 30 broadcasts/min/IP.
+    const ip = (req.headers["x-forwarded-for"] as string || "").split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
+    if (!rateLimit(ip)) {
+      res.writeHead(429, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Rate limit exceeded. Max 30 broadcasts/min." }));
+      return true;
+    }
     let body = "";
     req.on("data", (chunk) => (body += chunk));
     req.on("end", () => {
@@ -67,6 +116,13 @@ function httpRequestHandler(req: IncomingMessage, res: ServerResponse) {
   }
 
   if (req.method === "POST" && req.url === "/broadcast-room") {
+    // Rate limit — 30 broadcasts/min/IP (same as /broadcast).
+    const ip = (req.headers["x-forwarded-for"] as string || "").split(",")[0]?.trim() || req.socket.remoteAddress || "unknown";
+    if (!rateLimit(ip)) {
+      res.writeHead(429, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Rate limit exceeded. Max 30 broadcasts/min." }));
+      return true;
+    }
     let body = "";
     req.on("data", (chunk) => (body += chunk));
     req.on("end", () => {

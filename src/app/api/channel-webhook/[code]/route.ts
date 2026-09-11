@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { broadcastToChannels } from "@/lib/channel-sync";
-import { requireStaff } from "@/lib/auth";
+import { requireStaff, generateRef } from "@/lib/auth";
 
 /**
  * Channel Partner Webhook — receives bookings from OTAs.
@@ -158,7 +158,7 @@ export async function POST(
   }
 
   // Create the booking
-  const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("GD");
   const finalAmount = amount || Math.round(room.price * nights);
 
   const booking = await db.booking.create({

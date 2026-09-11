@@ -203,7 +203,10 @@ async function sendWhatsAppReply(to: string, message: string): Promise<void> {
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
   if (!token || !phoneNumberId) {
-    console.log("📱 [DEV] WhatsApp reply not sent (env vars not set):", message.slice(0, 80));
+    // Only log in dev — PII in prod logs is risky.
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[DEV] WhatsApp reply not sent (env vars not set):", message.slice(0, 80));
+    }
     return;
   }
 

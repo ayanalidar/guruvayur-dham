@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireStaff } from "@/lib/auth";
+import { requireStaff, generateRef } from "@/lib/auth";
 
 // GET /api/pooja-bookings · list all pooja bookings
 export async function GET(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (!poojaId || !poojaName || !guestName || !guestPhone || !preferredDate || !amount) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
-  const ref = "PB-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("PB");
   const booking = await db.poojaBooking.create({
     data: {
       reference: ref,

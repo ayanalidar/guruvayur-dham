@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { generateRef } from "@/lib/auth";
 
 /**
  * POST /api/channel-inbox
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Create the booking
-  const ref = "GD-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("GD");
   const finalAmount = amount || Math.round(room.price * (channelCode === "BOOKING_COM" ? 1.18 : channelCode === "MAKEMYTRIP" ? 1.15 : 1.12) * nights);
 
   const booking = await db.booking.create({

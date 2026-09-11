@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 import { tmpdir } from "os";
+import crypto from "crypto";
 import { requireStaff } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 
@@ -11,18 +12,22 @@ import { rateLimit } from "@/lib/rate-limiter";
  *
  * Uploads an image file and returns its public URL.
  *
+ * SECURITY (Phase D H15 fixes):
+ * - Magic-number validation: reads first 12 bytes of the file and compares
+ *   against known JPEG/PNG/WebP/GIF signatures. The user-supplied
+ *   Content-Type is no longer trusted.
+ * - Image re-encoding via sharp: strips EXIF (incl. GPS coords) and any
+ *   embedded payloads (e.g. PHP in JPEG comments, polyglot files).
+ * - Hardcoded .jpg extension on output: prevents malicious extensions like
+ *   .php, .html, .svg (XSS via SVG).
+ * - Filename uses crypto.randomBytes (was Math.random — predictable).
+ *
  * Storage strategy (auto-detects):
  *   1. If BLOB_READ_WRITE_TOKEN env var is set → uses Vercel Blob (cloud)
- *   2. If /tmp is writable (Vercel serverless) → stores in /tmp and
- *      returns as base64 data URL (works on Vercel without Blob)
- *   3. If /public/uploads is writable (VPS/local) → stores on filesystem
+ *   2. If /public/uploads is writable (VPS/local) → stores on filesystem
+ *   3. If /tmp is writable (Vercel serverless) → returns as base64 data URL
  *
  * On Vercel serverless, the filesystem is READ-ONLY except /tmp.
- * So without Vercel Blob, we fall back to base64 data URLs which
- * work everywhere but are larger (not ideal for production).
- *
- * For production on Vercel: set BLOB_READ_WRITE_TOKEN env var.
- * For VPS: no env var needed, uses local filesystem.
  */
 export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
@@ -40,16 +45,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: `Invalid file type: ${file.type}. Allowed: ${allowedTypes.join(", ")}` },
-        { status: 400 }
-      );
-    }
-
-    // Validate file size (max 10MB)
+    // Validate file size (max 10MB).
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
@@ -58,17 +54,59 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate a unique filename
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    // Read file into buffer for magic-number check + re-encoding.
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // ===== Magic-number validation =====
+    // Don't trust the Content-Type header — attackers can spoof it.
+    // Read the actual file signature (first ~12 bytes).
+    const isJpeg = buffer.subarray(0, 3).toString("hex") === "ffd8ff";
+    const isPng = buffer.subarray(0, 8).toString("hex") === "89504e470d0a1a0a";
+    const isWebp = buffer.subarray(0, 4).toString("ascii") === "RIFF"
+      && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+    const isGif = buffer.subarray(0, 6).toString("ascii") === "GIF87a"
+      || buffer.subarray(0, 6).toString("ascii") === "GIF89a";
+
+    if (!isJpeg && !isPng && !isWebp && !isGif) {
+      return NextResponse.json(
+        { error: "Invalid image file. Magic number check failed — file is not a valid JPEG, PNG, WebP, or GIF." },
+        { status: 400 }
+      );
+    }
+
+    // ===== Re-encode via sharp (strips EXIF + embedded payloads) =====
+    // sharp normalizes the image: removes EXIF (GPS, camera info), strips
+    // any embedded payloads (PHP in JPEG comments, polyglot files), and
+    // outputs a clean JPEG. The output is always .jpg regardless of input.
+    let cleanBuffer: Buffer;
+    try {
+      const sharp = (await import("sharp")).default;
+      cleanBuffer = await sharp(buffer)
+        .rotate() // auto-orient based on EXIF (before stripping)
+        .flatten({ background: "#ffffff" }) // composite alpha onto white
+        .jpeg({ quality: 85, mozjpeg: true }) // re-encode as JPEG
+        .toBuffer();
+    } catch (sharpError: any) {
+      console.error("sharp re-encoding failed:", sharpError.message);
+      return NextResponse.json(
+        { error: "Image processing failed — file may be corrupted." },
+        { status: 400 }
+      );
+    }
+
+    // Generate a unique filename — crypto.randomBytes (was Math.random).
+    // Always .jpg since we re-encoded as JPEG above.
+    const filename = `${Date.now()}-${crypto.randomBytes(4).toString("hex")}.jpg`;
 
     // ===== Strategy 1: Vercel Blob (cloud storage) =====
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       try {
         const { put } = await import("@vercel/blob");
-        const blob = await put(filename, file, {
+        const blob = await put(filename, cleanBuffer, {
           access: "public",
           addRandomSuffix: false,
+          contentType: "image/jpeg",
         });
         return NextResponse.json({ url: blob.url });
       } catch (blobError: any) {
@@ -77,60 +115,43 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ===== Strategy 2: /tmp directory (Vercel serverless writable area) =====
-    // Vercel serverless can write to /tmp. We store the file there and
-    // return a base64 data URL (but only if small enough).
-    // For larger files, we return an error guiding the user to set up Blob.
+    // ===== Strategy 2: /public/uploads (VPS + local dev) =====
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Try /public/uploads first (works on VPS + local dev)
-      try {
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        if (!existsSync(uploadDir)) {
-          await mkdir(uploadDir, { recursive: true });
-        }
-        const filePath = path.join(uploadDir, filename);
-        await writeFile(filePath, buffer);
-        return NextResponse.json({ url: `/uploads/${filename}` });
-      } catch (publicErr: any) {
-        // /public not writable (Vercel) — try /tmp as fallback
-        const tmpDir = path.join(tmpdir(), "uploads");
-        if (!existsSync(tmpDir)) {
-          await mkdir(tmpDir, { recursive: true });
-        }
-        const tmpPath = path.join(tmpDir, filename);
-        await writeFile(tmpPath, buffer);
-        // /tmp files don't persist across requests on Vercel, so we
-        // can't return a URL. Instead, return a base64 data URL for
-        // small files, or an error for large files.
-        if (buffer.length < 500 * 1024) {
-          // File is small enough (< 500KB) for base64 data URL
-          const base64 = buffer.toString("base64");
-          const dataUrl = `data:${file.type};base64,${base64}`;
-          return NextResponse.json({ url: dataUrl });
-        }
-        // File too large for base64 on Vercel without Blob
-        return NextResponse.json(
-          {
-            error: "Image too large for Vercel without cloud storage. Set BLOB_READ_WRITE_TOKEN env var, or use an image under 500KB.",
-            hint: "Vercel dashboard → Storage → Create Blob Store → copy token → add as BLOB_READ_WRITE_TOKEN env var.",
-          },
-          { status: 413 }
-        );
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
       }
-    } catch (fsError: any) {
-      console.error("All filesystem strategies failed:", fsError);
+      const filePath = path.join(uploadDir, filename);
+      await writeFile(filePath, cleanBuffer);
+      return NextResponse.json({ url: `/uploads/${filename}` });
+    } catch (publicErr: any) {
+      // /public not writable (Vercel) — try /tmp + base64 fallback.
+      const tmpDir = path.join(tmpdir(), "uploads");
+      if (!existsSync(tmpDir)) {
+        await mkdir(tmpDir, { recursive: true });
+      }
+      const tmpPath = path.join(tmpDir, filename);
+      await writeFile(tmpPath, cleanBuffer);
+      // /tmp files don't persist across requests on Vercel, so we return
+      // a base64 data URL for small files, or an error for large files.
+      if (cleanBuffer.length < 500 * 1024) {
+        const base64 = cleanBuffer.toString("base64");
+        const dataUrl = `data:image/jpeg;base64,${base64}`;
+        return NextResponse.json({ url: dataUrl });
+      }
+      // File too large for base64 on Vercel without Blob.
       return NextResponse.json(
-        { error: `Upload failed: ${fsError.message}` },
-        { status: 500 }
+        {
+          error: "Image too large for Vercel without cloud storage. Set BLOB_READ_WRITE_TOKEN env var, or use an image under 500KB.",
+          hint: "Vercel dashboard → Storage → Create Blob Store → copy token → add as BLOB_READ_WRITE_TOKEN env var.",
+        },
+        { status: 413 }
       );
     }
   } catch (error: any) {
-    console.error("Upload error:", error);
+    console.error("Upload error:", error.message);
     return NextResponse.json(
-      { error: `Upload failed: ${error.message}` },
+      { error: "Upload failed" },
       { status: 500 }
     );
   }

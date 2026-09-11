@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireStaff } from "@/lib/auth";
+import { requireStaff, generateRef } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 
 // GET /api/kitchen-orders · list all orders
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     if (!menuItem) continue;
     total += menuItem.price * (item.qty || 1);
   }
-  const ref = "KO-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  const ref = generateRef("KO");
   const order = await db.kitchenOrder.create({
     data: {
       reference: ref,
