@@ -140,12 +140,21 @@ export async function POST(req: NextRequest) {
 
 /**
  * Process an incoming message and return a reply.
+ *
+ * SECURITY (Round 3 F4 fix): "my booking" intent no longer returns booking
+ * details by arbitrary phone number. Was: anyone texting the WhatsApp
+ * Business number with "my booking" got full booking details for the phone
+ * Meta sent the message from. Now: asks for booking reference (GD-XXXX) like
+ * the simulated /api/whatsapp-bot does (Phase C M2).
+ *
+ * FUNCTIONAL (Round 3 F12 fix): added missing 'directions' and 'dresscode'
+ * intents that exist in /api/whatsapp-bot but were never ported here.
  */
 async function processMessage(phone: string, message: string): Promise<string> {
   const msg = message.toLowerCase().trim();
 
   if (msg.match(/^(hi|hello|hey|namaskaram|namaste)/)) {
-    return `Namaskaram! 🙏 Welcome to Guruvayur Dham. I can help you with:\n\n• Book a room\n• Check your booking\n• Pooja list & booking\n• Darshan timings\n• Festival dates\n• Check-in/out times\n• How to reach us\n\nWhat would you like to know?`;
+    return `Namaskaram! 🙏 Welcome to Guruvayur Dham. I can help you with:\n\n• Book a room\n• Check your booking\n• Pooja list & booking\n• Darshan timings\n• Festival dates\n• Check-in/out times\n• How to reach us\n• Dress code\n\nWhat would you like to know?`;
   }
 
   if (msg.match(/book|room|availability|reserve/)) {
@@ -156,7 +165,7 @@ async function processMessage(phone: string, message: string): Promise<string> {
     return `Sacred offerings (zero commission): 🙏\n\n• Pushpanjali · ₹21\n• Mangala Aarti · ₹51\n• Sandhya Aarti · ₹101\n• Rajbhog Aarti · ₹251\n• Abhishek · ₹1,100\n• Annadan · ₹2,100\n\nBook online: https://guruvayurdham.com/#/pooja`;
   }
 
-  if (msg.match(/darshan|timing|aarti|temple time/)) {
+  if (msg.match(/darshan|timing|temple time/)) {
     return `Temple Darshan Timings: 🛕\n\n• Mata Pathwari Mandir: 5:00 AM - 9:00 PM (next to us!)\n• Krishna Janmabhoomi: 5:00 AM - 12:00 PM, 4:00 PM - 9:30 PM\n• Dwarkadhish Temple: 6:30 AM - 10:30 AM, 4:00 PM - 7:00 PM\n\nBest time: Early morning for peaceful darshan.`;
   }
 
@@ -168,15 +177,22 @@ async function processMessage(phone: string, message: string): Promise<string> {
     return `Check-in & Check-out: ⏰\n\n• Check-in: 12:00 PM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n\nFree pickup from Mathura railway station for 2+ night stays!`;
   }
 
+  // F12 fix: directions intent (was missing from webhook)
+  if (msg.match(/reach|how|direction|airport|train|bus/)) {
+    return `How to Reach Us: 🚗\n\n• Address: Opp. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, UP 281001\n• Phone: +91-90908 20208\n• Nearest airport: Agra (60 km) / Delhi (150 km)\n• Mathura railway station: 3 km\n• Vrindavan: 15 km\n\nFree parking for 25+ vehicles. WhatsApp +91-90908 20208 for pickup!`;
+  }
+
+  // F12 fix: dress code intent (was missing from webhook)
+  if (msg.match(/dress|code|mundu|saree|wear/)) {
+    return `Dress Code for Mathura Temples: 👕\n\nMen:\n• Dhoti/kurta or traditional wear preferred\n• No shorts or sleeveless shirts\n\nWomen:\n• Saree, salwar kameez, or modest traditional wear\n• Cover head in some temples (especially Krishna Janmabhoomi)\n\nGeneral:\n• Remove footwear before entering\n• No leather items inside sanctum\n• Photography prohibited inside most temples`;
+  }
+
   if (msg.match(/my booking|status|reference/)) {
-    const booking = await db.booking.findFirst({
-      where: { guestPhone: phone },
-      orderBy: { createdAt: "desc" },
-    });
-    if (booking) {
-      return `Your booking: 📋\n\nReference: ${booking.reference}\nStatus: ${booking.status}\nCheck-in: ${new Date(booking.checkIn).toLocaleDateString("en-IN")}\nCheck-out: ${new Date(booking.checkOut).toLocaleDateString("en-IN")}\nAmount: ₹${booking.amount}\n\nNeed changes? Call +91-90908 20208.`;
-    }
-    return `I couldn't find a booking for ${phone}. Could you share your booking reference (starts with GD-)?`;
+    // SECURITY (F4): do NOT return booking details by phone — anyone texting
+    // the WhatsApp Business number with "my booking" would learn that phone's
+    // booking reference, dates, amount. Ask for booking reference instead
+    // (GD-XXXX is a secret known only to the actual guest).
+    return `To check your booking, please share your booking reference (starts with GD-, e.g. GD-AB12CD). You received it via WhatsApp/SMS when you booked. Lost your reference? Please call our front desk at +91-90908 20208 — we'll verify your identity before sharing details.`;
   }
 
   // AI fallback for general questions

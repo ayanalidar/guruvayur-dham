@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
-const PricingRuleTypeEnum = z.enum(["WEEKEND", "WEEKDAY", "FESTIVAL", "DATE_RANGE", "ROOM_TYPE"]);
+const PricingRuleTypeEnum = z.enum(["WEEKEND", "WEEKDAY", "FESTIVAL", "DATE_RANGE", "ROOM_TYPE", "LAST_MINUTE", "EARLY_BIRD", "SEASONAL"]);
 
 const CreatePricingRuleSchema = z.object({
   name: z.string().min(1).max(200),

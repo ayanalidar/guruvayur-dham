@@ -3,6 +3,8 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limiter";
 import { requireStaff, generateRef } from "@/lib/auth";
+import { broadcastToChannels } from "@/lib/channel-sync";
+import { calculateRoomPrice } from "@/lib/pricing";
 
 const CreateBookingSchema = z.object({
   roomSlug: z.string().min(1).max(200),
@@ -104,12 +106,16 @@ export async function POST(req: NextRequest) {
 
   // ===== CREATE BOOKING =====
   const ref = generateRef("GD");
-  // Calculate amount based on source (apply channel markup if from channel)
+  // SECURITY (Round 3 F3 fix): use calculateRoomPrice for proper dynamic pricing
+  // (weekend surge, early-bird, last-minute, festival, coupons) — was flat
+  // room.price * ratePlan.priceModifier * nights.
+  const pricing = await calculateRoomPrice(roomSlug, ci, co);
+  // Apply channel markup on top of dynamic price (rate plan modifier).
   const ratePlan = await db.ratePlan.findUnique({
     where: { roomId_channelPartner: { roomId: room.id, channelPartner: source } },
   });
   const modifier = ratePlan?.priceModifier ?? 1.0;
-  const amount = Math.round(room.price * modifier * nights);
+  const amount = Math.round(pricing.totalPrice * modifier);
 
   const booking = await db.booking.create({
     data: {
@@ -121,7 +127,11 @@ export async function POST(req: NextRequest) {
       amount,
       source,
       channelBookingId: channelBookingId || null,
-      notes: notes || null,
+      notes: notes || JSON.stringify({
+        basePrice: pricing.totalPrice,
+        channelModifier: modifier,
+        pricingBreakdown: pricing.breakdown.map(b => ({ date: "", base: b.basePrice, final: b.finalPrice, rules: b.appliedRules })),
+      }),
       status: "CONFIRMED",
     },
   });
@@ -139,43 +149,33 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ===== BROADCAST SYNC TO ALL CHANNEL PARTNERS =====
-  // When a booking comes from any source, ALL other channels must be blocked
-  const channels = await db.channelPartner.findMany({ where: { connected: true } });
-  const otherChannels = channels.filter((c) => c.code !== source);
+  // ===== BROADCAST SYNC TO ALL CHANNEL PARTNERS (uses shared helper) =====
+  // SECURITY (Round 3 F6 fix): use broadcastToChannels() instead of inline
+  // duplicate — ensures [SIMULATED] prefix is shown in admin dashboard.
+  const syncResults = await broadcastToChannels({
+    bookingId: booking.id,
+    bookingRef: ref,
+    roomSlug,
+    roomId: room.id,
+    checkIn: ci,
+    checkOut: co,
+    sourceChannel: source,
+    action: "BLOCK",
+  });
 
-  for (const ch of otherChannels) {
-    // Simulate calling each channel partner's webhook
-    // In production, this would be a real HTTP POST to their API
-    const syncResult = await simulateChannelWebhook(ch, {
-      action: "BLOCK",
-      roomSlug,
-      roomName: room.name,
-      checkIn: ci,
-      checkOut: co,
-      reference: ref,
-      guestName,
-      source,
+  // ===== BROADCAST REALTIME EVENT (booking:new) =====
+  // SECURITY (Round 3 F7 fix): fire booking:new so admin dashboards see all
+  // new bookings live (was: only fired from /api/guest-booking).
+  try {
+    await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "booking:new",
+        data: { reference: ref, guestName, roomSlug, amount, source, checkIn: ci, checkOut: co },
+      }),
     });
-
-    await db.syncLog.create({
-      data: {
-        bookingId: booking.id,
-        channel: ch.code,
-        action: "BLOCK",
-        status: syncResult.success ? "SUCCESS" : "FAILED",
-        message: syncResult.message,
-        payload: JSON.stringify(syncResult.payload),
-      },
-    });
-
-    if (syncResult.success) {
-      await db.channelPartner.update({
-        where: { code: ch.code },
-        data: { lastSyncAt: new Date() },
-      });
-    }
-  }
+  } catch {}
 
   return NextResponse.json({
     booking: {
@@ -185,35 +185,9 @@ export async function POST(req: NextRequest) {
       nights,
     },
     syncResults: {
-      totalChannels: otherChannels.length,
-      success: otherChannels.length, // all succeeded in simulation
-      channels: otherChannels.map((c) => c.code),
+      totalChannels: syncResults.length,
+      success: syncResults.filter(r => r.success).length,
+      channels: syncResults.map(r => r.channel),
     },
   });
-}
-
-// ===== Simulated channel webhook =====
-// In production, replace with real fetch() to Booking.com/MakeMyTrip/etc. APIs
-async function simulateChannelWebhook(channel: any, payload: any) {
-  // Simulate network latency
-  await new Promise((r) => setTimeout(r, 200 + Math.random() * 300));
-
-  // 95% success rate (simulate occasional failures)
-  const success = Math.random() > 0.05;
-
-  return {
-    success,
-    message: success
-      ? `Inventory blocked on ${channel.name} for ${payload.guestName} (${payload.reference})`
-      : `Failed to sync with ${channel.name} · will retry`,
-    payload: {
-      channelCode: channel.code,
-      channelName: channel.name,
-      action: "BLOCK",
-      roomSlug: payload.roomSlug,
-      checkIn: payload.checkIn,
-      checkOut: payload.checkOut,
-      timestamp: new Date().toISOString(),
-    },
-  };
 }

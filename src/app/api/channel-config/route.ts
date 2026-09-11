@@ -36,9 +36,15 @@ const TestConnectionSchema = z.object({
 
 /**
  * GET /api/channel-config
- * Returns all channel partner configurations (API keys masked)
+ * Returns all channel partner configurations (API keys masked).
+ *
+ * SECURITY (Round 3 S6 fix): requireStaff(MANAGER,ACCOUNTANT) + strip ?key=
+ * from webhookUrl + omit config blob (may contain secrets).
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const category = req.nextUrl.searchParams.get("category");
   const where: any = {};
   if (category) where.category = category;
@@ -48,12 +54,28 @@ export async function GET(req: NextRequest) {
     orderBy: [{ category: "asc" }, { name: "asc" }],
   });
 
-  // Mask API keys for security (show only last 4 chars)
-  const masked = configs.map(c => ({
-    ...c,
-    apiKey: c.apiKey ? `****${c.apiKey.slice(-4)}` : null,
-    apiSecret: c.apiSecret ? `****${c.apiSecret.slice(-4)}` : null,
-  }));
+  // Mask API keys + strip ?key= from webhookUrl + omit config blob.
+  const masked = configs.map(c => {
+    let safeWebhookUrl = c.webhookUrl;
+    if (safeWebhookUrl) {
+      try {
+        const u = new URL(safeWebhookUrl);
+        u.searchParams.delete("key");
+        safeWebhookUrl = u.toString();
+      } catch {
+        // not a URL — leave as-is
+      }
+    }
+    return {
+      ...c,
+      apiKey: c.apiKey ? `****${c.apiKey.slice(-4)}` : null,
+      apiSecret: c.apiSecret ? `****${c.apiSecret.slice(-4)}` : null,
+      webhookUrl: safeWebhookUrl,
+      // Omit config blob — it can contain secrets (per-channel tokens, etc).
+      // Only return it if MANAGER explicitly requests ?includeConfig=1.
+      config: req.nextUrl.searchParams.get("includeConfig") === "1" ? c.config : null,
+    };
+  });
 
   return NextResponse.json({ configs: masked });
 }

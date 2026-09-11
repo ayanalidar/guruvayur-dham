@@ -6,7 +6,12 @@ import crypto from "crypto";
  * Verifies the Razorpay payment signature after checkout.
  *
  * In production: verifies HMAC SHA256 signature using RAZORPAY_KEY_SECRET.
- * In demo mode (no secret): accepts any payment as valid.
+ * In demo mode (no secret configured): accepts any payment as valid.
+ *
+ * SECURITY (Round 3 S3 fix): removed the `order_demo_*` bypass — was an
+ * `||` short-circuit that let attackers bypass signature verification in
+ * production by submitting `razorpay_order_id: "order_demo_anything"`.
+ * Demo mode is now keyed solely on `!keySecret`.
  *
  * body: { razorpay_order_id, razorpay_payment_id, razorpay_signature }
  * returns: { verified: boolean, paymentId }
@@ -20,8 +25,8 @@ export async function POST(req: NextRequest) {
 
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-  // ===== DEMO MODE =====
-  if (!keySecret || razorpay_order_id.startsWith("order_demo_")) {
+  // ===== DEMO MODE (only when RAZORPAY_KEY_SECRET is unset) =====
+  if (!keySecret) {
     return NextResponse.json({
       verified: true,
       paymentId: razorpay_payment_id,
@@ -31,14 +36,20 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // ===== PRODUCTION MODE =====
+  // ===== PRODUCTION MODE (signature verification required) =====
   try {
     const expectedSignature = crypto
       .createHmac("sha256", keySecret)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    const verified = expectedSignature === razorpay_signature;
+    // Constant-time comparison to prevent timing attacks.
+    const sigBuf = Buffer.from(String(razorpay_signature || ""));
+    const expBuf = Buffer.from(expectedSignature);
+    const verified =
+      sigBuf.length === expBuf.length &&
+      crypto.timingSafeEqual(sigBuf, expBuf);
+
     if (!verified) {
       return NextResponse.json({ verified: false, error: "Signature mismatch · possible tampering" }, { status: 400 });
     }
@@ -49,6 +60,6 @@ export async function POST(req: NextRequest) {
       demo: false,
     });
   } catch (e: any) {
-    return NextResponse.json({ verified: false, error: e.message }, { status: 500 });
+    return NextResponse.json({ verified: false, error: "Payment verification failed" }, { status: 500 });
   }
 }

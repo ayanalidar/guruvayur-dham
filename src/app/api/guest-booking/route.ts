@@ -53,7 +53,60 @@ export async function POST(req: NextRequest) {
     roomSlug, guestName, guestPhone, guestEmail,
     checkIn, checkOut, guests = 2, couponCode,
     darshanSlot, paymentMethod = "RAZORPAY",
+    paymentId: clientPaymentId,
   } = parsed.data;
+
+  // SECURITY (Round 3 S4 fix): require + verify paymentId for RAZORPAY/CARD/UPI.
+  // Without this check, anyone could POST and get a CONFIRMED booking for free
+  // (the old code generated a fake paymentId server-side and ignored the client's).
+  // For COD (cash on delivery) the booking stays PENDING until check-in.
+  let bookingStatus: "CONFIRMED" | "PENDING" = "CONFIRMED";
+  let verifiedPaymentId: string | null = null;
+
+  if (paymentMethod !== "COD") {
+    if (!clientPaymentId) {
+      return NextResponse.json(
+        { error: `paymentId required for ${paymentMethod} payments` },
+        { status: 400 }
+      );
+    }
+    // If Razorpay keys are configured, verify the payment server-side.
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (keyId && keySecret) {
+      try {
+        const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+        const verifyRes = await fetch(`https://api.razorpay.com/v1/payments/${clientPaymentId}`, {
+          headers: { Authorization: `Basic ${auth}` },
+        });
+        if (!verifyRes.ok) {
+          return NextResponse.json(
+            { error: "Payment verification failed — invalid paymentId" },
+            { status: 400 }
+          );
+        }
+        const payment = await verifyRes.json();
+        if (payment.status !== "captured") {
+          return NextResponse.json(
+            { error: `Payment not captured (status: ${payment.status})` },
+            { status: 400 }
+          );
+        }
+        verifiedPaymentId = clientPaymentId;
+      } catch {
+        return NextResponse.json(
+          { error: "Payment verification failed" },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Demo mode (no Razorpay keys) — accept client paymentId as-is.
+      verifiedPaymentId = clientPaymentId;
+    }
+  } else {
+    // COD — booking starts PENDING, staff confirms on check-in.
+    bookingStatus = "PENDING";
+  }
 
   const room = await db.room.findUnique({ where: { slug: roomSlug } });
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
@@ -123,14 +176,14 @@ export async function POST(req: NextRequest) {
       nights, guests,
       amount: finalAmount,
       source: "DIRECT",
-      status: "CONFIRMED",
+      status: bookingStatus, // CONFIRMED only when payment verified; PENDING for COD
       notes: JSON.stringify({
         basePrice: pricing.totalPrice,
         earlyBird: { active: earlyBird.active, discount: earlyBirdDiscount, campaign: earlyBird.campaignName },
         coupon: couponResult?.valid ? { code: couponCode, discount: couponDiscount } : null,
         darshanSlot: darshanSlot || null,
         paymentMethod,
-        paymentId: "pay_" + Math.random().toString(36).slice(2, 14),
+        paymentId: verifiedPaymentId, // real verified paymentId (was random fake)
         pricingBreakdown: pricing.breakdown.map(b => ({ date: "", base: b.basePrice, final: b.finalPrice, rules: b.appliedRules })),
       }),
     },

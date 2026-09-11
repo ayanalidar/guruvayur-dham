@@ -9,7 +9,11 @@ const UpdateChannelPartnerSchema = z.object({
 });
 
 // GET /api/channel-partners · list all channel partners with stats
-export async function GET() {
+// SECURITY (Round 3 S5 fix): requireStaff + strip ?key= from webhookUrl.
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const partners = await db.channelPartner.findMany({
     orderBy: { name: "asc" },
   });
@@ -33,12 +37,25 @@ export async function GET() {
   for (const s of syncStats) syncMap[s.channel] = s._count;
 
   return NextResponse.json({
-    partners: partners.map((p) => ({
-      ...p,
-      bookingCount: statsMap[p.code]?._count || 0,
-      totalRevenue: statsMap[p.code]?._sum.amount || 0,
-      syncsLast7Days: syncMap[p.code] || 0,
-    })),
+    partners: partners.map((p) => {
+      // Strip ?key=... from webhookUrl before returning — the key is a secret
+      // used by /api/channel-webhook/[code] for inbound-booking auth.
+      let safeWebhookUrl = p.webhookUrl;
+      try {
+        const u = new URL(p.webhookUrl);
+        u.searchParams.delete("key");
+        safeWebhookUrl = u.toString();
+      } catch {
+        // not a URL — leave as-is
+      }
+      return {
+        ...p,
+        webhookUrl: safeWebhookUrl,
+        bookingCount: statsMap[p.code]?._count || 0,
+        totalRevenue: statsMap[p.code]?._sum.amount || 0,
+        syncsLast7Days: syncMap[p.code] || 0,
+      };
+    }),
   });
 }
 
