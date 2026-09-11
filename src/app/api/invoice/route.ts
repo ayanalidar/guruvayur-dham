@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff, getUserFromRequest } from "@/lib/auth";
 
-// GET /api/invoice?bookingId=xxx · get invoice data for a booking
+/**
+ * GET /api/invoice?bookingId=xxx
+ * Get invoice data for a booking.
+ *
+ * SECURITY (Phase A C3 fix — IDOR):
+ * - Staff can view any booking's invoice.
+ * - Guests can view only invoices for bookings whose guestPhone matches their
+ *   own user.phone. This prevents IDOR — without this check, anyone passing
+ *   any bookingId could retrieve the guest's name, phone, email, and amount.
+ */
 export async function GET(req: NextRequest) {
   const bookingId = req.nextUrl.searchParams.get("bookingId");
   if (!bookingId) return NextResponse.json({ error: "bookingId required" }, { status: 400 });
@@ -11,6 +21,23 @@ export async function GET(req: NextRequest) {
     include: { room: true },
   });
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
+  // Authorization — staff OR booking owner.
+  const session = await getUserFromRequest(req);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const isStaff = session.role !== "GUEST";
+  if (!isStaff) {
+    // Guest — must own this booking (match by phone or email).
+    const guestPhone = session.user.phone || "";
+    const guestEmail = session.user.email || "";
+    const owns = booking.guestPhone === guestPhone
+      || (booking.guestEmail && booking.guestEmail === guestEmail);
+    if (!owns) {
+      return NextResponse.json({ error: "Forbidden — not your booking" }, { status: 403 });
+    }
+  }
 
   // Build invoice data · every field is editable in the admin invoice generator
   const invoice = {
@@ -52,8 +79,13 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ invoice, booking });
 }
 
-// PATCH /api/invoice · save edited invoice (returns the updated invoice for PDF generation)
+/**
+ * PATCH /api/invoice · save edited invoice (staff only — admin invoice generator).
+ */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   // In production, this would save to an Invoice table.
   // For now, just echo back the edited invoice for PDF generation.

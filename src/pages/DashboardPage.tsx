@@ -30,18 +30,15 @@ export default function DashboardPage() {
           return;
         }
         setUser(j.user);
-        // Fetch bookings for this user (by phone or email)
-        const phone = j.user.phone || "";
-        const email = j.user.email || "";
-        const r2 = await fetch(`/api/bookings?search=${encodeURIComponent(phone || email)}`, { cache: "no-store" });
+        // Fetch this user's own bookings via the guest-facing /my endpoint.
+        // (The /api/bookings main route is now staff-only for security.)
+        const r2 = await fetch(`/api/bookings/my`, { cache: "no-store" });
         const j2 = await r2.json();
         setBookings(j2.bookings || []);
-        // Fetch customer record
-        if (j.user.phone) {
-          const r3 = await fetch(`/api/customers?search=${encodeURIComponent(j.user.phone)}`, { cache: "no-store" });
-          const j3 = await r3.json();
-          if (j3.customers?.length > 0) setCustomer(j3.customers[0]);
-        }
+        // Fetch this user's own customer record.
+        const r3 = await fetch(`/api/customers/me`, { cache: "no-store" });
+        const j3 = await r3.json();
+        if (j3.customer) setCustomer(j3.customer);
         setLoading(false);
       });
     return () => { active = false; };

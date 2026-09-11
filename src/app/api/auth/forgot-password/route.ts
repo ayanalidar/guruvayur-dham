@@ -1,13 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { generateToken } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/auth/forgot-password
  * body: { email }
- * Generates a reset token and sends a reset link via email (simulated).
+ * Generates a reset token and queues a reset email.
+ *
+ * SECURITY:
+ * - Always returns the same response shape — does NOT reveal whether the
+ *   email exists (prevents enumeration).
+ * - Rate limited: 3 requests/hour per IP (prevents enumeration + spam).
+ * - demoResetUrl returned ONLY in dev/demo (NODE_ENV !== "production").
+ *   In production, the reset URL is only in the queued notification (which
+ *   requires staff auth to read via /api/notifications).
  */
 export async function POST(req: NextRequest) {
+  // Rate limit — prevents enumeration + spam.
+  const rl = rateLimit(req, { window: 3600, max: 3, key: "auth:forgot" });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many reset requests. Please wait an hour." },
+      { status: 429 }
+    );
+  }
+
   const { email } = await req.json();
   if (!email) {
     return NextResponse.json({ error: "Email required" }, { status: 400 });
@@ -15,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const user = await db.user.findUnique({ where: { email } });
   if (!user) {
-    // Don't reveal whether email exists · security best practice
+    // Don't reveal whether email exists — same response as success path.
     return NextResponse.json({ ok: true, message: "If an account with that email exists, a reset link has been sent." });
   }
 
@@ -29,7 +47,8 @@ export async function POST(req: NextRequest) {
 
   const resetUrl = `${req.nextUrl.origin}/#/reset-password?token=${token}`;
 
-  // Log the reset email (simulated)
+  // Queue the reset email. The notification body contains the reset URL, but
+  // /api/notifications now requires staff auth (Phase A C4 fix).
   await db.notification.create({
     data: {
       type: "EMAIL",
@@ -41,10 +60,17 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // In demo mode, return the reset URL so the UI can show it
-  return NextResponse.json({
+  const isDev = process.env.NODE_ENV !== "production";
+  const res: any = {
     ok: true,
     message: "If an account with that email exists, a reset link has been sent.",
-    demoResetUrl: resetUrl, // DEMO ONLY · remove in production
-  });
+  };
+  // Only return the reset URL in dev/demo — NEVER in production.
+  if (isDev) {
+    res.demoResetUrl = resetUrl;
+    res.demo = true;
+  }
+
+  return NextResponse.json(res);
 }
+

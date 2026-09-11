@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { broadcastToChannels } from "@/lib/channel-sync";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * Channel Partner Webhook — receives bookings from OTAs.
@@ -235,6 +236,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { code: string } }
 ) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const channelCode = params.code.toUpperCase();
   const channel = await db.channelPartner.findUnique({
     where: { code: channelCode },

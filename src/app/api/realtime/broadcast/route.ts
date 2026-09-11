@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * POST /api/realtime/broadcast
@@ -9,6 +10,9 @@ import { NextRequest, NextResponse } from "next/server";
  * to push a real-time update to all connected admin dashboards.
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { event, data } = await req.json();
   try {
     const r = await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {

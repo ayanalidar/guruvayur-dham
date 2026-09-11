@@ -272,3 +272,52 @@ Stage Summary:
 - All 8 critical security issues + 10 high-severity issues resolved
 - 9 medium issues resolved
 - Committed as a3b0cbf, pushed to origin/main
+
+---
+Task ID: PhaseA-Mechanical
+Agent: subagent
+Task: Add requireStaff guards to 17 admin API routes (Phase A mechanical fixes)
+
+Work Log:
+- Patched all 17 routes listed in the spec. Each guard was inserted at the top of the handler (before any `req.json()` or DB query); existing imports reused, no duplicate imports added. Where a handler was declared without a `req: NextRequest` arg (stats GET, maintenance GET, blog-schedule GET, early-bird GET), the signature was updated to accept `req: NextRequest` so `requireStaff(req)` works.
+- Files modified:
+  1. src/app/api/notifications/route.ts — GET → requireStaff(req); PUT (bulk send) → requireStaff(req, ["MANAGER"]). (POST already had guard from round 1; file has no PATCH/DELETE.)
+  2. src/app/api/bookings/route.ts — GET → requireStaff(req). (POST left open per spec — guest self-booking via /book flow, already rate-limited.)
+  3. src/app/api/customers/route.ts — GET → requireStaff(req). (POST/PATCH/PUT already had guards from round 1.)
+  4. src/app/api/audit-log/route.ts — POST → requireStaff(req). (GET already had guard from round 1.)
+  5. src/app/api/early-bird/route.ts — GET → requireStaff(req); POST → requireStaff(req, ["MANAGER", "ACCOUNTANT"]). (File has no PATCH/DELETE.)
+  6. src/app/api/channel-config/route.ts — DELETE → requireStaff(req, ["MANAGER"]); PUT (test connection) → requireStaff(req, ["MANAGER"]). (POST/PATCH already had guards from round 1.)
+  7. src/app/api/travel-agents/route.ts — PUT (record-booking) → requireStaff(req, ["MANAGER", "ACCOUNTANT"]). (POST/PATCH already had guards from round 1.)
+  8. src/app/api/reviews/route.ts — GET → requireStaff(req); POST → requireStaff(req); PATCH → requireStaff(req); DELETE → requireStaff(req). (All 4 handlers now guarded.)
+  9. src/app/api/stats/route.ts — GET → requireStaff(req). Signature changed from `GET()` to `GET(req: NextRequest)`.
+  10. src/app/api/analytics/route.ts — GET → requireStaff(req); POST (track event) → requireStaff(req).
+  11. src/app/api/seo-audit/route.ts — GET → requireStaff(req); POST (triggers Google/Bing pings) → requireStaff(req).
+  12. src/app/api/influencers/route.ts — GET → requireStaff(req). (POST left open per spec — public influencer application flow with explicit code comment "public · anyone can apply". PATCH already had guard.)
+  13. src/app/api/maintenance/route.ts — GET → requireStaff(req). Signature changed from `GET()` to `GET(req: NextRequest)`. (POST already had requireStaff(req, ["MANAGER"]) from round 1; PATCH already had requireStaff(req).)
+  14. src/app/api/housekeeping/route.ts — GET → requireStaff(req). (POST/PATCH already had guards from round 1.)
+  15. src/app/api/blog-schedule/route.ts — GET → requireStaff(req). Signature changed from `GET()` to `GET(req: NextRequest)`. (PATCH left open per spec — will be patched with CRON_SECRET by main agent. POST/PUT already had guards.)
+  16. src/app/api/realtime/broadcast/route.ts — POST → requireStaff(req). (Was wide open — anyone on the internet could spam admin dashboards via this proxy. Internal server-to-server calls from other API routes do NOT go through this Next.js route — they call `${REALTIME_URL}/broadcast` directly on port 3003, so this guard only blocks browser-side abusers, not legitimate internal broadcasts.)
+  17. src/app/api/channel-webhook/[code]/route.ts — GET → requireStaff(req). (POST webhook handler left as-is — it has its own X-Channel-Key/Bearer auth against the channel's configured key, which is the correct auth model for inbound OTA webhooks.)
+
+- Skipped (with reason):
+  - All handlers in auth/*, invoice, reminders (PUT only) — explicitly excluded by main agent.
+  - notifications PATCH/DELETE — file has neither.
+  - early-bird PATCH/DELETE — file has neither.
+  - bookings POST — guest self-booking, left open per spec.
+  - influencers POST — public application flow, left open per spec.
+  - blog-schedule PATCH — left open per spec (CRON_SECRET patch deferred to main agent).
+  - channel-webhook POST — has its own channel-key auth scheme (correct for inbound OTA webhooks).
+
+Deviations / items for main agent to review:
+1. analytics POST now requires staff. This WILL break guest-side analytics event tracking (page views, booking_started, booking_completed). The /admin/analytics dashboard will record fewer events because unauthenticated browser traffic will get 401. If guest-side tracking is intended, consider keeping POST open + adding rate limiting instead, or moving guest tracking to a separate `/api/analytics/track` public endpoint and keeping this POST admin-only. Followed spec literally per "POST (if exists) → requireStaff(req)".
+2. audit-log POST now requires staff. Previous subagent's round-1 deviation #3 flagged that POST is "called by other API routes" (internal server-to-server calls that don't carry session cookies). The spec explicitly says to add the guard ("was missing"), so I did — but this will silently break any internal server-to-server audit log writes that don't forward the session cookie. Recommend main agent either (a) forward session cookie in internal calls, or (b) extract audit-log writing into a shared lib function invoked directly instead of via HTTP.
+3. realtime/broadcast POST now requires staff. Browser-side code that calls `/api/realtime/broadcast` (e.g., admin dashboard JS pushing events) will now require a valid staff session. Internal server-to-server callers (bookings POST, reviews POST, blog-schedule POST, etc.) bypass this route entirely — they call `${REALTIME_URL}/broadcast` on port 3003 directly — so they are NOT affected. Only browser-side abusers are blocked, which is the intended behavior.
+
+Stage Summary:
+- All admin GET endpoints that return PII or business data now require staff auth (notifications, bookings, customers, audit-log GET already had it, early-bird, reviews, stats, analytics, seo-audit, influencers, maintenance, housekeeping, blog-schedule, channel-webhook/[code]).
+- Realtime broadcast now requires staff auth (was: anyone could spam admin dashboards via the Next.js proxy route).
+- Reviews full CRUD (GET/POST/PATCH/DELETE) all guarded — unpublished reviews are now staff-only.
+- Role-restricted handlers: notifications PUT (MANAGER), early-bird POST (MANAGER/ACCOUNTANT), channel-config DELETE+PUT (MANAGER), travel-agents PUT (MANAGER/ACCOUNTANT).
+- TypeScript: `npx tsc --noEmit` → 0 errors.
+- ESLint: `npx eslint <all 17 files>` → 0 errors.
+- All existing logic preserved below the new guards; only the auth check was inserted at the top of each handler + (where needed) the `req: NextRequest` parameter was added to a previously zero-arg GET.

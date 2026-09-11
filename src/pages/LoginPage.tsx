@@ -141,7 +141,12 @@ export default function LoginPage() {
       });
       const j = await r.json();
       if (j.error) toast.error(j.error);
-      else { setOtpSent(true); setDemoOtp(j.otp); toast.success(`OTP sent to ${otpPhone}`); }
+      else {
+        setOtpSent(true);
+        setDemoOtp(j.otp || "");
+        if (j.otp) toast.success(`OTP sent to ${otpPhone} (demo: ${j.otp})`);
+        else toast.success(`OTP sent to ${otpPhone}`);
+      }
     } catch { toast.error("Failed to send OTP"); }
     setLoading(false);
   };

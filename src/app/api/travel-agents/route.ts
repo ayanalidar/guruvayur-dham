@@ -30,6 +30,9 @@ export async function PATCH(req: NextRequest) {
 
 // PUT /api/travel-agents · record a booking for an agent (commission tracking)
 export async function PUT(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const { agentId, bookingAmount } = await req.json();
   const commission = Math.round(bookingAmount * 0.12); // default 12%
   const agent = await db.travelAgent.update({

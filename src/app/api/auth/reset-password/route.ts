@@ -38,6 +38,11 @@ export async function POST(req: NextRequest) {
     data: { used: true },
   });
 
+  // CRITICAL: invalidate all pre-existing sessions for this user before
+  // creating a new one. If the password was reset because of a compromise,
+  // the attacker's old session(s) must be revoked. (Phase A C13 fix.)
+  await db.session.deleteMany({ where: { userId: reset.userId } }).catch(() => {});
+
   // Create a new session (auto-login)
   const session = await createSession(reset.userId, reset.user.role);
   const res = NextResponse.json({

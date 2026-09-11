@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireUser } from "@/lib/auth";
 import crypto from "crypto";
 
 /**
  * 2FA TOTP implementation (RFC 6238)
- * Simple TOTP generator/validator without external dependencies.
+ *
+ * SECURITY (Phase A C6 + H10 fix):
+ * - All handlers now require an authenticated session via requireUser(req).
+ * - The userId is taken from the session, NOT from the request body/query.
+ *   (Previously, an unauthenticated attacker could enable 2FA on anyone's
+ *   account — full account lockout.)
+ * - GET no longer leaks which users have 2FA enabled (enumeration).
  */
 
 function base32Encode(buffer: Buffer): string {
@@ -53,13 +60,13 @@ function generateTOTP(secret: string, timeStep = 30, digits = 6): string {
 
 /**
  * POST /api/auth/2fa
- * Setup: Generates a TOTP secret + QR code URL for the user
- * body: { userId }
+ * Setup: Generates a TOTP secret + QR code URL for the calling user.
  */
 export async function POST(req: NextRequest) {
-  const { userId } = await req.json();
-  if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
+  const { session, error } = await requireUser(req);
+  if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
@@ -91,15 +98,19 @@ export async function POST(req: NextRequest) {
 
 /**
  * PUT /api/auth/2fa
- * Verify: Validates the TOTP code and enables 2FA
- * body: { userId, code }
+ * Verify: Validates the TOTP code and enables 2FA for the calling user.
+ * body: { code }
  */
 export async function PUT(req: NextRequest) {
-  const { userId, code } = await req.json();
-  if (!userId || !code) return NextResponse.json({ error: "userId and code required" }, { status: 400 });
+  const { session, error } = await requireUser(req);
+  if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const userId = session.user.id;
+  const { code } = await req.json();
+  if (!code) return NextResponse.json({ error: "code required" }, { status: 400 });
 
   const tf = await db.twoFactorSecret.findUnique({ where: { userId } });
-  if (!tf) return NextResponse.json({ error: "2FA not set up" }, { status: 400 });
+  if (!tf) return NextResponse.json({ error: "2FA not set up — call POST first" }, { status: 400 });
 
   const expectedCode = generateTOTP(tf.secret);
   if (code !== expectedCode) {
@@ -125,13 +136,14 @@ export async function PUT(req: NextRequest) {
 }
 
 /**
- * GET /api/auth/2fa?userId=xxx
- * Get 2FA status for a user
+ * GET /api/auth/2fa
+ * Get 2FA status for the calling user (not arbitrary userId).
  */
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
-  if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
+  const { session, error } = await requireUser(req);
+  if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const userId = session.user.id;
   const tf = await db.twoFactorSecret.findUnique({ where: { userId } });
   return NextResponse.json({
     enabled: tf?.enabled || false,

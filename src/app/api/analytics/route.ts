@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * GET /api/analytics
@@ -7,6 +9,9 @@ import { db } from "@/lib/db";
  * Query: ?days=30
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const days = parseInt(req.nextUrl.searchParams.get("days") || "30");
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
@@ -150,10 +155,15 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/analytics
- * Track an analytics event
+ * Track an analytics event — PUBLIC (called by guests via use-analytics.ts).
+ * Rate-limited to prevent spam (60 events/min/IP — covers normal browsing).
  * body: { eventType, page?, properties? }
  */
 export async function POST(req: NextRequest) {
+  // Rate limit — guests fire ~1 event per page view, so 60/min is plenty.
+  const rl = rateLimit(req, { window: 60, max: 60, key: "analytics:track" });
+  if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+
   const { eventType, page, properties } = await req.json();
 
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";

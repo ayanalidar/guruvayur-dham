@@ -93,6 +93,9 @@ export async function PATCH(req: NextRequest) {
  * DELETE /api/channel-config?id=xxx
  */
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER"]);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
@@ -106,6 +109,9 @@ export async function DELETE(req: NextRequest) {
  * body: { id }
  */
 export async function PUT(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER"]);
+  if (error) return error;
+
   const { id } = await req.json();
   const config = await db.channelConfig.findUnique({ where: { id } });
 

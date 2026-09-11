@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/reviews · list all reviews (admin)
  * Query params: ?source=GOOGLE, ?published=true, ?featured=true, ?limit=50
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { searchParams } = req.nextUrl;
   const source = searchParams.get("source");
   const published = searchParams.get("published");
@@ -49,6 +53,9 @@ export async function GET(req: NextRequest) {
  * body: { authorName, authorAvatar?, rating, text, reviewDate?, source?, featured? }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const body = await req.json();
   const { authorName, authorAvatar, rating, text, reviewDate, source, featured } = body;
 
@@ -90,6 +97,9 @@ export async function POST(req: NextRequest) {
  * body: { id, data: { ...fields } }
  */
 export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { id, data } = await req.json();
   const review = await db.review.update({
     where: { id },
@@ -116,6 +126,9 @@ export async function PATCH(req: NextRequest) {
  * DELETE /api/reviews?id=xxx
  */
 export async function DELETE(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await db.review.delete({ where: { id } });

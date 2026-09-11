@@ -4,6 +4,9 @@ import { requireStaff } from "@/lib/auth";
 
 // GET /api/notifications · list all notifications (SMS/Email/WhatsApp log)
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const type = req.nextUrl.searchParams.get("type");
   const where: any = {};
   if (type) where.type = type;
@@ -42,6 +45,9 @@ export async function POST(req: NextRequest) {
 // PUT /api/notifications · bulk send (e.g., festival alert to all subscribers)
 // body: { template, recipients: [...] }
 export async function PUT(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER"]);
+  if (error) return error;
+
   const { template, recipients, type = "WHATSAPP" } = await req.json();
   if (!template || !Array.isArray(recipients)) {
     return NextResponse.json({ error: "template and recipients[] required" }, { status: 400 });

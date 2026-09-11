@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limiter";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
 // ?search searches guestName, guestPhone, guestEmail, and reference fields
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { searchParams } = req.nextUrl;
   const status = searchParams.get("status");
   const source = searchParams.get("source");

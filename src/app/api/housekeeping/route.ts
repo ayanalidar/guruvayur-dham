@@ -4,6 +4,9 @@ import { requireStaff } from "@/lib/auth";
 
 // GET /api/housekeeping · list all rooms with status
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
   if (status) where.status = status;

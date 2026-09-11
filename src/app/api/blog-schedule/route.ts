@@ -6,7 +6,10 @@ import { requireStaff } from "@/lib/auth";
  * GET /api/blog-schedule
  * Returns all scheduled posts (published + scheduled + draft)
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const posts = await db.blogPost.findMany({
     orderBy: { scheduledAt: "asc" },
   });
@@ -59,8 +62,25 @@ export async function POST(req: NextRequest) {
  * PATCH /api/blog-schedule
  * Process scheduled posts · publishes any posts whose scheduledAt has passed.
  * Called by a cron job or manual trigger.
+ *
+ * SECURITY (Phase A H3 fix): CRON_SECRET-protected — prevents anyone from
+ * mass-publishing drafts ahead of schedule or spamming realtime broadcasts.
  */
-export async function PATCH() {
+export async function PATCH(req: NextRequest) {
+  // CRON_SECRET check — fail-closed.
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: "Server misconfiguration: CRON_SECRET not set. Blog scheduler disabled." },
+      { status: 503 }
+    );
+  }
+  const authHeader = req.headers.get("authorization") || "";
+  const queryKey = req.nextUrl.searchParams.get("key") || "";
+  if (authHeader !== `Bearer ${cronSecret}` && queryKey !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const now = new Date();
   const duePosts = await db.blogPost.findMany({
     where: {

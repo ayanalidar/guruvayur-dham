@@ -35,6 +35,9 @@ export async function GET(req: NextRequest) {
  * body: { userId, userName, action, entity, entityId?, details? }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { userId, userName, action, entity, entityId, details } = await req.json();
 
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";

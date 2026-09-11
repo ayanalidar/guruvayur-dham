@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 // GET /api/early-bird · list active campaigns
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const campaigns = await db.earlyBirdCampaign.findMany({ orderBy: { startDate: "desc" } });
   return NextResponse.json({ campaigns });
 }
 
 // POST /api/early-bird · create campaign
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
+  if (error) return error;
+
   const body = await req.json();
   const campaign = await db.earlyBirdCampaign.create({
     data: {

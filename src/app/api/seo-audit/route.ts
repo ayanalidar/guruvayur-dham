@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/seo-audit — Returns recent SEO audit results
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const audits = await db.seoAudit.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -171,6 +175,9 @@ async function checkAsset(baseUrl: string, path: string): Promise<{ ok: boolean;
  * for each section, not a fake 100/100).
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const baseUrl = req.nextUrl.origin;
 
   // 1) Real audit of base HTML — this is what search engines actually see

@@ -55,8 +55,23 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json({ reminder });
 }
 
-// PUT /api/reminders/process · process all due reminders (called by cron)
-export async function PUT() {
+// PUT /api/reminders/process · process all due reminders (called by cron).
+// CRON_SECRET-protected — prevents anyone from triggering mass WhatsApp sends.
+export async function PUT(req: NextRequest) {
+  // CRON_SECRET check — fail-closed.
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: "Server misconfiguration: CRON_SECRET not set. Reminder processing disabled." },
+      { status: 503 }
+    );
+  }
+  const authHeader = req.headers.get("authorization") || "";
+  const queryKey = req.nextUrl.searchParams.get("key") || "";
+  if (authHeader !== `Bearer ${cronSecret}` && queryKey !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const now = new Date();
   const due = await db.reminder.findMany({
     where: { sent: false, scheduledFor: { lte: now } },

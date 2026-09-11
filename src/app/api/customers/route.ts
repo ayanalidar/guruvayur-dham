@@ -4,6 +4,9 @@ import { requireStaff } from "@/lib/auth";
 
 // GET /api/customers · list all customers (CRM)
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const search = req.nextUrl.searchParams.get("search");
   const tag = req.nextUrl.searchParams.get("tag");
   const where: any = {};

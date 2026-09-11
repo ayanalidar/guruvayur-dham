@@ -7,6 +7,9 @@ import { requireStaff } from "@/lib/auth";
  * Returns all influencers (admin)
  */
 export async function GET(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
   if (status) where.status = status;
