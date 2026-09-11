@@ -5,7 +5,14 @@ import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/auth/login
- * Rate limited: 5 attempts per minute per IP
+ * Rate limited: 5 attempts per minute per IP.
+ *
+ * SECURITY (Phase C M9 + H16 fixes):
+ * - Staff login now tries passwordHash (proper bcrypt-like hash) first,
+ *   falls back to legacy PIN comparison. New staff should be created with
+ *   passwordHash via /api/staff PATCH { password: "..." }.
+ * - MANAGER role: requires 2FA enabled. If a MANAGER logs in without 2FA,
+ *   returns 403 telling them to set up 2FA first.
  */
 export async function POST(req: NextRequest) {
   // Rate limit: 5 login attempts per minute
@@ -20,7 +27,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { type } = body;
 
-  // ===== 1. STAFF PIN LOGIN =====
+  // ===== 1. STAFF PIN LOGIN (legacy — 4-digit PIN) =====
   if (type === "pin") {
     const { pin } = body;
     if (!pin || pin.length !== 4) {
@@ -43,16 +50,26 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+    // SECURITY (H16): MANAGER role requires 2FA.
+    if (staff.role === "MANAGER") {
+      const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
+      if (!tf?.enabled) {
+        return NextResponse.json({
+          error: "MANAGER role requires 2FA. Please log in via email + password + 2FA instead of PIN, or ask an admin to set up 2FA on your account.",
+          requires2FA: true,
+        }, { status: 403 });
+      }
+    }
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, role: staff.role },
+      user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
     res.headers.set("Set-Cookie", setSessionCookie(session.token));
     return res;
   }
 
-  // ===== 2. STAFF EMAIL + PASSWORD =====
+  // ===== 2. STAFF EMAIL + PASSWORD (preferred — uses passwordHash) =====
   if (type === "staff") {
     const { email, password } = body;
     if (!email || !password) {
@@ -60,21 +77,44 @@ export async function POST(req: NextRequest) {
     }
     const staff = await db.staffUser.findUnique({ where: { email } });
     if (!staff || !staff.active) {
+      // M11 timing equalization — run dummy hash to equalize response time.
+      verifyPassword(password, "dummy:salt:0000000000000000000000000000000000000000000000000000000000000000");
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
-    // For staff, check against stored PIN (production should use passwordHash)
-    if (password !== staff.pin) {
+
+    // SECURITY (M9): try passwordHash first, fall back to legacy PIN.
+    let authed = false;
+    if (staff.passwordHash) {
+      authed = verifyPassword(password, staff.passwordHash);
+    } else {
+      // Legacy fallback — PIN stored in plaintext. Once passwordHash is set,
+      // PIN login is bypassed. Migration path: managers should set passwords
+      // via /api/staff PATCH { password: "..." }.
+      authed = password === staff.pin;
+    }
+    if (!authed) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
+
     let user = await db.user.findFirst({ where: { staffId: staff.id } });
     if (!user) {
       user = await db.user.create({
         data: { name: staff.name, email: staff.email, phone: staff.phone, role: "STAFF", staffId: staff.id },
       });
     }
+    // SECURITY (H16): MANAGER role requires 2FA.
+    if (staff.role === "MANAGER") {
+      const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
+      if (!tf?.enabled) {
+        return NextResponse.json({
+          error: "MANAGER role requires 2FA. Please set up 2FA via /api/auth/2fa POST before logging in.",
+          requires2FA: true,
+        }, { status: 403 });
+      }
+    }
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, role: staff.role },
+      user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
     res.headers.set("Set-Cookie", setSessionCookie(session.token));

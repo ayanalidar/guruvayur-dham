@@ -71,13 +71,11 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
 
   if (!token) return null;
 
+  // Include session.user.tokensInvalidatedAt and twoFactor.enabled.
   const session = await db.session.findUnique({
     where: { token },
     include: {
       user: {
-        // Include 2FA status so handlers can enforce 2FA for sensitive ops.
-        // twoFactorSecret is a 1:1 relation on User (model TwoFactorSecret).
-        // We don't include the actual secret — just enabled flag.
         include: { twoFactor: { select: { enabled: true } } },
       },
     },
@@ -86,6 +84,16 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
   if (!session) return null;
   if (session.expiresAt < new Date()) {
     await db.session.delete({ where: { id: session.id } });
+    return null;
+  }
+
+  // SECURITY (Phase C M5): reject sessions created BEFORE the user's
+  // tokensInvalidatedAt timestamp. This is the global session-invalidation
+  // mechanism — set tokensInvalidatedAt = now() on password reset, 2FA
+  // enable, admin force-logout, etc. to revoke all pre-existing sessions.
+  const invalidatedAt = (session.user as any).tokensInvalidatedAt;
+  if (invalidatedAt && session.createdAt < invalidatedAt) {
+    await db.session.delete({ where: { id: session.id } }).catch(() => {});
     return null;
   }
 

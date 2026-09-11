@@ -29,7 +29,14 @@ export async function POST(req: NextRequest) {
   // Update password
   await db.user.update({
     where: { id: reset.userId },
-    data: { passwordHash: hashPassword(newPassword) },
+    data: {
+      passwordHash: hashPassword(newPassword),
+      // SECURITY (Phase C M5): set tokensInvalidatedAt so any pre-existing
+      // sessions (e.g. attacker's session if password was compromised) are
+      // rejected at the getUserFromRequest layer. Belt-and-braces on top
+      // of the explicit session.deleteMany in C13.
+      tokensInvalidatedAt: new Date(),
+    },
   });
 
   // Mark token as used

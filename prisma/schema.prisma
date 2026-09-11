@@ -278,7 +278,17 @@ model StaffUser {
   email           String   @unique
   phone           String?
   role            String   @default("RECEPTIONIST") // MANAGER | RECEPTIONIST | HOUSEKEEPING | ACCOUNTANT
-  pin             String   // 4-digit PIN for quick login
+  pin             String   // 4-digit PIN for quick login (legacy — prefer passwordHash)
+  // SECURITY (Phase C M9): proper password hash for staff login.
+  // When set, login uses verifyPassword(password, passwordHash) instead of
+  // plaintext PIN comparison. The PIN column remains for backwards compat
+  // (existing staff can still login via PIN until their passwordHash is set).
+  // Set via /api/staff PATCH with { password: "..." } — gets hashed by the route.
+  passwordHash    String?
+  // When true, staff is forced to change their password on next login.
+  // Set to true for seeded staff (Phase B seeds random PINs — should be
+  // replaced with proper passwords on first login).
+  mustChangePassword Boolean @default(false)
   active          Boolean  @default(true)
   lastLoginAt     DateTime?
   createdAt       DateTime @default(now())
@@ -431,6 +441,10 @@ model User {
   customerId      String?  // link to CRM Customer record
   role            String   @default("GUEST") // GUEST | STAFF
   staffId         String?  // if role=STAFF, link to StaffUser
+  // SECURITY (Phase C M5): when set, all sessions created before this
+  // timestamp are rejected in getUserFromRequest. Used by password reset,
+  // 2FA enable, and admin force-logout to globally invalidate sessions.
+  tokensInvalidatedAt DateTime? @default(now())
   lastLoginAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
