@@ -89,6 +89,10 @@ export async function POST(req: NextRequest) {
     }
     const user = await db.user.findUnique({ where: { email } });
     if (!user || !user.passwordHash) {
+      // SECURITY (M11): Equalize timing by running a dummy password
+      // verification. Without this, an attacker can enumerate emails via
+      // response-time differences (no verifyPassword call when user=null).
+      verifyPassword(password, "dummy:salt:hash:0000000000000000000000000000000000000000000000000000000000000000");
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
     if (!verifyPassword(password, user.passwordHash)) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/push/subscribe
@@ -7,6 +8,10 @@ import { db } from "@/lib/db";
  * body: { endpoint, keys, userId? }
  */
 export async function POST(req: NextRequest) {
+  // Rate limit — 10 subscriptions/min per IP (prevents DB spam).
+  const rl = rateLimit(req, { window: 60, max: 10, key: "push:subscribe" });
+  if (!rl.ok) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+
   const { endpoint, keys, userId } = await req.json();
 
   if (!endpoint || !keys) {

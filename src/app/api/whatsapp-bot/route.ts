@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { chat } from "@/lib/ai/provider";
+import { rateLimit } from "@/lib/rate-limiter";
 
 // POST /api/whatsapp-bot · simulated WhatsApp chatbot
 // body: { phone, message }
 // Recognizes intents: "book a room", "my booking", "pooja list", "check-out time", "festival dates"
+//
+// SECURITY (Phase C M2 fix):
+// - Rate limited: 20 messages/min per IP (prevents AI cost abuse).
+// - "my booking" intent no longer returns booking details by arbitrary phone.
+//   Instead, asks the user for their booking reference (GD-XXXX) — which is
+//   a secret known only to the actual guest. Was: anyone could pass any
+//   phone number and learn that person's booking reference, dates, amount.
 export async function POST(req: NextRequest) {
+  // Rate limit — 20 messages/min per IP.
+  const rl = rateLimit(req, { window: 60, max: 20, key: "whatsapp-bot" });
+  if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
+
   const { phone, message } = await req.json();
   if (!message) return NextResponse.json({ error: "Message required" }, { status: 400 });
 
@@ -40,16 +52,11 @@ export async function POST(req: NextRequest) {
     reply = `Dress Code for Mathura Temples: 👕\n\nMen:\n• Dhoti/kurta or traditional wear preferred\n• No shorts or sleeveless shirts\n\nWomen:\n• Saree, salwar kameez, or modest traditional wear\n• Cover head in some temples (especially Krishna Janmabhoomi)\n\nGeneral:\n• Remove footwear before entering\n• No leather items inside sanctum\n• Photography prohibited inside most temples`;
   } else if (msg.match(/my booking|status|reference/)) {
     intent = "booking_status";
-    // Try to find booking by phone
-    const booking = await db.booking.findFirst({
-      where: { guestPhone: phone },
-      orderBy: { createdAt: "desc" },
-    });
-    if (booking) {
-      reply = `Your booking: 📋\n\nReference: ${booking.reference}\nStatus: ${booking.status}\nCheck-in: ${new Date(booking.checkIn).toLocaleDateString("en-IN")}\nCheck-out: ${new Date(booking.checkOut).toLocaleDateString("en-IN")}\nNights: ${booking.nights}\nAmount: ₹${booking.amount}\nSource: ${booking.source}\n\nNeed changes? WhatsApp our front desk: +91-90908 20208`;
-    } else {
-      reply = `I couldn't find a booking for ${phone}. Could you share your booking reference (starts with GD-)? Or book a new room at https://guruvayurdham.com/#/rooms`;
-    }
+    // SECURITY (M2): Do NOT return booking details by phone — that allows
+    // anyone to enumerate bookings for any phone number. Instead, ask for
+    // the booking reference (GD-XXXX), which is a secret known only to the
+    // actual guest.
+    reply = `To check your booking, please share your booking reference (starts with GD-, e.g. GD-AB12CD). You received it via WhatsApp/SMS when you booked. Lost your reference? Please call our front desk at +91-90908 20208 — we'll verify your identity before sharing details.`;
   } else {
     // Use AI for general questions (Groq first, z-ai fallback)
     intent = "ai_fallback";

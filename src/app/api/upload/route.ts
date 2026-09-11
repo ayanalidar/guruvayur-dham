@@ -4,6 +4,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { tmpdir } from "os";
 import { requireStaff } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 
 /**
  * POST /api/upload
@@ -26,6 +27,10 @@ import { requireStaff } from "@/lib/auth";
 export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
+
+  // Rate limit — 10 uploads/min per IP (prevents disk-fill / Blob-cost abuse).
+  const rl = rateLimit(req, { window: 60, max: 10, key: "upload" });
+  if (!rl.ok) return NextResponse.json({ error: "Too many uploads. Please wait a minute." }, { status: 429 });
 
   try {
     const formData = await req.formData();

@@ -27,9 +27,20 @@ export function generateToken(): string {
 }
 
 /**
- * Create a session for a user
+ * Create a session for a user.
+ *
+ * SECURITY (Phase C M4 fix): deletes pre-existing sessions for the user
+ * before creating a new one. This enforces single-session-per-user (or limits
+ * to one active session at a time, per login). If you need to allow multiple
+ * concurrent sessions (e.g. multiple devices), comment out the deleteMany.
  */
 export async function createSession(userId: string, role: string, daysValid = 7) {
+  // Delete pre-existing sessions for this user — prevents session sprawl and
+  // ensures logout-on-other-device behavior on each new login.
+  // (Note: if a user logs in on phone + laptop in quick succession, the
+  // phone session will be invalidated — that's intentional for security.)
+  await db.session.deleteMany({ where: { userId } }).catch(() => {});
+
   const token = generateToken();
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + daysValid);
@@ -47,7 +58,10 @@ export async function createSession(userId: string, role: string, daysValid = 7)
 }
 
 /**
- * Get user from session token (from cookie or Authorization header)
+ * Get user from session token (from cookie or Authorization header).
+ *
+ * SECURITY (Phase C M8 fix): now includes the TwoFactorSecret relation so
+ * handlers can check session.user.twoFactorEnabled without an extra DB query.
  */
 export async function getUserFromRequest(req: Request): Promise<{ user: any; role: string } | null> {
   // Try cookie first
@@ -59,7 +73,14 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
 
   const session = await db.session.findUnique({
     where: { token },
-    include: { user: true },
+    include: {
+      user: {
+        // Include 2FA status so handlers can enforce 2FA for sensitive ops.
+        // twoFactorSecret is a 1:1 relation on User (model TwoFactorSecret).
+        // We don't include the actual secret — just enabled flag.
+        include: { twoFactor: { select: { enabled: true } } },
+      },
+    },
   });
 
   if (!session) return null;
@@ -77,6 +98,7 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
       role: session.user.role,
       customerId: session.user.customerId,
       staffId: session.user.staffId,
+      twoFactorEnabled: session.user.twoFactor?.enabled || false,
     },
     role: session.role,
   };

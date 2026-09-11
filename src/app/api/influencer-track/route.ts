@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 
 /**
  * GET /api/influencer-track?code=GDRAJ42
  * Tracks a click from an influencer's unique link.
  * Called when someone visits the site with ?ref=INFLUENCER_CODE
- * Increments click count + logs click details.
+ * Increments click count + logs click details. PUBLIC — anyone visiting
+ * with a referral code triggers a click track.
  */
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
@@ -50,10 +52,18 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/influencer-track
- * Mark a click as converted to a booking
+ * Mark a click as converted to a booking.
+ *
+ * SECURITY (Phase C M3 fix): Now requires staff auth. Was: anyone could
+ * pass any influencer code + bookingRef and inflate the influencer's
+ * totalBookings + totalCommission — financial fraud vector.
+ *
  * body: { code, bookingRef }
  */
 export async function POST(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
   const { code, bookingRef } = await req.json();
 
   const influencer = await db.influencer.findUnique({ where: { uniqueCode: code } });
