@@ -1,7 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { validateCoupon, markCouponUsed } from "@/lib/pricing";
 import { requireStaff } from "@/lib/auth";
+
+const CouponTypeEnum = z.enum(["PERCENTAGE", "FLAT"]);
+
+const CreateCouponSchema = z.object({
+  code: z.string().min(1).max(50),
+  description: z.string().optional(),
+  type: CouponTypeEnum,
+  value: z.coerce.number().min(0),
+  maxDiscount: z.coerce.number().min(0).optional(),
+  minBooking: z.coerce.number().min(0).optional(),
+  usageLimit: z.coerce.number().int().min(0).optional(),
+  validFrom: z.string().min(1),
+  validTo: z.string().min(1),
+  active: z.boolean().optional(),
+});
+
+const UpdateCouponSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
+
+const ValidateCouponSchema = z.object({
+  code: z.string().min(1).max(50),
+  bookingAmount: z.coerce.number().min(0),
+});
 
 // GET /api/coupons · list all coupons
 export async function GET() {
@@ -14,8 +40,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const coupon = await db.coupon.create({ data: body });
+  const parsed = CreateCouponSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const coupon = await db.coupon.create({ data: parsed.data as any });
   return NextResponse.json({ coupon });
 }
 
@@ -24,8 +56,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const coupon = await db.coupon.update({ where: { id }, data });
+  const parsed = UpdateCouponSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const coupon = await db.coupon.update({ where: { id }, data: data as any });
   return NextResponse.json({ coupon });
 }
 
@@ -42,7 +81,14 @@ export async function DELETE(req: NextRequest) {
 
 // PUT /api/coupons/validate · validate a coupon code against a booking amount
 export async function PUT(req: NextRequest) {
-  const { code, bookingAmount } = await req.json();
+  const parsed = ValidateCouponSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { code, bookingAmount } = parsed.data;
   const result = await validateCoupon(code, bookingAmount);
   return NextResponse.json(result);
 }

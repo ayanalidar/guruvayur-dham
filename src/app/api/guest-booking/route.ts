@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
 import { generateRef } from "@/lib/auth";
+
+const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
+const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
+
+const CreateGuestBookingSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  guestEmail: z.string().email().optional(),
+  checkIn: z.string().min(1),
+  checkOut: z.string().min(1),
+  guests: z.coerce.number().int().min(1).default(2),
+  couponCode: z.string().max(50).optional(),
+  darshanSlot: DarshanSlotEnum.optional(),
+  paymentMethod: PaymentMethodEnum.default("RAZORPAY"),
+  paymentId: z.string().max(200).optional(),
+});
 
 /**
  * POST /api/guest-booking
@@ -24,16 +42,18 @@ import { generateRef } from "@/lib/auth";
  * }
  */
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  const parsed = CreateGuestBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
   const {
     roomSlug, guestName, guestPhone, guestEmail,
     checkIn, checkOut, guests = 2, couponCode,
     darshanSlot, paymentMethod = "RAZORPAY",
-  } = body;
-
-  if (!roomSlug || !guestName || !guestPhone || !checkIn || !checkOut) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
+  } = parsed.data;
 
   const room = await db.room.findUnique({ where: { slug: roomSlug } });
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
@@ -117,7 +137,7 @@ export async function POST(req: NextRequest) {
   });
 
   // ===== 6. MARK COUPON AS USED =====
-  if (couponResult?.valid) {
+  if (couponCode && couponResult?.valid) {
     await markCouponUsed(couponCode);
   }
 

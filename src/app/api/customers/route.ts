@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateCustomerSchema = z.object({
+  name: z.string().min(1).max(200),
+  phone: z.string().min(1).max(30),
+  email: z.string().email().optional(),
+  city: z.string().max(100).optional(),
+  preferences: z.string().optional(),
+  notes: z.string().optional(),
+  tags: z.string().max(500).optional(),
+});
+
+const UpdateCustomerSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
+
+const RecordBookingSchema = z.object({
+  phone: z.string().min(1).max(30),
+  bookingAmount: z.coerce.number().min(0),
+  loyaltyPoints: z.coerce.number().int().min(0).optional(),
+});
 
 // GET /api/customers · list all customers (CRM)
 export async function GET(req: NextRequest) {
@@ -32,8 +54,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { name, phone, email, city, preferences, notes, tags } = body;
+  const parsed = CreateCustomerSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { name, phone, email, city, preferences, notes, tags } = parsed.data;
   const customer = await db.customer.upsert({
     where: { phone },
     create: { name, phone, email, city, preferences, notes, tags },
@@ -47,8 +75,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const customer = await db.customer.update({ where: { id }, data });
+  const parsed = UpdateCustomerSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const customer = await db.customer.update({ where: { id }, data: data as any });
   return NextResponse.json({ customer });
 }
 
@@ -57,7 +92,14 @@ export async function PUT(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { phone, bookingAmount, loyaltyPoints } = await req.json();
+  const parsed = RecordBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { phone, bookingAmount, loyaltyPoints } = parsed.data;
   const customer = await db.customer.upsert({
     where: { phone },
     create: {

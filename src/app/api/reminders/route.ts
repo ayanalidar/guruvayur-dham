@@ -1,6 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const ReminderTypeEnum = z.enum([
+  "CHECK_IN",
+  "CHECK_OUT",
+  "POOJA",
+  "DARSHAN",
+  "PAYMENT",
+  "OTHER",
+]);
+
+const ReminderChannelEnum = z.enum([
+  "WHATSAPP",
+  "SMS",
+  "EMAIL",
+  "PUSH",
+]);
+
+const CreateReminderSchema = z.object({
+  type: ReminderTypeEnum,
+  bookingRef: z.string().min(1).max(100),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  message: z.string().min(1),
+  scheduledFor: z.string().min(1),
+  channel: ReminderChannelEnum.optional(),
+});
+
+const MarkReminderSentSchema = z.object({
+  id: z.string().min(1),
+});
 
 // GET /api/reminders · list pending reminders
 export async function GET(req: NextRequest) {
@@ -20,8 +51,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { type, bookingRef, guestName, guestPhone, message, scheduledFor, channel } = body;
+  const parsed = CreateReminderSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { type, bookingRef, guestName, guestPhone, message, scheduledFor, channel } = parsed.data;
   const reminder = await db.reminder.create({
     data: {
       type, bookingRef, guestName, guestPhone, message,
@@ -37,7 +74,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id } = await req.json();
+  const parsed = MarkReminderSentSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id } = parsed.data;
   const reminder = await db.reminder.update({
     where: { id },
     data: { sent: true, sentAt: new Date() },

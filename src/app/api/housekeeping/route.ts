@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const HousekeepingStatusEnum = z.enum([
+  "READY",
+  "OCCUPIED",
+  "DIRTY",
+  "CLEANING",
+  "INSPECT",
+  "MAINTENANCE",
+]);
+
+const UpdateHousekeepingSchema = z.object({
+  roomNumber: z.string().min(1).max(50),
+  status: HousekeepingStatusEnum,
+  assignedTo: z.string().max(200).optional(),
+  notes: z.string().optional(),
+});
+
+const BulkUpdateHousekeepingSchema = z.object({
+  fromStatus: HousekeepingStatusEnum,
+  toStatus: HousekeepingStatusEnum,
+  assignedTo: z.string().max(200).optional(),
+});
 
 // GET /api/housekeeping · list all rooms with status
 export async function GET(req: NextRequest) {
@@ -23,7 +46,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { roomNumber, status, assignedTo, notes } = await req.json();
+  const parsed = UpdateHousekeepingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { roomNumber, status, assignedTo, notes } = parsed.data;
   const data: any = { status };
   if (assignedTo !== undefined) data.assignedTo = assignedTo;
   if (notes !== undefined) data.notes = notes;
@@ -40,7 +70,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { fromStatus, toStatus, assignedTo } = await req.json();
+  const parsed = BulkUpdateHousekeepingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { fromStatus, toStatus, assignedTo } = parsed.data;
   const result = await db.housekeepingStatus.updateMany({
     where: { status: fromStatus },
     data: { status: toStatus, assignedTo: assignedTo || null, lastCleanedAt: toStatus === "READY" ? new Date() : undefined },

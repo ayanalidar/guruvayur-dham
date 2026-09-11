@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateWaitingListSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  checkIn: z.string().min(1),
+  checkOut: z.string().min(1),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  guestEmail: z.string().email().optional(),
+  guests: z.coerce.number().int().min(1).optional(),
+});
+
+const NotifyWaitingListSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  checkIn: z.string().min(1),
+  checkOut: z.string().min(1),
+});
 
 // GET /api/waiting-list · list all waitlist entries
 export async function GET(req: NextRequest) {
@@ -16,11 +33,14 @@ export async function GET(req: NextRequest) {
 
 // POST /api/waiting-list · join waitlist
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { roomSlug, checkIn, checkOut, guestName, guestPhone, guestEmail, guests } = body;
-  if (!roomSlug || !guestName || !guestPhone || !checkIn || !checkOut) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const parsed = CreateWaitingListSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { roomSlug, checkIn, checkOut, guestName, guestPhone, guestEmail, guests } = parsed.data;
   const entry = await db.waitingList.create({
     data: {
       roomSlug,
@@ -49,7 +69,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { roomSlug, checkIn, checkOut } = await req.json();
+  const parsed = NotifyWaitingListSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { roomSlug, checkIn, checkOut } = parsed.data;
   // Find the next person in line for this room/date range
   const next = await db.waitingList.findFirst({
     where: {

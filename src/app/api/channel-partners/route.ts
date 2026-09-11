@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const UpdateChannelPartnerSchema = z.object({
+  code: z.string().min(1).max(50),
+  connected: z.boolean(),
+});
 
 // GET /api/channel-partners · list all channel partners with stats
 export async function GET() {
@@ -42,7 +48,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { code, connected } = await req.json();
+  const parsed = UpdateChannelPartnerSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { code, connected } = parsed.data;
   const partner = await db.channelPartner.update({
     where: { code },
     data: { connected },

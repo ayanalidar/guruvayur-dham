@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const MaintenanceStatusEnum = z.enum([
+  "SCHEDULED",
+  "IN_PROGRESS",
+  "COMPLETED",
+]);
+
+const CreateMaintenanceSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  roomNumber: z.string().max(50).optional(),
+  startDate: z.string().min(1),
+  endDate: z.string().min(1),
+  reason: z.string().min(1).max(1000),
+  cost: z.coerce.number().min(0).optional(),
+  notes: z.string().optional(),
+});
+
+const UpdateMaintenanceSchema = z.object({
+  id: z.string().min(1),
+  status: MaintenanceStatusEnum,
+});
 
 // GET /api/maintenance · list maintenance blocks
 export async function GET(req: NextRequest) {
@@ -16,8 +38,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
   if (error) return error;
 
-  const body = await req.json();
-  const { roomSlug, roomNumber, startDate, endDate, reason, cost, notes } = body;
+  const parsed = CreateMaintenanceSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { roomSlug, roomNumber, startDate, endDate, reason, cost, notes } = parsed.data;
 
   const block = await db.maintenanceBlock.create({
     data: {
@@ -75,7 +103,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, status } = await req.json();
+  const parsed = UpdateMaintenanceSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, status } = parsed.data;
   const block = await db.maintenanceBlock.update({ where: { id }, data: { status } });
   return NextResponse.json({ block });
 }

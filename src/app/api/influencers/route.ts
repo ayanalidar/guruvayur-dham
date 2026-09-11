@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const SocialPlatformEnum = z.enum([
+  "INSTAGRAM",
+  "YOUTUBE",
+  "TWITTER",
+  "FACEBOOK",
+  "BLOG",
+  "OTHER",
+]);
+
+const CreateInfluencerSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email(),
+  phone: z.string().max(30).optional(),
+  socialPlatform: SocialPlatformEnum,
+  socialHandle: z.string().min(1).max(200),
+  followerCount: z.coerce.number().int().min(0).optional(),
+});
+
+const UpdateInfluencerSchema = z.object({
+  id: z.string().min(1),
+  data: z.object({
+    status: z.enum(["PENDING", "APPROVED", "REJECTED", "SUSPENDED"]).optional(),
+    commissionRate: z.coerce.number().min(0).max(100).optional(),
+    notes: z.string().optional(),
+  }),
+});
 
 /**
  * GET /api/influencers
@@ -29,12 +57,14 @@ export async function GET(req: NextRequest) {
  * body: { name, email, phone, socialPlatform, socialHandle, followerCount }
  */
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { name, email, phone, socialPlatform, socialHandle, followerCount } = body;
-
-  if (!name || !email || !socialPlatform || !socialHandle) {
-    return NextResponse.json({ error: "Name, email, social platform, and handle required" }, { status: 400 });
+  const parsed = CreateInfluencerSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { name, email, phone, socialPlatform, socialHandle, followerCount } = parsed.data;
 
   // Check if email already registered
   const existing = await db.influencer.findUnique({ where: { email } });
@@ -81,7 +111,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
+  const parsed = UpdateInfluencerSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
   const influencer = await db.influencer.update({ where: { id }, data });
   return NextResponse.json({ influencer });
 }

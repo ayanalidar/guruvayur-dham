@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const SchedulePostSchema = z.object({
+  postId: z.string().min(1),
+  scheduledAt: z.string().min(1),
+});
+
+const UpdatePostSeoSchema = z.object({
+  postId: z.string().min(1),
+  seoTitle: z.string().max(300).optional(),
+  seoDescription: z.string().optional(),
+  seoKeywords: z.string().optional(),
+});
 
 /**
  * GET /api/blog-schedule
@@ -32,7 +45,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { postId, scheduledAt } = await req.json();
+  const parsed = SchedulePostSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { postId, scheduledAt } = parsed.data;
 
   const post = await db.blogPost.update({
     where: { id: postId },
@@ -128,7 +148,14 @@ export async function PUT(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { postId, seoTitle, seoDescription, seoKeywords } = await req.json();
+  const parsed = UpdatePostSeoSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { postId, seoTitle, seoDescription, seoKeywords } = parsed.data;
 
   const post = await db.blogPost.update({
     where: { id: postId },

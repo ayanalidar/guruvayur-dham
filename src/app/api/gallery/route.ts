@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateGalleryImageSchema = z.object({
+  tab: z.string().min(1).max(100),
+  src: z.string().min(1).max(1000),
+  alt: z.string().min(1).max(500),
+  caption: z.string().max(1000).optional(),
+  span: z.string().max(50).optional(),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+  title: z.string().max(200).optional(),
+  image: z.string().max(1000).optional(),
+  category: z.string().max(100).optional(),
+  active: z.boolean().optional(),
+}).passthrough();
+
+const UpdateGalleryImageSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
 
 // GET /api/gallery · list all (optionally by tab)
 export async function GET(req: NextRequest) {
@@ -19,8 +38,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const image = await db.galleryImage.create({ data: body });
+  const parsed = CreateGalleryImageSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const image = await db.galleryImage.create({ data: parsed.data as any });
   return NextResponse.json({ image });
 }
 
@@ -29,8 +54,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const image = await db.galleryImage.update({ where: { id }, data });
+  const parsed = UpdateGalleryImageSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const image = await db.galleryImage.update({ where: { id }, data: data as any });
   return NextResponse.json({ image });
 }
 

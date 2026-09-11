@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limiter";
 import { requireStaff, generateRef } from "@/lib/auth";
+
+const CreateBookingSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  guestEmail: z.string().email().optional(),
+  checkIn: z.string().min(1),
+  checkOut: z.string().min(1),
+  guests: z.coerce.number().int().min(1).optional(),
+  source: z.string().max(50).default("DIRECT"),
+  channelBookingId: z.string().max(200).optional(),
+  notes: z.string().optional(),
+});
 
 // GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
 // ?search searches guestName, guestPhone, guestEmail, and reference fields
@@ -51,15 +65,17 @@ export async function POST(req: NextRequest) {
   const rl = rateLimit(req, { window: 60, max: 5 });
   if (!rl.ok) return NextResponse.json({ error: "Too many booking attempts. Please wait a minute." }, { status: 429 });
 
-  const body = await req.json();
+  const parsed = CreateBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
   const {
     roomSlug, guestName, guestPhone, guestEmail,
     checkIn, checkOut, guests, source = "DIRECT", channelBookingId, notes,
-  } = body;
-
-  if (!roomSlug || !guestName || !guestPhone || !checkIn || !checkOut) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
+  } = parsed.data;
 
   const room = await db.room.findUnique({ where: { slug: roomSlug } });
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });

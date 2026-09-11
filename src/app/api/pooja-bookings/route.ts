@@ -1,6 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff, generateRef } from "@/lib/auth";
+
+const PoojaBookingStatusEnum = z.enum([
+  "SCHEDULED",
+  "AT_TEMPLE",
+  "COMPLETED",
+  "PRASADAM_READY",
+  "PICKED_UP",
+  "CANCELLED",
+]);
+
+const CreatePoojaBookingSchema = z.object({
+  poojaId: z.string().min(1),
+  poojaName: z.string().min(1).max(200),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  guestEmail: z.string().email().optional(),
+  preferredDate: z.string().min(1),
+  amount: z.coerce.number().min(0),
+  notes: z.string().optional(),
+});
+
+const UpdatePoojaBookingSchema = z.object({
+  id: z.string().min(1),
+  status: PoojaBookingStatusEnum,
+  prasadamNote: z.string().optional(),
+});
 
 // GET /api/pooja-bookings · list all pooja bookings
 export async function GET(req: NextRequest) {
@@ -19,11 +46,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { poojaId, poojaName, guestName, guestPhone, guestEmail, preferredDate, amount, notes } = body;
-  if (!poojaId || !poojaName || !guestName || !guestPhone || !preferredDate || !amount) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const parsed = CreatePoojaBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { poojaId, poojaName, guestName, guestPhone, guestEmail, preferredDate, amount, notes } = parsed.data;
   const ref = generateRef("PB");
   const booking = await db.poojaBooking.create({
     data: {
@@ -57,7 +87,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, status, prasadamNote } = await req.json();
+  const parsed = UpdatePoojaBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, status, prasadamNote } = parsed.data;
   const booking = await db.poojaBooking.update({
     where: { id },
     data: { status, prasadamNote: prasadamNote || undefined },

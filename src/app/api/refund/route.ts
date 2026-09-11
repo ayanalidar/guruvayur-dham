@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const RefundSchema = z.object({
+  bookingId: z.string().min(1),
+  reason: z.string().min(1).max(2000),
+});
 
 // POST /api/refund · process refund for a booking
 // body: { bookingId, reason }
@@ -13,7 +19,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
   if (error) return error;
 
-  const { bookingId, reason } = await req.json();
+  const parsed = RefundSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { bookingId, reason } = parsed.data;
   const booking = await db.booking.findUnique({
     where: { id: bookingId },
     include: { room: true },

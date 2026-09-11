@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateTravelAgentSchema = z.object({
+  companyName: z.string().min(1).max(200),
+  contactName: z.string().min(1).max(200),
+  phone: z.string().min(1).max(30),
+  email: z.string().email().optional(),
+  commissionRate: z.coerce.number().min(0).max(1).optional(),
+  creditLimit: z.coerce.number().int().min(0).optional(),
+  active: z.boolean().optional(),
+}).passthrough();
+
+const UpdateTravelAgentSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
+
+const RecordAgentBookingSchema = z.object({
+  agentId: z.string().min(1),
+  bookingAmount: z.coerce.number().min(0),
+});
 
 // GET /api/travel-agents · list all B2B agents
 export async function GET() {
@@ -13,8 +34,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const agent = await db.travelAgent.create({ data: body });
+  const parsed = CreateTravelAgentSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const agent = await db.travelAgent.create({ data: parsed.data as any });
   return NextResponse.json({ agent });
 }
 
@@ -23,8 +50,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const agent = await db.travelAgent.update({ where: { id }, data });
+  const parsed = UpdateTravelAgentSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const agent = await db.travelAgent.update({ where: { id }, data: data as any });
   return NextResponse.json({ agent });
 }
 
@@ -33,7 +67,14 @@ export async function PUT(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
   if (error) return error;
 
-  const { agentId, bookingAmount } = await req.json();
+  const parsed = RecordAgentBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { agentId, bookingAmount } = parsed.data;
   const commission = Math.round(bookingAmount * 0.12); // default 12%
   const agent = await db.travelAgent.update({
     where: { id: agentId },

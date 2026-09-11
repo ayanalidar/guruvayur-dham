@@ -1,6 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const ReviewSourceEnum = z.enum([
+  "GOOGLE",
+  "MANUAL",
+  "BOOKING_COM",
+  "MAKEMYTRIP",
+  "TRIPADVISOR",
+  "DIRECT",
+]);
+
+const CreateReviewSchema = z.object({
+  authorName: z.string().min(1).max(200),
+  authorAvatar: z.string().url().optional(),
+  rating: z.coerce.number().int().min(1).max(5),
+  text: z.string().min(1),
+  reviewDate: z.string().optional(),
+  source: ReviewSourceEnum.optional(),
+  featured: z.boolean().optional(),
+});
+
+const UpdateReviewSchema = z.object({
+  id: z.string().min(1),
+  data: z.object({
+    authorName: z.string().max(200).optional(),
+    authorAvatar: z.string().url().optional(),
+    rating: z.coerce.number().int().min(1).max(5).optional(),
+    text: z.string().optional(),
+    reviewDate: z.string().optional(),
+    source: ReviewSourceEnum.optional(),
+    featured: z.boolean().optional(),
+    published: z.boolean().optional(),
+  }),
+});
 
 /**
  * GET /api/reviews · list all reviews (admin)
@@ -56,15 +90,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { authorName, authorAvatar, rating, text, reviewDate, source, featured } = body;
-
-  if (!authorName || !rating || !text) {
-    return NextResponse.json({ error: "authorName, rating, text required" }, { status: 400 });
+  const parsed = CreateReviewSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
-  if (rating < 1 || rating > 5) {
-    return NextResponse.json({ error: "Rating must be 1-5" }, { status: 400 });
-  }
+  const { authorName, authorAvatar, rating, text, reviewDate, source, featured } = parsed.data;
 
   const review = await db.review.create({
     data: {
@@ -100,7 +133,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
+  const parsed = UpdateReviewSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
   const review = await db.review.update({
     where: { id },
     data: {

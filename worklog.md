@@ -347,3 +347,82 @@ Work Log:
 Stage Summary:
 - Booking/kitchen/pooja/itinerary references now have 32 bits of true randomness
 - Eliminates predictability + collision risk after 50k bookings
+
+---
+Task ID: PhaseE-Zod
+Agent: subagent
+Task: Add Zod input validation to ~30 state-changing API routes
+
+Work Log:
+- Patched 32 API route files with Zod schemas (import { z } from "zod"; v4.3.5 installed). For each route, defined a descriptively-named Zod schema above the handler, called .safeParse(await req.json()), returned 400 with { error: "Invalid input", details: parsed.error.flatten() } on failure, destructured parsed.data, and removed the old manual if(!fieldX) return error checks. Preserved ALL existing logic below the validation block.
+- Files modified (32 total):
+  1. src/app/api/rooms/route.ts — POST + PATCH (UpdateRoomSchema with passthrough `data` record; CreateRoomSchema with z.coerce.number for price/capacity etc.)
+  2. src/app/api/cms/route.ts — POST + PATCH (CmsTypeEnum restricts to features|events|testimonials|faqs|trustBadges|poojas|carousel|blogPosts; data field is z.record(z.string(), z.any()))
+  3. src/app/api/bookings/route.ts — POST only (CreateBookingSchema; rate-limit and guest-self-booking preserved; no requireStaff on POST per Phase B deviation)
+  4. src/app/api/customers/route.ts — POST + PATCH + PUT (CreateCustomerSchema, UpdateCustomerSchema, RecordBookingSchema)
+  5. src/app/api/blog-posts/route.ts — POST + PATCH (CreateBlogPostSchema with content as union of array|string; UpdateBlogPostSchema passthrough)
+  6. src/app/api/carousel/route.ts — POST + PATCH (CreateCarouselSchema; UpdateCarouselSchema passthrough data)
+  7. src/app/api/menu/route.ts — POST + PATCH (CreateMenuItemSchema with z.coerce.number for price; UpdateMenuItemSchema passthrough)
+  8. src/app/api/gallery/route.ts — POST + PATCH (CreateGalleryImageSchema uses Prisma's actual fields: tab, src, alt, caption — audit was wrong about "title/image"; .passthrough() to allow legacy field names)
+  9. src/app/api/poojas-admin/route.ts — POST + PATCH (CreatePoojaSchema; UpdatePoojaSchema passthrough)
+  10. src/app/api/pricing-rules/route.ts — POST + PATCH (PricingRuleTypeEnum restricts to WEEKEND|WEEKDAYS|FESTIVAL|DATE_RANGE|ROOM_TYPE; explicit field mapping in PATCH)
+  11. src/app/api/coupons/route.ts — POST + PATCH + PUT-validate (CouponTypeEnum restricts to PERCENTAGE|FLAT; ValidateCouponSchema on PUT /validate)
+  12. src/app/api/channel-config/route.ts — POST + PATCH + PUT-test-connection (CreateChannelConfigSchema, UpdateChannelConfigSchema with object-typed data, TestConnectionSchema)
+  13. src/app/api/channel-partners/route.ts — PATCH only (UpdateChannelPartnerSchema with strict code+connected)
+  14. src/app/api/housekeeping/route.ts — POST + PATCH (HousekeepingStatusEnum restricts to READY|OCCUPIED|DIRTY|CLEANING|INSPECT|MAINTENANCE matching Prisma schema)
+  15. src/app/api/kitchen-orders/route.ts — POST + PATCH (KitchenItemSchema validates itemId/name?/qty?/price?; KitchenOrderStatusEnum restricts to NEW|PREPARING|READY|DELIVERED|CANCELLED; rate-limit preserved on POST)
+  16. src/app/api/notifications/route.ts — POST + PUT-bulk (NotificationTypeEnum restricts to SMS|EMAIL|WHATSAPP|PUSH; BulkNotificationSchema validates recipients as array of string|{phone,name?})
+  17. src/app/api/pooja-bookings/route.ts — POST + PATCH (PoojaBookingStatusEnum restricts to SCHEDULED|AT_TEMPLE|COMPLETED|PRASADAM_READY|PICKED_UP|CANCELLED matching Prisma)
+  18. src/app/api/travel-agents/route.ts — POST + PATCH + PUT (CreateTravelAgentSchema uses Prisma's actual fields: companyName+contactName+phone required; commissionRate max 1.0 since Prisma stores as 0.12 = 12%; .passthrough())
+  19. src/app/api/waiting-list/route.ts — POST + PATCH (CreateWaitingListSchema for guest-facing POST; NotifyWaitingListSchema for staff PATCH)
+  20. src/app/api/content/route.ts — PATCH only (file has no POST; BulkContentUpdateSchema validates updates array)
+  21. src/app/api/early-bird/route.ts — POST (CreateEarlyBirdSchema with festivalName+bookingWindowStart+bookingWindowEnd required per Prisma)
+  22. src/app/api/refund/route.ts — POST (RefundSchema: bookingId+reason required; reason capped at 2000 chars)
+  23. src/app/api/email/send/route.ts — POST (SendEmailSchema: to+subject+body required, type optional)
+  24. src/app/api/influencers/route.ts — POST + PATCH (SocialPlatformEnum restricts to INSTAGRAM|YOUTUBE|TWITTER|FACEBOOK|BLOG|OTHER matching Prisma; POST left public per Phase B deviation; removed `niche` field — not in Prisma schema)
+  25. src/app/api/walkin/route.ts — POST (CreateWalkinSchema; left public per front-desk use)
+  26. src/app/api/guest-booking/route.ts — POST (CreateGuestBookingSchema; DarshanSlotEnum + PaymentMethodEnum; added null-check `couponCode &&` before markCouponUsed to satisfy TS narrowing)
+  27. src/app/api/maintenance/route.ts — POST + PATCH (MaintenanceStatusEnum restricts to SCHEDULED|IN_PROGRESS|COMPLETED matching Prisma; removed CANCELLED which doesn't exist in DB schema)
+  28. src/app/api/blog-schedule/route.ts — POST + PUT (SchedulePostSchema for POST, UpdatePostSeoSchema for PUT; PATCH left CRON_SECRET-protected, no Zod needed)
+  29. src/app/api/audit-log/route.ts — POST (AuditLogEntityEnum restricts to BOOKING|CUSTOMER|ROOM|STAFF|CMS|PAYMENT|REFUND|CHANNEL|INVENTORY|REVIEW|OTHER; userId/userName/entityId/details optional)
+  30. src/app/api/itinerary/route.ts — POST (CreateItinerarySchema with nested ItineraryItemSchema for items array)
+  31. src/app/api/reminders/route.ts — POST + PATCH (ReminderTypeEnum restricts to CHECK_IN|CHECK_OUT|POOJA|DARSHAN|PAYMENT|OTHER; ReminderChannelEnum restricts to WHATSAPP|SMS|EMAIL|PUSH; PUT left CRON_SECRET-protected)
+  +32. src/app/api/reviews/route.ts — POST + PATCH (Bonus: spec said "read it first; POST/PATCH may need zod" — confirmed both needed Zod. CreateReviewSchema with rating int 1-5; UpdateReviewSchema with object-typed data)
+
+- Routes skipped (already validated or special-cased per spec):
+  - auth/register, auth/login, auth/otp, auth/forgot-password, auth/reset-password, auth/2fa — already manual-validated in Phase C
+  - staff — already has manual validation (Phase B + C)
+  - upload — uses FormData, not JSON
+  - realtime/broadcast — has event allowlist (Phase D M1)
+  - channel-webhook/[code] — has channel key check (Phase B C9)
+  - channel-inbox — has channel key check (Phase B C10)
+  - whatsapp/webhook — has signature verification (Phase B C8)
+  - reviews/checkout-funnel — CRON_SECRET protected, no user input
+
+- Deviations from spec / items for main agent to review:
+  1. **gallery/route.ts POST schema doesn't match audit**: audit said `{title, image, caption?, category?}` but Prisma's GalleryImage model requires `tab, src, alt, caption`. Used Prisma's actual fields as required + .passthrough() to allow legacy field names if any. Cast `parsed.data as any` when calling db.galleryImage.create so Prisma accepts it.
+  2. **travel-agents POST schema doesn't match audit**: audit said `{name, email?, phone, commissionRate?, gstNumber?}` but Prisma's TravelAgent model requires `companyName, contactName, phone` (no `name` or `gstNumber` field). Updated schema to use Prisma's actual required fields. Cast `parsed.data as any` for Prisma.
+  3. **influencers POST**: removed `niche` from Zod schema — Prisma's Influencer model has no `niche` column. Audit was wrong about field shape.
+  4. **early-bird POST**: made `festivalName`, `bookingWindowStart`, `bookingWindowEnd` required (not optional) because Prisma requires them. Audit listed them as optional.
+  5. **housekeeping PATCH status enum**: restricted to READY|OCCUPIED|DIRTY|CLEANING|INSPECT|MAINTENANCE matching Prisma's actual allowed values. Original code accepted any string.
+  6. **maintenance PATCH status enum**: restricted to SCHEDULED|IN_PROGRESS|COMPLETED (no CANCELLED — Prisma's MaintenanceBlock.status comment only lists these three).
+  7. **For routes that originally passed `body` straight to Prisma** (gallery POST, menu POST, carousel POST, poojas-admin POST, coupons POST, travel-agents POST, customers PATCH, blog-posts PATCH, cms POST/PATCH, channel-config PATCH), the `data` field is typed as `z.record(z.string(), z.any())` and we cast `parsed.data as any` / `data as any` when calling Prisma. This preserves Zod's shape validation (top-level field names + types) while letting Prisma enforce its own required-field checks at runtime. Without the `as any` cast, TS rejects the union type because Prisma's create input requires specific field shapes per model.
+  8. **gallery POST schema uses .passthrough()**: Prisma fields (tab, src, alt, caption) listed as required, plus optional legacy field names (title, image, category) listed as optional. `.passthrough()` keeps unknown fields in the parsed output so they reach Prisma. Same for travel-agents POST.
+  9. **bookings POST schema uses z.string().min(1) for checkIn/checkOut** instead of `z.string().datetime()` or `z.coerce.date()`: the original code calls `new Date(checkIn)` which is permissive (accepts "2024-12-25", ISO strings, etc.). Using `.datetime()` would reject HTML form date inputs (YYYY-MM-DD). Used `.min(1)` to preserve backward compatibility. Same approach for all date-string fields across the 32 routes.
+  10. **reviews/route.ts added bonus**: spec said "read it first; POST/PATCH may need zod". Both POST (manual rating 1-5 validation) and PATCH (passthrough data) needed Zod. Patched both. DELETE uses ?id= query param — no body to validate.
+  11. **audit-log POST enum**: restricted `entity` field to BOOKING|CUSTOMER|ROOM|STAFF|CMS|PAYMENT|REFUND|CHANNEL|INVENTORY|REVIEW|OTHER. Other API routes that call this internally may need to use one of these enum values. If any existing internal caller sends a different entity string, it will now 400. (Quick scan showed no internal callers — audit-log POST appears unused server-side currently.)
+  12. **notifications PUT recipients**: schema allows array of strings OR array of {phone, name?} objects (preserving original behavior where either format was accepted).
+  13. **content/route.ts PATCH**: spec listed it as POST but file has only PATCH (no POST). Patched PATCH only.
+
+- TypeScript verification: `npx tsc --noEmit` → 0 errors after all patches.
+- ESLint verification: `npx eslint 'src/app/api/**/route.ts'` → 0 errors, 0 warnings.
+- Note on Zod v4 API change: `z.record(z.any())` requires two args in v4. Updated all `z.record(z.any())` to `z.record(z.string(), z.any())` across 11 files (rooms, cms, customers, blog-posts, carousel, menu, gallery, poojas-admin, coupons, channel-config, travel-agents).
+
+Stage Summary:
+- All 32 state-changing API endpoints now validate input shape via Zod safeParse
+- Invalid requests return 400 with structured error details (parsed.error.flatten())
+- All enum-like fields (role, status, type, channel, source, platform) are now restricted to known-good values via z.enum([...]) matching the Prisma schema's documented allowed values
+- All numeric fields use z.coerce.number() so clients can submit "1500" (form-encoded string) or 1500 (JSON number) interchangeably
+- Auth checks (requireStaff, rate-limit, CRON_SECRET) all preserved exactly as before — Zod validation runs AFTER auth, BEFORE any DB query
+- All existing business logic below the validation block is preserved 1:1
+- TypeScript compiles clean (0 errors), ESLint clean (0 errors, 0 warnings)

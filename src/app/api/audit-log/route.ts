@@ -1,6 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const AuditLogEntityEnum = z.enum([
+  "BOOKING",
+  "CUSTOMER",
+  "ROOM",
+  "STAFF",
+  "CMS",
+  "PAYMENT",
+  "REFUND",
+  "CHANNEL",
+  "INVENTORY",
+  "REVIEW",
+  "OTHER",
+]);
+
+const CreateAuditLogSchema = z.object({
+  userId: z.string().max(200).optional(),
+  userName: z.string().max(200).optional(),
+  action: z.string().min(1).max(200),
+  entity: AuditLogEntityEnum,
+  entityId: z.string().max(200).optional(),
+  details: z.string().optional(),
+});
 
 /**
  * GET /api/audit-log
@@ -38,7 +62,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { userId, userName, action, entity, entityId, details } = await req.json();
+  const parsed = CreateAuditLogSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { userId, userName, action, entity, entityId, details } = parsed.data;
 
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
   const ua = req.headers.get("user-agent") || "unknown";

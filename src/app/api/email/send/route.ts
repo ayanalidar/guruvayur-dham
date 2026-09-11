@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const SendEmailSchema = z.object({
+  to: z.string().min(1).max(500),
+  subject: z.string().min(1).max(500),
+  body: z.string().min(1),
+  type: z.string().max(50).optional(),
+});
 
 /**
  * POST /api/email/send
@@ -15,10 +23,14 @@ export async function POST(req: NextRequest) {
   if (error) return error;
 
   try {
-    const { to, subject, body, type = "GENERAL" } = await req.json();
-    if (!to || !subject || !body) {
-      return NextResponse.json({ error: "to, subject, body are required" }, { status: 400 });
+    const parsed = SendEmailSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
+    const { to, subject, body, type = "GENERAL" } = parsed.data;
 
     // Log to Notifications table
     const notification = await db.notification.create({

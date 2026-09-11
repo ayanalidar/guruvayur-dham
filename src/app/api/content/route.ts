@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const ContentUpdateSchema = z.object({
+  key: z.string().min(1).max(200),
+  value: z.string(),
+  category: z.string().max(100).optional(),
+  label: z.string().max(200).optional(),
+});
+
+const BulkContentUpdateSchema = z.object({
+  updates: z.array(ContentUpdateSchema).min(1),
+});
 
 // GET /api/content · fetch all content blocks (or by ?category=)
 export async function GET(req: NextRequest) {
@@ -23,11 +35,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { updates }: { updates: Array<{ key: string; value: string }> } = body;
-  if (!Array.isArray(updates)) {
-    return NextResponse.json({ error: "updates must be an array" }, { status: 400 });
+  const parsed = BulkContentUpdateSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { updates } = parsed.data;
   const results: Array<{ id: string; key: string; value: string }> = [];
   for (const u of updates) {
     const r = await db.contentBlock.upsert({

@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateChannelConfigSchema = z.object({
+  code: z.string().min(1).max(50),
+  name: z.string().min(1).max(200),
+  category: z.string().max(100).optional(),
+  apiEndpoint: z.string().url().optional(),
+  webhookUrl: z.string().url().optional(),
+  apiKey: z.string().max(500).optional(),
+  apiSecret: z.string().max(500).optional(),
+  hotelId: z.string().max(200).optional(),
+  config: z.record(z.string(), z.any()).optional(),
+});
+
+const UpdateChannelConfigSchema = z.object({
+  id: z.string().min(1),
+  data: z.object({
+    name: z.string().max(200).optional(),
+    category: z.string().max(100).optional(),
+    apiEndpoint: z.string().url().optional(),
+    webhookUrl: z.string().url().optional(),
+    apiKey: z.string().max(500).optional(),
+    apiSecret: z.string().max(500).optional(),
+    hotelId: z.string().max(200).optional(),
+    config: z.record(z.string(), z.any()).optional(),
+    connected: z.boolean().optional(),
+  }),
+});
+
+const TestConnectionSchema = z.object({
+  id: z.string().min(1),
+});
 
 /**
  * GET /api/channel-config
@@ -35,12 +67,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const { code, name, category, apiEndpoint, webhookUrl, apiKey, apiSecret, hotelId, config } = body;
-
-  if (!code || !name) {
-    return NextResponse.json({ error: "code and name required" }, { status: 400 });
+  const parsed = CreateChannelConfigSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { code, name, category, apiEndpoint, webhookUrl, apiKey, apiSecret, hotelId, config } = parsed.data;
 
   const existing = await db.channelConfig.findUnique({ where: { code } });
   if (existing) {
@@ -74,7 +108,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
+  const parsed = UpdateChannelConfigSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
 
   // If apiKey or apiSecret provided, mark as connected
   if (data.apiKey || data.apiSecret) {
@@ -83,7 +124,7 @@ export async function PATCH(req: NextRequest) {
 
   const config = await db.channelConfig.update({
     where: { id },
-    data,
+    data: data as any,
   });
 
   return NextResponse.json({ config, message: "Channel updated" });
@@ -112,7 +153,14 @@ export async function PUT(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
   if (error) return error;
 
-  const { id } = await req.json();
+  const parsed = TestConnectionSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id } = parsed.data;
   const config = await db.channelConfig.findUnique({ where: { id } });
 
   if (!config) return NextResponse.json({ error: "Not found" }, { status: 404 });

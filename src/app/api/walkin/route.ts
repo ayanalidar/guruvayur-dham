@@ -1,17 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { generateRef } from "@/lib/auth";
+
+const CreateWalkinSchema = z.object({
+  roomSlug: z.string().min(1).max(200),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().min(1).max(30),
+  guestEmail: z.string().email().optional(),
+  checkIn: z.string().min(1),
+  checkOut: z.string().min(1),
+  guests: z.coerce.number().int().min(1).optional(),
+  notes: z.string().optional(),
+});
 
 // POST /api/walkin · create a walk-in booking (front desk use)
 // This is the same as POST /api/bookings but with source=WALKIN hardcoded
 // and it ALSO broadcasts to all channel partners to block inventory
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { roomSlug, guestName, guestPhone, guestEmail, checkIn, checkOut, guests, notes } = body;
-
-  if (!roomSlug || !guestName || !guestPhone || !checkIn || !checkOut) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const parsed = CreateWalkinSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { roomSlug, guestName, guestPhone, guestEmail, checkIn, checkOut, guests, notes } = parsed.data;
 
   const room = await db.room.findUnique({ where: { slug: roomSlug } });
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });

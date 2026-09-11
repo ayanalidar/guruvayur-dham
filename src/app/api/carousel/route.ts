@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateCarouselSchema = z.object({
+  title: z.string().min(1).max(200),
+  subtitle: z.string().optional(),
+  image: z.string().min(1).max(1000),
+  link: z.string().url().optional(),
+  order: z.coerce.number().int().min(0).optional(),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+  active: z.boolean().optional(),
+});
+
+const UpdateCarouselSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
 
 // GET — list all slides
 export async function GET() {
@@ -16,8 +32,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const slide = await db.carouselSlide.create({ data: body });
+  const parsed = CreateCarouselSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const slide = await db.carouselSlide.create({ data: parsed.data as any });
   return NextResponse.json({ slide, message: "Slide added" });
 }
 
@@ -26,8 +48,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const slide = await db.carouselSlide.update({ where: { id }, data });
+  const parsed = UpdateCarouselSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const slide = await db.carouselSlide.update({ where: { id }, data: data as any });
   return NextResponse.json({ slide, message: "Slide updated" });
 }
 

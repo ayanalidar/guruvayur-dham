@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff, generateRef } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
+
+const KitchenItemSchema = z.object({
+  itemId: z.string().min(1),
+  name: z.string().min(1).max(200).optional(),
+  qty: z.coerce.number().int().min(1).optional(),
+  price: z.coerce.number().min(0).optional(),
+});
+
+const CreateKitchenOrderSchema = z.object({
+  roomNumber: z.string().min(1).max(50),
+  guestName: z.string().min(1).max(200),
+  guestPhone: z.string().max(30).optional(),
+  items: z.array(KitchenItemSchema).min(1),
+  notes: z.string().optional(),
+});
+
+const KitchenOrderStatusEnum = z.enum(["NEW", "PREPARING", "READY", "DELIVERED", "CANCELLED"]);
+
+const UpdateKitchenOrderSchema = z.object({
+  id: z.string().min(1),
+  status: KitchenOrderStatusEnum,
+});
 
 // GET /api/kitchen-orders · list all orders
 export async function GET(req: NextRequest) {
@@ -22,11 +45,15 @@ export async function POST(req: NextRequest) {
   const rl = rateLimit(req, { window: 60, max: 10 });
   if (!rl.ok) return NextResponse.json({ error: "Too many orders. Please wait a minute." }, { status: 429 });
 
-  const body = await req.json();
-  const { roomNumber, guestName, guestPhone, items, notes } = body;
-  if (!roomNumber || !guestName || !items || !Array.isArray(items) || items.length === 0) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const parsed = CreateKitchenOrderSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
   }
+  const { roomNumber, guestName, guestPhone, items, notes } = parsed.data;
+
   // Calculate total
   let total = 0;
   for (const item of items) {
@@ -50,7 +77,7 @@ export async function POST(req: NextRequest) {
     data: {
       type: "WHATSAPP",
       recipient: "kitchen@guruvayurdham.com",
-      body: `NEW ORDER ${ref} from Room ${roomNumber} (${guestName}). Items: ${items.map((i: any) => `${i.name} x${i.qty || 1}`).join(", ")}. Total: ₹${total}`,
+      body: `NEW ORDER ${ref} from Room ${roomNumber} (${guestName}). Items: ${items.map((i) => `${i.name} x${i.qty || 1}`).join(", ")}. Total: ₹${total}`,
       status: "QUEUED",
       relatedRef: ref,
     },
@@ -75,7 +102,14 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, status } = await req.json();
+  const parsed = UpdateKitchenOrderSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, status } = parsed.data;
   const data: any = { status };
   if (status === "PREPARING") data.printedAt = new Date();
   if (status === "DELIVERED") data.deliveredAt = new Date();

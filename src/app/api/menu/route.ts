@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+
+const CreateMenuItemSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().optional(),
+  price: z.coerce.number().min(0),
+  category: z.string().min(1).max(100),
+  veg: z.boolean().optional(),
+  prepTime: z.coerce.number().int().min(0).optional(),
+  image: z.string().url().optional(),
+  available: z.boolean().optional(),
+});
+
+const UpdateMenuItemSchema = z.object({
+  id: z.string().min(1),
+  data: z.record(z.string(), z.any()),
+});
 
 // GET /api/menu · list all menu items
 export async function GET(req: NextRequest) {
@@ -16,8 +33,14 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const body = await req.json();
-  const item = await db.menuItem.create({ data: body });
+  const parsed = CreateMenuItemSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const item = await db.menuItem.create({ data: parsed.data as any });
   return NextResponse.json({ item });
 }
 
@@ -26,8 +49,15 @@ export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const { id, data } = await req.json();
-  const item = await db.menuItem.update({ where: { id }, data });
+  const parsed = UpdateMenuItemSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { id, data } = parsed.data;
+  const item = await db.menuItem.update({ where: { id }, data: data as any });
   return NextResponse.json({ item });
 }
 
