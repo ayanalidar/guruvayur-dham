@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { chat } from "@/lib/ai/provider";
+import crypto from "crypto";
 
 /**
  * WhatsApp Business API Webhook
@@ -14,12 +15,16 @@ import { chat } from "@/lib/ai/provider";
  *
  * Environment variables needed:
  *   - WHATSAPP_VERIFY_TOKEN  — the token you set in Meta Business Manager
+ *   - WHATSAPP_APP_SECRET    — your Meta app secret (used for signature
+ *                              verification of POST payloads — REQUIRED in
+ *                              production for security)
  *   - WHATSAPP_PHONE_NUMBER_ID  — your WhatsApp Business phone number ID
  *   - WHATSAPP_ACCESS_TOKEN  — your WhatsApp Business API access token
  *
- * If env vars are not set, the endpoint returns a friendly message explaining
- * how to set them up. The /api/whatsapp-bot endpoint (used by the website
- * chat widget) works without these.
+ * SECURITY (Phase B C8 fix):
+ * - POST now verifies Meta's X-Hub-Signature-256 HMAC header. Without this,
+ *   anyone could POST fake inbound messages (triggering WhatsApp replies +
+ *   leaking booking details to the attacker by phone).
  */
 
 // GET — Webhook verification (Meta calls this when you set up the webhook)
@@ -42,17 +47,47 @@ export async function GET(req: NextRequest) {
   }
 
   if (mode === "subscribe" && token === verifyToken) {
-    console.log("✅ WhatsApp webhook verified");
+    console.log("WhatsApp webhook verified");
     return new NextResponse(challenge || "", { status: 200 });
   }
 
   return NextResponse.json({ error: "Verification failed" }, { status: 403 });
 }
 
-// POST — Incoming WhatsApp message
+// POST — Incoming WhatsApp message (signature-verified).
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    // ===== Signature verification (X-Hub-Signature-256) =====
+    // Meta signs every webhook POST with HMAC-SHA256 of the raw body using
+    // your App Secret. Verifying this prevents fake inbound messages.
+    const appSecret = process.env.WHATSAPP_APP_SECRET;
+    const sig = req.headers.get("x-hub-signature-256") || "";
+
+    // Read the raw body once (so we can both verify and parse).
+    const rawBody = await req.text();
+
+    if (appSecret) {
+      const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
+      // Constant-time comparison to prevent timing attacks.
+      if (
+        sig.length !== expected.length ||
+        !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))
+      ) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      }
+    } else if (process.env.NODE_ENV === "production") {
+      // Fail-closed in production — without app secret, we can't verify.
+      console.error("WHATSAPP_APP_SECRET not set — refusing to process WhatsApp webhook in production");
+      return NextResponse.json(
+        { error: "Server misconfiguration: WHATSAPP_APP_SECRET not set" },
+        { status: 503 }
+      );
+    } else {
+      // Dev only — warn but allow (so you can test without configuring Meta).
+      console.warn("WHATSAPP_APP_SECRET not set — skipping webhook signature verification (dev mode)");
+    }
+
+    const body = JSON.parse(rawBody);
 
     // Meta WhatsApp webhook payload structure
     const entry = body?.entry?.[0];
@@ -75,7 +110,11 @@ export async function POST(req: NextRequest) {
     // Process the message using the same intent logic as /api/whatsapp-bot
     const reply = await processMessage(from, text);
 
-    // Log the conversation
+    // Log the conversation (in dev only — PII in prod logs is risky).
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`WhatsApp IN from ${from}: ${text.slice(0, 80)}`);
+    }
+
     await db.notification.create({
       data: {
         type: "WHATSAPP",
@@ -91,8 +130,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ status: "ok", reply });
   } catch (error: any) {
-    console.error("WhatsApp webhook error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("WhatsApp webhook error:", error.message || error);
+    return NextResponse.json(
+      { error: "Webhook processing failed" },
+      { status: 500 }
+    );
   }
 }
 

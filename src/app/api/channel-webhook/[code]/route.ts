@@ -65,13 +65,23 @@ export async function POST(
     );
   }
 
-  // Authenticate: check X-Channel-Key header against the webhookUrl ?key= param
+  // Authenticate: check X-Channel-Key header against the webhookUrl ?key= param.
+  // SECURITY (Phase B C9 fix): FAIL-CLOSED. Previously, if a channel's
+  // webhookUrl had no ?key= param (the default for seeded channels), the
+  // entire auth check was skipped — anyone could POST fake bookings that
+  // would block inventory across all channels.
   const authHeader = req.headers.get("x-channel-key") || req.headers.get("authorization")?.replace("Bearer ", "");
-  const expectedKey = new URL(channel.webhookUrl).searchParams.get("key");
+  let expectedKey: string | null = null;
+  try {
+    expectedKey = new URL(channel.webhookUrl).searchParams.get("key");
+  } catch {
+    // webhookUrl is not a valid URL — no key to compare against.
+    expectedKey = null;
+  }
 
-  if (expectedKey && authHeader !== expectedKey) {
+  if (!expectedKey || !authHeader || authHeader !== expectedKey) {
     return NextResponse.json(
-      { error: "Invalid API key" },
+      { error: "Invalid or missing API key. Configure the channel's webhookUrl with a ?key= param in /admin/channels." },
       { status: 401 }
     );
   }

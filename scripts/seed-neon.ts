@@ -22,11 +22,18 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "hero.subheadline", value: "Clean AC & non-AC rooms, 24x7 hot water, family-friendly. Book in 30 seconds.", category: "hero", label: "Hero Subheadline" },
 ];
 
+// Staff — PINs are randomized at seed time (NOT hardcoded).
+// The seeded PINs are printed to the console — copy them to a safe place.
+// Override with env vars SEED_MANAGER_PIN etc. if you want stable PINs.
+import crypto from "crypto";
+function randPin(): string {
+  return crypto.randomInt(1000, 10000).toString();
+}
 const STAFF = [
-  { name: "Krishnan Warrier", email: "manager@guruvayurdham.com", phone: "+91-90908 20208", role: "MANAGER", pin: "1234" },
-  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.com", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: "2345" },
-  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.com", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: "3456" },
-  { name: "Saritha Nair", email: "accounts@guruvayurdham.com", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: "4567" },
+  { name: "Krishnan Warrier", email: "manager@guruvayurdham.com", phone: "+91-90908 20208", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
+  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.com", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
+  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.com", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
+  { name: "Saritha Nair", email: "accounts@guruvayurdham.com", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
 ];
 
 const COUPONS = [
@@ -113,6 +120,12 @@ async function main() {
     await db.staffUser.upsert({ where: { email: s.email }, create: s, update: {} });
   }
   console.log(`✓ ${STAFF.length} staff users`);
+  // Print PINs so the operator can copy them — they're not stored anywhere else.
+  console.log("\n========== STAFF PIN CREDENTIALS (copy these now) ==========");
+  for (const s of STAFF) {
+    console.log(`  ${s.role.padEnd(12)} | ${s.email.padEnd(40)} | PIN: ${s.pin}`);
+  }
+  console.log("=============================================================\n");
 
   // Coupons
   for (const c of COUPONS) {

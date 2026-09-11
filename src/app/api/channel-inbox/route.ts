@@ -38,6 +38,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Channel ${channelCode} not connected` }, { status: 400 });
   }
 
+  // SECURITY (Phase B C10 fix): Require channel API key.
+  // Previously this endpoint had NO auth — anyone could POST fake bookings
+  // for any channel. Now requires X-Channel-Key header matching the channel's
+  // webhookUrl ?key= param (same mechanism as /api/channel-webhook/[code]).
+  const authHeader = req.headers.get("x-channel-key") || req.headers.get("authorization")?.replace("Bearer ", "");
+  let expectedKey: string | null = null;
+  try {
+    expectedKey = new URL(channel.webhookUrl).searchParams.get("key");
+  } catch {
+    expectedKey = null;
+  }
+  if (!expectedKey || !authHeader || authHeader !== expectedKey) {
+    return NextResponse.json(
+      { error: "Invalid or missing API key. Configure the channel's webhookUrl with a ?key= param in /admin/channels." },
+      { status: 401 }
+    );
+  }
+
   // Check for duplicate
   const existing = channelBookingId
     ? await db.booking.findFirst({ where: { channelBookingId } })
