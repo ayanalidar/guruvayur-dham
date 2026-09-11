@@ -8,7 +8,7 @@ import { rateLimit } from "@/lib/rate-limiter";
  */
 export async function POST(req: NextRequest) {
   // Rate limit: 3 reviews per hour
-  const rl = rateLimit(req, { window: 3600, max: 3, key: "review:submit" });
+  const rl = await rateLimit(req, { window: 3600, max: 3, key: "review:submit" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "You've submitted too many reviews recently. Please try again later." },

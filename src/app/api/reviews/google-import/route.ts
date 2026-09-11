@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
   // strictly (3/hour) to prevent quota-exhaustion abuse.
   const { error } = await requireStaff(req);
   if (error) return error;
-  const rl = rateLimit(req, { window: 3600, max: 3, key: "google-import" });
+  const rl = await rateLimit(req, { window: 3600, max: 3, key: "google-import" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded. Google import is limited to 3 calls per hour." }, { status: 429 });
 
   const { placeId, shareUrl } = await req.json();

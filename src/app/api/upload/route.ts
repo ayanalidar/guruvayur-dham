@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   if (error) return error;
 
   // Rate limit — 10 uploads/min per IP (prevents disk-fill / Blob-cost abuse).
-  const rl = rateLimit(req, { window: 60, max: 10, key: "upload" });
+  const rl = await rateLimit(req, { window: 60, max: 10, key: "upload" });
   if (!rl.ok) return NextResponse.json({ error: "Too many uploads. Please wait a minute." }, { status: 429 });
 
   try {

@@ -18,7 +18,7 @@ import { generateTOTP } from "@/app/api/auth/2fa/route";
  */
 export async function POST(req: NextRequest) {
   // Rate limit: 5 login attempts per minute
-  const rl = rateLimit(req, { window: 60, max: 5, key: "auth:login" });
+  const rl = await rateLimit(req, { window: 60, max: 5, key: "auth:login" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many login attempts. Please try again in a minute." },

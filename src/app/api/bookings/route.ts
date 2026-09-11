@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 // This is the CORE function · when a booking is made here, it broadcasts BLOCK to all channels.
 export async function POST(req: NextRequest) {
   // Rate limit guest self-bookings to prevent spam (5 per minute per IP).
-  const rl = rateLimit(req, { window: 60, max: 5 });
+  const rl = await rateLimit(req, { window: 60, max: 5 });
   if (!rl.ok) return NextResponse.json({ error: "Too many booking attempts. Please wait a minute." }, { status: 429 });
 
   const parsed = CreateBookingSchema.safeParse(await req.json());

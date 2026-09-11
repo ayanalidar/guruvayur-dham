@@ -40,9 +40,13 @@ export async function POST(req: NextRequest) {
   checkIn.setHours(0, 0, 0, 0);
   const daysUntilCheckIn = Math.floor((checkIn.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-  // Festival dates have strict no-refund policy
-  const isFestival = ["BOOKING_COM", "MAKEMYTRIP"].includes(booking.source) && daysUntilCheckIn < 30; // simplified
-  const festivalDate = booking.source !== "WALKIN" && booking.source !== "DIRECT";
+  // FUNCTIONAL (Round 3 F14 fix): removed dead 'isFestival' + 'festivalDate'
+  // variables — they were computed but never used in the refund calculation.
+  // The documented "festival dates: no refund (but can reschedule)" rule
+  // is not currently implemented; if you want to enforce it, add a Festival
+  // table lookup here and override refundPercent = 0 when the booking
+  // overlaps a festival. For now, the cancellation policy is purely
+  // days-based (90% / 50% / 0%).
 
   let refundPercent = 0;
   let refundAmount = 0;
@@ -84,20 +88,38 @@ export async function POST(req: NextRequest) {
     }).catch(() => {});
   }
 
-  // Broadcast UNBLOCK to all channels (room is now available again)
-  const channels = await db.channelPartner.findMany({ where: { connected: true } });
-  for (const ch of channels) {
-    await db.syncLog.create({
-      data: {
-        bookingId: booking.id,
-        channel: ch.code,
-        action: "UNBLOCK",
-        status: "SUCCESS",
-        message: `Booking ${booking.reference} cancelled · room ${booking.room.name} released for ${new Date(booking.checkIn).toLocaleDateString()} → ${new Date(booking.checkOut).toLocaleDateString()}`,
-        payload: JSON.stringify({ reference: booking.reference, refundPercent, refundAmount }),
-      },
+  // Broadcast UNBLOCK to all channels (uses shared helper for [SIMULATED] prefix)
+  const { broadcastToChannels } = await import("@/lib/channel-sync");
+  const syncResults = await broadcastToChannels({
+    bookingId: booking.id,
+    bookingRef: booking.reference,
+    roomSlug: booking.room.slug,
+    roomId: booking.roomId,
+    checkIn: booking.checkIn,
+    checkOut: booking.checkOut,
+    sourceChannel: booking.source,
+    action: "UNBLOCK",
+  });
+
+  // FUNCTIONAL (Round 3 F18 fix): fire booking:cancelled realtime event so
+  // admin dashboards see cancellations live (was: only booking:new fired).
+  try {
+    await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "booking:cancelled",
+        data: {
+          reference: booking.reference,
+          guestName: booking.guestName,
+          roomSlug: booking.room.slug,
+          refundPercent,
+          refundAmount,
+          reason,
+        },
+      }),
     });
-  }
+  } catch {}
 
   // Notify waitlist (auto-notify next person in line).
   // Forward the session cookie so the waitlist PATCH endpoint (which requires
@@ -137,9 +159,9 @@ export async function POST(req: NextRequest) {
       reason,
     },
     syncResults: {
-      channelsNotified: channels.length,
+      channelsNotified: syncResults.length,
       waitlistNotified: true,
     },
-    message: `Booking cancelled. ${refundPercent}% refund (₹${refundAmount}). Room released on all ${channels.length} channels. Waitlist notified.`,
+    message: `Booking cancelled. ${refundPercent}% refund (₹${refundAmount}). Room released on all ${syncResults.length} channels. Waitlist notified.`,
   });
 }

@@ -30,7 +30,7 @@ const PHONE_RE = /^\+?[1-9]\d{7,14}$/;
  */
 export async function POST(req: NextRequest) {
   // Rate limit — 3 registrations per hour per IP.
-  const rl = rateLimit(req, { window: 3600, max: 3, key: "auth:register" });
+  const rl = await rateLimit(req, { window: 3600, max: 3, key: "auth:register" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many registration attempts. Please wait an hour." },

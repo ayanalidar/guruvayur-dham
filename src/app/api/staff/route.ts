@@ -147,7 +147,7 @@ export async function PATCH(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   // 5 attempts per minute per IP — 4-digit PINs have 10,000 combinations,
   // so this makes brute force impractical (would take ~33 hours).
-  const rl = rateLimit(req, { window: 60, max: 5, key: "staff-pin-login" });
+  const rl = await rateLimit(req, { window: 60, max: 5, key: "staff-pin-login" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many login attempts. Please wait a minute." },

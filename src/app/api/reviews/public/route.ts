@@ -8,7 +8,8 @@ import { db } from "@/lib/db";
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const limit = parseInt(searchParams.get("limit") || "10");
+  // M17 fix: cap limit to 100 to prevent DoS via ?limit=1000000
+  const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 100);
   const featured = searchParams.get("featured") === "true";
   const minRating = parseInt(searchParams.get("minRating") || "0");
 

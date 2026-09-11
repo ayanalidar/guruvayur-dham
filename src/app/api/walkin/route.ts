@@ -20,7 +20,7 @@ const CreateWalkinSchema = z.object({
 // and it ALSO broadcasts to all channel partners to block inventory
 export async function POST(req: NextRequest) {
   // Rate limit walk-in creation (same abuse surface as /api/bookings POST).
-  const rl = rateLimit(req, { window: 60, max: 5, key: "walkin" });
+  const rl = await rateLimit(req, { window: 60, max: 5, key: "walkin" });
   if (!rl.ok) return NextResponse.json({ error: "Too many walk-in requests. Please wait a minute." }, { status: 429 });
 
   const parsed = CreateWalkinSchema.safeParse(await req.json());

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   // to prevent cost-abuse via repeated automated calls.
   const { error } = await requireStaff(req);
   if (error) return error;
-  const rl = rateLimit(req, { window: 60, max: 10, key: "ai-generate" });
+  const rl = await rateLimit(req, { window: 60, max: 10, key: "ai-generate" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded. Please wait before generating more content." }, { status: 429 });
 
   const { type, prompt, context } = await req.json();

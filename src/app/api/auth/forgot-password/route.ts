@@ -18,7 +18,7 @@ import { rateLimit } from "@/lib/rate-limiter";
  */
 export async function POST(req: NextRequest) {
   // Rate limit — prevents enumeration + spam.
-  const rl = rateLimit(req, { window: 3600, max: 3, key: "auth:forgot" });
+  const rl = await rateLimit(req, { window: 3600, max: 3, key: "auth:forgot" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many reset requests. Please wait an hour." },

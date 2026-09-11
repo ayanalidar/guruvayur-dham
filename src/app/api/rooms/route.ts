@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { withErrorHandler } from "@/lib/api-safe";
 
 // GET /api/rooms · fetch all rooms (with live availability count for next 30 days)
-export async function GET(req: NextRequest) {
+// FUNCTIONAL (Round 3 F17 fix): wrapped in withErrorHandler so DB blips return
+// a proper JSON error instead of a raw 500 HTML page.
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const slug = req.nextUrl.searchParams.get("slug");
   if (slug) {
     const room = await db.room.findUnique({ where: { slug }, include: { rates: true } });
@@ -20,7 +23,7 @@ export async function GET(req: NextRequest) {
     { rooms: rooms.map(serializeRoom) },
     { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
   );
-}
+});
 
 const UpdateRoomSchema = z.object({
   id: z.string().min(1),

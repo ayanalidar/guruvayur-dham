@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 // POST /api/kitchen-orders · create new order (from QR code in room — guests)
 export async function POST(req: NextRequest) {
   // Rate limit guest orders to prevent spam (10 per minute per IP).
-  const rl = rateLimit(req, { window: 60, max: 10 });
+  const rl = await rateLimit(req, { window: 60, max: 10 });
   if (!rl.ok) return NextResponse.json({ error: "Too many orders. Please wait a minute." }, { status: 429 });
 
   const parsed = CreateKitchenOrderSchema.safeParse(await req.json());

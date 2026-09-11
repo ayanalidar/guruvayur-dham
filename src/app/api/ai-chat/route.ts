@@ -6,7 +6,7 @@ import { rateLimit } from "@/lib/rate-limiter";
 // Uses Groq (Llama 3.3 70B) first, falls back to z-ai SDK (GLM)
 export async function POST(req: NextRequest) {
   // Rate limit — 20 messages/min per IP (prevents Groq/GLM API cost abuse).
-  const rl = rateLimit(req, { window: 60, max: 20, key: "ai-chat" });
+  const rl = await rateLimit(req, { window: 60, max: 20, key: "ai-chat" });
   if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
 
   const { message, history } = await req.json();

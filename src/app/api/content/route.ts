@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { withErrorHandler } from "@/lib/api-safe";
 
 const ContentUpdateSchema = z.object({
   key: z.string().min(1).max(200),
@@ -15,7 +16,8 @@ const BulkContentUpdateSchema = z.object({
 });
 
 // GET /api/content · fetch all content blocks (or by ?category=)
-export async function GET(req: NextRequest) {
+// FUNCTIONAL (Round 3 F17 fix): wrapped in withErrorHandler.
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const cat = req.nextUrl.searchParams.get("category");
   const blocks = await db.contentBlock.findMany({
     where: cat ? { category: cat } : undefined,
@@ -27,7 +29,7 @@ export async function GET(req: NextRequest) {
     { blocks, map },
     { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
   );
-}
+});
 
 // PATCH /api/content · update one or more content blocks
 // body: { updates: [{ key, value }, ...] }

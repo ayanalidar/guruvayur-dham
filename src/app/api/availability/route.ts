@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { withErrorHandler } from "@/lib/api-safe";
 
 // GET /api/availability?roomSlug=deluxe-ac-room&days=30
 // Returns availability for next N days for a room (or all rooms if no slug)
-export async function GET(req: NextRequest) {
+// FUNCTIONAL (Round 3 F17 fix): wrapped in withErrorHandler so DB blips return
+// a proper JSON error instead of a raw 500 HTML page. Also caps `days` to 365
+// to prevent unbounded scans (Round 3 M16 fix).
+export const GET = withErrorHandler(async (req: NextRequest) => {
   const { searchParams } = req.nextUrl;
   const slug = searchParams.get("roomSlug");
-  const days = parseInt(searchParams.get("days") || "30");
+  // M16 fix: cap days to prevent DoS via ?days=999999
+  const days = Math.min(parseInt(searchParams.get("days") || "30"), 365);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -48,4 +53,4 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     availability: slug ? byRoom[slug] : Object.values(byRoom),
   });
-}
+});

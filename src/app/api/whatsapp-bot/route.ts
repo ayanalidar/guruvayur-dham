@@ -15,7 +15,7 @@ import { rateLimit } from "@/lib/rate-limiter";
 //   phone number and learn that person's booking reference, dates, amount.
 export async function POST(req: NextRequest) {
   // Rate limit — 20 messages/min per IP.
-  const rl = rateLimit(req, { window: 60, max: 20, key: "whatsapp-bot" });
+  const rl = await rateLimit(req, { window: 60, max: 20, key: "whatsapp-bot" });
   if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
 
   const { phone, message } = await req.json();

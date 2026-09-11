@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   // Rate limit click tracking (GET is state-changing — creates click row,
   // increments click count). Without this, anyone can script massive click
   // fraud against any influencer code.
-  const rl = rateLimit(req, { window: 60, max: 10, key: "influencer-track" });
+  const rl = await rateLimit(req, { window: 60, max: 10, key: "influencer-track" });
   if (!rl.ok) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 });
 
   const code = req.nextUrl.searchParams.get("code");

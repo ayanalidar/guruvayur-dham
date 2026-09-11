@@ -161,7 +161,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   // Rate limit — guests fire ~1 event per page view, so 60/min is plenty.
-  const rl = rateLimit(req, { window: 60, max: 60, key: "analytics:track" });
+  const rl = await rateLimit(req, { window: 60, max: 60, key: "analytics:track" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
   const { eventType, page, properties } = await req.json();
@@ -172,13 +172,30 @@ export async function POST(req: NextRequest) {
 
   // Get session ID from cookie (or generate one)
   const cookie = req.headers.get("cookie") || "";
-  const sessionMatch = cookie.match(/session_token=([^;]+)/);
+  const sessionMatch = cookie.match(/(?:__Host-)?session_token=([^;]+)/);
+
+  // FUNCTIONAL (Round 3 F16 fix): populate userId when caller is logged in.
+  // Was: schema has userId column but POST never set it; couldn't break
+  // funnel by logged-in vs anonymous.
+  let userId: string | null = null;
+  if (sessionMatch) {
+    try {
+      const session = await db.session.findUnique({
+        where: { token: sessionMatch[1] },
+        select: { userId: true, expiresAt: true },
+      });
+      if (session && session.expiresAt > new Date()) {
+        userId = session.userId;
+      }
+    } catch {}
+  }
 
   await db.analyticsEvent.create({
     data: {
       eventType,
       page: page || null,
       sessionId: sessionMatch?.[1]?.slice(0, 16) || null,
+      userId, // F16 fix — now populated when caller is authed
       properties: properties ? JSON.stringify(properties) : null,
       referrer,
       userAgent: ua,

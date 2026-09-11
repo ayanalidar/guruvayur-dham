@@ -18,7 +18,7 @@ import { rateLimit } from "@/lib/rate-limiter";
  */
 export async function POST(req: NextRequest) {
   // Rate limit — SMS bombing protection.
-  const rl = rateLimit(req, { window: 600, max: 3, key: "auth:otp" });
+  const rl = await rateLimit(req, { window: 600, max: 3, key: "auth:otp" });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many OTP requests. Please wait 10 minutes." },
