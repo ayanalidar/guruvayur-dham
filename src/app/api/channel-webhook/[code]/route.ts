@@ -42,9 +42,10 @@ import { requireStaff, generateRef } from "@/lib/auth";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
-  const channelCode = params.code.toUpperCase();
+  const { code } = await params;
+  const channelCode = code.toUpperCase();
 
   // Find the channel
   const channel = await db.channelPartner.findUnique({
@@ -244,14 +245,15 @@ export async function POST(
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   // SECURITY: restrict to MANAGER + ACCOUNTANT — the response leaks webhook URL
   // (with ?key= secret stripped below) and channel partner setup details.
   const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
   if (error) return error;
 
-  const channelCode = params.code.toUpperCase();
+  const { code } = await params;
+  const channelCode = code.toUpperCase();
   const channel = await db.channelPartner.findUnique({
     where: { code: channelCode },
   });
