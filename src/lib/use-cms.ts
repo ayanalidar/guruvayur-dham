@@ -33,26 +33,61 @@ import { useEffect, useState } from "react";
 import type { ContentMap } from "./api-client";
 import { useI18n } from "./i18n/context";
 
-/* ---------- in-memory cache so multiple components share one fetch ---------- */
+/* ---------- in-memory cache with TTL ---------- */
+//
+// PROBLEM (user-reported): "data updated on backend doesn't reflect on frontend"
+//
+// Root cause: contentCache and cmsListCache were module-level variables with
+// NO TTL — once set on first page load, they never refreshed for the entire
+// browser session. invalidateCMSCache() was only called from the admin CMS
+// editor (CMSPage.tsx), so only the admin's browser cleared its cache.
+// Regular users kept seeing stale data forever.
+//
+// FIX: add a TTL (30 seconds). Every fetchContentMap() / fetchCMSList() call
+// checks if the cache is older than the TTL; if so, it refetches from the
+// server. This ensures all users see admin edits within 30 seconds, without
+// spamming the API on every page navigation.
+//
+// The admin editor still calls invalidateCMSCache() after saves for instant
+// feedback in their own browser.
+
+const CMS_CACHE_TTL_MS = 30 * 1000; // 30 seconds
 
 let contentCache: ContentMap | null = null;
+let contentCacheAt = 0; // timestamp when contentCache was populated
 let contentPromise: Promise<ContentMap> | null = null;
+
 const cmsListCache: Partial<Record<string, any[]>> = {};
+const cmsListCacheAt: Partial<Record<string, number>> = {}; // per-type timestamp
 const cmsListPromises: Partial<Record<string, Promise<any[]>>> = {};
 
-async function fetchContentMap(): Promise<ContentMap> {
-  if (contentCache) return contentCache;
+function isContentStale(): boolean {
+  if (!contentCache) return true;
+  return Date.now() - contentCacheAt > CMS_CACHE_TTL_MS;
+}
+
+function isListStale(type: string): boolean {
+  if (!cmsListCache[type]) return true;
+  const ts = cmsListCacheAt[type] || 0;
+  return Date.now() - ts > CMS_CACHE_TTL_MS;
+}
+
+async function fetchContentMap(force = false): Promise<ContentMap> {
+  // Return cached data if fresh (within TTL) and not forced.
+  if (contentCache && !force && !isContentStale()) return contentCache;
+  // If a fetch is already in flight, deduplicate.
   if (contentPromise) return contentPromise;
   contentPromise = (async () => {
     try {
       const r = await fetch("/api/content", { cache: "no-store" });
-      if (!r.ok) return {};
+      if (!r.ok) return contentCache || {};
       const j = await r.json();
       const map = j.map || {};
       contentCache = map;
+      contentCacheAt = Date.now();
       return map;
     } catch {
-      return {};
+      return contentCache || {};
     } finally {
       contentPromise = null;
     }
@@ -60,19 +95,23 @@ async function fetchContentMap(): Promise<ContentMap> {
   return contentPromise;
 }
 
-async function fetchCMSList<T>(type: string): Promise<T[]> {
-  if (cmsListCache[type]) return cmsListCache[type] as T[];
+async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
+  // Return cached data if fresh (within TTL) and not forced.
+  if (cmsListCache[type] && !force && !isListStale(type)) {
+    return cmsListCache[type] as T[];
+  }
   if (cmsListPromises[type]) return cmsListPromises[type] as Promise<T[]>;
   cmsListPromises[type] = (async () => {
     try {
       const r = await fetch(`/api/cms?type=${type}`, { cache: "no-store" });
-      if (!r.ok) return [];
+      if (!r.ok) return cmsListCache[type] || [];
       const j = await r.json();
       const data = j.data || [];
       cmsListCache[type] = data;
+      cmsListCacheAt[type] = Date.now();
       return data;
     } catch {
-      return [];
+      return cmsListCache[type] || [];
     } finally {
       delete cmsListPromises[type];
     }
@@ -80,10 +119,29 @@ async function fetchCMSList<T>(type: string): Promise<T[]> {
   return cmsListPromises[type] as Promise<T[]>;
 }
 
-/** Invalidate caches — call after admin saves content so the next read is fresh. */
+/**
+ * Invalidate caches — call after admin saves content so the next read is fresh.
+ * Also called automatically by the TTL expiry (30 seconds).
+ */
 export function invalidateCMSCache() {
   contentCache = null;
-  for (const k of Object.keys(cmsListCache)) delete cmsListCache[k];
+  contentCacheAt = 0;
+  for (const k of Object.keys(cmsListCache)) {
+    delete cmsListCache[k];
+    delete cmsListCacheAt[k];
+  }
+}
+
+/**
+ * Force a refresh of all CMS data — bypasses the TTL.
+ * Useful for "refresh" buttons in the admin UI.
+ */
+export async function refreshCMSData() {
+  invalidateCMSCache();
+  await Promise.all([
+    fetchContentMap(true),
+    ...Object.keys(cmsListCache).map((k) => fetchCMSList(k, true)),
+  ]);
 }
 
 /* ---------- Hooks ---------- */
@@ -104,6 +162,9 @@ export function useContent() {
 
   useEffect(() => {
     let active = true;
+    // fetchContentMap() now checks TTL internally — if the cache is older
+    // than 30 seconds, it refetches from the server. This ensures admin
+    // edits propagate to all users within 30 seconds.
     fetchContentMap().then((m) => {
       if (!active) return;
       setMap(m);
@@ -150,23 +211,23 @@ export function useContent() {
  */
 export function useCMSList<T = any>(type: string, fallback: T[]): T[] {
   const [list, setList] = useState<T[]>(cmsListCache[type] as T[] || fallback);
-  const [loaded, setLoaded] = useState(!!cmsListCache[type]);
 
   useEffect(() => {
     let active = true;
-    if (loaded) return;
+    // fetchCMSList() now checks TTL internally — if the cache is older than
+    // 30 seconds, it refetches from the server. Removed the `if (loaded) return`
+    // guard that was preventing TTL-based refresh on subsequent mounts.
     fetchCMSList<T>(type).then((data) => {
       if (!active) return;
       // Only use CMS data if it's non-empty; otherwise keep fallback
       if (data && data.length > 0) {
         setList(data);
       }
-      setLoaded(true);
     });
     return () => {
       active = false;
     };
-  }, [type, loaded]);
+  }, [type]);
 
   return list;
 }
