@@ -47,6 +47,7 @@ import AdminRooms from "@/pages/admin/AdminRooms";
 import AdminChannels from "@/pages/admin/AdminChannels";
 import AdminHub from "@/pages/admin/AdminHub";
 import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
+import MaintenancePage from "@/pages/MaintenancePage";
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -69,14 +70,28 @@ export default function Home() {
   const { trackEvent } = useAnalytics();
   useWebVitals();
   const [loading, setLoading] = useState(true);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
+  // Check maintenance mode on mount + every 60 seconds
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1800);
-    return () => clearTimeout(t);
+    const checkMaintenance = () => {
+      fetch("/api/maintenance/mode", { cache: "no-store" })
+        .then(r => r.json())
+        .then(j => setMaintenanceMode(j.enabled || false))
+        .catch(() => {});
+    };
+    checkMaintenance();
+    const interval = setInterval(checkMaintenance, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   // Route matching
   const renderPage = () => {
+    // Maintenance mode: show holding page for guests, but allow admin
+    const isAdminRoute = path.startsWith("/admin") || path === "/login" || path === "/reset-password" || path === "/cms" || path === "/settings";
+    if (maintenanceMode && !isAdminRoute) {
+      return <MaintenancePage />;
+    }
     if (path === "/" || path === "") return <HomePage />;
     if (path === "/rooms") return <RoomsPage />;
     if (path.startsWith("/rooms/")) {

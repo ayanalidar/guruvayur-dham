@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
 import { generateRef } from "@/lib/auth";
 import { getSetting } from "@/lib/settings";
+import { withRetry } from "@/lib/retry";
 
 const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
 const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
@@ -78,9 +79,16 @@ export async function POST(req: NextRequest) {
     if (keyId && keySecret) {
       try {
         const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-        const verifyRes = await fetch(`https://api.razorpay.com/v1/payments/${clientPaymentId}`, {
-          headers: { Authorization: `Basic ${auth}` },
-        });
+        // SelfReliant-Phase2-4: wrap Razorpay payment fetch in withRetry so a
+        // transient 5xx/network blip doesn't fail the booking flow. Circuit
+        // breaker key "razorpay" auto-trips after 5 consecutive failures
+        // (across all callers) for 5 min — surfaces on the Health Dashboard.
+        const verifyRes = await withRetry(
+          () => fetch(`https://api.razorpay.com/v1/payments/${clientPaymentId}`, {
+            headers: { Authorization: `Basic ${auth}` },
+          }),
+          { maxRetries: 2, circuitBreakerKey: "razorpay" },
+        );
         if (!verifyRes.ok) {
           return NextResponse.json(
             { error: "Payment verification failed — invalid paymentId" },

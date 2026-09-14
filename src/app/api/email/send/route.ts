@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { getSetting } from "@/lib/settings";
+import { withRetry } from "@/lib/retry";
 
 const SendEmailSchema = z.object({
   to: z.string().min(1).max(500),
@@ -57,16 +58,19 @@ export async function POST(req: NextRequest) {
             secure: smtpPortStr === "465",
             auth: { user: smtpUser, pass: smtpPass },
           });
-          await transporter.sendMail({
-            from: `"Guruvayur Dham" <${fromEmail}>`,
-            to, subject, text: body,
-            // SECURITY (Round 3 M21 fix): HTML-escape the body before
-            // injecting <br> tags. Was: body.replace(/\n/g, "<br>") — if
-            // staff passed a customer-supplied value as body (e.g. contact
-            // form message), it would be rendered as HTML in the recipient's
-            // email client (stored XSS in mail client).
-            html: escapeHtml(body).replace(/\n/g, "<br>"),
-          });
+          await withRetry(
+            () => transporter.sendMail({
+              from: `"Guruvayur Dham" <${fromEmail}>`,
+              to, subject, text: body,
+              // SECURITY (Round 3 M21 fix): HTML-escape the body before
+              // injecting <br> tags. Was: body.replace(/\n/g, "<br>") — if
+              // staff passed a customer-supplied value as body (e.g. contact
+              // form message), it would be rendered as HTML in the recipient's
+              // email client (stored XSS in mail client).
+              html: escapeHtml(body).replace(/\n/g, "<br>"),
+            }),
+            { maxRetries: 2, circuitBreakerKey: "smtp" },
+          );
           await db.notification.update({
             where: { id: notification.id },
             data: { status: "SENT", sentAt: new Date() },

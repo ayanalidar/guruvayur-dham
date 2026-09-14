@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 /**
  * API Error Handler Wrapper
@@ -7,7 +8,10 @@ import { NextRequest, NextResponse } from "next/server";
  * 1. Catches all errors (DB failures, null references, etc.)
  * 2. Returns a proper JSON error response (not a 500 HTML page)
  * 3. Logs the error to the console with context
- * 4. Includes the error message in development mode
+ * 4. Persists the error to the ErrorLog table (visible on the admin
+ *    Health Dashboard and Performance Monitoring UI) — best-effort, never
+ *    throws if the DB itself is down (which is often the cause of the error).
+ * 5. Includes the error message in development mode
  *
  * Usage:
  *   export const GET = withErrorHandler(async (req) => {
@@ -32,14 +36,31 @@ export function withErrorHandler(handler: Handler): Handler {
       // Log the error with context
       const url = req.nextUrl.pathname;
       const method = req.method;
+      const statusCode = error.statusCode || 500;
       console.error(`[API ERROR] ${method} ${url}:`, {
         message: error.message,
         code: error.code,
         stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       });
 
+      // Persist to ErrorLog so the admin Health Dashboard + Performance
+      // Monitoring UI can surface it. Best-effort — if the DB itself is
+      // down (often the cause of the error), this silently no-ops.
+      try {
+        await db.errorLog.create({
+          data: {
+            route: url,
+            method,
+            errorType: error.code?.startsWith("P") ? "DB_ERROR" : "UNKNOWN",
+            message: error.message?.slice(0, 500) || "Unknown error",
+            statusCode,
+            ipAddress: req.headers.get("x-forwarded-for") || null,
+            userAgent: req.headers.get("user-agent") || null,
+          },
+        });
+      } catch {}
+
       // Return a proper JSON error response
-      const statusCode = error.statusCode || 500;
       const response: any = {
         error: statusCode === 500 ? "Internal server error" : error.message,
         message: process.env.NODE_ENV === "development" ? error.message : undefined,

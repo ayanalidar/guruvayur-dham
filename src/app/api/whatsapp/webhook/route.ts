@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { chat } from "@/lib/ai/provider";
 import crypto from "crypto";
 import { getSetting } from "@/lib/settings";
+import { withRetry } from "@/lib/retry";
 
 /**
  * WhatsApp Business API Webhook
@@ -125,7 +126,17 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       });
       if (existing) {
-        // Already processed — acknowledge but don't re-process.
+        // Already processed — log the duplicate attempt + acknowledge.
+        await db.webhookDelivery.create({
+          data: {
+            source: "WHATSAPP",
+            eventType: message ? "INBOUND_MESSAGE" : "STATUS_UPDATE",
+            payload: JSON.stringify({ from, messageId: message?.id }).slice(0, 5000),
+            status: "DUPLICATE",
+            message: `Duplicate webhook delivery for ${messageId}`,
+            ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+          },
+        }).catch(() => {});
         return NextResponse.json({ status: "ok", duplicate: true });
       }
     }
@@ -148,6 +159,18 @@ export async function POST(req: NextRequest) {
         relatedRef: messageId ? `WA-${messageId}` : undefined,
       },
     });
+
+    // Log the inbound webhook delivery for the admin Webhook Deliveries dashboard.
+    await db.webhookDelivery.create({
+      data: {
+        source: "WHATSAPP",
+        eventType: message ? "INBOUND_MESSAGE" : "STATUS_UPDATE",
+        payload: JSON.stringify({ from, messageId: message?.id }).slice(0, 5000),
+        status: "PROCESSED",
+        message: `Reply: ${reply?.slice(0, 100) || "no reply"}`,
+        ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+      },
+    }).catch(() => {});
 
     // Send the reply back via WhatsApp API
     await sendWhatsAppReply(from, reply);
@@ -251,19 +274,31 @@ async function sendWhatsAppReply(to: string, message: string): Promise<void> {
   }
 
   try {
-    await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to,
-        type: "text",
-        text: { body: message },
+    // SelfReliant-Phase2-4: wrap Meta Graph API fetch in withRetry so a
+    // transient 5xx from Facebook doesn't silently drop the WhatsApp reply
+    // (the inbound message has already been logged; this is the outbound
+    // reply path). Circuit breaker key "whatsapp" auto-trips after 5
+    // consecutive failures (shared with /api/reviews/checkout-funnel) for
+    // 5 min — surfaces on the Health Dashboard.
+    const res = await withRetry(
+      () => fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to,
+          type: "text",
+          text: { body: message },
+        }),
       }),
-    });
+      { maxRetries: 2, circuitBreakerKey: "whatsapp" },
+    );
+    // Drain the body so the connection can be reused. We don't need the
+    // response body — failures are visible in the Notification table.
+    await res.text().catch(() => {});
   } catch (error) {
     console.error("Failed to send WhatsApp reply:", error);
   }

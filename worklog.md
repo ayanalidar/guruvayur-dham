@@ -912,3 +912,211 @@ Stage Summary:
   `getCachedSetting` for the sync path) so their existing callers in
   ai-generate GET and /api/rate-limit GET don't need updates.
 - Not committed. Not pushed. Staged for review by main.
+
+
+---
+Task ID: SelfReliant-Phase2-4
+Agent: subagent
+Task: Complete remaining self-reliant platform features (Phases 2-4):
+  (1) WebhookDelivery logging in webhook routes, (2) ErrorLog logging in
+  withErrorHandler, (3) withRetry adoption on external API calls,
+  (4) content versioning integration in PATCH handlers, (5) content
+  versions API route, (6) self-healing cron script, (7) API key rotation
+  route, (8) performance monitoring route.
+
+Work Log:
+
+(1) WebhookDelivery logging — 2 files:
+  - src/app/api/whatsapp/webhook/route.ts — added 2 webhookDelivery.create
+    calls: one in the duplicate path (status: DUPLICATE, logged when Meta
+    retries an already-processed messageId — surfaces retry behavior to
+    the admin Webhook Deliveries dashboard), and one in the success path
+    (status: PROCESSED, with the reply text snippet). Both wrapped in
+    .catch(() => {}) so a DB blip never breaks the webhook ack (Meta
+    retries on 5xx — would otherwise amplify a single DB hiccup into a
+    retry storm).
+  - src/app/api/channel-webhook/[code]/route.ts — added 1 webhookDelivery
+    create call after the SyncLog entry (status: PROCESSED, payload
+    includes booking reference + channelBookingId). Same .catch() guard.
+
+(2) ErrorLog logging in withErrorHandler — src/lib/api-safe.ts:
+  - Added `import { db } from "@/lib/db"` at top of file.
+  - Extended the catch block: after the console.error line, persist the
+    error to the ErrorLog table (route, method, errorType, message,
+    statusCode, ipAddress, userAgent). errorType is "DB_ERROR" if
+    error.code starts with "P" (Prisma error codes P2002, P2025, etc.),
+    "UNKNOWN" otherwise. Wrapped in try/catch so a DB-is-down error (the
+    most common cause of an unhandled error) doesn't itself throw and
+    mask the real error.
+
+(3) withRetry adoption on external API calls — 4 files:
+  - src/app/api/guest-booking/route.ts — wrapped the Razorpay payment
+    verification fetch (`https://api.razorpay.com/v1/payments/${id}`)
+    in withRetry({ maxRetries: 2, circuitBreakerKey: "razorpay" }).
+    Note: this is the ONLY Razorpay fetch in the project — the
+    `/api/razorpay/verify` route uses local HMAC only, no network call
+    (deviation from spec item 3a: see Deviation 1 below).
+  - src/app/api/email/send/route.ts — wrapped transporter.sendMail in
+    withRetry({ maxRetries: 2, circuitBreakerKey: "smtp" }). 2 retries
+    covers most transient SMTP 4xx errors; the circuit breaker trips
+    after 5 consecutive failures (shared across all callers — there's
+    only one caller today) for 5 min, surfacing on the Health Dashboard.
+  - src/app/api/whatsapp/webhook/route.ts (sendWhatsAppReply helper) —
+    wrapped the Meta Graph API fetch in withRetry({ maxRetries: 2,
+    circuitBreakerKey: "whatsapp" }). Drain the response body so the
+    keepalive connection can be reused.
+  - src/app/api/reviews/checkout-funnel/route.ts (sendWhatsAppMessage
+    helper) — wrapped the Meta Graph API fetch in withRetry with the
+    SAME circuit breaker key "whatsapp" so admin sees one consolidated
+    failure state for the WhatsApp integration across both routes.
+
+(4) Content versioning integration — 2 files:
+  - src/app/api/content/route.ts (PATCH) — captured session from
+    requireStaff, then BEFORE each contentBlock.upsert, snapshot the
+    existing row's value into ContentVersion (version = current count
+    + 1, updatedBy/userName from session). Wrapped in try/catch so a
+    version write failure never blocks the actual content update.
+  - src/app/api/cms/route.ts (PATCH) — added fetchCmsRow helper + a
+    ContentVersion snapshot before the existing update switch. Key is
+    `cms:${type}:${id}` so it namespaces cleanly away from
+    ContentBlock keys. value is JSON.stringify of the existing row
+    (the rollback route parses it back). POST handler doesn't
+    snapshot — there's no previous state to record (the row is being
+    created); documented in the POST comment. Captured session from
+    requireStaff for both handlers.
+
+(5) Content versions API route — 2 NEW files:
+  - src/app/api/content/versions/route.ts (GET ?key=...&limit=20) —
+    MANAGER-only. Returns the version history for the key (newest-
+    first), plus `currentValue` (the live ContentBlock.value, so the
+    UI can show "current vs selected version" diff). For `cms:*` keys,
+    currentValue is null (CMS rows live in different tables — the
+    GET endpoint doesn't query them, only ContentVersion snapshots).
+  - src/app/api/content/versions/rollback/route.ts (POST { key, version })
+    — MANAGER-only. 4-step flow: (1) look up the requested
+    ContentVersion row; (2) snapshot the CURRENT live value into a NEW
+    ContentVersion (so the rollback itself is reversible — "undo the
+    undo"); (3a) for ContentBlock keys, update ContentBlock.value;
+    (3b) for cms:<type>:<id> keys, parse the JSON snapshot, strip
+    id/createdAt/updatedAt, and update the corresponding CMS table row
+    (full switch on type: features, events, testimonials, faqs,
+    trustBadges, poojas, carousel, blogPosts — all 8 supported); (4)
+    write an AuditLog entry. Returns the restored version number +
+    target reference.
+
+(6) Self-healing cron script — scripts/self-heal.sh (NEW, +chmod +x):
+  - 5-step bash script intended for crontab `*/5 * * * *`:
+    1. Check `docker compose ps` for guruvayur-app Up; restart if down.
+    2. df / disk usage; if >80%, `docker system prune -f` +
+       `docker volume prune -f`.
+    3. Delete ErrorLog rows older than 30 days (via `prisma db execute
+       --stdin` heredoc) — keeps the dashboard fast.
+    4. Delete AdminNotification rows that have been read
+       (array_length(readBy,1) > 0) AND older than 7 days.
+    5. Echo a one-line summary with disk usage %.
+  - All non-fatal: a failure in step 3/4 (e.g. transient DB blip) doesn't
+    break the next cron run. Step 1 (container restart) is the most
+    critical — the script `exit 1`s if cd fails, otherwise always
+    reaches the summary echo.
+  - Cron line documented in the file header: `*/5 * * * * /root/guruvayur-dham/scripts/self-heal.sh >> /var/log/self-heal.log 2>&1`
+
+(7) API key rotation route — src/app/api/settings/rotate/route.ts (NEW):
+  - POST /api/settings/rotate — MANAGER-only.
+  - Body: { key: "CRON_SECRET" | "NEXTAUTH_SECRET", confirm?: boolean }.
+  - CRON_SECRET: generates crypto.randomBytes(32).toString("hex") (256-
+    bit hex token, suitable for Bearer-header auth). Saves via
+    setSetting, invalidates cache, writes AuditLog (length only — never
+    the value). Returns the new value + a ready-to-use `Bearer <token>`
+    string so admin can paste it directly into Vercel Cron config / VPS
+    crontab. No confirmation required.
+  - NEXTAUTH_SECRET: generates crypto.randomBytes(32).toString("base64")
+    (256-bit base64 token, JWT signing key). REQUIRES `confirm: true`
+    in the body. Without it, returns 409 with a warning explaining the
+    two consequences: (1) all active staff + guest sessions are
+    invalidated (JWT signing key changes); (2) the encrypted Setting
+    table is AES-256-GCM keyed by NEXTAUTH_SECRET (see src/lib/settings.ts
+    getMasterKey) — so all previously-saved secrets become unreadable
+    until the OLD NEXTAUTH_SECRET is restored, OR each secret is re-saved
+    via the Settings UI. Returns a "restart the app" warning since
+    NextAuth reads NEXTAUTH_SECRET at module-load time.
+
+(8) Performance monitoring route — src/app/api/performance/route.ts (NEW):
+  - GET /api/performance?days=7 — MANAGER-only.
+  - Returns a consolidated view for the Performance Dashboard:
+    * window: { days, since, until }
+    * errorCount: total ErrorLog rows in window
+    * errorsByRoute: top 10 routes by error count (via Prisma groupBy
+      with orderBy: { _count: { id: "desc" } })
+    * slowestRoutesApprox: same list (see Deviation 2 below)
+    * errorsByType: histogram (DB_ERROR / UNKNOWN / etc.)
+    * errorsByStatusCode: histogram
+    * recentErrors: 10 newest errors
+    * circuitBreakers: live state from getCircuitBreakerStatus()
+    * rateLimiter: live state from getRateLimitStats()
+    * unresolvedErrors: count of unresolved errors in window
+  - Uses z.coerce.number for ?days query (defaults to 7, capped at 90).
+
+Deviations from spec (documented inline):
+1. **/api/razorpay/verify has no fetch to wrap (spec item 3a)** — the
+   existing /api/razorpay/verify route uses local HMAC-SHA256 signature
+   verification only (crypto.createHmac + crypto.timingSafeEqual) — there
+   is NO call to api.razorpay.com. The spec's example code
+   (`fetch('https://api.razorpay.com/v1/payments/${clientPaymentId}')`)
+   actually matches the fetch in /api/guest-booking/route.ts (spec item
+   3b), which I DID wrap. So items 3a and 3b refer to the same conceptual
+   "Razorpay verification fetch" — both addressed by the single wrap in
+   guest-booking. The /api/razorpay/verify route was left unchanged (no
+   fetch to wrap). The /api/razorpay/create-order route (which DOES
+   fetch api.razorpay.com/v1/orders) was NOT in the spec's item list —
+   left unchanged to avoid scope creep.
+2. **"Slowest API routes" approximated from error frequency (perf route)** —
+   the app does not record per-request server-side latency in any DB
+   table. PerformanceMetric holds client-side web vitals (LCP, FID, CLS);
+   AnalyticsEvent has no duration field. Until we add a latency column to
+   ErrorLog (or a new ApiLatencyLog table), the "slowest routes" list is
+   approximated from error frequency — routes that error most often are
+   likely the slowest or most strained. Documented inline; surfaced as
+   `slowestRoutesApprox` in the response. Same caveat documented in the
+   SelfReliant-API-Routes commit for the /api/health-check route.
+3. **CMS POST skipped versioning (item 4)** — the spec said "save the
+   previous state before overwriting" for CMS POST + PATCH. But POST
+   creates a NEW row — there is no previous state to snapshot. Version
+   history accrues on subsequent PATCH calls. Documented in the POST
+   handler's comment.
+4. **WebhookDelivery logged in BOTH duplicate and success paths (item 1)** —
+   the spec said "after processing the message (or after the idempotency
+   check)" — ambiguous between "after one or the other". I implemented
+   BOTH: a DUPLICATE-status row in the idempotency-hit path, and a
+   PROCESSED-status row in the success path. This gives admins better
+   visibility into Meta's retry behavior (they can see how often Meta
+   retries the same messageId).
+5. **CMS rollback strips id/createdAt/updatedAt from JSON snapshot (item 5)**
+   — the ContentVersion.value for CMS rows is a JSON.stringify of the
+   entire row (including id, createdAt, updatedAt). The rollback route
+   parses these out before calling update() — otherwise we'd try to
+   overwrite the primary key (Prisma rejects) and reset timestamps
+   (silent data loss). Documented in restoreCmsRow.
+
+Stage Summary:
+- 9 files modified, 5 NEW files created, 1 NEW bash script.
+- ~640 lines added, ~50 lines removed (net +590 lines).
+- TypeScript verification: `npx tsc --noEmit` → 0 errors (exit 0).
+- ESLint verification: `npx eslint .` → 0 errors, 3 warnings (all pre-
+  existing, in unrelated files: global-error.tsx + OAuthButtons.tsx).
+- No new dependencies (used existing: zod, @prisma/client, crypto).
+- No existing route handler signatures changed.
+- New env vars: none (script uses paths inside the VPS, not env).
+- New admin surface available:
+  - /api/content/versions (GET version history)
+  - /api/content/versions/rollback (POST restore)
+  - /api/settings/rotate (POST key rotation)
+  - /api/performance (GET monitoring dashboard data)
+  - scripts/self-heal.sh (cron-driven self-healing)
+- All new routes MANAGER-only (perf + rotate + content versions + rollback).
+- WebhookDelivery + ErrorLog now auto-populate on every webhook hit and
+  every wrapped API error respectively — the admin Health Dashboard +
+  Performance Dashboard have live data without any UI trigger.
+- All withRetry wraps share circuit-breaker keys across routes (razorpay,
+  smtp, whatsapp) so admin sees ONE consolidated failure state per
+  integration, not per-route.
+- Not committed. Not pushed. Staged for review by main.

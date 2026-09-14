@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getSetting } from "@/lib/settings";
+import { withRetry } from "@/lib/retry";
 
 /**
  * POST /api/reviews/checkout-funnel
@@ -213,19 +214,27 @@ async function sendWhatsAppMessage(to: string, message: string): Promise<boolean
   const formattedPhone = to.replace(/[^0-9]/g, "");
 
   try {
-    const res = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: formattedPhone,
-        type: "text",
-        text: { body: message },
+    // SelfReliant-Phase2-4: wrap Meta Graph API fetch in withRetry so a
+    // transient 5xx from Facebook doesn't silently drop the review-request
+    // WhatsApp message. Circuit breaker key "whatsapp" is shared with
+    // /api/whatsapp/webhook so admin sees one consolidated failure state
+    // for the WhatsApp integration on the Health Dashboard.
+    const res = await withRetry(
+      () => fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: formattedPhone,
+          type: "text",
+          text: { body: message },
+        }),
       }),
-    });
+      { maxRetries: 2, circuitBreakerKey: "whatsapp" },
+    );
     return res.ok;
   } catch (error) {
     console.error("Failed to send WhatsApp message:", error);

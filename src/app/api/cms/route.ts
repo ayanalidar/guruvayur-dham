@@ -190,9 +190,13 @@ export async function GET(req: NextRequest) {
 /**
  * POST /api/cms — Create
  * body: { type, data: { ...fields } }
+ *
+ * SelfReliant-Phase2-4: no version snapshot on POST — there is no previous
+ * state to record (the row is being created). Version history accrues on
+ * subsequent PATCH calls.
  */
 export async function POST(req: NextRequest) {
-  const { error } = await requireStaff(req);
+  const { session, error } = await requireStaff(req);
   if (error) return error;
 
   const parsed = CreateCmsSchema.safeParse(await req.json());
@@ -245,9 +249,14 @@ export async function POST(req: NextRequest) {
 /**
  * PATCH /api/cms — Update
  * body: { type, id, data: { ...fields } }
+ *
+ * SelfReliant-Phase2-4: snapshot the existing row's current state into
+ * ContentVersion BEFORE overwriting, so admins can roll back via
+ * /api/content/versions. The version key is `cms:<type>:<id>`. Best-effort —
+ * if the snapshot write fails, we still proceed with the update.
  */
 export async function PATCH(req: NextRequest) {
-  const { error } = await requireStaff(req);
+  const { session, error } = await requireStaff(req);
   if (error) return error;
 
   const parsed = UpdateCmsSchema.safeParse(await req.json());
@@ -271,6 +280,27 @@ export async function PATCH(req: NextRequest) {
   // Cast to any: the per-type schema has already validated the shape at runtime;
   // TS can't narrow the union type returned by the lookup table inside switch.
   const data: any = typedResult.data;
+
+  // SelfReliant-Phase2-4: snapshot current state into ContentVersion.
+  // We use a single fetch helper to keep the switch compact.
+  const versionKey = `cms:${type}:${id}`;
+  try {
+    const existing: any = await fetchCmsRow(type, id);
+    if (existing) {
+      const nextVersion =
+        (await db.contentVersion.count({ where: { contentBlockKey: versionKey } })) + 1;
+      await db.contentVersion.create({
+        data: {
+          contentBlockKey: versionKey,
+          value: JSON.stringify(existing),
+          version: nextVersion,
+          updatedBy: session?.user?.id,
+          userName: session?.user?.name,
+        },
+      });
+    }
+  } catch {}
+
   let item: any;
   switch (type) {
     case "features": item = await db.feature.update({ where: { id }, data }); break;
@@ -294,6 +324,26 @@ export async function PATCH(req: NextRequest) {
     default: return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
   }
   return NextResponse.json({ item, message: "Updated" });
+}
+
+/**
+ * Fetch the current state of a CMS row by type + id — used by the PATCH
+ * handler to snapshot the previous state into ContentVersion. Returns null
+ * if the row doesn't exist (which means the update will fail with 404 anyway
+ * — but we let the update path emit that error).
+ */
+async function fetchCmsRow(type: string, id: string): Promise<any> {
+  switch (type) {
+    case "features": return await db.feature.findUnique({ where: { id } });
+    case "events": return await db.event.findUnique({ where: { id } });
+    case "testimonials": return await db.testimonial.findUnique({ where: { id } });
+    case "faqs": return await db.fAQItem.findUnique({ where: { id } });
+    case "trustBadges": return await db.trustBadge.findUnique({ where: { id } });
+    case "poojas": return await db.pooja.findUnique({ where: { id } });
+    case "carousel": return await db.carouselSlide.findUnique({ where: { id } });
+    case "blogPosts": return await db.blogPost.findUnique({ where: { id } });
+    default: return null;
+  }
 }
 
 /**

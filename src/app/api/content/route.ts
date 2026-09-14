@@ -34,7 +34,7 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
 // PATCH /api/content · update one or more content blocks
 // body: { updates: [{ key, value }, ...] }
 export async function PATCH(req: NextRequest) {
-  const { error } = await requireStaff(req);
+  const { session, error } = await requireStaff(req);
   if (error) return error;
 
   const parsed = BulkContentUpdateSchema.safeParse(await req.json());
@@ -47,6 +47,28 @@ export async function PATCH(req: NextRequest) {
   const { updates } = parsed.data;
   const results: Array<{ id: string; key: string; value: string }> = [];
   for (const u of updates) {
+    // SelfReliant-Phase2-4: snapshot the current value into ContentVersion
+    // BEFORE overwriting, so admins can roll back via /api/content/versions.
+    // Best-effort: if the snapshot write fails (e.g. transient DB blip) we
+    // still proceed with the update — losing history is preferable to
+    // blocking the editor.
+    try {
+      const existing = await db.contentBlock.findUnique({ where: { key: u.key } });
+      if (existing) {
+        const nextVersion =
+          (await db.contentVersion.count({ where: { contentBlockKey: u.key } })) + 1;
+        await db.contentVersion.create({
+          data: {
+            contentBlockKey: u.key,
+            value: existing.value,
+            version: nextVersion,
+            updatedBy: session?.user?.id,
+            userName: session?.user?.name,
+          },
+        });
+      }
+    } catch {}
+
     const r = await db.contentBlock.upsert({
       where: { key: u.key },
       create: { key: u.key, value: u.value, category: "general" },

@@ -212,6 +212,18 @@ export async function POST(
     },
   });
 
+  // Log the webhook delivery for the admin Webhook Deliveries dashboard.
+  await db.webhookDelivery.create({
+    data: {
+      source: channelCode,
+      eventType: "BOOKING_NEW",
+      payload: JSON.stringify({ reference: ref, channelBookingId }).slice(0, 5000),
+      status: "PROCESSED",
+      message: `Booking ${ref} imported from ${channelCode}`,
+      ipAddress: req.headers.get("x-forwarded-for") || "unknown",
+    },
+  }).catch(() => {});
+
   // Broadcast BLOCK to all OTHER channels
   const syncResults = await broadcastToChannels({
     bookingId: booking.id,
