@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
   const where: any = {};
   if (category) where.category = category;
 
-  const configs = await db.channelConfig.findMany({
+  const configs = await db.channelConfig.findMany({ take: 1000,
     where,
     orderBy: [{ category: "asc" }, { name: "asc" }],
   });

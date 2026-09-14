@@ -52,5 +52,5 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
 
   return NextResponse.json({
     availability: slug ? byRoom[slug] : Object.values(byRoom),
-  });
+  }, { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } });
 });

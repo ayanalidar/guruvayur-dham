@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   const status = req.nextUrl.searchParams.get("status");
   const where: any = {};
   if (status) where.status = status;
-  const entries = await db.waitingList.findMany({
+  const entries = await db.waitingList.findMany({ take: 1000,
     where,
     orderBy: { createdAt: "desc" },
   });

@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
-  const coupons = await db.coupon.findMany({ orderBy: { code: "asc" } });
+  const coupons = await db.coupon.findMany({ take: 1000, orderBy: { code: "asc" } });
   return NextResponse.json({ coupons });
 }
 

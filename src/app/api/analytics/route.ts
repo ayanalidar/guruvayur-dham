@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
     : 0;
 
   // ===== REVENUE TRENDS (daily) =====
-  const bookings = await db.booking.findMany({
+  const bookings = await db.booking.findMany({ take: 1000,
     where: { createdAt: { gte: startDate }, status: { in: ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"] } },
     orderBy: { createdAt: "asc" },
   });
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
   });
 
   // ===== ROOM PERFORMANCE =====
-  const roomStats = await db.booking.findMany({
+  const roomStats = await db.booking.findMany({ take: 1000,
     where: { createdAt: { gte: startDate } },
     include: { room: true },
   });
@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
   for (let i = 0; i < 14; i++) {
     const date = new Date(today);
     date.setDate(date.getDate() + i);
-    const availability = await db.availability.findMany({
+    const availability = await db.availability.findMany({ take: 1000,
       where: { date },
       select: { available: true },
     });
@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
   }
 
   // ===== REVIEW SENTIMENT (simplified keyword-based) =====
-  const reviews = await db.review.findMany({
+  const reviews = await db.review.findMany({ take: 1000,
     where: { published: true, reviewDate: { gte: startDate } },
     select: { text: true, rating: true },
   });

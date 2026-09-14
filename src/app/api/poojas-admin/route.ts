@@ -35,7 +35,7 @@ const UpdatePoojaSchema = z.object({
 
 // GET /api/poojas-admin — list all poojas
 export async function GET() {
-  const poojas = await db.pooja.findMany({ orderBy: { sortOrder: "asc" } });
+  const poojas = await db.pooja.findMany({ take: 1000, orderBy: { sortOrder: "asc" } });
   return NextResponse.json({ poojas });
 }
 

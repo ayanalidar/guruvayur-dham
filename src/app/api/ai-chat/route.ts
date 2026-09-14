@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { chat } from "@/lib/ai/provider";
 import { rateLimit } from "@/lib/rate-limiter";
+
+const ChatSchema = z.object({
+  message: z.string().min(1).max(2000),
+  history: z.array(z.object({
+    role: z.enum(["system", "user", "assistant"]),
+    content: z.string().max(5000),
+  })).max(20).optional(),
+});
 
 // POST /api/ai-chat — Guruvayur Guide chatbot
 // Uses Groq (Llama 3.3 70B) first, falls back to z-ai SDK (GLM)
@@ -9,8 +18,11 @@ export async function POST(req: NextRequest) {
   const rl = await rateLimit(req, { window: 60, max: 20, key: "ai-chat" });
   if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
 
-  const { message, history } = await req.json();
-  if (!message) return NextResponse.json({ error: "Message required" }, { status: 400 });
+  const parsed = ChatSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+  }
+  const { message, history } = parsed.data;
 
   const systemPrompt = `You are the Guruvayur Dham AI Guide — a warm, knowledgeable assistant for pilgrims visiting Mathura, Uttar Pradesh, India. You help with:
 - Temple darshan timings, dress code, and rituals

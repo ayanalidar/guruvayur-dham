@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { generateContent } from "@/lib/ai/provider";
 import { requireStaff } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
+
+const GenerateSchema = z.object({
+  type: z.enum(["seo-meta", "blog-intro", "pooja-desc", "room-desc", "custom"]),
+  prompt: z.string().min(1).max(5000),
+  context: z.string().max(5000).optional(),
+});
 
 /**
  * POST /api/ai-generate
@@ -19,7 +26,11 @@ export async function POST(req: NextRequest) {
   const rl = await rateLimit(req, { window: 60, max: 10, key: "ai-generate" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded. Please wait before generating more content." }, { status: 429 });
 
-  const { type, prompt, context } = await req.json();
+  const parsed = GenerateSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+  }
+  const { type, prompt, context } = parsed.data;
 
   if (!prompt) {
     return NextResponse.json({ error: "Prompt required" }, { status: 400 });
