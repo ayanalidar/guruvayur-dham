@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getSetting } from "@/lib/settings";
 
 /**
  * POST /api/reviews/checkout-funnel
@@ -32,8 +33,9 @@ import { db } from "@/lib/db";
 export async function POST(req: NextRequest) {
   // CRON_SECRET check — fail-closed (if secret is unset, refuse all requests).
   // This prevents unauthorized triggering of WhatsApp review messages.
-  // Vercel Cron sets CRON_SECRET automatically; on VPS, set it in .env.
-  const cronSecret = process.env.CRON_SECRET;
+  // Vercel Cron sets CRON_SECRET automatically; on VPS, set it in .env or
+  // via the admin Settings UI (encrypted Setting table).
+  const cronSecret = await getSetting("CRON_SECRET");
   if (!cronSecret) {
     return NextResponse.json(
       { error: "Server misconfiguration: CRON_SECRET not set. Review funnel disabled." },
@@ -191,11 +193,13 @@ Guruvayur Dham Team 🙏`;
 
 /**
  * Send a WhatsApp message via Meta's WhatsApp Business API.
- * Returns true if sent, false if env vars not set (dev mode) or failed.
+ * Returns true if sent, false if not configured (dev mode) or failed.
+ * Configuration is read via getSetting() (encrypted Setting table +
+ * process.env fallback).
  */
 async function sendWhatsAppMessage(to: string, message: string): Promise<boolean> {
-  const token = process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const token = await getSetting("WHATSAPP_ACCESS_TOKEN");
+  const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
 
   if (!token || !phoneNumberId) {
     // Only log in dev — PII in prod logs is risky.

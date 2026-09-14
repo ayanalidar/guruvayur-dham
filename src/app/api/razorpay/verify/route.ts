@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { getSetting } from "@/lib/settings";
 
 /**
  * POST /api/razorpay/verify
  * Verifies the Razorpay payment signature after checkout.
  *
- * In production: verifies HMAC SHA256 signature using RAZORPAY_KEY_SECRET.
+ * In production: verifies HMAC SHA256 signature using RAZORPAY_KEY_SECRET
+ * (read at runtime via getSetting — so admin can rotate keys from the
+ * Settings UI without a redeploy; falls back to process.env for backwards
+ * compatibility).
  * In demo mode (no secret configured): accepts any payment as valid.
  *
  * SECURITY (Round 3 S3 fix): removed the `order_demo_*` bypass — was an
@@ -23,7 +27,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing payment details" }, { status: 400 });
   }
 
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keySecret = await getSetting("RAZORPAY_KEY_SECRET");
 
   // ===== DEMO MODE (only when RAZORPAY_KEY_SECRET is unset) =====
   if (!keySecret) {

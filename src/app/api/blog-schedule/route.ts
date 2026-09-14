@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { getSetting } from "@/lib/settings";
 
 const SchedulePostSchema = z.object({
   postId: z.string().min(1),
@@ -85,10 +86,12 @@ export async function POST(req: NextRequest) {
  *
  * SECURITY (Phase A H3 fix): CRON_SECRET-protected — prevents anyone from
  * mass-publishing drafts ahead of schedule or spamming realtime broadcasts.
+ * Secret can be set in .env or via the admin Settings UI (encrypted Setting
+ * table) — read at runtime via getSetting().
  */
 export async function PATCH(req: NextRequest) {
   // CRON_SECRET check — fail-closed.
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = await getSetting("CRON_SECRET");
   if (!cronSecret) {
     return NextResponse.json(
       { error: "Server misconfiguration: CRON_SECRET not set. Blog scheduler disabled." },

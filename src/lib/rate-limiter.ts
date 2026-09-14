@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSetting, getCachedSetting } from "@/lib/settings";
 
 /**
  * Rate limiter — hybrid in-memory + optional Upstash Redis.
@@ -7,14 +8,22 @@ import { NextRequest, NextResponse } from "next/server";
  * may be a fresh instance → the in-memory Map resets → limits are per-instance,
  * not per-IP. This was effectively no rate limiting in production.
  *
- * Now: if UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN env vars are set,
- * we use Upstash Redis (serverless-friendly HTTP-based Redis) for true
- * distributed rate limiting. Otherwise we fall back to in-memory (works on
- * VPS where the app is a single long-lived process, and in dev).
+ * Now: if UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set (either in
+ * the encrypted Setting table or in process.env), we use Upstash Redis
+ * (serverless-friendly HTTP-based Redis) for true distributed rate limiting.
+ * Otherwise we fall back to in-memory (works on VPS where the app is a single
+ * long-lived process, and in dev).
+ *
+ * SelfReliant-Refactor: UPSTASH_* env vars are now read at runtime via
+ * getSetting() — admin can rotate Redis credentials from the Settings UI
+ * without a redeploy. getRateLimitStats() stays synchronous and uses the
+ * cache-only getCachedSetting() to report `redisEnabled` as a best-effort
+ * approximation (may lag by up to the 5-minute cache TTL).
  *
  * Setup:
  *   1. Create a free Upstash Redis database at https://upstash.com
- *   2. Add to .env: UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+ *   2. Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN either in .env
+ *      or via the admin Settings UI (category INTEGRATION).
  *   3. (Optional) `npm install @upstash/redis` for typed client — currently
  *      we use raw fetch to avoid adding a dep, but you can swap to the SDK.
  *
@@ -65,22 +74,24 @@ interface RateLimitResult {
   blocked: boolean;
 }
 
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-const useRedis = !!UPSTASH_URL && !!UPSTASH_TOKEN;
-
 /**
  * Upstash Redis INCR + EXPIRE pipeline via REST API.
  * Returns the new count after increment, or null on error.
+ *
+ * SelfReliant-Refactor: URL + token are read at runtime via getSetting() so
+ * admin can rotate them via the Settings UI. The settings cache (5 min TTL)
+ * keeps this from adding a DB query on every rate-limited request.
  */
 async function redisIncrement(key: string, windowSec: number): Promise<number | null> {
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null;
+  const upstashUrl = await getSetting("UPSTASH_REDIS_REST_URL");
+  const upstashToken = await getSetting("UPSTASH_REDIS_REST_TOKEN");
+  if (!upstashUrl || !upstashToken) return null;
   try {
     // Upstash REST pipeline: INCR + EXPIRE (only set EXPIRE if it's a new key).
-    const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+    const res = await fetch(`${upstashUrl}/pipeline`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${UPSTASH_TOKEN}`,
+        Authorization: `Bearer ${upstashToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify([
@@ -129,6 +140,13 @@ export async function rateLimit(req: NextRequest, opts: RateLimitOptions = {}): 
   const now = Date.now();
   const windowMs = window * 1000;
 
+  // SelfReliant-Refactor: Redis config is read at runtime via getSetting()
+  // (cache + DB + process.env fallback). If either is missing we use
+  // in-memory only.
+  const upstashUrl = await getSetting("UPSTASH_REDIS_REST_URL");
+  const upstashToken = await getSetting("UPSTASH_REDIS_REST_TOKEN");
+  const useRedis = !!(upstashUrl && upstashToken);
+
   // Redis path (distributed, works on Vercel).
   if (useRedis) {
     const count = await redisIncrement(key, window);
@@ -163,9 +181,18 @@ function inMemoryIncrement(key: string, max: number, now: number, windowMs: numb
 }
 
 /**
- * Get blocked IPs stats (for admin dashboard)
+ * Get blocked IPs stats (for admin dashboard).
+ *
+ * Sync — uses getCachedSetting() (cache + process.env only, no DB hit) to
+ * report `redisEnabled`. May lag the real value by up to the 5-minute cache
+ * TTL, but accurate enough for the dashboard. The first request after a
+ * cache expiry will miss, and `rateLimit()` will repopulate the cache via
+ * `getSetting()`.
  */
 export function getRateLimitStats() {
+  const upstashUrl = getCachedSetting("UPSTASH_REDIS_REST_URL");
+  const upstashToken = getCachedSetting("UPSTASH_REDIS_REST_TOKEN");
+  const useRedis = !!(upstashUrl && upstashToken);
   return {
     trackedKeys: store.size,
     blockedIps: Array.from(blockedIps.entries()).map(([ip, count]) => ({ ip, blocks: count })),

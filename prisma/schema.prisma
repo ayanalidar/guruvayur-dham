@@ -753,3 +753,98 @@ model TrustBadge {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+/* ========================================================================
+   SELF-RELIANT PLATFORM MODELS (Phase 1-4)
+   ======================================================================== */
+
+/* ============ SETTINGS (encrypted key-value store) ============ */
+model Setting {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String   // encrypted (AES-256-GCM) for secrets, plaintext for config
+  category        String   @default("INTEGRATION") // INTEGRATION | FEATURE_FLAG | CONFIG | SECRET
+  label           String?  // human-readable label for admin UI
+  isSecret        Boolean  @default(true) // if true, value is encrypted + masked in UI
+  isSet           Boolean  @default(false) // false = not yet configured (shows red in UI)
+  updatedBy       String?  // userId of last updater
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([category])
+}
+
+/* ============ FEATURE FLAGS (toggle features without redeploying) ============ */
+model FeatureFlag {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  label           String
+  description     String?
+  enabled         Boolean  @default(true)
+  updatedBy       String?
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+}
+
+/* ============ CONTENT VERSIONS (CMS undo/rollback) ============ */
+model ContentVersion {
+  id              String   @id @default(cuid())
+  contentBlockKey String   // the CMS key this version is for
+  value           String   // the content value at this point
+  version         Int      // incrementing version number
+  updatedBy       String?  // userId
+  userName        String?  // user name (for audit display)
+  changeSummary   String?  // optional summary of what changed
+  createdAt       DateTime @default(now())
+
+  @@index([contentBlockKey, version])
+}
+
+/* ============ ERROR LOG (for health dashboard + monitoring) ============ */
+model ErrorLog {
+  id              String   @id @default(cuid())
+  route           String   // API route path
+  method          String   // GET | POST | etc.
+  errorType       String   // "DB_ERROR" | "EXTERNAL_API" | "VALIDATION" | "AUTH" | "UNKNOWN"
+  message         String   // sanitized error message (no PII/stack traces)
+  statusCode      Int      @default(500)
+  ipAddress       String?
+  userAgent       String?
+  userId          String?
+  resolved       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([route, createdAt])
+  @@index([errorType, createdAt])
+  @@index([resolved, createdAt])
+}
+
+/* ============ ADMIN NOTIFICATIONS (alerts sent to managers) ============ */
+model AdminNotification {
+  id              String   @id @default(cuid())
+  type            String   // "INTEGRATION_DOWN" | "ERROR_SPIKE" | "DISK_FULL" | "SECURITY" | "BOOKING_FRAUD"
+  severity        String   @default("WARNING") // INFO | WARNING | CRITICAL
+  title           String
+  message         String
+  readBy         String[]  @default([]) // array of userIds who dismissed it
+  actionUrl      String?  // URL to navigate to for resolution
+  createdAt       DateTime @default(now())
+
+  @@index([severity, createdAt])
+  @@index([type, createdAt])
+}
+
+/* ============ WEBHOOK DELIVERY LOG (WhatsApp + channel webhook status) ============ */
+model WebhookDelivery {
+  id              String   @id @default(cuid())
+  source          String   // "WHATSAPP" | "BOOKING_COM" | "MAKEMYTRIP" | "GOIBIBO" | "AGODA"
+  eventType       String   // "INBOUND_MESSAGE" | "BOOKING_NEW" | "BOOKING_CANCEL" | "STATUS_UPDATE"
+  payload         String   // JSON string of the webhook payload (sanitized)
+  status          String   @default("PROCESSED") // PROCESSED | FAILED | DUPLICATE | IGNORED
+  message         String?  // result message
+  ipAddress       String?
+  createdAt       DateTime @default(now())
+
+  @@index([source, createdAt])
+  @@index([status, createdAt])
+}

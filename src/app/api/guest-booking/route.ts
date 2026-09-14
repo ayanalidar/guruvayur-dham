@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
 import { generateRef } from "@/lib/auth";
+import { getSetting } from "@/lib/settings";
 
 const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
 const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
@@ -70,9 +71,10 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    // If Razorpay keys are configured, verify the payment server-side.
-    const keyId = process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    // If Razorpay keys are configured (DB Setting table or process.env),
+    // verify the payment server-side.
+    const keyId = await getSetting("RAZORPAY_KEY_ID");
+    const keySecret = await getSetting("RAZORPAY_KEY_SECRET");
     if (keyId && keySecret) {
       try {
         const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");

@@ -46,6 +46,7 @@ import AdminContent from "@/pages/admin/AdminContent";
 import AdminRooms from "@/pages/admin/AdminRooms";
 import AdminChannels from "@/pages/admin/AdminChannels";
 import AdminHub from "@/pages/admin/AdminHub";
+import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -117,6 +118,7 @@ export default function Home() {
     // Admin routes · protected by AdminGuard
     if (path === "/admin") return <AdminGuard><AdminDashboard /></AdminGuard>;
     if (path === "/admin/hub") return <AdminGuard><AdminHub /></AdminGuard>;
+    if (path === "/admin/system") return <AdminGuard><AdminSystemSettings /></AdminGuard>;
     if (path === "/admin/bookings") return <AdminGuard><AdminBookings /></AdminGuard>;
     if (path === "/admin/content") return <AdminGuard roles={["MANAGER"]} ><AdminContent /></AdminGuard>;
     if (path === "/admin/rooms") return <AdminGuard><AdminRooms /></AdminGuard>;

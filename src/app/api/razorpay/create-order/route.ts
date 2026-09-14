@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSetting } from "@/lib/settings";
 
 /**
  * POST /api/razorpay/create-order
  * Creates a Razorpay order ID for the checkout.
  *
  * In production: makes a real API call to Razorpay's /v1/orders endpoint
- * using RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET from env.
+ * using RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET (read at runtime via
+ * getSetting — admin can rotate keys from the Settings UI without a
+ * redeploy; falls back to process.env for backwards compatibility).
  *
  * In demo mode (no keys): returns a simulated order ID so the checkout flow
  * can be tested end-to-end.
@@ -20,8 +23,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Amount must be at least ₹1 (100 paise)" }, { status: 400 });
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = await getSetting("RAZORPAY_KEY_ID");
+  const keySecret = await getSetting("RAZORPAY_KEY_SECRET");
 
   // ===== DEMO MODE (no API keys) =====
   if (!keyId || !keySecret) {

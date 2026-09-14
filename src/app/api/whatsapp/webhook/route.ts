@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { chat } from "@/lib/ai/provider";
 import crypto from "crypto";
+import { getSetting } from "@/lib/settings";
 
 /**
  * WhatsApp Business API Webhook
@@ -13,7 +14,8 @@ import crypto from "crypto";
  * GET  /api/whatsapp/webhook  — Webhook verification (Meta sends hub.challenge)
  * POST /api/whatsapp/webhook  — Incoming messages
  *
- * Environment variables needed:
+ * Configuration (set in encrypted Setting table via admin Settings UI, or
+ * in .env for backwards compatibility):
  *   - WHATSAPP_VERIFY_TOKEN  — the token you set in Meta Business Manager
  *   - WHATSAPP_APP_SECRET    — your Meta app secret (used for signature
  *                              verification of POST payloads — REQUIRED in
@@ -34,7 +36,7 @@ export async function GET(req: NextRequest) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+  const verifyToken = await getSetting("WHATSAPP_VERIFY_TOKEN");
 
   if (!verifyToken) {
     return NextResponse.json(
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
     // ===== Signature verification (X-Hub-Signature-256) =====
     // Meta signs every webhook POST with HMAC-SHA256 of the raw body using
     // your App Secret. Verifying this prevents fake inbound messages.
-    const appSecret = process.env.WHATSAPP_APP_SECRET;
+    const appSecret = await getSetting("WHATSAPP_APP_SECRET");
     const sig = req.headers.get("x-hub-signature-256") || "";
 
     // Read the raw body once (so we can both verify and parse).
@@ -234,11 +236,11 @@ async function processMessage(phone: string, message: string): Promise<string> {
 
 /**
  * Send a WhatsApp reply via Meta's WhatsApp Business API.
- * Falls back gracefully if env vars are not set (dev mode).
+ * Falls back gracefully if not configured (dev mode).
  */
 async function sendWhatsAppReply(to: string, message: string): Promise<void> {
-  const token = process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const token = await getSetting("WHATSAPP_ACCESS_TOKEN");
+  const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
 
   if (!token || !phoneNumberId) {
     // Only log in dev — PII in prod logs is risky.

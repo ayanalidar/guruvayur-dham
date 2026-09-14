@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 import webpush from "web-push";
+import { getSetting } from "@/lib/settings";
 
 /**
  * POST /api/push/send
@@ -15,8 +16,10 @@ import webpush from "web-push";
  * was effectively write-only dead data. This endpoint iterates the
  * PushSubscription table and sends notifications via the web-push library.
  *
- * Required env vars:
- * - NEXT_PUBLIC_VAPID_PUBLIC_KEY (already used by frontend subscribe)
+ * Required configuration (set in encrypted Setting table via admin Settings
+ * UI, or in .env for backwards compatibility):
+ * - NEXT_PUBLIC_VAPID_PUBLIC_KEY (client-side — MUST stay in process.env,
+ *   inlined at build time. Not refactored to getSetting.)
  * - VAPID_PRIVATE_KEY (server-only — generate with `npx web-push generate-vapid-keys`)
  * - VAPID_SUBJECT (mailto: or https: URL for push spec compliance)
  *
@@ -52,10 +55,13 @@ export async function POST(req: NextRequest) {
   }
   const { title, body, url, tag, userId } = parsed.data;
 
-  // Verify VAPID env vars are set.
+  // Verify VAPID configuration. NEXT_PUBLIC_VAPID_PUBLIC_KEY is client-side
+  // and MUST stay as process.env (inlined at build time). The private key
+  // and subject are server-only — read via getSetting() so admin can rotate
+  // them without a redeploy.
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  const privateKey = process.env.VAPID_PRIVATE_KEY;
-  const subject = process.env.VAPID_SUBJECT || "mailto:stay@guruvayurdham.com";
+  const privateKey = await getSetting("VAPID_PRIVATE_KEY");
+  const subject = (await getSetting("VAPID_SUBJECT")) || "mailto:stay@guruvayurdham.com";
   if (!publicKey || !privateKey) {
     return NextResponse.json(
       { error: "Push notifications not configured. Set NEXT_PUBLIC_VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY + VAPID_SUBJECT env vars." },

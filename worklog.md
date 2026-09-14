@@ -736,3 +736,179 @@ Stage Summary:
   VAPID_SUBJECT
 - New dependency: web-push ^3.6.7
 - All commits pushed to origin/main (b556cac is HEAD)
+
+
+---
+Task ID: SelfReliant-API-Routes
+Agent: subagent
+Task: Create 9 API routes wiring the new self-reliant platform libraries
+(settings.ts, health-check.ts, retry.ts) into admin-facing endpoints.
+
+Work Log:
+- Created 9 route files across 8 directories:
+  1. src/app/api/settings/route.ts             — GET (masked settings + flags) + POST (update one setting, AuditLog, cache invalidate)
+  2. src/app/api/settings/test/route.ts         — POST (test razorpay|groq|whatsapp|smtp|upstash|blob integration via withRetry + runAllHealthChecks)
+  3. src/app/api/feature-flags/route.ts         — GET (all flags) + POST (toggle, AuditLog)
+  4. src/app/api/health-check/route.ts          — GET (runAllHealthChecks + dbSize + activeSessions + errorCount24h + circuitBreakerStatus)
+  5. src/app/api/admin-notifications/route.ts   — GET (unread, ?severity filter) + POST (mark read) + DELETE (clear read)
+  6. src/app/api/webhook-deliveries/route.ts    — GET (?source, ?limit; take 50 default, 200 cap)
+  7. src/app/api/error-log/route.ts             — GET (?route/?errorType/?resolved/?limit) + POST (mark resolved, AuditLog)
+  8. src/app/api/maintenance/mode/route.ts      — GET (MAINTENANCE_MODE flag) + POST (toggle, AdminNotification CRITICAL/WARNING, AuditLog)
+  9. src/app/api/backup/route.ts                — GET (list local + Vercel Blob backups) + POST (pg_dump | gzip → .sql.gz, 503 on Vercel)
+
+Deviations from spec (documented inline):
+  a. Path conflict on /api/maintenance — the existing route handles ROOM
+     maintenance blocks (MaintenanceBlock table). Spec asked for the same
+     path for the maintenance MODE feature flag toggle. Resolved by putting
+     the new endpoint at /api/maintenance/mode (sub-path) so both concepts
+     coexist. Documented in the route's top comment block.
+  b. health-check GET "avg API response time" — the app does not record
+     per-request server-side latency in any DB table (PerformanceMetric
+     holds client-side web vitals, AnalyticsEvent has no duration field).
+     Returns null instead of a misleading 0 ms. Documented inline.
+  c. backup GET on Vercel — tries Vercel Blob (if BLOB_READ_WRITE_TOKEN
+     configured) AND falls through to local fs on self-hosted. Spec said
+     "Vercel Blob or local filesystem" — implemented as runtime-detected
+     union to keep the dashboard working in both deploy modes.
+  d. backup POST — spec said "uses pg_dump via child_process OR calls
+     deploy.sh backup logic". Implemented via child_process shell pipeline
+     `pg_dump --no-owner --clean --if-exists "<DATABASE_URL>" | gzip > file`
+     because (1) deploy.sh is a Docker-compose shell wrapper not callable
+     from Next.js serverless, (2) shelling out to ./deploy.sh would require
+     the script on PATH + exec bit + .env sourced — fragile. pg_dump path
+     configurable via PG_DUMP_PATH env var (default "pg_dump" on PATH).
+  e. admin-notifications DELETE — Prisma has no first-class "remove array
+     element" operator; "clear" interpreted as: delete rows where the
+     current user is the ONLY reader (others may still need the alert).
+     Documented inline. Returns both `cleared` (dismissed from this user's
+     view) and `deleted` (rows actually removed from DB) so the UI can show
+     the distinction.
+
+All routes:
+  - Use requireStaff(req, ["MANAGER"]) — except admin-notifications which
+    allows any staff role on all 3 methods (per spec: "GET can be any staff")
+  - Validate POST/DELETE bodies with Zod safeParse + .flatten() on error
+  - Write AuditLog entries on mutating operations (settings POST, flag POST,
+    error-log POST, maintenance-mode POST, backup POST) —
+    { userId, userName, action, entity, entityId, details, ipAddress, userAgent }
+  - Use redacted/structural AuditLog details (e.g. settings POST logs
+    `valueLength` not the actual value, since it could be a secret)
+  - Return proper JSON + status codes (200/400/401/403/404/503/500)
+
+Stage Summary:
+- 9 new files, ~620 lines added, 0 lines removed
+- TypeScript verification: `npx tsc --noEmit` → 0 errors (exit 0)
+- ESLint verification: `npx eslint <8 dirs>` → 0 errors, 0 warnings (exit 0)
+- No new dependencies (used existing: zod, @prisma/client, @vercel/blob
+  dynamic-imported only when needed)
+- No existing routes modified (the maintenance route conflict was sidestepped
+  via sub-path; existing /api/maintenance room-block UIs are untouched)
+- New env vars read (all optional, with sensible fallbacks):
+    BACKUP_DIR (default ./backups)
+    PG_DUMP_PATH (default "pg_dump" on PATH)
+    GZIP_PATH (default "gzip" on PATH)
+- New admin surface available for the SettingsPage / HealthDashboard UIs
+  (this commit only adds the backend routes; UI wiring is a separate task)
+
+
+---
+Task ID: SelfReliant-Refactor
+Agent: subagent
+Task: Refactor ~15 API routes to read runtime secrets from the new
+`getSetting()` helper (DB-first, encrypted, 5-min cached) instead of
+`process.env.X` directly. Admin can now rotate integration keys, SMTP creds,
+Redis tokens, VAPID keys, and CRON_SECRET from the Settings UI without a
+redeploy. Backwards-compatible fallback to `process.env` is preserved in
+`getSetting()` itself.
+
+Work Log:
+- Patched 11 files (10 routes + 2 libs; one targeted route file did not exist):
+  1. src/lib/ai/provider.ts — GROQ_API_KEY. Removed the module-load-time
+     constant. `isGroqAvailable()` stays sync (uses `getCachedSetting()` =
+     cache + process.env, no DB hit). `chat()`, `streamChat()`,
+     `getGroqModels()` call `await getSetting("GROQ_API_KEY")` at runtime.
+     `chat()` was already async, so ai-chat/POST, ai-generate/POST, and
+     whatsapp-bot/POST (the 3 callers listed as items 1, 2, 7) needed no
+     direct edits — refactor flowed through `chat()`.
+  2. src/app/api/razorpay/verify/route.ts — RAZORPAY_KEY_SECRET.
+  3. src/app/api/razorpay/create-order/route.ts — RAZORPAY_KEY_ID +
+     RAZORPAY_KEY_SECRET.
+  4. src/app/api/guest-booking/route.ts — RAZORPAY_KEY_ID +
+     RAZORPAY_KEY_SECRET (payment verification block only).
+     `process.env.REALTIME_URL` left as-is per spec (kept on the broadcast
+     fetch with fallback to localhost:3003).
+  5. src/app/api/whatsapp/webhook/route.ts — WHATSAPP_VERIFY_TOKEN,
+     WHATSAPP_APP_SECRET, WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID
+     (4 keys). `process.env.NODE_ENV` checks left intact (build-time).
+  6. src/app/api/email/send/route.ts — SMTP_HOST, SMTP_USER, SMTP_PASS,
+     FROM_EMAIL, SMTP_PORT (5 keys). The inline `parseInt(process.env.SMTP_PORT
+     || "587")` and `process.env.SMTP_PORT === "465"` were swapped to use the
+     awaited `smtpPortStr` local.
+  7. src/app/api/reviews/checkout-funnel/route.ts — CRON_SECRET, plus
+     WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID (the spec only listed
+     CRON_SECRET for this route, but the helper `sendWhatsAppMessage()` reads
+     the same two WhatsApp keys as item 6 — refactored them for consistency so
+     admin's WhatsApp key rotation propagates here too).
+  8. src/app/api/reviews/google-import/route.ts — GOOGLE_PLACES_API_KEY
+     (in both POST and GET handlers).
+  9. src/app/api/push/send/route.ts — VAPID_PRIVATE_KEY + VAPID_SUBJECT.
+     NEXT_PUBLIC_VAPID_PUBLIC_KEY left as `process.env` (client-side, inlined
+     at build time — cannot be moved to DB).
+ 10. src/app/api/reminders/route.ts — CRON_SECRET in PUT handler.
+ 11. src/app/api/blog-schedule/route.ts — CRON_SECRET in PATCH handler.
+ 12. src/lib/rate-limiter.ts — UPSTASH_REDIS_REST_URL +
+     UPSTASH_REDIS_REST_TOKEN. Removed the module-load-time `UPSTASH_URL` /
+     `UPSTASH_TOKEN` / `useRedis` constants. `rateLimit()` (already async)
+     now reads both via `getSetting()` at the start and passes the resulting
+     `useRedis` flag to the existing redis/in-memory branch. `redisIncrement()`
+     independently re-reads them (cache hit, negligible cost).
+     `getRateLimitStats()` stays sync — uses `getCachedSetting()` (cache +
+     process.env only) so it does not need a DB hit just to render the admin
+     dashboard. Documented that `redisEnabled` may lag the real value by up to
+     the 5-min cache TTL on first read after expiry.
+
+Deviations from spec (documented inline):
+  a. **`src/app/api/upload/route.ts` does not exist** — task item 10 asked to
+     refactor `BLOB_READ_WRITE_TOKEN` here, but the file is not present in
+     src/app/api/. Globbed the whole project for `**/upload*.ts` — no matches
+     either. `BLOB_READ_WRITE_TOKEN` is already in `DEFAULT_SETTINGS` so when
+     admin populates it via the Settings UI, any future code that reads it
+     via `getSetting("BLOB_READ_WRITE_TOKEN")` will pick it up. The existing
+     /api/backup route already uses `getSetting`-style logic via the
+     SelfReliant-API-Routes commit. Marking item 10 as N/A — no source file
+     to patch.
+  b. **channel-config PUT (item 14)** — spec said "no refactor needed here,
+     reads from DB row not env". Confirmed, no edits.
+  c. **src/lib/oauth.ts (item 18)** — spec said "leave as process.env" since
+     NextAuth needs GOOGLE_CLIENT_ID/SECRET + FACEBOOK_CLIENT_ID/SECRET at
+     module-load time to configure providers. Confirmed, no edits.
+  d. **Refactored 2 extra WhatsApp keys in /api/reviews/checkout-funnel**
+     beyond what item 11 strictly listed (CRON_SECRET only). Rationale: the
+     same WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID pair is read in
+     the route's `sendWhatsAppMessage()` helper — if we only refactored
+     /whatsapp/webhook, the checkout-funnel would still hit process.env
+     directly and ignore DB-side key rotations. Refactoring both keeps the
+     "rotate-once-in-admin" UX consistent.
+  e. **Email/send `process.env.SMTP_PORT` inlined twice** — the original
+     code read `process.env.SMTP_PORT` in three places (once into a local
+     missing, once in parseInt, once in the secure-check ternary). After
+     refactor, all three use a single awaited `smtpPortStr` local. Behaviour
+     is identical: if SMTP_PORT is unset, `getSetting` returns null, the
+     `|| "587"` and `=== "465"` checks behave the same as before.
+
+Stage Summary:
+- 12 files touched (10 route files + 2 lib files). ~80 lines changed.
+- 0 TypeScript errors (`npx tsc --noEmit` → exit 0).
+- 0 ESLint errors (`npx eslint <11 dirs/files>` → exit 0).
+- All `process.env.X` references for refactorable runtime secrets removed
+  from the targeted files (verified via grep — the only remaining mention
+  is in a doc comment in src/lib/ai/provider.ts explaining the fallback).
+- Backwards compatibility preserved: `getSetting()` falls back to
+  `process.env[key]` if the Setting table has no value (or DB is unreachable),
+  so existing `.env` deployments keep working unchanged until admin populates
+  the Setting table.
+- No new dependencies. No existing route handlers changed signature.
+  `isGroqAvailable()` and `getRateLimitStats()` remain sync (use
+  `getCachedSetting` for the sync path) so their existing callers in
+  ai-generate GET and /api/rate-limit GET don't need updates.
+- Not committed. Not pushed. Staged for review by main.

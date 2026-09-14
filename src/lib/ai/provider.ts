@@ -5,14 +5,20 @@
  * 1. Groq (Llama 3.3 70B) — free tier, very fast, needs GROQ_API_KEY
  * 2. z-ai-web-dev-sdk (GLM) — always available, no key needed
  *
+ * GROQ_API_KEY is read at runtime via getSetting() — checks the encrypted
+ * Setting table first (so admin can rotate keys from the UI without a
+ * redeploy) and falls back to process.env.GROQ_API_KEY for backwards
+ * compatibility. The synchronous `isGroqAvailable()` uses
+ * `getCachedSetting()` (cache + process.env, no DB hit).
+ *
  * Usage:
  *   import { chat, streamChat, generateContent } from "@/lib/ai/provider";
  *   const reply = await chat("What time is Nirmalya darshan?");
  */
 
 import ZAI from "z-ai-web-dev-sdk";
+import { getSetting, getCachedSetting } from "@/lib/settings";
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
@@ -28,10 +34,15 @@ export interface ChatOptions {
 }
 
 /**
- * Check if Groq is available (key configured)
+ * Check if Groq is available (key configured).
+ *
+ * Synchronous — uses `getCachedSetting()` which only checks the in-memory
+ * cache + process.env (no DB hit). The full `getSetting()` async path is
+ * used inside `chat()` / `streamChat()` / `getGroqModels()` to surface the
+ * real value (and prime the cache for the next call).
  */
 export function isGroqAvailable(): boolean {
-  return !!GROQ_API_KEY;
+  return !!getCachedSetting("GROQ_API_KEY");
 }
 
 /**
@@ -44,12 +55,13 @@ export async function chat(
   const { temperature = 0.7, maxTokens = 500, model } = options;
 
   // ===== Try Groq first =====
-  if (isGroqAvailable()) {
+  const groqApiKey = await getSetting("GROQ_API_KEY");
+  if (groqApiKey) {
     try {
       const response = await fetch(GROQ_URL, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Authorization": `Bearer ${groqApiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -100,12 +112,13 @@ export async function* streamChat(
   const { temperature = 0.7, maxTokens = 500, model } = options;
 
   // ===== Try Groq streaming =====
-  if (isGroqAvailable()) {
+  const groqApiKey = await getSetting("GROQ_API_KEY");
+  if (groqApiKey) {
     try {
       const response = await fetch(GROQ_URL, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Authorization": `Bearer ${groqApiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -178,11 +191,12 @@ export async function generateContent(
  * Get available models from Groq
  */
 export async function getGroqModels(): Promise<string[]> {
-  if (!isGroqAvailable()) return [];
+  const groqApiKey = await getSetting("GROQ_API_KEY");
+  if (!groqApiKey) return [];
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/models", {
-      headers: { "Authorization": `Bearer ${GROQ_API_KEY}` },
+      headers: { "Authorization": `Bearer ${groqApiKey}` },
     });
 
     if (!response.ok) return [];

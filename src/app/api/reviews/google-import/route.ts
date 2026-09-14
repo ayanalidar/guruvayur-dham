@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
+import { getSetting } from "@/lib/settings";
 
 /**
  * POST /api/reviews/google-import
  *
  * In production: This would call the Google Places API (Details endpoint) to fetch
- * reviews for a specific Place ID. Requires GOOGLE_PLACES_API_KEY in .env.
+ * reviews for a specific Place ID. Requires GOOGLE_PLACES_API_KEY (set via
+ * admin Settings UI or .env).
  *
  * Example production code:
  *   const res = await fetch(
@@ -157,7 +159,7 @@ export async function POST(req: NextRequest) {
 
   const { placeId, shareUrl } = await req.json();
 
-  const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
+  const googleApiKey = await getSetting("GOOGLE_PLACES_API_KEY");
 
   // ===== PRODUCTION MODE =====
   if (googleApiKey && placeId) {
@@ -259,6 +261,6 @@ export async function GET() {
   return NextResponse.json({
     totalGoogleReviews: total,
     lastImportAt: lastImport?.createdAt,
-    hasApiKey: !!process.env.GOOGLE_PLACES_API_KEY,
+    hasApiKey: !!(await getSetting("GOOGLE_PLACES_API_KEY")),
   });
 }

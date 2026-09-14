@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
+import { getSetting } from "@/lib/settings";
 
 const SendEmailSchema = z.object({
   to: z.string().min(1).max(500),
@@ -12,11 +13,13 @@ const SendEmailSchema = z.object({
 
 /**
  * POST /api/email/send
- * Sends an email notification. Uses Nodemailer if SMTP env vars are set,
- * otherwise queues to the Notifications table for manual processing.
+ * Sends an email notification. Uses Nodemailer if SMTP settings are configured
+ * (encrypted Setting table via admin Settings UI, or in .env for backwards
+ * compatibility), otherwise queues to the Notifications table for manual
+ * processing.
  *
  * Body: { to, subject, body, type? }
- * Env vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL
+ * Settings: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL
  */
 export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
@@ -38,10 +41,11 @@ export async function POST(req: NextRequest) {
     });
 
     // Try SMTP if configured
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const fromEmail = process.env.FROM_EMAIL || "stay@guruvayurdham.com";
+    const smtpHost = await getSetting("SMTP_HOST");
+    const smtpUser = await getSetting("SMTP_USER");
+    const smtpPass = await getSetting("SMTP_PASS");
+    const fromEmail = (await getSetting("FROM_EMAIL")) || "stay@guruvayurdham.com";
+    const smtpPortStr = await getSetting("SMTP_PORT");
 
     if (smtpHost && smtpUser && smtpPass) {
       try {
@@ -49,8 +53,8 @@ export async function POST(req: NextRequest) {
         if (nodemailer) {
           const transporter = nodemailer.createTransport({
             host: smtpHost,
-            port: parseInt(process.env.SMTP_PORT || "587"),
-            secure: process.env.SMTP_PORT === "465",
+            port: parseInt(smtpPortStr || "587"),
+            secure: smtpPortStr === "465",
             auth: { user: smtpUser, pass: smtpPass },
           });
           await transporter.sendMail({
