@@ -36,7 +36,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-RUN npm run build
+RUN npm run build:standalone
 
 # ---- Runner stage (minimal final image) ----
 FROM node:20-alpine AS runner

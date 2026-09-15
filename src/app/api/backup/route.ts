@@ -51,7 +51,9 @@ async function listVercelBlobBackups() {
 
 async function listLocalBackups() {
   try {
-    const entries = await readdir(BACKUP_DIR);
+    // turbopackIgnore: suppress Vercel's "dynamic filesystem access" warning
+    // (this code only runs on VPS, not Vercel serverless)
+    const entries = await readdir(/*turbopackIgnore: true*/ BACKUP_DIR);
     const backups: Array<{
       name: string;
       size: number;
@@ -65,7 +67,7 @@ async function listLocalBackups() {
         continue;
       }
       try {
-        const s = await stat(path.join(BACKUP_DIR, name));
+        const s = await stat(/*turbopackIgnore: true*/ path.join(BACKUP_DIR, name));
         backups.push({
           name,
           size: s.size,
