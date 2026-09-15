@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Vercel doesn't need standalone output — it has its own serverless bundling.
+  // Docker/VPS uses standalone (set via env var DOCKER_BUILD=1 during docker build).
+  // Without this conditional, Vercel's onBuildComplete fails with:
+  //   ENOENT: no such file or directory, open '.next/next-server.js.nft.json'
+  ...(process.env.DOCKER_BUILD === "1" ? { output: "standalone" as const } : {}),
   // Do NOT ignore TS build errors — they should fail the build, not ship to prod.
   typescript: {
     ignoreBuildErrors: false,

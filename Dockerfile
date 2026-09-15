@@ -35,6 +35,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # DATABASE_URL is needed at build time for Prisma client generation.
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
+# DOCKER_BUILD=1 enables output: "standalone" in next.config.ts (for Docker/VPS only)
+ENV DOCKER_BUILD=1
 
 RUN npm run build:standalone
 
