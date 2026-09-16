@@ -22,11 +22,11 @@ export default function Hero() {
   const badges = cmsBadges.length > 0 ? cmsBadges.map(mapTrustBadge) : TRUST_BADGES;
 
   const eyebrow = get("hero.eyebrow", "Stay · Pooja · Blessing · Since 1998");
-  const headlinePre = get("hero.headline", "Stay 2 Minutes from");
-  const headlineHighlight = get("hero.headlineHighlight", "Guruvayur Temple");
+  const headlinePre = get("hero.headline", "Where Your Stay");
+  const headlineHighlight = get("hero.headlineHighlight", "Journey");
   const subheadline = get(
     "hero.subheadline",
-    "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp confirmation."
+    "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land."
   );
   // Hero background image — editable via CMS content block "hero.bgImage"
   const bgImage = get(

@@ -113,9 +113,9 @@ function Hero() {
             className="mt-6 font-serif text-[2.5rem] leading-[1.05] tracking-tight text-ivory sm:text-6xl lg:text-[4.5rem]"
             style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
           >
-            Stay 2 Minutes
+            Where Your Stay
             <br />
-            from <GoldFoilText>Guruvayur Temple</GoldFoilText>
+            Becomes Part of the <GoldFoilText>Journey</GoldFoilText>
           </motion.h1>
 
           <motion.p
@@ -124,9 +124,9 @@ function Hero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 max-w-xl text-base leading-relaxed text-ivory/80 sm:text-lg"
           >
-            Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada
-            for Nirmalya Darshan. Book in 30 seconds · no booking fee, instant WhatsApp
-            confirmation.
+            Guruvayur Dham is a premium pilgrimage stay in Mathura, created for
+            travellers seeking comfort, serenity and thoughtful hospitality while
+            experiencing the sacred land.
           </motion.p>
 
           <motion.div

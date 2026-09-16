@@ -54,12 +54,12 @@ export default function Navbar() {
         >
           <img
             src="/logo-nav.png"
-            alt="Guruvayur Dham"
+            alt="GVD"
             className="h-10 w-10 object-contain transition-transform group-hover:scale-105"
           />
           <span className="flex flex-col leading-none">
             <span className="font-serif text-lg font-medium tracking-wide text-ivory">
-              {brandName}
+              GVD
             </span>
             <span className="mt-0.5 text-[10px] uppercase tracking-[0.3em] text-champagne/70">
               {brandTagline}
