@@ -27,10 +27,10 @@ export default function PoojaSection() {
   const poojas = cmsPoojas.length > 0 ? cmsPoojas.map(mapPooja) : POOJAS;
 
   const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
-  const title = get("pooja.title", "Guruvayur Pooja Booking — Palpayasam, Thulabharam & More");
+  const title = get("pooja.title", "Guruvayur Pooja Booking — prasadam, Archana & More");
   const subtitle = get(
     "pooja.subtitle",
-    "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room."
+    "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room."
   );
 
   // Split title on em-dash so the second half gets the gradient
@@ -87,7 +87,7 @@ export default function PoojaSection() {
           {poojas.map((pooja, i) => {
             const waMsg = `Namaskaram! I'd like to book the "${pooja.name}" pooja (${formatINR(
               pooja.price
-            )}) at Guruvayur Temple through Guruvayur Dham. Please share next available date.`;
+            )}) at Shri Krishna Janmabhoomi through Guruvayur Dham. Please share next available date.`;
             return (
               <motion.article
                 key={pooja.id || i}
@@ -102,7 +102,7 @@ export default function PoojaSection() {
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image
                     src={pooja.image}
-                    alt={`${pooja.name} pooja offering at Guruvayur Temple`}
+                    alt={`${pooja.name} pooja offering at Shri Krishna Janmabhoomi`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"

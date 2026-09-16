@@ -14,8 +14,8 @@ export default function PoojaPage() {
   const poojas = cmsPoojas.length > 0 ? cmsPoojas : POOJAS;
 
   const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
-  const title = get("pooja.title", "Guruvayur Pooja Booking · Palpayasam, Thulabharam & More");
-  const subtitle = get("pooja.subtitle", "Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room.");
+  const title = get("pooja.title", "Guruvayur Pooja Booking · prasadam, Archana & More");
+  const subtitle = get("pooja.subtitle", "Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.");
 
   // Split title for gold foil highlight
   const titleParts = title.split("·");
@@ -61,7 +61,7 @@ export default function PoojaPage() {
         <div className="container-x relative">
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
             {poojas.map((pooja, i) => {
-              const waMsg = `Namaskaram! I'd like to book the "${pooja.name}" pooja (${formatINR(pooja.price)}) at Guruvayur Temple through Guruvayur Dham. Please share next available date.`;
+              const waMsg = `Namaskaram! I'd like to book the "${pooja.name}" pooja (${formatINR(pooja.price)}) at Shri Krishna Janmabhoomi through Guruvayur Dham. Please share next available date.`;
               return (
                 <TiltCard key={pooja.id} maxTilt={5} className="h-full">
                   <motion.div
@@ -74,7 +74,7 @@ export default function PoojaPage() {
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <img
                         src={pooja.image}
-                        alt={`${pooja.name} pooja offering at Guruvayur Temple`}
+                        alt={`${pooja.name} pooja offering at Shri Krishna Janmabhoomi`}
                         className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
@@ -130,7 +130,7 @@ export default function PoojaPage() {
             <SectionHeader
               eyebrow="Custom Pooja Packages"
               title={<>Need a <GoldFoilText>Combined Package?</GoldFoilText></>}
-              subtitle="Travelling with family? We curate combined pooja packages (Palpayasam + Archana + Pushpanjali, etc.) at bundled rates. Message us your requirements."
+              subtitle="Travelling with family? We curate combined pooja packages (prasadam + Archana + Pushpanjali, etc.) at bundled rates. Message us your requirements."
             />
             <div className="mt-6 flex justify-center">
               <MagneticButton href={waLink("Namaskaram! I'd like to know about combined pooja packages at Guruvayur Dham.")}>

@@ -16,7 +16,7 @@ export default function WhyChooseUs() {
   const title = get("whyChooseUs.title", "More Than a Stay · A Pilgrim Companion");
   const subtitle = get(
     "whyChooseUs.subtitle",
-    "We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+    "We've hosted over 15,000 pilgrims since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
   );
 
   // Split title so the second half gets the gradient style (preserve original visual)
@@ -84,7 +84,7 @@ export default function WhyChooseUs() {
           className="mt-16 grid grid-cols-2 gap-4 rounded-3xl bg-gradient-maroon p-8 text-cream sm:grid-cols-4 lg:p-10"
         >
           {[
-            { value: "200 m", label: "to East Nada gate" },
+            { value: "200 m", label: "to temple gate" },
             { value: "52", label: "AC & non-AC rooms" },
             { value: "50,000+", label: "happy pilgrims" },
             { value: "4.9 ★", label: "Google rating" },

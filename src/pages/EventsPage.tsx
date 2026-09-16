@@ -37,10 +37,10 @@ export default function EventsPage() {
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
-        name: "Guruvayur Temple",
+        name: "Shri Krishna Janmabhoomi",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "East Nada, Guruvayur",
+          streetAddress: "temple gate, Guruvayur",
           addressLocality: "Guruvayur",
           addressRegion: "Kerala",
           addressCountry: "IN",
@@ -80,7 +80,7 @@ export default function EventsPage() {
                     <div className="relative aspect-[16/10] flex-shrink-0 overflow-hidden sm:w-2/5 sm:aspect-auto">
                       <img
                         src={ev.image}
-                        alt={`${ev.name} festival at Guruvayur Temple`}
+                        alt={`${ev.name} festival at Shri Krishna Janmabhoomi`}
                         className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent sm:bg-gradient-to-r" />

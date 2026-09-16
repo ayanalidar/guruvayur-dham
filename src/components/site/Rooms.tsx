@@ -103,7 +103,7 @@ export default function Rooms() {
   const title = get("rooms.title", "Clean Rooms in Guruvayur — Walkable to Temple");
   const subtitle = get(
     "rooms.subtitle",
-    "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada. Filter to find your perfect match."
+    "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate. Filter to find your perfect match."
   );
 
   // Split title on em-dash so the second half gets the gradient

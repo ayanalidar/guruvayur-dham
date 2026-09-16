@@ -57,7 +57,7 @@ export default function EventsSection() {
                 <div className="relative aspect-[16/10] flex-shrink-0 overflow-hidden sm:w-2/5 sm:aspect-auto">
                   <Image
                     src={ev.image}
-                    alt={`${ev.name} festival at Guruvayur Temple`}
+                    alt={`${ev.name} festival at Shri Krishna Janmabhoomi`}
                     fill
                     sizes="(max-width: 640px) 100vw, 280px"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"

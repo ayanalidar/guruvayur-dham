@@ -116,7 +116,7 @@ export default function Contact() {
       label: "Visit",
       value: shortAddress,
       href: mapLink,
-      sub: "200 m from East Nada gate",
+      sub: "2 min from temple gate",
     },
     {
       icon: Clock,
@@ -396,7 +396,7 @@ ${data.message}`;
                     Rooms from ₹700/night
                   </p>
                   <p className="mt-1 text-xs text-cream/80">
-                    AC, non-AC, family suites, dormitory · all 200 m from East Nada.
+                    AC, non-AC, family suites, dormitory · all 2 min from temple gate.
                   </p>
                   <a
                     href={waLink(

@@ -263,7 +263,7 @@ export async function POST(req: NextRequest) {
   // Darshan slot reminder (if specified)
   if (darshanSlot) {
     const slotTimes: any = {
-      NIRMALYA: { time: "3:00 AM", desc: "Nirmalya Darshan (most sacred)" },
+      NIRMALYA: { time: "3:00 AM", desc: "Mangala Aarti darshan (most sacred)" },
       USHA: { time: "8:30 AM", desc: "Usha Pooja Darshan" },
       DEEPARADHANA: { time: "6:15 PM", desc: "Deeparadhana (evening aarti)" },
     };
@@ -276,7 +276,7 @@ export async function POST(req: NextRequest) {
           type: "DARSHAN",
           bookingRef: ref,
           guestName, guestPhone,
-          message: `Your preferred darshan: ${slot.desc} at ${slot.time}. Walk to East Nada (2 min) · give yourself 30 min for queue. Reference: ${ref}`,
+          message: `Your preferred darshan: ${slot.desc} at ${slot.time}. Walk to temple gate (2 min) · give yourself 30 min for queue. Reference: ${ref}`,
           scheduledFor: darshanReminder,
           channel: "WHATSAPP",
         },
@@ -308,7 +308,7 @@ export async function POST(req: NextRequest) {
     data: {
       type: "WHATSAPP",
       recipient: guestPhone,
-      body: `🙏 Booking Confirmed!\n\nReference: ${ref}\nRoom: ${room.name}\nCheck-in: ${ci.toLocaleDateString("en-IN")}\nCheck-out: ${co.toLocaleDateString("en-IN")}\nNights: ${nights}\nGuests: ${guests}\nAmount: ₹${finalAmount}${couponResult?.valid ? `\nCoupon ${couponCode}: -₹${couponDiscount}` : ""}${earlyBird.active ? `\nEarly Bird (${earlyBird.campaignName}): -₹${earlyBirdDiscount}` : ""}\n\nPayment: ${paymentMethod} ✓\n\nSee you at Guruvayur Dham! Walk to East Nada in 2 min.`,
+      body: `🙏 Booking Confirmed!\n\nReference: ${ref}\nRoom: ${room.name}\nCheck-in: ${ci.toLocaleDateString("en-IN")}\nCheck-out: ${co.toLocaleDateString("en-IN")}\nNights: ${nights}\nGuests: ${guests}\nAmount: ₹${finalAmount}${couponResult?.valid ? `\nCoupon ${couponCode}: -₹${couponDiscount}` : ""}${earlyBird.active ? `\nEarly Bird (${earlyBird.campaignName}): -₹${earlyBirdDiscount}` : ""}\n\nPayment: ${paymentMethod} ✓\n\nSee you at Guruvayur Dham! Walk to temple gate in 2 min.`,
       status: "SENT",
       sentAt: new Date(),
       relatedRef: ref,

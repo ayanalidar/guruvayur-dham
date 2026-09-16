@@ -13,7 +13,7 @@
  *
  * Usage:
  *   import { chat, streamChat, generateContent } from "@/lib/ai/provider";
- *   const reply = await chat("What time is Nirmalya darshan?");
+ *   const reply = await chat("What time is Mangala Aarti darshan?");
  */
 
 import ZAI from "z-ai-web-dev-sdk";

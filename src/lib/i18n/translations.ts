@@ -34,8 +34,8 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Hero section — matches CMS content block keys */
     "hero.eyebrow": "Stay · Pooja · Blessing · Since 1998",
     "hero.headline": "Stay 2 Minutes from",
-    "hero.headlineHighlight": "Guruvayur Temple",
-    "hero.subheadline": "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.",
+    "hero.headlineHighlight": "Shri Krishna Janmabhoomi",
+    "hero.subheadline": "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to temple gate for Mangala Aarti darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.",
     "hero.bookNow": "Instant Book",
     "hero.viewRooms": "View Rooms",
     "hero.rating": "Google Rating",
@@ -45,19 +45,19 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Why Choose Us */
     "whyChooseUs.eyebrow": "Why Pilgrims Choose Us",
     "whyChooseUs.title": "More Than a Stay · A Pilgrim Companion",
-    "whyChooseUs.subtitle": "We've hosted over 50,000 devotees since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.",
+    "whyChooseUs.subtitle": "We've hosted over 15,000 pilgrims since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.",
     /* Rooms */
     "rooms.eyebrow": "Rooms & Suites",
     "rooms.title": "Clean Rooms in Guruvayur — Walkable to Temple",
-    "rooms.subtitle": "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada.",
+    "rooms.subtitle": "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.",
     /* Pooja */
     "pooja.eyebrow": "Pooja & Offerings",
-    "pooja.title": "Guruvayur Pooja Booking — Palpayasam, Thulabharam & More",
-    "pooja.subtitle": "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf and ensures prasadam reaches your room.",
+    "pooja.title": "Guruvayur Pooja Booking — prasadam, Archana & More",
+    "pooja.subtitle": "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.",
     /* About */
     "about.eyebrow": "About Guruvayur Dham",
     "about.title": "A Family-Run Pilgrim Home Since 1998",
-    "about.story": "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Warrier — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 52-room property that has welcomed over 50,000 devotees from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Nirmalya darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple tantri's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Choroonu ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer.",
+    "about.story": "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Sharma — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 16-room property that has welcomed over 15,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 5 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Annaprashan ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer.",
     /* Contact */
     "contact.eyebrow": "Get in Touch",
     "contact.title": "Book Your Stay or Ask Anything",

@@ -26,11 +26,11 @@ const siteUrl = "https://www.guruvayurdham.co.in";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Guruvayur Dham · Luxury Pilgrim Stay 2 Minutes from Guruvayur Temple",
+    default: "Guruvayur Dham · Luxury Pilgrim Stay 2 Minutes from Shri Krishna Janmabhoomi",
     template: "%s | Guruvayur Dham",
   },
   description:
-    "Boutique pilgrim accommodation near Guruvayur Temple. Cinematic dark-luxe rooms, 24×7 hot water, free parking, on-site pooja booking. Walk to East Nada in 2 minutes.",
+    "Boutique pilgrim accommodation near Shri Krishna Janmabhoomi. Cinematic dark-luxe rooms, 24×7 hot water, free parking, on-site pooja booking. Walk to temple gate in 2 minutes.",
   keywords: [
     "Guruvayur rooms",
     "Guruvayur temple accommodation",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     "boutique hotel Guruvayur",
     "Guruvayur Dham",
     "Guruvayur pooja booking",
-    "Palpayasam booking",
-    "Thulabharam Guruvayur",
+    "prasadam booking",
+    "Archana Guruvayur",
     "AC rooms Guruvayur",
     "stay near Guruvayur temple",
     "Guruvayur darshan timings",
@@ -54,9 +54,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: siteUrl,
     siteName: "Guruvayur Dham",
-    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Guruvayur Temple",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Shri Krishna Janmabhoomi",
     description:
-      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
+      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to temple gate in 2 minutes.",
     images: [
       {
         url: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
@@ -68,9 +68,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Guruvayur Temple",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Shri Krishna Janmabhoomi",
     description:
-      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to East Nada in 2 minutes.",
+      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to temple gate in 2 minutes.",
     images: [
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
     ],
@@ -128,7 +128,7 @@ export default function RootLayout({
     "@id": `${siteUrl}/#hotel`,
     name: "Guruvayur Dham",
     description:
-      "Boutique pilgrim accommodation near Guruvayur Temple offering dark-luxe AC & non-AC rooms, pooja booking, and pilgrim services.",
+      "Boutique pilgrim accommodation near Shri Krishna Janmabhoomi offering dark-luxe AC & non-AC rooms, pooja booking, and pilgrim services.",
     url: siteUrl,
     telephone: "+91-90908-20208",
     email: "bookings@guruvayurdham.co.in",

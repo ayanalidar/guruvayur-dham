@@ -79,7 +79,7 @@ function Hero() {
         <div className="absolute inset-0 animate-kenburns">
           <img
             src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"
-            alt="Guruvayur Temple gopuram at golden hour"
+            alt="Shri Krishna Janmabhoomi temple at golden hour"
             className="h-full w-full object-cover photo-cinematic-strong"
           />
         </div>
@@ -188,13 +188,13 @@ function Hero() {
             >
               <img
                 src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&h=800&fit=crop"
-                alt="Guruvayur Temple gopuram"
+                alt="Shri Krishna Janmabhoomi temple"
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">2 min walk</p>
-                <p className="font-serif text-base text-ivory">East Nada Gate</p>
+                <p className="font-serif text-base text-ivory">temple gate Gate</p>
               </div>
             </div>
 
@@ -222,7 +222,7 @@ function Hero() {
             >
               <img
                 src="https://images.unsplash.com/photo-1591025207163-942350e47db2?w=400&h=400&fit=crop"
-                alt="Pooja offerings at Guruvayur Temple"
+                alt="Pooja offerings at Shri Krishna Janmabhoomi"
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
@@ -272,10 +272,10 @@ function MarqueeStrip() {
   return (
     <Marquee
       items={[
-        "Palpayasam",
-        "Thulabharam",
-        "Choroonu",
-        "Walk to East Nada",
+        "prasadam",
+        "Archana",
+        "Annaprashan",
+        "Walk to temple gate",
         "4.9 ★ Google Rating",
         "24×7 Hot Water",
         "Free Parking",
@@ -298,7 +298,7 @@ function WhyChooseUs() {
         <SectionHeader
           eyebrow={t("section.whyUs")}
           title={<>More Than a Stay · A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
-          subtitle="We've hosted over 50,000 devotees since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+          subtitle="We've hosted over 15,000 pilgrims since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -365,7 +365,7 @@ function RoomPreviews() {
             align="left"
             eyebrow={t("section.rooms")}
             title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
-            subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from East Nada."
+            subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from temple gate."
             className="!mx-0"
           />
           <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>
@@ -490,7 +490,7 @@ function PoojaPreview() {
             align="left"
             eyebrow={t("section.pooja")}
             title={<>Book Sacred Poojas at <GoldFoilText>Temple Rates</GoldFoilText></>}
-            subtitle="Zero commission, zero waiting in queue. Our team coordinates with the temple tantri on your behalf."
+            subtitle="Zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf."
             className="!mx-0"
           />
           <MagneticButton variant="ghost" onClick={() => navigate("/pooja")}>
@@ -511,7 +511,7 @@ function PoojaPreview() {
               <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                   src={pooja.image}
-                  alt={`${pooja.name} pooja at Guruvayur Temple`}
+                  alt={`${pooja.name} pooja at Shri Krishna Janmabhoomi`}
                   className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
@@ -523,7 +523,7 @@ function PoojaPreview() {
                 <h3 className="font-serif text-xl text-ivory">{pooja.name}</h3>
                 <p className="mt-2 text-sm text-ivory/60 line-clamp-2">{pooja.description}</p>
                 <a
-                  href={waLink(`Namaskaram! I'd like to book the "${pooja.name}" pooja at Guruvayur Temple through Guruvayur Dham.`)}
+                  href={waLink(`Namaskaram! I'd like to book the "${pooja.name}" pooja at Shri Krishna Janmabhoomi through Guruvayur Dham.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-champagne hover:text-champagne-bright"
@@ -641,11 +641,11 @@ function AboutTeaser() {
               Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather
               noticed that pilgrims arriving from distant states had nowhere clean, affordable,
               and walking-distance to stay. Over 25 years and three generations, it has grown
-              into a 52-room boutique property that has welcomed over 50,000 devotees.
+              into a 16-room boutique property that has welcomed over 15,000 pilgrims.
             </p>
             <p className="mt-4 text-base leading-relaxed text-ivory/70">
               We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
-              reception shift during Nirmalya darshan to the complimentary chai before temple
+              reception shift during Mangala Aarti darshan to the complimentary chai before temple
               visits, is made with the devotee in mind.
             </p>
             <div className="mt-7">

@@ -44,7 +44,7 @@ export default function Hero() {
         <div className="absolute inset-0 animate-kenburns">
           <Image
             src={bgImage}
-            alt="Guruvayur Temple gopuram at golden hour"
+            alt="Shri Krishna Janmabhoomi temple at golden hour"
             fill
             priority
             sizes="100vw"

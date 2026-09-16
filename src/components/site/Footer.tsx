@@ -14,9 +14,9 @@ const serviceLinks = [
   { label: "360° Virtual Tour", route: "/tour" },
   { label: "Write a Review", route: "/review" },
   { label: "Influencer Portal", route: "/influencer" },
-  { label: "Palpayasam Booking", route: "/pooja" },
-  { label: "Thulabharam", route: "/pooja" },
-  { label: "Choroonu Ceremony", route: "/pooja" },
+  { label: "prasadam Booking", route: "/pooja" },
+  { label: "Archana", route: "/pooja" },
+  { label: "Annaprashan Ceremony", route: "/pooja" },
 ];
 
 export default function Footer() {
@@ -108,7 +108,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="mt-5 text-sm leading-relaxed text-ivory/60">
-            {tagline}. A boutique pilgrim home just 200 metres from the temple's East Nada
+            {tagline}. A boutique pilgrim home just 2 minutes from the temple's temple gate
             gate. Cinematic dark-luxe rooms, honest pricing, and warm service for every
             devotee who walks through our doors.
           </p>

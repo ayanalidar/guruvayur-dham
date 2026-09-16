@@ -153,7 +153,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
           "6. Radha Damodar Temple: Contains the samadhi of Jiva Goswami. Very spiritual. 7 AM-12 PM, 5-9 PM.",
           "7. Shahji Temple (Tera Kamba): Famous for its spiral marble pillars. Beautiful architecture. 8 AM-12 PM, 5-9 PM.",
           "8. Gopinath Temple: Dedicated to Krishna as Gopinath (lord of the gopis). 7 AM-12 PM, 5-9 PM.",
-          "9. Rangji Temple: South Indian style architecture with a gold-plated gopuram. Unique in Vrindavan. 6 AM-12 PM, 4-9 PM.",
+          "9. Rangji Temple: South Indian style architecture with a gold-plated temple. Unique in Vrindavan. 6 AM-12 PM, 4-9 PM.",
           "10. Pagal Baba Temple: 8-story modern temple with an elevator. Great panoramic views of Vrindavan. 6 AM-9 PM.",
         ],
       },

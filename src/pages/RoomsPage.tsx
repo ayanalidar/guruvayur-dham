@@ -105,7 +105,7 @@ export default function RoomsPage() {
 
   const eyebrow = get("rooms.eyebrow", "Rooms & Suites");
   const title = get("rooms.title", "Cinematic Dark-Luxe Rooms in Guruvayur");
-  const subtitle = get("rooms.subtitle", "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from East Nada.");
+  const subtitle = get("rooms.subtitle", "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.");
 
   return (
     <div className="animate-page-reveal">

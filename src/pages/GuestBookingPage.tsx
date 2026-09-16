@@ -24,7 +24,7 @@ const STEPS = ["Dates & Room", "Guest Details", "Coupon & Payment", "Confirmatio
 
 const DARSHAN_SLOTS = [
   { value: "", label: "No preference" },
-  { value: "NIRMALYA", label: "Nirmalya Darshan (3:00 AM)" },
+  { value: "NIRMALYA", label: "Mangala Aarti darshan (3:00 AM)" },
   { value: "USHA", label: "Usha Pooja (8:30 AM)" },
   { value: "DEEPARADHANA", label: "Deeparadhana (6:15 PM)" },
 ];

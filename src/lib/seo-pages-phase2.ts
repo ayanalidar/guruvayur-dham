@@ -375,22 +375,22 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
   {
     slug: "palpayasam-booking",
     category: "pooja-guides",
-    navLabel: "Palpayasam",
-    title: "Palpayasam Booking in Mathura - Sweet Rice Offering to Krishna",
-    metaDescription: "Book Palpayasam offering at Mathura temples. Sweet rice pudding offered to Krishna. Significance, price, booking process. Zero commission pooja booking.",
+    navLabel: "prasadam",
+    title: "prasadam Booking in Mathura - Sweet Rice Offering to Krishna",
+    metaDescription: "Book prasadam offering at Mathura temples. Sweet rice pudding offered to Krishna. Significance, price, booking process. Zero commission pooja booking.",
     heroImage: "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
     eyebrow: "Pooja Guide",
     intro: [
-      "Palpayasam is a sacred sweet rice pudding offered to Lord Krishna as prasadam. It is one of the most popular pooja offerings in Mathura temples, symbolizing the sweet devotion of a pilgrim's heart. The dish is prepared with rice, milk, sugar, ghee, and cardamom, then offered to the deity before being distributed as blessed prasadam.",
-      "At Guruvayur Dham, we coordinate Palpayasam bookings at all major Mathura temples at zero commission. You pay only the official temple rate, and the prasadam is delivered to your room. Book at least 1 day in advance through our pooja booking page or WhatsApp +91-90908 20208.",
+      "prasadam is a sacred sweet rice pudding offered to Lord Krishna as prasadam. It is one of the most popular pooja offerings in Mathura temples, symbolizing the sweet devotion of a pilgrim's heart. The dish is prepared with rice, milk, sugar, ghee, and cardamom, then offered to the deity before being distributed as blessed prasadam.",
+      "At Guruvayur Dham, we coordinate prasadam bookings at all major Mathura temples at zero commission. You pay only the official temple rate, and the prasadam is delivered to your room. Book at least 1 day in advance through our pooja booking page or WhatsApp +91-90908 20208.",
     ],
     sections: [
       {
-        heading: "Palpayasam Significance",
+        heading: "prasadam Significance",
         body: [
-          "Palpayasam holds deep spiritual significance in Krishna worship. Krishna is known for his love of milk and dairy products (he was a cowherd in Gokul). Offering Palpayasam symbolizes offering the sweetness of devotion to the divine. It is especially auspicious to offer on birthdays, anniversaries, and after fulfilling a wish or vow.",
-          "The prasadam (blessed offering) is believed to carry Krishna's blessings. Devotees receive a portion of the Palpayasam after it has been offered to the deity, which they consume as a sacred act of receiving divine grace.",
+          "prasadam holds deep spiritual significance in Krishna worship. Krishna is known for his love of milk and dairy products (he was a cowherd in Gokul). Offering prasadam symbolizes offering the sweetness of devotion to the divine. It is especially auspicious to offer on birthdays, anniversaries, and after fulfilling a wish or vow.",
+          "The prasadam (blessed offering) is believed to carry Krishna's blessings. Devotees receive a portion of the prasadam after it has been offered to the deity, which they consume as a sacred act of receiving divine grace.",
         ],
       },
       {
@@ -401,13 +401,13 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
       },
     ],
     faqs: [
-      { q: "What is Palpayasam?", a: "Palpayasam is a sweet rice pudding made with milk, sugar, ghee, and cardamom, offered to Krishna as prasadam. It symbolizes the sweetness of devotion." },
-      { q: "How much does Palpayasam booking cost?", a: "Rs 51-251 depending on the temple and quantity. Includes preparation, offering ceremony, and prasadam delivery to your room. Zero commission." },
-      { q: "How do I book Palpayasam at Mathura temples?", a: "Book through Guruvayur Dham's pooja booking page or WhatsApp +91-90908 20208. We coordinate with the temple at zero commission. Book 1 day in advance." },
-      { q: "When should I offer Palpayasam?", a: "Any day is auspicious. Especially recommended on birthdays, anniversaries, after fulfilling a vow, or on festivals like Janmashtami, Radhashtami, and Krishna Janmashtami." },
-      { q: "Do I get the prasadam after offering?", a: "Yes, the blessed Palpayasam is delivered to your room at Guruvayur Dham after the offering ceremony. You can also collect it directly from the temple." },
+      { q: "What is prasadam?", a: "prasadam is a sweet rice pudding made with milk, sugar, ghee, and cardamom, offered to Krishna as prasadam. It symbolizes the sweetness of devotion." },
+      { q: "How much does prasadam booking cost?", a: "Rs 51-251 depending on the temple and quantity. Includes preparation, offering ceremony, and prasadam delivery to your room. Zero commission." },
+      { q: "How do I book prasadam at Mathura temples?", a: "Book through Guruvayur Dham's pooja booking page or WhatsApp +91-90908 20208. We coordinate with the temple at zero commission. Book 1 day in advance." },
+      { q: "When should I offer prasadam?", a: "Any day is auspicious. Especially recommended on birthdays, anniversaries, after fulfilling a vow, or on festivals like Janmashtami, Radhashtami, and Krishna Janmashtami." },
+      { q: "Do I get the prasadam after offering?", a: "Yes, the blessed prasadam is delivered to your room at Guruvayur Dham after the offering ceremony. You can also collect it directly from the temple." },
     ],
-    ctaHeadline: "Book Palpayasam Offering - Zero Commission, Doorstep Delivery",
+    ctaHeadline: "Book prasadam Offering - Zero Commission, Doorstep Delivery",
   },
 
   {
@@ -548,7 +548,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
       { q: "What is the best time to start Day 1?", a: "Start at 5:30 AM for the Mangala Aarti at Krishna Janmabhoomi. This is the most peaceful and spiritual darshan. If you can't wake up early, start at 8 AM for Shringar Darshan at Dwarkadhish." },
       { q: "How much does the 2-day trip cost?", a: "Room at Guruvayur Dham: Rs 1,400-4,400 for 2 nights. Transport (autos/taxis): Rs 800-1,200. Food: Rs 500-1,000. Pooja offerings: Rs 200-2,000 (optional). Total: Rs 2,900-8,600 for 2 days." },
       { q: "Can Guruvayur Dham arrange the full itinerary?", a: "Yes! We arrange guided temple tours with car and driver. Day 1 Mathura tour: Rs 500. Day 2 Vrindavan tour: Rs 800. Both days: Rs 1,200. Includes all temple visits with a knowledgeable guide." },
-      { q: "Should I book poojas in advance?", a: "Yes, book Abhishek and Aarti sponsorships 2-3 days in advance through Guruvayur Dham. Zero commission. WhatsApp +91-90908 20208. Palpayasam can be booked 1 day in advance." },
+      { q: "Should I book poojas in advance?", a: "Yes, book Abhishek and Aarti sponsorships 2-3 days in advance through Guruvayur Dham. Zero commission. WhatsApp +91-90908 20208. prasadam can be booked 1 day in advance." },
     ],
     ctaHeadline: "Book Your 2-Day Mathura Pilgrimage - Stay at Guruvayur Dham",
   },
