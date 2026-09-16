@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
   await db.notification.create({
     data: {
       type: "EMAIL",
-      recipient: "manager@guruvayurdham.com",
+      recipient: "manager@guruvayurdham.co.in",
       subject: `New influencer application: ${name}`,
       body: `New influencer application received.\n\nName: ${name}\nEmail: ${email}\nPlatform: ${socialPlatform}\nHandle: ${socialHandle}\nFollowers: ${followerCount}\n\nReview in admin panel: /#/admin/hub → Influencers tab`,
       status: "QUEUED",

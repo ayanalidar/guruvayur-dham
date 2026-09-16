@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
   await db.notification.create({
     data: {
       type: "EMAIL",
-      recipient: "manager@guruvayurdham.com",
+      recipient: "manager@guruvayurdham.co.in",
       subject: `New review pending moderation · ${rating}★ from ${authorName}`,
       body: `A new guest review has been submitted and is pending your approval.\n\nAuthor: ${authorName}\nRating: ${rating}★\nText: ${text}\n\nReview in admin panel: /#/admin/hub → Reviews tab`,
       status: "QUEUED",

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-static";
 
-const SITE_URL = "https://www.guruvayurdham.com";
+const SITE_URL = "https://www.guruvayurdham.co.in";
 
 /**
  * GET /robots.txt

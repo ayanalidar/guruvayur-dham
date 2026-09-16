@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   // them without a redeploy.
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = await getSetting("VAPID_PRIVATE_KEY");
-  const subject = (await getSetting("VAPID_SUBJECT")) || "mailto:stay@guruvayurdham.com";
+  const subject = (await getSetting("VAPID_SUBJECT")) || "mailto:bookings@guruvayurdham.co.in";
   if (!publicKey || !privateKey) {
     return NextResponse.json(
       { error: "Push notifications not configured. Set NEXT_PUBLIC_VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY + VAPID_SUBJECT env vars." },

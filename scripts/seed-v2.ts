@@ -35,10 +35,10 @@ function randPin(): string {
   return crypto.randomInt(1000, 10000).toString();
 }
 const STAFF = [
-  { name: "Krishnan Warrier", email: "manager@guruvayurdham.com", phone: "+91 98765 43210", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
-  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.com", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
-  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.com", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
-  { name: "Saritha Nair", email: "accounts@guruvayurdham.com", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
+  { name: "Krishnan Warrier", email: "manager@guruvayurdham.co.in", phone: "+91 98765 43210", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
+  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
+  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
+  { name: "Saritha Nair", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
 ];
 
 const COUPONS = [

@@ -21,7 +21,7 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const siteUrl = "https://www.guruvayurdham.com";
+const siteUrl = "https://www.guruvayurdham.co.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -131,7 +131,7 @@ export default function RootLayout({
       "Boutique pilgrim accommodation near Guruvayur Temple offering dark-luxe AC & non-AC rooms, pooja booking, and pilgrim services.",
     url: siteUrl,
     telephone: "+91-90908-20208",
-    email: "stay@guruvayurdham.com",
+    email: "bookings@guruvayurdham.co.in",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
     priceRange: "₹700 - ₹3500",
@@ -179,7 +179,7 @@ export default function RootLayout({
     name: "Guruvayur Dham",
     url: siteUrl,
     logo: `${siteUrl}/logo-large.png`,
-    email: "stay@guruvayurdham.com",
+    email: "bookings@guruvayurdham.co.in",
     telephone: "+91-90908-20208",
     address: { "@id": `${siteUrl}/#hotel` },
     sameAs: [

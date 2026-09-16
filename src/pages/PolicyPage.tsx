@@ -37,7 +37,7 @@ const POLICIES: Record<string, { title: string; sections: { h: string; p: string
       {
         h: "3. How to Cancel",
         p: [
-          "Cancellations can be made via WhatsApp (+91-90908 20208), phone, or email (stay@guruvayurdham.com).",
+          "Cancellations can be made via WhatsApp (+91-90908 20208), phone, or email (bookings@guruvayurdham.co.in).",
           "Please provide your booking reference number (starts with GD-) when requesting a cancellation.",
           "Refunds are processed within 5-7 business days to the original payment method.",
         ],

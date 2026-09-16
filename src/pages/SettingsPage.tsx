@@ -363,7 +363,7 @@ export default function SettingsPage() {
                       </div>
                       <div className="sm:col-span-2">
                         <label className="text-[10px] uppercase tracking-wider text-ivory/50">Webhook URL (where they send bookings to us)</label>
-                        <input value={editForm.webhookUrl} onChange={(e) => setEditForm({ ...editForm, webhookUrl: e.target.value })} placeholder="https://guruvayurdham.com/api/channel-inbox" className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                        <input value={editForm.webhookUrl} onChange={(e) => setEditForm({ ...editForm, webhookUrl: e.target.value })} placeholder="https://guruvayurdham.co.in/api/channel-inbox" className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
                       </div>
                     </div>
                     <p className="mt-2 text-xs text-ivory/40">

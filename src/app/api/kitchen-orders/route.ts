@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
   await db.notification.create({
     data: {
       type: "WHATSAPP",
-      recipient: "kitchen@guruvayurdham.com",
+      recipient: "kitchen@guruvayurdham.co.in",
       body: `NEW ORDER ${ref} from Room ${roomNumber} (${guestName}). Items: ${items.map((i) => `${i.name} x${i.qty || 1}`).join(", ")}. Total: ₹${total}`,
       status: "QUEUED",
       relatedRef: ref,

@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     const smtpHost = await getSetting("SMTP_HOST");
     const smtpUser = await getSetting("SMTP_USER");
     const smtpPass = await getSetting("SMTP_PASS");
-    const fromEmail = (await getSetting("FROM_EMAIL")) || "stay@guruvayurdham.com";
+    const fromEmail = (await getSetting("FROM_EMAIL")) || "bookings@guruvayurdham.co.in";
     const smtpPortStr = await getSetting("SMTP_PORT");
 
     if (smtpHost && smtpUser && smtpPass) {

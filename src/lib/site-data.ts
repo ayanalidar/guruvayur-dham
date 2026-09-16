@@ -10,7 +10,13 @@ export const SITE = {
   phone: "+91-90908 20208",
   phoneRaw: "+919090820208",
   whatsapp: "919090820208",
-  email: "stay@guruvayurdham.com",
+  email: "bookings@guruvayurdham.co.in",
+  emails: {
+    bookings: "bookings@guruvayurdham.co.in",
+    manager: "manager@guruvayurdham.co.in",
+    sales: "sales@guruvayurdham.co.in",
+  },
+  domain: "guruvayurdham.co.in",
   address: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
   shortAddress: "Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
   mapEmbed:

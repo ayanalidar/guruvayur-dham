@@ -9,7 +9,7 @@ const SECTIONS = [
   {
     h: "1. Acceptance of Terms",
     p: [
-      "By accessing and booking through the Guruvayur Dham website (guruvayurdham.com), WhatsApp, phone, or any other channel, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please do not use our services.",
+      "By accessing and booking through the Guruvayur Dham website (guruvayurdham.co.in), WhatsApp, phone, or any other channel, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please do not use our services.",
       "These terms constitute a legally binding agreement between you (\"the Guest\") and Guruvayur Dham (\"the Property\", \"we\", \"us\", or \"our\"), governing your stay and any associated services.",
     ],
   },
@@ -89,7 +89,7 @@ const SECTIONS = [
     h: "10. Governing Law",
     p: [
       `These terms are governed by the laws of the Republic of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Mathura, Uttar Pradesh.`,
-      `For any queries regarding these terms, contact us at ${SITE.phone} or care@guruvayurdham.com.`,
+      `For any queries regarding these terms, contact us at ${SITE.phone} or care@guruvayurdham.co.in.`,
     ],
   },
 ];
@@ -149,7 +149,7 @@ export default function TermsPage() {
           <div className="rounded-xl border border-champagne/15 bg-ink-card p-5 text-center">
             <p className="text-sm text-ivory/70">
               Questions about these terms? Call <a href={`tel:${SITE.phoneRaw}`} className="text-champagne">{SITE.phone}</a>
-              {" "}or email <a href="mailto:care@guruvayurdham.com" className="text-champagne">care@guruvayurdham.com</a>.
+              {" "}or email <a href="mailto:care@guruvayurdham.co.in" className="text-champagne">care@guruvayurdham.co.in</a>.
             </p>
           </div>
         </div>

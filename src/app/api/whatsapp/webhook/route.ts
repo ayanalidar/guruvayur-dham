@@ -205,11 +205,11 @@ async function processMessage(phone: string, message: string): Promise<string> {
   }
 
   if (msg.match(/book|room|availability|reserve/)) {
-    return `We'd love to host you! 🏨\n\nOur rooms (2 min walk to the temple):\n• Non-AC Budget: ₹700/night\n• Standard AC: ₹1,500/night\n• Deluxe AC: ₹2,200/night\n• Family Suite AC: ₹3,500/night\n\nBook instantly: https://guruvayurdham.com/#/rooms\n\nOr tell me your check-in date, check-out date, and number of guests.`;
+    return `We'd love to host you! 🏨\n\nOur rooms (2 min walk to the temple):\n• Non-AC Budget: ₹700/night\n• Standard AC: ₹1,500/night\n• Deluxe AC: ₹2,200/night\n• Family Suite AC: ₹3,500/night\n\nBook instantly: https://guruvayurdham.co.in/#/rooms\n\nOr tell me your check-in date, check-out date, and number of guests.`;
   }
 
   if (msg.match(/pooja|aarti|abhishek|bhog|offering/)) {
-    return `Sacred offerings (zero commission): 🙏\n\n• Pushpanjali · ₹21\n• Mangala Aarti · ₹51\n• Sandhya Aarti · ₹101\n• Rajbhog Aarti · ₹251\n• Abhishek · ₹1,100\n• Annadan · ₹2,100\n\nBook online: https://guruvayurdham.com/#/pooja`;
+    return `Sacred offerings (zero commission): 🙏\n\n• Pushpanjali · ₹21\n• Mangala Aarti · ₹51\n• Sandhya Aarti · ₹101\n• Rajbhog Aarti · ₹251\n• Abhishek · ₹1,100\n• Annadan · ₹2,100\n\nBook online: https://guruvayurdham.co.in/#/pooja`;
   }
 
   if (msg.match(/darshan|timing|temple time/)) {
@@ -217,7 +217,7 @@ async function processMessage(phone: string, message: string): Promise<string> {
   }
 
   if (msg.match(/festival|janmashtami|holi|diwali/)) {
-    return `Major Festivals: 🎉\n\n• Janmashtami (Aug/Sept): Krishna's birthday\n• Holi (March): Lathmar Holi in Barsana\n• Diwali (Oct/Nov): Festival of lights\n• Radhashtami (Aug/Sept)\n\nBook rooms 60+ days in advance! https://guruvayurdham.com/#/events`;
+    return `Major Festivals: 🎉\n\n• Janmashtami (Aug/Sept): Krishna's birthday\n• Holi (March): Lathmar Holi in Barsana\n• Diwali (Oct/Nov): Festival of lights\n• Radhashtami (Aug/Sept)\n\nBook rooms 60+ days in advance! https://guruvayurdham.co.in/#/events`;
   }
 
   if (msg.match(/check.?in|check.?out|time/)) {
@@ -247,7 +247,7 @@ async function processMessage(phone: string, message: string): Promise<string> {
     const result = await chat([
       {
         role: "system",
-        content: "You are the Guruvayur Dham WhatsApp assistant in Mathura, UP. Be warm, brief, and helpful. Use Namaskaram as greeting. Keep replies under 150 words. For booking, share https://guruvayurdham.com/#/rooms. For urgent help, share +91-90908 20208.",
+        content: "You are the Guruvayur Dham WhatsApp assistant in Mathura, UP. Be warm, brief, and helpful. Use Namaskaram as greeting. Keep replies under 150 words. For booking, share https://guruvayurdham.co.in/#/rooms. For urgent help, share +91-90908 20208.",
       },
       { role: "user", content: message },
     ], { temperature: 0.6, maxTokens: 250 });

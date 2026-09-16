@@ -22,7 +22,7 @@ const SECTIONS = [
       `As required under Section 13 of the DPDP Act, 2023, we have designated a Grievance Officer to address any complaints or concerns regarding data protection.`,
       `Name: The Manager, Guruvayur Dham`,
       `Phone: ${SITE.phone}`,
-      `Email: privacy@guruvayurdham.com`,
+      `Email: privacy@guruvayurdham.co.in`,
       `Address: ${SITE.address}`,
       `Response time: Within 10 business days of receiving a complaint (as mandated by the DPDP Act).`,
     ],
@@ -65,7 +65,7 @@ const SECTIONS = [
       `• Right to erasure ("Right to be Forgotten"): You can request deletion of your data, subject to legal retention requirements (e.g., booking records must be kept for 5 years as per Indian tax law).`,
       `• Right to grievance redressal: You can file a complaint with our Grievance Officer (see Section 2 above).`,
       `• Right to nominate: You can nominate another individual to exercise your rights in case of death or incapacity.`,
-      `To exercise any of these rights, contact us at privacy@guruvayurdham.com or call ${SITE.phone}.`,
+      `To exercise any of these rights, contact us at privacy@guruvayurdham.co.in or call ${SITE.phone}.`,
     ],
   },
   {
@@ -179,7 +179,7 @@ export default function PrivacyPage() {
             <div className="mt-3 grid gap-2 text-sm text-ivory/70 sm:grid-cols-2">
               <p className="flex items-center gap-2"><User className="h-4 w-4 text-champagne/60" /> The Manager, Guruvayur Dham</p>
               <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-champagne/60" /> {SITE.phone}</p>
-              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-champagne/60" /> privacy@guruvayurdham.com</p>
+              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-champagne/60" /> privacy@guruvayurdham.co.in</p>
               <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-champagne/60" /> Response: 10 business days</p>
             </div>
           </div>
@@ -204,7 +204,7 @@ export default function PrivacyPage() {
               ))}
             </div>
             <p className="mt-3 text-xs text-ivory/50">
-              To exercise these rights, email <a href="mailto:privacy@guruvayurdham.com" className="text-champagne">privacy@guruvayurdham.com</a> or call {SITE.phone}.
+              To exercise these rights, email <a href="mailto:privacy@guruvayurdham.co.in" className="text-champagne">privacy@guruvayurdham.co.in</a> or call {SITE.phone}.
             </p>
           </div>
 
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
           <div className="rounded-xl border border-champagne/15 bg-ink-card p-5 text-center">
             <p className="text-sm text-ivory/70">
               Questions about your data? Contact our Grievance Officer at{" "}
-              <a href="mailto:privacy@guruvayurdham.com" className="text-champagne">privacy@guruvayurdham.com</a>
+              <a href="mailto:privacy@guruvayurdham.co.in" className="text-champagne">privacy@guruvayurdham.co.in</a>
               {" "}or call <a href={`tel:${SITE.phoneRaw}`} className="text-champagne">{SITE.phone}</a>.
             </p>
           </div>

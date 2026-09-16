@@ -475,7 +475,7 @@ export default function LoginPage() {
                   {staffMode === "email" && (
                     <div className="space-y-4">
                       <Field icon={Mail} label="Staff Email">
-                        <input type="email" value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} placeholder="manager@guruvayurdham.com" className="input-luxe" />
+                        <input type="email" value={staffEmail} onChange={(e) => setStaffEmail(e.target.value)} placeholder="manager@guruvayurdham.co.in" className="input-luxe" />
                       </Field>
                       <Field icon={Lock} label="Password">
                         <div className="relative">
@@ -490,7 +490,7 @@ export default function LoginPage() {
                       </button>
                       <div className="rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
                         <p>Demo: Use any staff email + PIN as password, or <code className="text-gold-foil">admin123</code></p>
-                        <p className="mt-1">e.g. <code className="text-champagne">manager@guruvayurdham.com</code> / <code className="text-gold-foil">1234</code></p>
+                        <p className="mt-1">e.g. <code className="text-champagne">manager@guruvayurdham.co.in</code> / <code className="text-gold-foil">1234</code></p>
                       </div>
                     </div>
                   )}

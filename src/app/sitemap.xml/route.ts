@@ -4,7 +4,7 @@ import { ALL_SEO_PAGES } from "@/lib/seo-pages";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL = "https://www.guruvayurdham.com";
+const SITE_URL = "https://www.guruvayurdham.co.in";
 
 /**
  * GET /sitemap.xml

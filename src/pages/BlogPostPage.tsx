@@ -35,11 +35,11 @@ export default function BlogPostPage({ slug }: { slug: string }) {
     publisher: {
       "@type": "Organization",
       name: "Guruvayur Dham",
-      logo: { "@type": "ImageObject", url: "https://www.guruvayurdham.com/logo-large.png" },
+      logo: { "@type": "ImageObject", url: "https://www.guruvayurdham.co.in/logo-large.png" },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://www.guruvayurdham.com/#/blog/${post.slug}`,
+      "@id": `https://www.guruvayurdham.co.in/#/blog/${post.slug}`,
     },
   };
 

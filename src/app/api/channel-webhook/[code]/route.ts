@@ -296,7 +296,7 @@ export async function GET(
     webhookUrl: safeWebhookUrl,
     setup: {
       instructions: `Configure this webhook URL in your ${channel.name} partner dashboard:`,
-      url: `https://guruvayurdham.com/api/channel-webhook/${channelCode}`,
+      url: `https://guruvayurdham.co.in/api/channel-webhook/${channelCode}`,
       method: "POST",
       headers: channel.webhookUrl.includes("key=")
         ? { "X-Channel-Key": "<the key from your admin settings>" }

@@ -72,7 +72,7 @@ export default function SEOPage({ slug }: { slug: string }) {
 
   // Build JSON-LD based on page type
   let jsonLdData: object;
-  const baseUrl = "https://www.guruvayurdham.com";
+  const baseUrl = "https://www.guruvayurdham.co.in";
 
   if (page.jsonLdType === "Event") {
     jsonLdData = {

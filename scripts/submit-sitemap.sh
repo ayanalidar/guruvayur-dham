@@ -4,7 +4,7 @@
 # Usage: ./scripts/submit-sitemap.sh https://yourdomain.com
 # ============================================================================
 
-SITE_URL="${1:-https://www.guruvayurdham.com}"
+SITE_URL="${1:-https://www.guruvayurdham.co.in}"
 SITEMAP_URL="${SITE_URL}/sitemap.xml"
 
 echo "📢 Submitting sitemap to search engines..."

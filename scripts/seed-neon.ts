@@ -16,7 +16,7 @@ const CHANNELS = [
 const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; label: string }> = [
   { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
   { key: "site.phone", value: "+91-90908 20208", category: "site", label: "Phone" },
-  { key: "site.email", value: "stay@guruvayurdham.com", category: "site", label: "Email" },
+  { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Email" },
   { key: "site.address", value: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001", category: "site", label: "Address" },
   { key: "hero.headline", value: "Stay Near the Divine", category: "hero", label: "Hero Headline" },
   { key: "hero.subheadline", value: "Clean AC & non-AC rooms, 24x7 hot water, family-friendly. Book in 30 seconds.", category: "hero", label: "Hero Subheadline" },
@@ -30,10 +30,10 @@ function randPin(): string {
   return crypto.randomInt(1000, 10000).toString();
 }
 const STAFF = [
-  { name: "Krishnan Warrier", email: "manager@guruvayurdham.com", phone: "+91-90908 20208", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
-  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.com", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
-  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.com", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
-  { name: "Saritha Nair", email: "accounts@guruvayurdham.com", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
+  { name: "Krishnan Warrier", email: "manager@guruvayurdham.co.in", phone: "+91-90908 20208", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
+  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
+  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
+  { name: "Saritha Nair", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
 ];
 
 const COUPONS = [
