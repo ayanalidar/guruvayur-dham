@@ -86,6 +86,10 @@ async function main() {
   console.log("🌱 Seeding Neon PostgreSQL...");
 
   // Rooms
+  // Delete old rooms not in the new ROOMS array
+  await db.room.deleteMany({ where: { slug: { notIn: ROOMS.map(r => r.slug) } } });
+  console.log("✓ Old rooms cleaned up");
+
   for (const r of ROOMS) {
     await db.room.upsert({
       where: { slug: r.slug },
