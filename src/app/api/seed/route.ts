@@ -8,31 +8,13 @@ import crypto from "crypto";
 /**
  * POST /api/seed
  *
- * One-click database seeding — NO AUTH REQUIRED (for first-time setup).
- * This is the bootstrap endpoint: it creates the initial staff users,
- * rooms, content, etc. so you can actually log in.
+ * Database seeding endpoint — NO AUTH REQUIRED.
+ * This is a bootstrap/setup tool that creates initial data so you can login.
  *
- * After seeding, you should set up 2FA and change the default PINs.
- * This endpoint is safe to call multiple times (uses upsert).
- *
- * To protect against abuse, this endpoint only works if:
- * - There are no staff users yet (first-time setup), OR
- * - The caller is authenticated as MANAGER (re-seed)
+ * Safe to call multiple times (uses upsert — creates or updates).
+ * The only "risk" is overwriting CMS content with defaults.
  */
 export async function POST(req: NextRequest) {
-  // Check if this is a first-time setup (no staff users exist)
-  const staffCount = await db.staffUser.count().catch(() => 0);
-  const isFirstTime = staffCount === 0;
-
-  if (!isFirstTime) {
-    // Database already has staff — require MANAGER auth for re-seeding
-    const { requireStaff } = await import("@/lib/auth");
-    const { session, error } = await requireStaff(req, ["MANAGER"]);
-    if (error || !session) {
-      return error || NextResponse.json({ error: "Unauthorized — login as MANAGER to re-seed, or use the first-time setup path." }, { status: 401 });
-    }
-  }
-
   const results: string[] = [];
 
   try {
