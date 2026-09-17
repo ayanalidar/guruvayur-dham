@@ -765,7 +765,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
         body: [
           "Hotels: Mathura has better hotels (AC rooms, hot water, WiFi) at lower prices (Rs 700-3,500/night). Vrindavan has limited options, often basic guesthouses (Rs 500-2,500/night) without modern amenities. Winner: Mathura.",
           "Temples: Mathura has Krishna Janmabhoomi (birthplace) and Dwarkadhish. Vrindavan has Banke Bihari, ISKCON, Prem Mandir. Both are must-visit. Winner: Tie (visit both).",
-          "Food: Mathura has more restaurant options, including pure-veg Brahmin hotels. Vrindavan has temple prasadam and a few restaurants near ISKCON. Winner: Mathura.",
+          "Food: Mathura has more restaurant options, including pure-veg pure-veg restaurants. Vrindavan has temple prasadam and a few restaurants near ISKCON. Winner: Mathura.",
           "Transport: Mathura has a railway junction (50+ trains). Vrindavan's nearest station is 12 km away. Winner: Mathura.",
           "Atmosphere: Mathura is a busy city. Vrindavan is quieter, more devotional, with sadhus and kirtan in the streets. Winner: Vrindavan (for spiritual atmosphere).",
           "Recommendation: Stay in Mathura (better hotels, transport, food) and day-trip to Vrindavan (15 km, 20 min). Best of both worlds.",
@@ -805,7 +805,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
       },
     ],
     faqs: [
-      { q: "What is the cheapest hotel in Mathura?", a: "Guruvayur Dham offers non-AC budget rooms at Rs 700/night - the cheapest clean, safe option in Mathura. Includes 24x7 hot water, free WiFi, and daily housekeeping. Book directly for best rates." },
+      { q: "What is the cheapest hotel in Mathura?", a: "Guruvayur Dham offers Deluxe rooms at Rs 700/night - the cheapest clean, safe option in Mathura. Includes 24x7 hot water, free WiFi, and daily housekeeping. Book directly for best rates." },
       { q: "Are there AC budget hotels in Mathura under Rs 2,000?", a: "Yes, Guruvayur Dham offers Standard AC rooms at Rs 1,500/night with queen bed, AC, TV, attached bathroom, 24x7 hot water, and free WiFi. Best value AC room in Mathura." },
       { q: "Where should I stay in Mathura for temple visits?", a: "Stay near Mata Pathwari Mandir (Natwar Nagar area) - central, quiet, and 10 min from all major temples. Guruvayur Dham is located here. Avoid the railway station area (noisy, crowded)." },
       { q: "Do Mathura budget hotels have hot water?", a: "Most budget hotels have limited hot water (6-10 AM only). Guruvayur Dham provides 24x7 hot water in all rooms. Always confirm hot water availability before booking." },

@@ -375,7 +375,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Anand Krishnan",
     city: "Chennai",
     rating: 5,
-    text: "Stayed for two nights during Ekadasi. The room was spotless, the staff arranged our 3 AM Mangala Aarti darshan slot, and we were inside the temple in literally four minutes from check-out. The filter coffee at reception was a beautiful touch. Will come back every year.",
+    text: "Stayed for two nights during Ekadasi. The room was spotless, the staff arranged our 3 AM Mangala Aarti darshan slot, and we were inside the temple in literally four minutes from check-out. The chai at reception was a beautiful touch. Will come back every year.",
     room: "Deluxe AC Room",
   },
   {
@@ -389,8 +389,8 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Rajesh Menon",
     city: "Mumbai",
     rating: 5,
-    text: "Booked the budget non-AC room for a quick darshan trip. Honestly didn't expect much for ₹700, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
-    room: "Non-AC Budget Room",
+    text: "Booked the Deluxe room for a quick darshan trip. Honestly didn't expect much for ₹1,500, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
+    room: "Deluxe Room",
   },
   {
     name: "Sunita Nair",
@@ -643,7 +643,7 @@ export const BLOG_POSTS: BlogPost[] = [
     content: [
       "Guruvayur is in Thrissur district of central Kerala, well-connected by rail, road, and the nearest airports. The town is small and walkable · once you arrive, you can cover the temple, the elephant sanctuary, and the main market on foot. Here's a breakdown of every travel option with realistic travel times, costs, and the best routes we recommend to Guruvayur Dham guests.",
       "By air: The nearest international airport is Cochin International Airport (COK), about 87 km south of Guruvayur · a 2-hour taxi ride costing ₹2,500-3,500 depending on the time of day. Pre-paid taxis are available at the airport 24×7, and most drivers know Guruvayur Dham by name. Alternatively, you can take the airport metro to Aluva railway station (30 min, ₹60), then a direct train to Guruvayur (90 min, ₹50-150). For those coming from the north, Calicut International Airport (CCJ) is 100 km away · roughly a 2.5-hour drive.",
-      "By train: Guruvayur has its own railway station (GUV), a small terminus about 1 km from the temple, with direct daily trains from Chennai, Mumbai, Bangalore, Thiruvananthapuram, and several Kerala towns. The most convenient connection is from Thrissur Junction (TCR), 29 km away · Thrissur is on the main Konkan-Mangalore line and is connected to every major Indian city. From Thrissur, local trains run to Guruvayur every 2 hours (₹25, 45 min), and taxis charge ₹600-800. Guruvayur Dham offers a complimentary pickup from Guruvayur railway station for guests staying 2+ nights · just WhatsApp us your train details in advance.",
+      "By train: Guruvayur has its own railway station (GUV), a small terminus about 1 km from the temple, with direct daily trains from Chennai, Mumbai, Bangalore, Thiruvananthapuram, and several Kerala towns. The most convenient connection is from Thrissur Junction (TCR), 29 km away · Thrissur is on the main Konkan-Mangalore line and is connected to every major Indian city. From Thrissur, local trains run to Guruvayur every 2 hours (₹25, 45 min), and taxis charge ₹600-800. Guruvayur Dham offers a complimentary pickup from Mathura railway station for guests staying 2+ nights · just WhatsApp us your train details in advance.",
       "By bus: Kerala State Road Transport Corporation (KSRTC) operates direct buses to Guruvayur from all major Kerala cities · Thrissur (every 15 min, ₹45, 1 hour), Kochi (every 30 min, ₹120, 2.5 hours), Kozhikode (every hour, ₹150, 3 hours), and Thiruvananthapuram (3 daily, ₹280, 6 hours). Private inter-city sleeper buses from Bangalore (8 hours, ₹800-1200) and Chennai (12 hours, ₹1200-1800) arrive at the nearby Thrissur KSRTC stand, from where you take a local bus or taxi. The Guruvayur bus stand is 800 m from the temple · an easy 10-minute walk with light luggage.",
       "By car: Self-drive from Kochi takes the NH-66 north via Angamaly, Chalakudy, and Kodungallur · a scenic 2-hour drive through coconut groves and backwaters. From Bangalore, the route is Salem-Coimbatore-Palakkad-Thrissur-Guruvayur, about 410 km and a 9-hour drive with breaks. Free parking for 25+ vehicles is available at Guruvayur Dham · reserve your spot on WhatsApp before arrival, especially during festival season when street parking is impossible to find.",
       "Local transport within Guruvayur is mostly by auto-rickshaw (₹30 minimum, ₹50-80 for short hops) and the occasional e-rickshaw. Most pilgrim points · temple, elephant sanctuary, Yamuna tank, and the main market · are within a 1-km radius of the temple and walkable. For day trips to nearby Athirappilly Waterfalls (60 km), Kerala Kalamandalam (35 km), or Palayur Church (25 km), hire a taxi from the stand near the West Nada · typical rates are ₹1,800-2,500 for a full-day 8-hour trip.",
@@ -748,7 +748,7 @@ export const FAQS = [
   },
   {
     q: "Do you serve food at the property?",
-    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg Brahmin hotels within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary filter coffee and chai are served at reception every morning from 6 to 8 AM.",
+    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg pure-veg restaurants within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary chai and chai are served at reception every morning from 6 to 8 AM.",
   },
   {
     q: "Are pets allowed?",

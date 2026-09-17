@@ -205,7 +205,7 @@ async function processMessage(phone: string, message: string): Promise<string> {
   }
 
   if (msg.match(/book|room|availability|reserve/)) {
-    return `We'd love to host you! 🏨\n\nOur rooms (2 min walk to the temple):\n• Non-AC Budget: ₹700/night\n• Standard AC: ₹1,500/night\n• Deluxe AC: ₹2,200/night\n• Family Suite AC: ₹3,500/night\n\nBook instantly: https://guruvayurdham.co.in/#/rooms\n\nOr tell me your check-in date, check-out date, and number of guests.`;
+    return `We'd love to host you! 🏨\n\nOur rooms (2 min walk to the temple):\n• Deluxe Room: ₹1,500/night\n• Super Deluxe: ₹2,200/night\n• Superior Room: ₹2,800/night\n• GVD Suite: ₹3,500/night\n\nBook instantly: https://guruvayurdham.co.in/#/rooms\n\nOr tell me your check-in date, check-out date, and number of guests.`;
   }
 
   if (msg.match(/pooja|aarti|abhishek|bhog|offering/)) {

@@ -255,7 +255,7 @@ ${data.message}`;
                     {[
                       "Instant WhatsApp confirmation · no waiting",
                       "Zero booking fee, zero commission on poojas",
-                      "Free pickup from Guruvayur railway station (2+ night stays)",
+                      "Free pickup from Mathura railway station (2+ night stays)",
                       "Flexible cancellation up to 7 days before check-in",
                       "Group discounts for 10+ pilgrim batches",
                       "On-site pooja-booking coordinator at your service",
@@ -269,7 +269,7 @@ ${data.message}`;
 
                   <div className="mt-6 rounded-xl border border-champagne/12 bg-ink/50 p-4">
                     <p className="flex items-center gap-2 text-sm font-semibold text-ivory">
-                      <BedDouble className="h-4 w-4 text-champagne" /> Rooms from ₹700/night
+                      <BedDouble className="h-4 w-4 text-champagne" /> Rooms from ₹1,500/night
                     </p>
                     <p className="mt-1 text-xs text-ivory/60">AC, non-AC, family suites, dormitory · all 2 min from temple gate.</p>
                     <MagneticButton

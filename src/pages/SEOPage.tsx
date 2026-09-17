@@ -269,7 +269,7 @@ export default function SEOPage({ slug }: { slug: string }) {
                     {page.ctaHeadline}
                   </h3>
                   <p className="mt-2 text-sm text-ivory/60">
-                    Clean AC rooms from ₹700/night. 24×7 hot water, free WiFi, free parking.
+                    Clean AC rooms from ₹1,500/night. 24×7 hot water, free WiFi, free parking.
                     2 minutes from Mata Pathwari Mandir, 10 min from Krishna Janmabhoomi.
                   </p>
                   <div className="mt-4 space-y-2">

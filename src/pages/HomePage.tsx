@@ -210,7 +210,7 @@ function Hero() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹700</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹1,500</p>
                 <p className="font-serif text-base text-ivory">52 Luxury Rooms</p>
               </div>
             </div>
@@ -365,7 +365,7 @@ function RoomPreviews() {
             align="left"
             eyebrow={t("section.rooms")}
             title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
-            subtitle="From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from temple gate."
+            subtitle="From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from temple gate."
             className="!mx-0"
           />
           <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>

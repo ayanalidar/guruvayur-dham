@@ -14,7 +14,7 @@ const HIGHLIGHTS = [
   "52 rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
-  "Tie-ups with pure-veg Brahmin hotels for in-room meal delivery",
+  "Tie-ups with pure-veg pure-veg restaurants for in-room meal delivery",
 ];
 
 export default function AboutPage() {

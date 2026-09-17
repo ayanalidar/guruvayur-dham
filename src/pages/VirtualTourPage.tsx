@@ -51,7 +51,7 @@ const DEMO_SCENES: TourScene[] = [
     preview: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=400&fit=crop",
     hotspots: [
       { pitch: 0, yaw: 180, type: "scene", targetScene: "corridor", text: "← Back to Corridor" },
-      { pitch: -20, yaw: 0, type: "info", text: "Pure-veg Brahmin hotel tie-up · order to your room via QR" },
+      { pitch: -20, yaw: 0, type: "info", text: "Pure-veg restaurant tie-up · order to your room via QR" },
     ],
   },
 ];

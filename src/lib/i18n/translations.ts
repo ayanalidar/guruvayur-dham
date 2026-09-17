@@ -49,7 +49,7 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Rooms */
     "rooms.eyebrow": "Rooms & Suites",
     "rooms.title": "Clean Rooms in Guruvayur — Walkable to Temple",
-    "rooms.subtitle": "From ₹700/night budget rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.",
+    "rooms.subtitle": "From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.",
     /* Pooja */
     "pooja.eyebrow": "Pooja & Offerings",
     "pooja.title": "Guruvayur Pooja Booking — prasadam, Archana & More",
@@ -178,7 +178,7 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Rooms */
     "rooms.eyebrow": "कमरे और सुइट",
     "rooms.title": "गुरुवायुर में स्वच्छ कमरे · मंदिर तक पैदल",
-    "rooms.subtitle": "₹700/रात बजट कमरों से ₹3,500 परिवार सुइट तक · हर विकल्प रोज़ साफ होता है और मंदिर के पास है।",
+    "rooms.subtitle": "₹1,500/रात डीलक्स कमरों से ₹3,500 GVD सुइट तक · हर विकल्प रोज़ साफ होता है और मंदिर के पास है।",
     /* Pooja */
     "pooja.eyebrow": "पूजा और अर्पण",
     "pooja.title": "गुरुवायुर पूजा बुकिंग · पालपायसम, तुलाभारम और अधिक",
@@ -337,7 +337,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "whyChooseUs.subtitle": "1998 पासून 50,000+ भाविकांचे स्वागत. प्रत्येक तपशील यात्रीच्या गरजेनुसार.",
     "rooms.eyebrow": "खोल्या आणि सुइट",
     "rooms.title": "गुरुवायुरमध्ये स्वच्छ खोल्या · मंदिरापर्यंत पायी",
-    "rooms.subtitle": "₹700/रात्री बजेट खोल्यांपासून ₹3,500 परिवार सुइटपर्यंत · प्रत्येक पर्याय दररोज स्वच्छ केला जातो.",
+    "rooms.subtitle": "₹1,500/रात्री डीलक्स खोल्यांपासून ₹3,500 GVD सुइटपर्यंत · प्रत्येक पर्याय दररोज स्वच्छ केला जातो.",
     "pooja.eyebrow": "पूजा आणि अर्पण",
     "pooja.title": "गुरुवायुर पूजा बुकिंग · पालपायसम, तुलाभारम आणि बरेच काही",
     "pooja.subtitle": "शून्य कमिशन, अधिकृत दराने पूजा बुक करा. प्रसाद खोलीत वितरीत.",
@@ -452,7 +452,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "whyChooseUs.subtitle": "1998 થી 50,000+ ભક્તોનું સ્વાગત. દરેક વિગત યાત્રિકની જરૂર મુજબ.",
     "rooms.eyebrow": "રૂમ્સ અને સ્યુટ",
     "rooms.title": "ગુરુવાયુરમાં સ્વચ્છ રૂમ્સ · મંદિર સુધી ચાલતા",
-    "rooms.subtitle": "₹700/રાત બજેટ રૂમ્સથી ₹3,500 પરિવાર સ્યુટ સુધી · દરેક વિકલ્પ રોજ સ્વચ્છ થાય છે.",
+    "rooms.subtitle": "₹1,500/રાત ડીલક્સ રૂમ્સથી ₹3,500 GVD સ્યુટ સુધી · દરેક વિકલ્પ રોજ સ્વચ્છ થાય છે.",
     "pooja.eyebrow": "પૂજા અને અર્પણ",
     "pooja.title": "ગુરુવાયુર પૂજા બુકિંગ · પાલપાયસમ, તુલાભારમ અને વધુ",
     "pooja.subtitle": "ઝીરો કમિશન, અધિકૃત દરે પૂજા બુક કરો. પ્રસાદ રૂમમાં વિતરિત.",
@@ -567,7 +567,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "whyChooseUs.subtitle": "1998 മുതൽ 50,000+ ഭക്തരെ സ്വാഗതം ചെയ്തിട്ടുണ്ട്. എല്ലാ വിശദാംശവും തീർത്ഥാടകന്റെ ആവശ്യമനുസരിച്ച്.",
     "rooms.eyebrow": "മുറികളും സ്യൂട്ടുകളും",
     "rooms.title": "ഗുരുവായൂരിൽ വൃത്തിയുള്ള മുറികൾ · ക്ഷേത്രത്തിലേക്ക് നടക്കാൻ",
-    "rooms.subtitle": "₹700/രാത്രി ബഡ്ജറ്റ് മുറികൾ മുതൽ ₹3,500 കുടുംബ സ്യൂട്ട് വരെ · ഓരോ ഓപ്ഷനും ദിവസേന വൃത്തിയാക്കുന്നു.",
+    "rooms.subtitle": "₹1,500/രാത്രി ഡീലക്സ് മുറികൾ മുതൽ ₹3,500 GVD സ്യൂട്ട് വരെ · ഓരോ ഓപ്ഷനും ദിവസേന വൃത്തിയാക്കുന്നു.",
     "pooja.eyebrow": "പൂജയും വഴിപാടുകളും",
     "pooja.title": "ഗുരുവായൂർ പൂജ ബുക്കിംഗ് · പാൽപായസം, തുലാഭാരം ഒഴികെ കൂടുതൽ",
     "pooja.subtitle": "പൂജ്യ കമ്മീഷൻ, ഔദ്യോഗിക നിരക്കിൽ പൂജ ബുക്ക് ചെയ്യുക. പ്രസാദം മുറിയിൽ എത്തിക്കും.",
