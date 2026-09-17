@@ -49,7 +49,7 @@ export default function LoginPage() {
   const [otpPhone, setOtpPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [demoOtp, setDemoOtp] = useState("");
+
 
   useEffect(() => {
     fetch("/api/auth/session", { cache: "no-store" })
@@ -105,12 +105,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email: guestEmail }),
       });
       const j = await r.json();
-      if (j.demoResetUrl) {
-        toast.success("Reset link generated!");
-        window.open(j.demoResetUrl, "_blank");
-      } else {
-        toast.success(j.message || "If the email exists, a reset link has been sent.");
-      }
+      toast.success(j.message || "If the email exists, a reset link has been sent.");
     } catch { toast.error("Failed to send reset link"); }
     setLoading(false);
   };
@@ -143,9 +138,7 @@ export default function LoginPage() {
       if (j.error) toast.error(j.error);
       else {
         setOtpSent(true);
-        setDemoOtp(j.otp || "");
-        if (j.otp) toast.success(`OTP sent to ${otpPhone} (demo: ${j.otp})`);
-        else toast.success(`OTP sent to ${otpPhone}`);
+        toast.success(`OTP sent to ${otpPhone}`);
       }
     } catch { toast.error("Failed to send OTP"); }
     setLoading(false);
@@ -408,7 +401,6 @@ export default function LoginPage() {
                         <>
                           <div className="rounded-lg border border-champagne/15 bg-ink/50 p-3 text-sm text-ivory/70">
                             OTP sent to <strong className="text-champagne">{otpPhone}</strong>
-                            {demoOtp && <div className="mt-1 text-xs text-ivory/50">Demo OTP: <code className="text-gold-foil">{demoOtp}</code></div>}
                           </div>
                           <Field icon={KeyRound} label="Enter 4-digit OTP">
                             <input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))} maxLength={4} placeholder="1234" className="input-luxe text-center text-2xl tracking-[0.5em]" />
@@ -463,11 +455,6 @@ export default function LoginPage() {
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.signIn")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
                       <div className="rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
-                        <p className="mb-1 font-semibold text-ivory/70">Demo PINs:</p>
-                        <p>Manager: <code className="text-gold-foil">1234</code></p>
-                        <p>Receptionist: <code className="text-gold-foil">2345</code></p>
-                        <p>Housekeeping: <code className="text-gold-foil">3456</code></p>
-                        <p>Accountant: <code className="text-gold-foil">4567</code></p>
                       </div>
                     </div>
                   )}
@@ -488,10 +475,6 @@ export default function LoginPage() {
                       <button onClick={handleStaffLogin} disabled={loading} className="btn-luxe w-full">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t("login.signIn")} <ChevronRight className="h-4 w-4" /></>}
                       </button>
-                      <div className="rounded-lg border border-champagne/10 bg-ink/30 p-3 text-xs text-ivory/50">
-                        <p>Demo: Use any staff email + PIN as password, or <code className="text-gold-foil">admin123</code></p>
-                        <p className="mt-1">e.g. <code className="text-champagne">manager@guruvayurdham.co.in</code> / <code className="text-gold-foil">1234</code></p>
-                      </div>
                     </div>
                   )}
                 </motion.div>
