@@ -36,9 +36,9 @@ function randPin(): string {
 }
 const STAFF = [
   { name: "Krishnan Sharma", email: "manager@guruvayurdham.co.in", phone: "+91 98765 43210", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
-  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
-  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
-  { name: "Saritha Nair", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
+  { name: "Lakshmi Sharma", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
+  { name: "Ravi Sharma", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
+  { name: "Saritha Sharma", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
 ];
 
 const COUPONS = [
@@ -130,7 +130,7 @@ async function seed() {
           roomNumber: num,
           roomSlug: room.slug,
           status,
-          assignedTo: status === "CLEANING" || status === "DIRTY" ? "Ravi Menon" : null,
+          assignedTo: status === "CLEANING" || status === "DIRTY" ? "Ravi Sharma" : null,
           lastCleanedAt: status === "READY" ? new Date() : null,
         },
         update: {},

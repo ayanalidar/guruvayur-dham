@@ -31,9 +31,9 @@ function randPin(): string {
 }
 const STAFF = [
   { name: "Krishnan Sharma", email: "manager@guruvayurdham.co.in", phone: "+91-90908 20208", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
-  { name: "Lakshmi Pillai", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
-  { name: "Ravi Menon", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
-  { name: "Saritha Nair", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
+  { name: "Lakshmi Sharma", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
+  { name: "Ravi Sharma", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
+  { name: "Saritha Sharma", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
 ];
 
 const COUPONS = [
@@ -100,7 +100,7 @@ async function main() {
         gallery: JSON.stringify(r.gallery), badge: r.badge ?? null,
         description: r.description, shortDesc: r.shortDesc,
         amenities: JSON.stringify(r.amenities),
-        totalUnits: r.type === "Family" ? 4 : r.type === "Deluxe" ? 6 : r.slug === "non-ac-room" ? 18 : r.slug === "ac-dormitory" ? 8 : 10,
+        totalUnits: r.type === "Family" ? 4 : r.type === "Deluxe" ? 6 : r.slug === "deluxe-room" ? 18 : r.slug === "ac-dormitory" ? 8 : 10,
       },
       update: {},
     });
@@ -191,8 +191,8 @@ async function main() {
   // Demo bookings
   const demoBookings = [
     { guestName: "Anand Krishnan", guestPhone: "+91-90908 20208", source: "BOOKING_COM", channelBookingId: "BC-887412", nights: 2, guests: 2, roomSlug: "deluxe-ac-room", offsetDays: 3 },
-    { guestName: "Rajesh Menon", guestPhone: "+91 90123 45678", source: "WALKIN", nights: 1, guests: 2, roomSlug: "non-ac-room", offsetDays: 1 },
-    { guestName: "Sunita Nair", guestPhone: "+91 91234 56789", source: "DIRECT", nights: 2, guests: 2, roomSlug: "standard-ac-room", offsetDays: 7 },
+    { guestName: "Rajesh Sharma", guestPhone: "+91 90123 45678", source: "WALKIN", nights: 1, guests: 2, roomSlug: "deluxe-room", offsetDays: 1 },
+    { guestName: "Sunita Sharma", guestPhone: "+91 91234 56789", source: "DIRECT", nights: 2, guests: 2, roomSlug: "super-deluxe-room", offsetDays: 7 },
   ];
   for (const b of demoBookings) {
     const room = await db.room.findUnique({ where: { slug: b.roomSlug } });
@@ -209,8 +209,8 @@ async function main() {
   // Reviews
   const demoReviews = [
     { authorName: "Anand Krishnan", rating: 5, text: "Stayed for two nights during Ekadasi. The room was spotless, the staff arranged our 3 AM Nirmalya Darshan slot. Will come back every year.", reviewDate: new Date("2026-08-15"), source: "GOOGLE", googleReviewId: "r1", published: true, featured: true },
-    { authorName: "Lakshmi Pillai", rating: 5, text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked. Felt like staying with relatives.", reviewDate: new Date("2026-07-22"), source: "GOOGLE", googleReviewId: "r2", published: true, featured: true },
-    { authorName: "Rajesh Menon", rating: 5, text: "Booked the budget non-AC room for ₹700. Clean, hot water 24x7, location unbeatable. Free chai at 6 AM was a sweet surprise.", reviewDate: new Date("2026-07-10"), source: "GOOGLE", googleReviewId: "r3", published: true, featured: true },
+    { authorName: "Lakshmi Sharma", rating: 5, text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked. Felt like staying with relatives.", reviewDate: new Date("2026-07-22"), source: "GOOGLE", googleReviewId: "r2", published: true, featured: true },
+    { authorName: "Rajesh Sharma", rating: 5, text: "Booked the budget non-AC room for ₹700. Clean, hot water 24x7, location unbeatable. Free chai at 6 AM was a sweet surprise.", reviewDate: new Date("2026-07-10"), source: "GOOGLE", googleReviewId: "r3", published: true, featured: true },
   ];
   for (const r of demoReviews) {
     await db.review.create({ data: r as any });
