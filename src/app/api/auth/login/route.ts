@@ -52,20 +52,20 @@ export async function POST(req: NextRequest) {
         },
       });
     }
-    // SECURITY (H16 + F1): MANAGER role requires 2FA — and now actually verifies the TOTP.
+    // SECURITY (H16 + F1): MANAGER role requires 2FA IF 2FA is configured.
+    // If 2FA is NOT enabled yet (first login), allow PIN login so the
+    // MANAGER can access the dashboard and set up 2FA.
     if (staff.role === "MANAGER") {
       const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
-      if (!tf?.enabled) {
+      if (tf?.enabled) {
+        // 2FA is configured — PIN login is not enough, MANAGER must use
+        // email + password + TOTP.
         return NextResponse.json({
-          error: "MANAGER role requires 2FA. Please log in via email + password + 2FA instead of PIN, or ask an admin to set up 2FA on your account.",
+          error: "MANAGER 2FA is enabled. Please log in via email + password + 2FA code.",
           requires2FA: true,
         }, { status: 403 });
       }
-      // PIN login doesn't carry a TOTP code — MANAGERs must use email+password+TOTP.
-      return NextResponse.json({
-        error: "MANAGER role must use email + password + 2FA login. PIN login is disabled for MANAGER.",
-        requires2FA: true,
-      }, { status: 403 });
+      // 2FA not yet set up — allow PIN login (first-login path).
     }
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
@@ -108,25 +108,25 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // SECURITY (H16 + F1): MANAGER role requires 2FA — actual TOTP verification.
+    // SECURITY (H16 + F1): MANAGER role requires 2FA IF 2FA is configured.
+    // If 2FA is NOT enabled yet (first login, no TOTP set up), allow login
+    // with a warning so the MANAGER can set up 2FA later.
     if (staff.role === "MANAGER") {
       const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
-      if (!tf?.enabled) {
+      if (tf?.enabled) {
+        // 2FA is configured — require the TOTP challenge.
         return NextResponse.json({
-          error: "MANAGER role requires 2FA. Please set up 2FA via /api/auth/2fa POST before logging in.",
-          requires2FA: true,
-        }, { status: 403 });
+          requires2FACode: true,
+          email,
+          message: "Enter your 6-digit authenticator code.",
+        }, { status: 200 });
       }
-      // 2FA challenge — return requires2FACode flag, NO session.
-      // Frontend collects TOTP code and calls back with type:"staff-2fa".
-      return NextResponse.json({
-        requires2FACode: true,
-        email, // echo back so frontend knows which user is mid-flow
-        message: "Enter your 6-digit authenticator code.",
-      }, { status: 200 });
+      // 2FA not yet set up — allow login but flag that 2FA should be configured.
+      // This is the first-login path so the MANAGER can access the dashboard
+      // and set up 2FA via /api/auth/2fa POST.
     }
 
-    // Non-MANAGER staff — no 2FA required, create session directly.
+    // Create session (for non-MANAGER staff, or MANAGER without 2FA configured).
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
       user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
