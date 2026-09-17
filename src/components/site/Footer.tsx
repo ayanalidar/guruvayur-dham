@@ -37,8 +37,8 @@ export default function Footer() {
   const checkOut = get("contact.checkOut", SITE.checkOut);
   const totalRooms = get("site.totalRooms", String(SITE.totalRooms));
   const distanceToTemple = get("site.distanceToTemple", SITE.distanceToTemple);
-  const ctaHeadline = get("footer.ctaHeadline", "Ready for Divine Comfort, 2 Minutes from the Temple?");
-  const ctaSubtitle = get("footer.ctaSubtitle", "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, dynamic pricing, and zero booking fee.");
+  const ctaHeadline = get("footer.ctaHeadline", "Ready for Divine Comfort in Mathura?");
+  const ctaSubtitle = get("footer.ctaSubtitle", "Book your room in 30 seconds. Real-time availability, instant confirmation, dynamic pricing, and zero booking fee.");
   const socialsFacebook = get("footer.socials.facebook", SITE.socials.facebook);
   const socialsInstagram = get("footer.socials.instagram", SITE.socials.instagram);
   const socialsYoutube = get("footer.socials.youtube", SITE.socials.youtube);

@@ -239,7 +239,7 @@ function RoomsCMS() {
                   value={newRoom.slug}
                   onChange={(e) => setNewRoom({ ...newRoom, slug: slugify(e.target.value) })}
                   className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none font-mono"
-                  placeholder="deluxe-ac-room"
+                  placeholder="deluxe-room"
                 />
               </div>
               <div>

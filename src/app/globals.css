@@ -564,3 +564,23 @@ html:not(.dark) {
 [data-slot="select-item"]:hover {
   background: rgba(212, 196, 168, 0.10) !important;
 }
+
+/* ===== DATE INPUT CALENDAR ICON ===== */
+/* Make the native calendar picker icon visible (gold) on dark backgrounds */
+input[type="date"] {
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(80%) sepia(25%) saturate(300%) hue-rotate(5deg) brightness(95%);
+  cursor: pointer;
+  opacity: 0.9;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  filter: invert(85%) sepia(35%) saturate(400%) hue-rotate(5deg) brightness(105%);
+}
+/* Firefox date input */
+input[type="date"]::-moz-calendar-picker-indicator {
+  filter: invert(80%) sepia(25%) saturate(300%) hue-rotate(5deg);
+  cursor: pointer;
+}
