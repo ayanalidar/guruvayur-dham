@@ -106,11 +106,7 @@ export default function Hero() {
             className="mt-8 flex flex-wrap gap-3"
           >
             <a
-              href={waLink(
-                "Namaskaram! I'd like to book a room at Guruvayur Dham. Please share availability and rates."
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#/book"
               className="btn-brand group"
             >
               Book Now

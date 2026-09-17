@@ -281,12 +281,12 @@ export default function SEOPage({ slug }: { slug: string }) {
                       <ArrowRight className="h-4 w-4" />
                     </button>
                     <a
-                      href={waLink("Namaskaram! I'd like to book a room at Guruvayur Dham. Please share availability and rates.")}
+                      href="#/book"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-ghost-luxe w-full text-sm"
                     >
-                      <MessageCircle className="h-4 w-4" /> Book on WhatsApp
+                      Book Now
                     </a>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export default function SEOPage({ slug }: { slug: string }) {
             <button onClick={() => navigate("/rooms")} className="btn-luxe text-sm">
               View All Rooms
             </button>
-            <MagneticButton href={waLink("Namaskaram! I'd like to book a room at Guruvayur Dham.")}>
+            <MagneticButton href="#/book">
               <MessageCircle className="h-4 w-4" /> WhatsApp Us
             </MagneticButton>
           </div>

@@ -136,7 +136,7 @@ function Hero() {
             className="mt-8 flex flex-wrap gap-3"
           >
             <MagneticButton
-              href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
+              onClick={() => navigate("/book")}
             >
               Book Now <ChevronRight className="h-4 w-4" />
             </MagneticButton>
@@ -663,6 +663,7 @@ function AboutTeaser() {
 /* ============ FINAL CTA ============ */
 function FinalCTA() {
   const { t } = useI18n();
+  const { navigate } = useHashRoute();
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
       <FloatingDiyas count={12} />
@@ -682,14 +683,14 @@ function FinalCTA() {
             Your <GoldFoilText>Divine Comfort</GoldFoilText> Awaits
           </h2>
           <p className="section-subtitle mt-5">
-            Book your luxury pilgrim stay today. Instant WhatsApp confirmation, zero booking
-            fee, and the warmest welcome in Guruvayur.
+            Book your luxury pilgrim stay today. Instant confirmation, zero booking
+            fee, and the warmest welcome in Mathura.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <MagneticButton
-              href={waLink("Namaskaram! I'd like to book a luxury room at Guruvayur Dham.")}
+              onClick={() => navigate("/book")}
             >
-              Book on WhatsApp <ChevronRight className="h-4 w-4" />
+              Book Now <ChevronRight className="h-4 w-4" />
             </MagneticButton>
             <MagneticButton variant="ghost" href={`tel:${SITE.phoneRaw}`}>
               <Phone className="h-4 w-4" /> Call Us

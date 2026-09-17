@@ -183,8 +183,8 @@ export default function BlogPostPage({ slug }: { slug: string }) {
             <p className="font-serif text-2xl text-ivory">Ready to plan your Guruvayur visit?</p>
             <p className="mt-2 text-sm text-ivory/60">Book your luxury stay with us · 2 minutes from temple gate.</p>
             <div className="mt-5 flex justify-center">
-              <MagneticButton href={waLink("Namaskaram! I just read your blog and want to book a room at Guruvayur Dham.")}>
-                <MessageCircle className="h-4 w-4" /> Book Now
+              <MagneticButton href="#/book">
+                Book Now
               </MagneticButton>
             </div>
           </div>
