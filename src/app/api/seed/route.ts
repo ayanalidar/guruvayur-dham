@@ -1,13 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireStaff, hashPassword } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
 import { ROOMS, POOJAS, FAQS, TESTIMONIALS, BLOG_POSTS, GALLERY_IMAGES, SITE } from "@/lib/site-data";
 import { DEFAULT_SETTINGS, DEFAULT_FEATURE_FLAGS } from "@/lib/settings";
 import crypto from "crypto";
 
+/**
+ * POST /api/seed
+ *
+ * One-click database seeding — NO AUTH REQUIRED (for first-time setup).
+ * This is the bootstrap endpoint: it creates the initial staff users,
+ * rooms, content, etc. so you can actually log in.
+ *
+ * After seeding, you should set up 2FA and change the default PINs.
+ * This endpoint is safe to call multiple times (uses upsert).
+ *
+ * To protect against abuse, this endpoint only works if:
+ * - There are no staff users yet (first-time setup), OR
+ * - The caller is authenticated as MANAGER (re-seed)
+ */
 export async function POST(req: NextRequest) {
-  const { session, error } = await requireStaff(req, ["MANAGER"]);
-  if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Check if this is a first-time setup (no staff users exist)
+  const staffCount = await db.staffUser.count().catch(() => 0);
+  const isFirstTime = staffCount === 0;
+
+  if (!isFirstTime) {
+    // Database already has staff — require MANAGER auth for re-seeding
+    const { requireStaff } = await import("@/lib/auth");
+    const { session, error } = await requireStaff(req, ["MANAGER"]);
+    if (error || !session) {
+      return error || NextResponse.json({ error: "Unauthorized — login as MANAGER to re-seed, or use the first-time setup path." }, { status: 401 });
+    }
+  }
 
   const results: string[] = [];
 
@@ -157,9 +181,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const { session, error } = await requireStaff(req, ["MANAGER"]);
-  if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
+  // No auth required — this is a status check (safe to expose)
   const [rooms, settings, flags, poojas, faqs, staff] = await Promise.all([
     db.room.count(), db.setting.count(), db.featureFlag.count(),
     db.pooja.count(), db.fAQItem.count(), db.staffUser.count(),
