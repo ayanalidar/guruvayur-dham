@@ -22,40 +22,40 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "site.tagline", value: "Stay 2 Minutes from the Divine", category: "site", label: "Tagline" },
   { key: "site.phone", value: "+91 98765 43210", category: "site", label: "Phone" },
   { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Email" },
-  { key: "site.address", value: "East Nada Road, Near Guruvayur Temple, Guruvayur, Kerala 680101", category: "site", label: "Address" },
+  { key: "site.address", value: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001", category: "site", label: "Address" },
   { key: "site.checkIn", value: "12:00 PM", category: "site", label: "Check-in Time" },
   { key: "site.checkOut", value: "11:00 AM", category: "site", label: "Check-out Time" },
   { key: "site.rating", value: "4.9", category: "site", label: "Rating" },
   { key: "site.reviewCount", value: "847", category: "site", label: "Review Count" },
   { key: "site.totalRooms", value: "52", category: "site", label: "Total Rooms" },
-  { key: "site.distanceToTemple", value: "2 min walk to East Nada", category: "site", label: "Distance to Temple" },
+  { key: "site.distanceToTemple", value: "2 min from Mathura Station", category: "site", label: "Distance to Temple" },
 
   /* ----- Hero section ----- */
   { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 1998", category: "hero", label: "Hero Eyebrow" },
   { key: "hero.headline", value: "Stay 2 Minutes from", category: "hero", label: "Hero Headline (first part)" },
   { key: "hero.headlineHighlight", value: "Guruvayur Temple", category: "hero", label: "Hero Headline Highlight (gold foil)" },
-  { key: "hero.subheadline", value: "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to East Nada for Nirmalya Darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.", category: "hero", label: "Hero Subheadline" },
+  { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
   { key: "hero.bgImage", value: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop", category: "hero", label: "Hero Background Image URL (full-width, ≥1920×1280)" },
 
   /* ----- Why Choose Us section ----- */
   { key: "whyChooseUs.eyebrow", value: "Why Pilgrims Choose Us", category: "whyChooseUs", label: "Why Us Eyebrow" },
   { key: "whyChooseUs.title", value: "More Than a Stay · A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
-  { key: "whyChooseUs.subtitle", value: "We've hosted over 50,000 devotees since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
+  { key: "whyChooseUs.subtitle", value: "We've hosted over 15,000 pilgrims since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
 
   /* ----- Rooms section ----- */
   { key: "rooms.eyebrow", value: "Rooms & Suites", category: "rooms", label: "Rooms Eyebrow" },
   { key: "rooms.title", value: "Cinematic Dark-Luxe Rooms", category: "rooms", label: "Rooms Title" },
-  { key: "rooms.subtitle", value: "From ₹700/night budget rooms to ₹3,500 family suites — every option is sanitised daily and a 2-minute walk from East Nada.", category: "rooms", label: "Rooms Subtitle" },
+  { key: "rooms.subtitle", value: "From ₹1,500 Deluxe to ₹3,500 GVD Suites — every option is sanitised daily and 2 minutes from Mathura Station.", category: "rooms", label: "Rooms Subtitle" },
 
   /* ----- Pooja section ----- */
   { key: "pooja.eyebrow", value: "Pooja & Offerings", category: "pooja", label: "Pooja Eyebrow" },
-  { key: "pooja.title", value: "Guruvayur Pooja Booking — Palpayasam, Thulabharam & More", category: "pooja", label: "Pooja Title" },
+  { key: "pooja.title", value: "Mathura Pooja Booking — Pushpanjali, Abhishek & More", category: "pooja", label: "Pooja Title" },
   { key: "pooja.subtitle", value: "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue.", category: "pooja", label: "Pooja Subtitle" },
 
   /* ----- About section ----- */
   { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
   { key: "about.title", value: "A Family-Run Pilgrim Home Since 1998", category: "about", label: "About Title" },
-  { key: "about.story", value: "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Warrier — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 52-room property that has welcomed over 50,000 devotees from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Nirmalya darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple tantri's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Choroonu ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer.", category: "about", label: "About Story" },
+  { key: "about.story", value: "Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather Shri Krishna Sharma — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 25 years and three generations, grown into a 16-room property that has welcomed over 15,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 3 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Annaprashan ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a family-run home can offer.", category: "about", label: "About Story" },
 
   /* ----- Contact section ----- */
   { key: "contact.eyebrow", value: "Get in Touch", category: "contact", label: "Contact Eyebrow" },
@@ -83,7 +83,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
 
   /* ----- Testimonials section ----- */
   { key: "testimonials.eyebrow", value: "Guest Stories", category: "testimonials", label: "Testimonials Eyebrow" },
-  { key: "testimonials.title", value: "Loved by 50,000+ Pilgrims", category: "testimonials", label: "Testimonials Title" },
+  { key: "testimonials.title", value: "Loved by 15,000+ Pilgrims", category: "testimonials", label: "Testimonials Title" },
   { key: "testimonials.subtitle", value: "4.9 ★ average rating across Google, Booking.com & MakeMyTrip from 847+ verified reviews.", category: "testimonials", label: "Testimonials Subtitle" },
 
   /* ----- FAQ section ----- */
@@ -125,8 +125,8 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
     category: "darshan",
     label: "Darshan Cards (JSON array — icon/title/text/cta/href/accent)",
     value: JSON.stringify([
-      { icon: "Clock", title: "Temple Timings", text: "Nirmalyam 3:00 AM • Seeveli 7:30 AM • General Darshan till 9:15 PM", cta: "View Full Schedule", href: "#blog", accent: "saffron" },
-      { icon: "Flame", title: "Pooja Booking", text: "Palpayasam, Thulabharam, Choroonu, Archana & more. Book in 60 seconds.", cta: "Book a Pooja", href: "#pooja", accent: "maroon" },
+      { icon: "Clock", title: "Temple Timings", text: "Krishna Janmabhoomi 5 AM-12 PM, 4-9:30 PM • Dwarkadhish 6:30-10:30 AM, 4-7 PM", cta: "View Full Schedule", href: "#blog", accent: "saffron" },
+      { icon: "Flame", title: "Pooja Booking", text: "Pushpanjali, Abhishek, Mangala Aarti, Rajbhog & more. Book in 60 seconds.", cta: "Book a Pooja", href: "#pooja", accent: "maroon" },
       { icon: "CalendarDays", title: "Festival Calendar", text: "Utsavam, Ashtami Rohini, Ekadasi · plan your visit around major festivals.", cta: "View Festivals", href: "#events", accent: "gold" },
     ]),
   },

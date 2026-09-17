@@ -86,7 +86,7 @@ export default function WhyChooseUs() {
           {[
             { value: "200 m", label: "to temple gate" },
             { value: "52", label: "AC & non-AC rooms" },
-            { value: "50,000+", label: "happy pilgrims" },
+            { value: "15,000+", label: "happy pilgrims" },
             { value: "4.9 ★", label: "Google rating" },
           ].map((s, i) => (
             <div key={i} className="text-center">

@@ -35,7 +35,7 @@ function randPin(): string {
   return crypto.randomInt(1000, 10000).toString();
 }
 const STAFF = [
-  { name: "Krishnan Warrier", email: "manager@guruvayurdham.co.in", phone: "+91 98765 43210", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
+  { name: "Krishnan Sharma", email: "manager@guruvayurdham.co.in", phone: "+91 98765 43210", role: "MANAGER", pin: process.env.SEED_MANAGER_PIN || randPin() },
   { name: "Lakshmi Pillai", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: process.env.SEED_RECEPTIONIST_PIN || randPin() },
   { name: "Ravi Menon", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: process.env.SEED_HOUSEKEEPING_PIN || randPin() },
   { name: "Saritha Nair", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: process.env.SEED_ACCOUNTANT_PIN || randPin() },
@@ -58,7 +58,7 @@ const PRICING_RULES = [
 ];
 
 const TRAVEL_AGENTS = [
-  { companyName: "Kerala Pilgrim Tours", contactName: "Anand Kumar", phone: "+91 94470 12345", email: "anand@keralapilgrim.com", commissionRate: 0.12, creditLimit: 50000 },
+  { companyName: "Mathura Pilgrim Tours", contactName: "Anand Kumar", phone: "+91 94470 12345", email: "anand@mathurapilgrim.com", commissionRate: 0.12, creditLimit: 50000 },
   { companyName: "South India Travels", contactName: "Priya Sharma", phone: "+91 98400 67890", email: "priya@southindiatravels.com", commissionRate: 0.15, creditLimit: 75000 },
   { companyName: "Divine Journeys", contactName: "Mohan Das", phone: "+91 93300 11111", email: "mohan@divinejourneys.in", commissionRate: 0.10, creditLimit: 40000 },
 ];

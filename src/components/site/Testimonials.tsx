@@ -40,7 +40,7 @@ export default function Testimonials() {
   }, [next, testimonials.length]);
 
   const eyebrow = get("testimonials.eyebrow", "Guest Stories");
-  const title = get("testimonials.title", "Loved by 50,000+ Pilgrims");
+  const title = get("testimonials.title", "Loved by 15,000+ Pilgrims");
   const subtitle = get(
     "testimonials.subtitle",
     `${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`

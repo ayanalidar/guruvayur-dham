@@ -551,7 +551,7 @@ function Testimonials() {
       <div className="container-x relative">
         <SectionHeader
           eyebrow={t("section.testimonials")}
-          title={<>Loved by <GoldFoilText>50,000+ Pilgrims</GoldFoilText></>}
+          title={<>Loved by <GoldFoilText>15,000+ Pilgrims</GoldFoilText></>}
           subtitle={`${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`}
         />
 
