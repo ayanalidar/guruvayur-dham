@@ -187,14 +187,14 @@ function Hero() {
               style={{ transform: "translateZ(80px)" }}
             >
               <img
-                src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&h=800&fit=crop"
-                alt="Shri Krishna Janmabhoomi temple"
+                src="/rooms/gvd-suite-main.jpg"
+                alt="GVD Suite at Guruvayur Dham"
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">2 min walk</p>
-                <p className="font-serif text-base text-ivory">temple gate Gate</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">Signature</p>
+                <p className="font-serif text-base text-ivory">GVD Suite</p>
               </div>
             </div>
 
@@ -204,14 +204,14 @@ function Hero() {
               style={{ transform: "translateZ(40px)" }}
             >
               <img
-                src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=500&h=700&fit=crop"
-                alt="Deluxe AC Room at Guruvayur Dham"
+                src="/rooms/deluxe-room-main.jpg"
+                alt="Deluxe Room at Guruvayur Dham"
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹1,500</p>
-                <p className="font-serif text-base text-ivory">52 Luxury Rooms</p>
+                <p className="font-serif text-base text-ivory">16 Premium Rooms</p>
               </div>
             </div>
 
@@ -221,14 +221,14 @@ function Hero() {
               style={{ transform: "translateZ(120px)" }}
             >
               <img
-                src="https://images.unsplash.com/photo-1591025207163-942350e47db2?w=400&h=400&fit=crop"
-                alt="Pooja offerings at Shri Krishna Janmabhoomi"
+                src="/rooms/superior-room-main.jpg"
+                alt="Superior Room at Guruvayur Dham"
                 className="h-full w-full object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">Zero commission</p>
-                <p className="font-serif text-base text-ivory">Pooja Booking</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">Family Choice</p>
+                <p className="font-serif text-base text-ivory">Superior Room</p>
               </div>
             </div>
 
