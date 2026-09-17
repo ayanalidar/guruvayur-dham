@@ -3,10 +3,15 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/api-safe";
+import { ROOMS } from "@/lib/site-data";
+
+// Current valid room slugs — any room in the DB with a slug not in this list
+// is an old room from a previous seed and should NOT be returned to the frontend.
+const VALID_SLUGS = ROOMS.map(r => r.slug);
 
 // GET /api/rooms · fetch all rooms (with live availability count for next 30 days)
-// FUNCTIONAL (Round 3 F17 fix): wrapped in withErrorHandler so DB blips return
-// a proper JSON error instead of a raw 500 HTML page.
+// Only returns rooms whose slug matches the current ROOMS array — filters out
+// old rooms from previous seeds that may still be in the database.
 export const GET = withErrorHandler(async (req: NextRequest) => {
   const slug = req.nextUrl.searchParams.get("slug");
   if (slug) {
@@ -15,7 +20,10 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     return NextResponse.json({ room: serializeRoom(room) });
   }
   const rooms = await db.room.findMany({
-    where: { active: true },
+    where: {
+      active: true,
+      slug: { in: VALID_SLUGS }, // Only return current room types — filters out old rooms
+    },
     orderBy: { price: "asc" },
     include: { rates: true },
   });
