@@ -12,22 +12,60 @@ import crypto from "crypto";
  *
  * Safe to call multiple times (uses upsert — creates or updates).
  * The only "risk" is overwriting CMS content with defaults.
+ *
+ * Resilient: if one step fails, the next step still runs.
+ * The response includes per-step status + any error messages so you can
+ * see exactly what failed without digging through Vercel logs.
  */
 export async function POST(req: NextRequest) {
   const results: string[] = [];
+  const errors: string[] = [];
 
-  try {
-    // 1. Clean old rooms
+  // Helper: run a step, capture any error, continue
+  async function step<T>(label: string, fn: () => Promise<T>): Promise<T | null> {
+    try {
+      const r = await fn();
+      results.push(`✓ ${label}`);
+      return r;
+    } catch (e: any) {
+      const msg = e?.message || String(e);
+      errors.push(`✗ ${label}: ${msg}`);
+      // Also log to Vercel functions log
+      console.error(`[seed] FAILED step: ${label}`, e);
+      return null;
+    }
+  }
+
+  // Pre-flight DB ping
+  await step("DB ping", async () => {
+    await db.$queryRaw`SELECT 1`;
+  });
+  if (errors.length === 1 && errors[0].startsWith("✗ DB ping")) {
+    // Can't reach DB — fail fast
+    return NextResponse.json({
+      ok: false,
+      error: "Cannot reach database",
+      message: errors[0],
+      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s — try once more.",
+      results,
+      errors,
+    }, { status: 500 });
+  }
+
+  // 1. Clean old rooms
+  await step("Delete old rooms", async () => {
     const oldRooms = await db.room.findMany({ select: { slug: true } });
     const currentSlugs = ROOMS.map(r => r.slug);
     const oldSlugs = oldRooms.map(r => r.slug).filter(s => !currentSlugs.includes(s));
     if (oldSlugs.length > 0) {
       await db.room.deleteMany({ where: { slug: { in: oldSlugs } } });
-      results.push(`Deleted ${oldSlugs.length} old rooms`);
+      results.push(`  Deleted ${oldSlugs.length} old rooms`);
     }
+  });
 
-    // 2. Seed rooms
-    const unitCounts: Record<string, number> = { "deluxe-room": 4, "super-deluxe-room": 5, "superior-room": 5, "gvd-suite": 2 };
+  // 2. Seed rooms
+  const unitCounts: Record<string, number> = { "deluxe-room": 4, "super-deluxe-room": 5, "superior-room": 5, "gvd-suite": 2 };
+  await step("Seed rooms", async () => {
     for (const r of ROOMS) {
       await db.room.upsert({
         where: { slug: r.slug },
@@ -51,23 +89,36 @@ export async function POST(req: NextRequest) {
         },
       });
     }
-    results.push(`Seeded ${ROOMS.length} rooms`);
+  });
 
-    // 3. Seed content blocks
-    const blocks = [
-      { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 1998", category: "hero", label: "Hero Eyebrow" },
-      { key: "hero.headline", value: "Where Your Stay", category: "hero", label: "Hero Headline" },
-      { key: "hero.headlineHighlight", value: "Journey", category: "hero", label: "Hero Highlight" },
-      { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
-      { key: "footer.tagline", value: "Luxury Pilgrim Stay", category: "footer", label: "Footer Tagline" },
-      { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
-    ];
+  // 3. Seed content blocks (the most important ones for footer etc.)
+  const blocks = [
+    { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 1998", category: "hero", label: "Hero Eyebrow" },
+    { key: "hero.headline", value: "Where Your Stay", category: "hero", label: "Hero Headline" },
+    { key: "hero.headlineHighlight", value: "Journey", category: "hero", label: "Hero Highlight" },
+    { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
+    { key: "footer.tagline", value: "Luxury Pilgrim Stay", category: "footer", label: "Footer Tagline" },
+    { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
+    { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Site Email" },
+    { key: "site.address", value: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001", category: "site", label: "Site Address" },
+    { key: "site.distanceToTemple", value: "Walk to Mata Pathwari Mandir", category: "site", label: "Distance to Temple" },
+    { key: "site.totalRooms", value: "16", category: "site", label: "Total Rooms" },
+    { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Phone" },
+    { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Phone Raw" },
+    { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp" },
+    { key: "contact.email", value: "bookings@guruvayurdham.co.in", category: "contact", label: "Contact Email" },
+    { key: "contact.shortAddress", value: "Natwar Nagar, Dholi Pyau, Mathura 281001", category: "contact", label: "Short Address" },
+    { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in" },
+    { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out" },
+  ];
+  await step("Seed content blocks", async () => {
     for (const b of blocks) {
       await db.contentBlock.upsert({ where: { key: b.key }, create: b, update: { value: b.value } });
     }
-    results.push(`Seeded ${blocks.length} content blocks`);
+  });
 
-    // 4. Seed poojas
+  // 4. Seed poojas
+  await step("Seed poojas", async () => {
     for (const p of POOJAS) {
       await db.pooja.upsert({
         where: { id: p.id },
@@ -75,9 +126,10 @@ export async function POST(req: NextRequest) {
         update: { name: p.name, price: p.price, description: p.description },
       });
     }
-    results.push(`Seeded ${POOJAS.length} poojas`);
+  });
 
-    // 5. Seed FAQs
+  // 5. Seed FAQs
+  await step("Seed FAQs", async () => {
     for (let i = 0; i < FAQS.length; i++) {
       await db.fAQItem.upsert({
         where: { id: `faq-${i+1}` },
@@ -85,9 +137,10 @@ export async function POST(req: NextRequest) {
         update: { question: FAQS[i].q, answer: FAQS[i].a, sortOrder: i },
       });
     }
-    results.push(`Seeded ${FAQS.length} FAQs`);
+  });
 
-    // 6. Seed testimonials
+  // 6. Seed testimonials (as Reviews)
+  await step("Seed testimonials", async () => {
     for (const t of TESTIMONIALS) {
       const id = `seed-${t.name.replace(/\s+/g, "-").toLowerCase()}`;
       await db.review.upsert({
@@ -96,9 +149,10 @@ export async function POST(req: NextRequest) {
         update: { authorName: t.name, rating: t.rating, text: t.text },
       });
     }
-    results.push(`Seeded ${TESTIMONIALS.length} testimonials`);
+  });
 
-    // 7. Seed settings
+  // 7. Seed settings
+  await step("Seed settings", async () => {
     for (const s of DEFAULT_SETTINGS) {
       await db.setting.upsert({
         where: { key: s.key },
@@ -106,9 +160,10 @@ export async function POST(req: NextRequest) {
         update: {},
       });
     }
-    results.push(`Seeded ${DEFAULT_SETTINGS.length} settings`);
+  });
 
-    // 8. Seed feature flags
+  // 8. Seed feature flags
+  await step("Seed feature flags", async () => {
     for (const f of DEFAULT_FEATURE_FLAGS) {
       await db.featureFlag.upsert({
         where: { key: f.key },
@@ -116,9 +171,10 @@ export async function POST(req: NextRequest) {
         update: {},
       });
     }
-    results.push(`Seeded ${DEFAULT_FEATURE_FLAGS.length} feature flags`);
+  });
 
-    // 9. Seed coupons
+  // 9. Seed coupons
+  await step("Seed coupons", async () => {
     const coupons = [
       { code: "EARLYBIRD10", description: "10% off 30+ days ahead", type: "PERCENTAGE", value: 10, maxDiscount: 500, minBooking: 1000, usageLimit: 100, validFrom: new Date("2026-01-01"), validTo: new Date("2026-12-31") },
       { code: "RETURN15", description: "15% off returning guests", type: "PERCENTAGE", value: 15, maxDiscount: 700, minBooking: 1000, usageLimit: 0, validFrom: new Date("2026-01-01"), validTo: new Date("2026-12-31") },
@@ -126,9 +182,10 @@ export async function POST(req: NextRequest) {
     for (const c of coupons) {
       await db.coupon.upsert({ where: { code: c.code }, create: c as any, update: {} });
     }
-    results.push(`Seeded ${coupons.length} coupons`);
+  });
 
-    // 10. Seed pricing rules
+  // 10. Seed pricing rules
+  await step("Seed pricing rules", async () => {
     const rules = [
       { name: "Weekend Surge", type: "WEEKEND", multiplier: 1.3, dayOfWeek: "5,6", priority: 10 },
       { name: "Early Bird", type: "EARLY_BIRD", multiplier: 0.9, priority: 7 },
@@ -138,39 +195,55 @@ export async function POST(req: NextRequest) {
       const existing = await db.dynamicPricingRule.findFirst({ where: { name: r.name } });
       if (!existing) await db.dynamicPricingRule.create({ data: r as any });
     }
-    results.push(`Seeded ${rules.length} pricing rules`);
+  });
 
-    // 11. Seed staff users
+  // 11. Seed staff users — MANAGER pin is the most important (login)
+  const pins: string[] = [];
+  await step("Seed staff users", async () => {
     const staff = [
       { name: "Krishnan Sharma", email: "manager@guruvayurdham.co.in", phone: "+91-90908 20208", role: "MANAGER", pin: crypto.randomInt(1000, 10000).toString() },
       { name: "Lakshmi Sharma", email: "reception@guruvayurdham.co.in", phone: "+91 99876 54321", role: "RECEPTIONIST", pin: crypto.randomInt(1000, 10000).toString() },
       { name: "Ravi Sharma", email: "housekeeping@guruvayurdham.co.in", phone: "+91 90123 45678", role: "HOUSEKEEPING", pin: crypto.randomInt(1000, 10000).toString() },
       { name: "Saritha Sharma", email: "accounts@guruvayurdham.co.in", phone: "+91 91234 56789", role: "ACCOUNTANT", pin: crypto.randomInt(1000, 10000).toString() },
     ];
-    const pins: string[] = [];
     for (const s of staff) {
       await db.staffUser.upsert({ where: { email: s.email }, create: s, update: {} });
       pins.push(`${s.role} | ${s.email} | PIN: ${s.pin}`);
     }
-    results.push(`Seeded ${staff.length} staff users`);
+  });
 
-    return NextResponse.json({ ok: true, message: "Seed complete!", results, staffPins: pins });
+  // Always disconnect cleanly
+  try { await db.$disconnect(); } catch {}
 
-  } catch (e: any) {
-    return NextResponse.json({ error: "Seed failed", message: e.message, results }, { status: 500 });
-  }
+  const ok = errors.length === 0;
+  return NextResponse.json({
+    ok,
+    message: ok ? "Seed complete!" : `Seed partially complete — ${errors.length} step(s) failed`,
+    results,
+    errors,
+    staffPins: pins,
+    hint: ok ? "" : "If only 'Seed staff users' failed, you may have a database column mismatch — check Prisma schema vs migrations.",
+  }, { status: ok ? 200 : 500 });
 }
 
 export async function GET(req: NextRequest) {
   // No auth required — this is a status check (safe to expose)
-  const [rooms, settings, flags, poojas, faqs, staff] = await Promise.all([
-    db.room.count(), db.setting.count(), db.featureFlag.count(),
-    db.pooja.count(), db.fAQItem.count(), db.staffUser.count(),
-  ]);
+  try {
+    const [rooms, settings, flags, poojas, faqs, staff] = await Promise.all([
+      db.room.count(), db.setting.count(), db.featureFlag.count(),
+      db.pooja.count(), db.fAQItem.count(), db.staffUser.count(),
+    ]);
 
-  return NextResponse.json({
-    seeded: { rooms, settings, featureFlags: flags, poojas, faqs, staffUsers: staff },
-    expected: { rooms: ROOMS.length, settings: DEFAULT_SETTINGS.length, featureFlags: DEFAULT_FEATURE_FLAGS.length },
-    needsSeeding: rooms === 0,
-  });
+    return NextResponse.json({
+      seeded: { rooms, settings, featureFlags: flags, poojas, faqs, staffUsers: staff },
+      expected: { rooms: ROOMS.length, settings: DEFAULT_SETTINGS.length, featureFlags: DEFAULT_FEATURE_FLAGS.length },
+      needsSeeding: rooms === 0,
+    });
+  } catch (e: any) {
+    return NextResponse.json({
+      error: "DB check failed",
+      message: e?.message || String(e),
+      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s — try once more.",
+    }, { status: 500 });
+  }
 }
