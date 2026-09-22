@@ -28,6 +28,7 @@ import {
   ImageReveal,
   SectionHeader,
 } from "@/components/site/visuals";
+import TempleTimingsWidget from "@/components/site/TempleTimingsWidget";
 import ReviewsWidget from "@/components/site/ReviewsWidget";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -39,6 +40,7 @@ export default function HomePage() {
     <div className="animate-page-reveal">
       <Hero />
       <MarqueeStrip />
+      <TempleTimingsWidget />
       <WhyChooseUs />
       <RoomPreviews />
       <PlanDarshan />

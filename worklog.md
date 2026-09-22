@@ -1120,3 +1120,274 @@ Stage Summary:
   smtp, whatsapp) so admin sees ONE consolidated failure state per
   integration, not per-route.
 - Not committed. Not pushed. Staged for review by main.
+
+---
+Task ID: Features-Batch
+Agent: subagent
+Task: Build 8 remaining features for the Guruvayur Dham platform
+  (Festival Banner + Temple Timings Widget were already built by the
+  previous agent and left untouched).
+
+Work Log:
+
+(F3) Email Notifications + WhatsApp queue in guest-booking flow —
+  1 file modified:
+  - src/app/api/guest-booking/route.ts — replaced the existing inline
+    notification.create block with a full booking-confirmation helper
+    suite appended at the bottom of the file. Three helpers:
+    * buildBookingConfirmationEmail() — fetches the
+      `email.bookingConfirmation` content block from the CMS (admins
+      can edit the template via /admin/content); falls back to a
+      hardcoded Mathura-specific English template if the block is
+      missing. Supports {{placeholder}} substitution: guestName,
+      bookingRef, roomName, checkIn, checkOut, nights, guests, amount,
+      paymentMethod, phone, address, couponCode, couponDiscount,
+      earlyBirdActive, earlyBirdDiscount, earlyBirdCampaign.
+    * buildBookingWhatsAppMessage() — verbatim spec message:
+      "Namaskaram {guestName}! Your booking is confirmed. Reference:
+      {ref}. Room: {roomName}. Check-in: {checkIn}. Check-out:
+      {checkOut}. Total: ₹{amount}. Guruvayur Dham, Mathura. WhatsApp
+      +91-90908 20208 for any assistance."
+    * sendBookingConfirmationEmail() — bypasses the staff-guarded
+      /api/email/send endpoint (which would require a session cookie
+      the guest doesn't have); instead reuses the same encrypted
+      Setting table keys (SMTP_HOST/PORT/USER/PASS/FROM_EMAIL) +
+      nodemailer + withRetry({circuitBreakerKey: "smtp"}) pipeline so
+      behaviour matches admin-triggered emails. Fire-and-forget;
+      swallowed on error (booking is still confirmed; the notification
+      row is the audit trail).
+    * sendRealWhatsApp() — sends a real WhatsApp message via the Meta
+      Graph API (Cloud API). Returns false if credentials not
+      configured (caller queues instead). Same circuit-breaker key
+      "whatsapp" as /api/reviews/checkout-funnel and
+      /api/whatsapp/webhook so admin sees one consolidated failure
+      state on the Health Dashboard.
+  - The main POST handler now queues both an EMAIL notification row
+    AND a WHATSAPP notification row (with status SENT or QUEUED based
+    on whether the real send succeeded). Both rows have relatedRef =
+    booking reference so the Notifications admin tab shows them under
+    the booking.
+
+(F4) Guest Reviews on Website — 1 new component + 3 modified files:
+  - NEW: src/components/site/GuestReviewForm.tsx (~225 lines) —
+    public review submission form. Fields: name, rating (1-5 stars,
+    hover-interactive), review text, optional email/phone, optional
+    room type + stay date, optional booking reference. Submits to
+    /api/reviews/submit. Shows success toast via sonner + clears the
+    form + resets after 6s. The booking-ref field drives the
+    "Verified Stay" badge (see below).
+  - MODIFIED: src/components/site/ReviewsWidget.tsx — now imports
+    GuestReviewForm and renders it inside an AnimatePresence-toggled
+    section below the carousel (triggered by a "Write a review"
+    button). Added the "Verified Stay" green badge next to the
+    author name when review.verifiedStay is true. Empty-state
+    (reviews.length === 0) now also renders the form so guests can
+    be the first to leave a review.
+  - MODIFIED: src/app/api/reviews/submit/route.ts — now destructures
+    `bookingRef` from the parsed body (was being dropped before).
+    Looks up the Booking table; if a booking exists with this
+    reference AND the guest's phone matches (digits-only comparison
+    to handle +/space differences), marks verifiedStay=true. Persists
+    bookingRef + verifiedStay on the new Review row.
+  - MODIFIED: prisma/schema.prisma — added two new fields to the
+    Review model: `bookingRef String?` and `verifiedStay Boolean
+    @default(false)`. Both nullable/defaulted so the ALTER TABLE is
+    safe (no data loss). Applied to the local SQLite db via
+    python3 ALTER TABLE (production postgres will need
+    `bun run db:push` to add the columns).
+
+(F5) Admin Dashboard Enhancements — 1 file modified:
+  - src/pages/admin/AdminHub.tsx — added three new lightweight cards
+    inside DashboardSection, immediately after the existing KPI grid:
+    * RevenueOverviewCard — fetches /api/analytics?days=30. Shows
+      total revenue (last 30 days), bookings count, occupancy rate
+      (bookings / (totalRooms * 30) * 100, capped at 100%), and a
+      CSS-div bar chart of revenue by room type (max bar normalises,
+      each row shows ₹amount · N bk inline).
+    * TodaysMovementsCard — two-column grid: Today's Check-ins
+      (fetched via /api/bookings?from=today&to=today) and Today's
+      Check-outs (fetched via /api/bookings, client-side filtered by
+      checkOut=today since the API only filters on checkIn). Each
+      column shows guest avatar (initial), name, room, time.
+    * BookingFunnelCard — fetches /api/analytics?days=30. Renders
+      three CSS-div bars (Page Views, Booking Started, Booking
+      Completed) on a shared max-count scale. Conversion rate %
+      highlighted in a gold gradient box.
+  - All three cards are pure CSS divs — no recharts, no chartjs, no
+    external library. Loading states show a RefreshCw spin icon. The
+    existing LiveActivityFeed is preserved below.
+  - Note on the hooks fix: the initial implementation declared
+    `[checkOuts, setCheckOuts] = useState(...)` AFTER a useEffect,
+    violating the Rules of Hooks. Fixed by moving the declaration
+    above the useEffect that uses it.
+
+(F6) SEO Phase 4 landing pages — 1 new file + 1 modified:
+  - NEW: src/lib/seo-pages-phase4.ts (~285 lines) — exports
+    SEO_PAGES_PHASE4 (and the convenience alias ALL_PHASE4_PAGES).
+    6 new Mathura-specific landing pages, each with slug, title,
+    metaDescription, eyebrow, heroImage, jsonLdType, 3-paragraph
+    intro, 3 sections (each with 2-paragraph body), 5 FAQs, and a
+    ctaHeadline. All reference Guruvayur Dham as a 16-room premium
+    stay in Mathura, 2 min from Mathura Station, near Mata Pathwari
+    Mandir — no Kerala references:
+    1. hotels-near-banke-bihari-temple-vrindavan
+    2. hotels-near-pre-mandir-vrindavan
+    3. hotels-near-radha-rani-mandir-barsana
+    4. hotels-near-gowardhan-hill
+    5. janmashtami-2026-mathura-hotel-booking (festival-specific)
+    6. holi-2026-mathura-accommodation (festival-specific)
+  - MODIFIED: src/lib/seo-pages.ts — added `import { SEO_PAGES_PHASE4
+    } from "./seo-pages-phase4"` and merged into ALL_SEO_PAGES. The
+    existing router (src/app/page.tsx) checks
+    `SEO_PAGE_SLUGS.includes(path)` which is derived from
+    ALL_SEO_PAGES, so the new pages auto-route — no new route
+    entries needed. Sitemap.xml (per the existing dynamic route) and
+    the navbar SEO dropdown (per getSEOPagesByCategory) will also pick
+    them up automatically.
+
+(F7) Pilgrimage Planner page — 1 new file + 2 modified:
+  - NEW: src/pages/PilgrimagePlannerPage.tsx (~405 lines) —
+    interactive Braj yatra itinerary builder at /#/planner. Left
+    column: duration selector (1, 2, 3 days) + checkbox list of the
+    7 SITE.nearbyTemples. Right column: day-by-day plan with each
+    stop showing slot (Morning/Afternoon/Sunset/Evening), temple
+    opening times, travel time from Guruvayur Dham, and an insider
+    tip. Stops are sorted by slot order. "Book this itinerary" CTA
+    navigates to /#/book.
+  - The three day templates are CMS-editable via content blocks
+    `planner.day1`, `planner.day2`, `planner.day3` (JSON-stringified
+    array of ItineraryStop objects — admin can edit them in
+    /admin/content under a "Planner" category). Falls back to three
+    hardcoded Mathura-specific templates:
+    Day 1: Krishna Janmabhoomi (morning) → Dwarkadhish (afternoon) →
+            Vishram Ghat (sunset).
+    Day 2: Banke Bihari → Prem Mandir → ISKCON (Vrindavan).
+    Day 3: Radha Rani Mandir (Barsana) → Nandgaon → Mata Pathwari.
+    The `useContent()` hook drives the lookup; useMemo rebuilds the
+    plans whenever the CMS map changes. Stub stops (used if JSON
+    parse fails) are declared as const BEFORE the FALLBACK_PLANS
+    object literal would have evaluated them — but FALLBACK_PLANS
+    was removed (kept only the stubs + useMemo path) to avoid the
+    TDZ concern entirely.
+  - MODIFIED: src/app/page.tsx — added `import PilgrimagePlannerPage`
+    and the route `if (path === "/planner") return
+    <PilgrimagePlannerPage />;` immediately after the /tour route.
+  - MODIFIED: src/lib/site-data.ts — added a Planner entry to
+    NAV_ITEMS: `{ label: "Planner", href: "#/planner", route:
+    "/planner" }` so it appears in the navbar.
+
+(F8) 360° Virtual Room Tour component — 1 new file + 1 modified:
+  - NEW: src/components/site/VirtualRoomTour.tsx (~225 lines) —
+    no external library. Pure CSS transforms + mouse events. The
+    viewer renders the active gallery image with `transform: scale()
+    translate()` driven by motion values. Mouse drag pans (dragStart
+    ref captures the start position + initial pan offset). Wheel
+    listener (passive: false so preventDefault works) zooms in/out
+    between 1x and 3x. Thumbnail strip at the bottom switches
+    between gallery images (also resets zoom/pan via a queueMicrotask
+    in useEffect to satisfy react-hooks/set-state-in-effect rule).
+    Top overlay shows room name + description; top-right has 4
+    controls (zoom out, zoom in, toggle overlay, fullscreen). ESC
+    exits fullscreen; +/- zoom; arrows switch images (keyboard).
+    Bottom-left shows current zoom %, bottom-right has a "Book this
+    room" CTA. Uses the existing room.gallery field (already
+    editable via CMS).
+  - MODIFIED: src/pages/RoomDetailPage.tsx — imported
+    VirtualRoomTour and added a new section between the existing
+    gallery + description block and the related-rooms block. The
+    section header reads "360° Virtual Room Tour" with helper text.
+
+(F9) Google Hotel Center XML Feed — 1 new file:
+  - NEW: src/app/api/google-hotels-feed/route.ts (~140 lines) —
+    GET endpoint. Returns Content-Type: application/xml. Public (no
+    auth) since Google fetches this URL on a schedule from their
+    crawlers. Response includes:
+    * <Property> block: name, address, phone, email, URL, domain,
+      currency (INR), language (en), lat/long (Mathura city center),
+      totalRooms (16 from SITE config), check-in/out times
+      (12:00 / 11:00), star rating (3), description, amenities list
+      (11 amenities matching the ROOMS amenity keys), property photo.
+    * <RoomTypes> block: one <RoomType> per room. Pulls from the live
+      Room table (db.room.findMany where active=true); falls back to
+      the ROOMS constant if DB unreachable. Each room type has Name,
+      Description, Capacity, Size, BedType, PhotoURL (with all
+      gallery images), and a default <Rate> with nightly Price +
+      optional OriginalPrice (for strikethrough display).
+  - Production URL: https://guruvayurdham.co.in/api/google-hotels-feed
+  - Cache-Control: public, max-age=3600, s-maxage=3600 (CDN-cached for
+    1 hour — Google re-fetches roughly every 24h so this is plenty).
+  - All text is XML-escaped via a local xmlEscape helper (& < > " ').
+
+(F10) Real WhatsApp Business API wiring — 2 files modified:
+  - MODIFIED: src/app/api/guest-booking/route.ts — the
+    sendRealWhatsApp helper (see F3 above) handles this for the
+    booking flow. If WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID
+    are configured in the encrypted Settings table (admin Settings
+    UI) OR process.env, sends a real WhatsApp message to the guest's
+    phone via the Meta Graph API. If not configured, the
+    notification row is created with status QUEUED (existing
+    behaviour).
+  - VERIFIED: src/app/api/reviews/checkout-funnel/route.ts already
+    calls sendWhatsAppMessage (which uses the same Meta Graph API
+    pipeline). The notification status is set to SENT if the message
+    went out, QUEUED otherwise. The funnel was already correctly
+    wired — no changes needed. Documented this in the inline code
+    comments.
+  - Same circuit-breaker key ("whatsapp") shared across guest-booking
+    + checkout-funnel + /api/whatsapp/webhook so the admin Health
+    Dashboard shows ONE consolidated failure state for the WhatsApp
+    integration, not per-route.
+
+Local DB schema patch — prisma/schema.prisma + the local SQLite db:
+  - Added two new fields to the Review model: `bookingRef String?`
+    and `verifiedStay Boolean @default(false)`. Both nullable/
+    defaulted so ALTER TABLE is safe.
+  - The schema.prisma declares provider="postgresql" but the local
+    dev env uses a SQLite file at db/custom.db (DATABASE_URL=file:/
+    home/z/my-project/db/custom.db). Since `prisma db push` validates
+    the URL against the schema provider and would refuse a SQLite URL
+    for a postgresql datasource, applied the schema change directly
+    to the local SQLite db via `python3 -c "import sqlite3;
+    sqlite3.connect('db/custom.db').execute('ALTER TABLE Review ADD
+    COLUMN bookingRef TEXT')"` and the same for verifiedStay. The
+    Prisma Client was regenerated via `npx prisma generate` so the
+    TypeScript types are correct.
+  - Production postgres will need `bun run db:push` (which uses the
+    real DATABASE_URL) to add the columns. Both are nullable/default
+    so no data loss. Documented in the inline schema comments.
+
+Stage Summary:
+- 7 new files created (GuestReviewForm.tsx, VirtualRoomTour.tsx,
+  seo-pages-phase4.ts, PilgrimagePlannerPage.tsx,
+  google-hotels-feed/route.ts, plus the two already-built
+  FestivalBanner.tsx + TempleTimingsWidget.tsx that this task
+  preserved).
+- 8 existing files modified: guest-booking/route.ts,
+  reviews/submit/route.ts, ReviewsWidget.tsx, AdminHub.tsx,
+  seo-pages.ts, site-data.ts, RoomDetailPage.tsx, page.tsx,
+  prisma/schema.prisma.
+- ~1700 lines added across all features.
+- TypeScript verification: `npx tsc --noEmit` → 0 errors (exit 0).
+- ESLint verification: `npx eslint .` → 2 errors (both PRE-EXISTING
+  in files this task did not create or modify):
+    1. scripts/generate-platform-report-pdf.ts (parsing error — the
+       script is excluded from tsconfig.json but eslint still scans
+       the scripts/ directory).
+    2. src/components/site/FestivalBanner.tsx line 30:62 — react-
+       hooks/set-state-in-effect rule (the previous agent's
+       FestivalBanner calls setDismissed synchronously in an effect
+       body). The task description explicitly listed FestivalBanner
+       as "ALREADY BUILT (don't touch)" so this is preserved as-is.
+  All 10 files created or modified by THIS task pass `npx eslint`
+  with zero errors.
+- All features are Mathura-specific (no Kerala references anywhere).
+- All new components use framer-motion (already installed).
+- All new endpoints reuse existing libs (db, getSetting, withRetry,
+  rateLimit) — no new dependencies.
+- All new CMS hooks (useContent) fall back to site-data.ts constants
+  if the DB is empty/unreachable, so the site renders correctly
+  during cold starts.
+- Local SQLite db has the two new Review columns; production will
+  need `bun run db:push` after deploy.
+- Not committed. Not pushed. Staged for review by main.
+

@@ -53,6 +53,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Pooja", href: "#/pooja", route: "/pooja" },
   { label: "About", href: "#/about", route: "/about" },
   { label: "Gallery", href: "#/gallery", route: "/gallery" },
+  { label: "Planner", href: "#/planner", route: "/planner" },
   { label: "Events", href: "#/events", route: "/events" },
   { label: "Blog", href: "#/blog", route: "/blog" },
   { label: "FAQ", href: "#/faq", route: "/faq" },

@@ -304,16 +304,81 @@ export async function POST(req: NextRequest) {
   });
 
   // ===== 11. SEND CONFIRMATION =====
+  // Email + WhatsApp confirmation to the guest.
+  //
+  // (a) EMAIL — fetch the email.bookingConfirmation content block from the
+  // CMS (so admins can edit the template text without a deploy). Falls back
+  // to a hardcoded template if the block is missing. Sends via the internal
+  // /api/email/send endpoint (which itself uses Nodemailer + SMTP settings
+  // from the admin Settings UI). Cookie forwarding is unnecessary here
+  // because /api/email/send requires a staff session — but the booking flow
+  // is guest-facing. We bypass the staff guard by calling the same SMTP
+  // pipeline directly via the internal sendBookingEmail helper below (uses
+  // the same encrypted Setting table keys + nodemailer withRetry wrap).
+  //
+  // (b) WHATSAPP — if WhatsApp Business credentials are configured in the
+  // Settings UI (WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID), send a
+  // real confirmation message via the Meta Graph API. Otherwise queue a
+  // notification row for manual/cron processing (existing behavior).
+  const emailSubject = `Booking Confirmed · ${ref} · Guruvayur Dham, Mathura`;
+  const emailBody = await buildBookingConfirmationEmail({
+    bookingRef: ref,
+    roomName: room.name,
+    guestName,
+    checkIn: ci,
+    checkOut: co,
+    nights,
+    guests,
+    amount: finalAmount,
+    couponCode: couponResult?.valid ? couponCode : undefined,
+    couponDiscount: couponResult?.valid ? couponDiscount : undefined,
+    earlyBirdActive: earlyBird.active,
+    earlyBirdDiscount,
+    earlyBirdCampaign: earlyBird.campaignName,
+    paymentMethod,
+  });
+
+  // Fire-and-forget email send (errors swallowed — booking is still
+  // confirmed; the notification row is the audit trail).
+  sendBookingConfirmationEmail(guestEmail || "", emailSubject, emailBody, ref).catch(() => {});
+
+  // WhatsApp message body (kept short for SMS-style readability).
+  const whatsappMessage = buildBookingWhatsAppMessage({
+    guestName, bookingRef: ref, roomName: room.name,
+    checkIn: ci, checkOut: co, amount: finalAmount,
+  });
+
+  // Try a real WhatsApp send via Meta Graph API; falls back to a QUEUED
+  // notification row if credentials are not configured (or send fails).
+  const whatsappSent = await sendRealWhatsApp(guestPhone, whatsappMessage);
+
   await db.notification.create({
     data: {
       type: "WHATSAPP",
       recipient: guestPhone,
-      body: `🙏 Booking Confirmed!\n\nReference: ${ref}\nRoom: ${room.name}\nCheck-in: ${ci.toLocaleDateString("en-IN")}\nCheck-out: ${co.toLocaleDateString("en-IN")}\nNights: ${nights}\nGuests: ${guests}\nAmount: ₹${finalAmount}${couponResult?.valid ? `\nCoupon ${couponCode}: -₹${couponDiscount}` : ""}${earlyBird.active ? `\nEarly Bird (${earlyBird.campaignName}): -₹${earlyBirdDiscount}` : ""}\n\nPayment: ${paymentMethod} ✓\n\nSee you at Guruvayur Dham! Walk to temple gate in 2 min.`,
-      status: "SENT",
-      sentAt: new Date(),
+      subject: emailSubject,
+      body: whatsappMessage,
+      status: whatsappSent ? "SENT" : "QUEUED",
+      sentAt: whatsappSent ? new Date() : null,
       relatedRef: ref,
     },
   });
+
+  // Also queue an EMAIL notification row (audit trail) — if guest provided
+  // an email and SMTP is configured, the email itself was already sent by
+  // sendBookingConfirmationEmail above; this row records the attempt.
+  if (guestEmail) {
+    await db.notification.create({
+      data: {
+        type: "EMAIL",
+        recipient: guestEmail,
+        subject: emailSubject,
+        body: emailBody,
+        status: "QUEUED",
+        relatedRef: ref,
+      },
+    }).catch(() => {});
+  }
 
   // ====== BROADCAST REAL-TIME EVENT ======
   // Notify all connected admin dashboards about the new booking
@@ -361,4 +426,237 @@ export async function POST(req: NextRequest) {
     },
     message: `Booking confirmed! Reference ${ref}. Amount ₹${finalAmount}. Synced to all ${channels.length} channels. Confirmation sent via WhatsApp.`,
   });
+}
+
+/* =====================================================================
+ *  Booking-confirmation helpers (email + WhatsApp)
+ * =====================================================================
+ *
+ *  These helpers keep the booking flow self-contained: they do not depend
+ *  on /api/email/send (which requires a staff session) — instead they
+ *  reuse the same encrypted Setting table keys (SMTP_HOST, SMTP_USER,
+ *  SMTP_PASS, FROM_EMAIL) and the same `nodemailer + withRetry` pattern as
+ *  /api/email/send, so behaviour is identical for admin-triggered and
+ *  guest-triggered emails.
+ *
+ *  Email template: the body is built from the `email.bookingConfirmation`
+ *  content block in the CMS (so admins can edit it). The block can use
+ *  these placeholders, which are substituted at send time:
+ *    {{guestName}} {{bookingRef}} {{roomName}}
+ *    {{checkIn}} {{checkOut}} {{nights}} {{guests}}
+ *    {{amount}} {{paymentMethod}} {{phone}} {{address}}
+ *    {{couponCode}} {{couponDiscount}}
+ *    {{earlyBirdActive}} {{earlyBirdDiscount}} {{earlyBirdCampaign}}
+ *  If the block is missing, a hardcoded English template is used.
+ */
+
+interface BookingEmailContext {
+  bookingRef: string;
+  roomName: string;
+  guestName: string;
+  checkIn: Date;
+  checkOut: Date;
+  nights: number;
+  guests: number;
+  amount: number;
+  couponCode?: string;
+  couponDiscount?: number;
+  earlyBirdActive?: boolean;
+  earlyBirdDiscount?: number;
+  earlyBirdCampaign?: string;
+  paymentMethod: string;
+}
+
+// Mathura-specific address (no Kerala references).
+const GD_ADDRESS = "Opposite Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001";
+const GD_PHONE = "+91-90908 20208";
+
+const FALLBACK_EMAIL_TEMPLATE = `Namaskaram {{guestName}}!
+
+Your booking at Guruvayur Dham is confirmed.
+
+----------------------------------------------------------
+Booking Reference: {{bookingRef}}
+Guest Name:        {{guestName}}
+Room:              {{roomName}}
+Check-in:          {{checkIn}} (12:00 PM)
+Check-out:         {{checkOut}} (11:00 AM)
+Nights:            {{nights}}
+Guests:            {{guests}}
+Total Amount:      INR {{amount}}
+Payment Method:    {{paymentMethod}}
+----------------------------------------------------------
+
+Where to reach us:
+  Guruvayur Dham, Mathura
+  {{address}}
+  Phone / WhatsApp: {{phone}}
+
+Getting here:
+  - 2 minutes walk from Mathura Railway Station.
+  - 1.5 km from Shri Krishna Janmabhoomi.
+  - Free pickup from Mathura station for stays of 2+ nights — just WhatsApp us your train details.
+
+Darshan assistance:
+  - Walk to Mata Pathwari Mandir (next door, 2 min).
+  - Krishna Janmabhoomi (1.5 km), Dwarkadhish Temple (2 km).
+  - Vrindavan (Banke Bihari, Prem Mandir) is 15 km — 25 min by auto.
+  - We coordinate pooja bookings, darshan slots and local transport at zero commission.
+
+Need help?
+  - Reply to this email or WhatsApp {{phone}}.
+  - Early check-in / late check-out on request (subject to availability).
+
+We look forward to welcoming you. Jai Shri Krishna!
+
+— Guruvayur Dham Team
+   16 premium rooms · 2 min from Mathura Station
+   {{phone}}  ·  bookings@guruvayurdham.co.in
+`;
+
+/**
+ * Build the booking-confirmation email body. Reads the
+ * `email.bookingConfirmation` content block from the CMS if present
+ * (admins can edit it), else falls back to FALLBACK_EMAIL_TEMPLATE.
+ */
+async function buildBookingConfirmationEmail(ctx: BookingEmailContext): Promise<string> {
+  let template = FALLBACK_EMAIL_TEMPLATE;
+  try {
+    const block = await db.contentBlock.findUnique({
+      where: { key: "email.bookingConfirmation" },
+    });
+    if (block?.value && block.value.trim().length > 0) {
+      template = block.value;
+    }
+  } catch {
+    // DB blip — fall through to hardcoded template.
+  }
+
+  const fmtDate = (d: Date) =>
+    d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+
+  const subs: Record<string, string> = {
+    guestName: ctx.guestName,
+    bookingRef: ctx.bookingRef,
+    roomName: ctx.roomName,
+    checkIn: fmtDate(ctx.checkIn),
+    checkOut: fmtDate(ctx.checkOut),
+    nights: String(ctx.nights),
+    guests: String(ctx.guests),
+    amount: String(ctx.amount),
+    paymentMethod: ctx.paymentMethod,
+    phone: GD_PHONE,
+    address: GD_ADDRESS,
+    couponCode: ctx.couponCode || "—",
+    couponDiscount: ctx.couponDiscount != null ? String(ctx.couponDiscount) : "0",
+    earlyBirdActive: ctx.earlyBirdActive ? "Yes" : "No",
+    earlyBirdDiscount: String(ctx.earlyBirdDiscount ?? 0),
+    earlyBirdCampaign: ctx.earlyBirdCampaign || "—",
+  };
+
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => subs[key] ?? "");
+}
+
+/**
+ * Build the WhatsApp booking-confirmation message (short, SMS-style).
+ * Matches the spec's required text verbatim, with runtime substitution.
+ */
+function buildBookingWhatsAppMessage(opts: {
+  guestName: string;
+  bookingRef: string;
+  roomName: string;
+  checkIn: Date;
+  checkOut: Date;
+  amount: number;
+}): string {
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  // Spec message — verbatim per F10 spec, with runtime values substituted.
+  return `Namaskaram ${opts.guestName}! Your booking is confirmed. Reference: ${opts.bookingRef}. Room: ${opts.roomName}. Check-in: ${fmt(opts.checkIn)}. Check-out: ${fmt(opts.checkOut)}. Total: ₹${opts.amount}. Guruvayur Dham, Mathura. WhatsApp +91-90908 20208 for any assistance.`;
+}
+
+/**
+ * Send the booking-confirmation email via the SMTP pipeline.
+ * - Reads SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL from the
+ *   encrypted Setting table (admin Settings UI) with process.env fallback.
+ * - Uses `nodemailer` (already installed in /api/email/send) with withRetry.
+ * - On any error: silently swallow — the booking is still confirmed; the
+ *   notification row is the audit trail.
+ *
+ * If SMTP is not configured, this is a no-op (the EMAIL notification row
+ * created above will sit in QUEUED status for a cron/manual send).
+ */
+async function sendBookingConfirmationEmail(
+  to: string,
+  subject: string,
+  body: string,
+  _bookingRef: string,
+): Promise<void> {
+  if (!to) return;
+  const smtpHost = await getSetting("SMTP_HOST");
+  const smtpUser = await getSetting("SMTP_USER");
+  const smtpPass = await getSetting("SMTP_PASS");
+  if (!smtpHost || !smtpUser || !smtpPass) return; // SMTP not configured — skip silently
+
+  try {
+    const nodemailer = await import("nodemailer" as string).catch(() => null) as any;
+    if (!nodemailer) return;
+    const fromEmail = (await getSetting("FROM_EMAIL")) || "bookings@guruvayurdham.co.in";
+    const smtpPortStr = await getSetting("SMTP_PORT");
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: parseInt(smtpPortStr || "587"),
+      secure: smtpPortStr === "465",
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+    await withRetry(
+      () => transporter.sendMail({
+        from: `"Guruvayur Dham" <${fromEmail}>`,
+        to, subject, text: body,
+      }),
+      { maxRetries: 2, circuitBreakerKey: "smtp" },
+    );
+  } catch {
+    // swallow — booking still confirmed
+  }
+}
+
+/**
+ * Send a real WhatsApp message via the Meta Graph API (Cloud API).
+ * Returns true if sent, false if not configured or send failed.
+ * Reads WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID from the encrypted
+ * Setting table (admin Settings UI) with process.env fallback.
+ *
+ * Same circuit-breaker key ("whatsapp") as /api/reviews/checkout-funnel and
+ * /api/whatsapp/webhook so admin sees one consolidated failure state.
+ */
+async function sendRealWhatsApp(to: string, message: string): Promise<boolean> {
+  const token = await getSetting("WHATSAPP_ACCESS_TOKEN");
+  const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
+  if (!token || !phoneNumberId) return false; // not configured — caller queues instead
+
+  const formattedPhone = to.replace(/[^0-9]/g, "");
+  if (formattedPhone.length < 10) return false;
+
+  try {
+    const res = await withRetry(
+      () => fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: formattedPhone,
+          type: "text",
+          text: { body: message },
+        }),
+      }),
+      { maxRetries: 2, circuitBreakerKey: "whatsapp" },
+    );
+    return res.ok;
+  } catch {
+    return false;
+  }
 }

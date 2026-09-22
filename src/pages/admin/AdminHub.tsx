@@ -148,6 +148,12 @@ function DashboardSection({ stats }: any) {
           </div>
         ))}
       </div>
+
+      {/* ===== Revenue Overview (last 30 days) + Booking Funnel ===== */}
+      <RevenueOverviewCard totalRooms={stats?.totalRooms ?? 16} />
+      <TodaysMovementsCard />
+      <BookingFunnelCard />
+
       {/* Live Activity Feed · real-time WebSocket */}
       <div className="mt-6">
         <LiveActivityFeed />
@@ -1795,6 +1801,303 @@ function StaffSection() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+ *  Dashboard Enhancement Cards (F5)
+ * =====================================================================
+ *  Three lightweight cards rendered inside DashboardSection:
+ *    1. RevenueOverviewCard — last-30-day total + bar chart (CSS divs) of
+ *       revenue by room type + occupancy rate.
+ *    2. TodaysMovementsCard — today's check-ins / check-outs pulled from
+ *       /api/bookings?from=today&to=today.
+ *    3. BookingFunnelCard — PAGE_VIEW vs BOOKING_COMPLETED counts (from
+ *       /api/analytics) + conversion rate %.
+ *
+ *  All data comes from existing API endpoints — no new endpoints created.
+ *  No chart library used — bars are pure CSS divs.
+ */
+
+function RevenueOverviewCard({ totalRooms = 16 }: { totalRooms?: number }) {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/analytics?days=30", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setData(j); })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const totalRevenue = data?.summary?.totalRevenue ?? 0;
+  const roomPerformance: Array<{ name: string; bookings: number; revenue: number }> =
+    data?.roomPerformance || [];
+  const maxRevenue = Math.max(1, ...roomPerformance.map(r => r.revenue));
+  const totalBookings30 = data?.summary?.totalBookings ?? 0;
+  const occupancyRate = totalRooms > 0
+    ? Math.min(100, Math.round((totalBookings30 / (totalRooms * 30)) * 100))
+    : 0;
+
+  return (
+    <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-champagne" />
+          <h3 className="font-serif text-lg text-ivory">Revenue Overview</h3>
+        </div>
+        <span className="rounded-full border border-champagne/20 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-champagne">last 30 days</span>
+      </div>
+
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading analytics…
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-ivory/50">Total Revenue</p>
+              <p className="font-serif text-2xl text-gold-foil">₹{totalRevenue.toLocaleString("en-IN")}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-ivory/50">Bookings (30d)</p>
+              <p className="font-serif text-2xl text-ivory">{totalBookings30}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-ivory/50">Occupancy (30d)</p>
+              <p className="font-serif text-2xl text-ivory">{occupancyRate}%</p>
+              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-ink">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-champagne to-gold"
+                  style={{ width: `${occupancyRate}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-5 text-[10px] uppercase tracking-wider text-ivory/50">Revenue by Room Type</p>
+          <div className="mt-2 space-y-2">
+            {roomPerformance.length === 0 && (
+              <p className="text-xs text-ivory/40">No room revenue in this period.</p>
+            )}
+            {roomPerformance.map((r, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-32 flex-shrink-0 text-xs text-ivory/70">{r.name}</div>
+                <div className="relative h-6 flex-1 overflow-hidden rounded-md border border-champagne/10 bg-ink">
+                  <div
+                    className="h-full rounded-md bg-gradient-to-r from-champagne/70 to-gold/70 transition-all"
+                    style={{ width: `${Math.max(2, Math.round((r.revenue / maxRevenue) * 100))}%` }}
+                  />
+                  <span className="absolute inset-y-0 right-2 flex items-center text-[10px] font-semibold text-ivory/80">
+                    ₹{r.revenue.toLocaleString("en-IN")} · {r.bookings} bk
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function TodaysMovementsCard() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [checkOuts, setCheckOuts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    // /api/bookings supports ?from & ?to filters that map to checkIn range.
+    // For "today" we use the start-of-day for both — the API does gte/lte
+    // on checkIn, so a single today date catches all bookings checking in
+    // today. (Check-outs are fetched in a second pass below.)
+    const today = new Date();
+    const iso = today.toISOString().slice(0, 10);
+
+    // (a) Bookings whose checkIn == today (today's check-ins).
+    fetch(`/api/bookings?from=${iso}&to=${iso}`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setBookings(j.bookings || []); })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false); });
+
+    // (b) /api/bookings only filters on checkIn; we fire a second
+    // unfiltered fetch and filter client-side for checkOut == today
+    // (limited to 200 by the API).
+    fetch(`/api/bookings`, { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => {
+        if (!active) return;
+        const all = (j.bookings || []).filter((b: any) =>
+          new Date(b.checkOut).toISOString().slice(0, 10) === iso
+        );
+        setCheckOuts(all);
+      })
+      .catch(() => {});
+
+    return () => { active = false; };
+  }, []);
+
+  // Split into check-ins (checkIn == today).
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const checkIns = bookings.filter(b => new Date(b.checkIn).toISOString().slice(0, 10) === todayStr);
+
+  return (
+    <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <MovementColumn
+        title="Today's Check-ins"
+        icon={CalendarDays}
+        accent="text-green-300"
+        items={checkIns.map(b => ({
+          id: b.id,
+          name: b.guestName,
+          room: b.room?.name || "—",
+          time: new Date(b.checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 12:00 PM",
+          ref: b.reference,
+        }))}
+        loading={loading}
+        emptyMsg="No check-ins scheduled today."
+      />
+      <MovementColumn
+        title="Today's Check-outs"
+        icon={CalendarDays}
+        accent="text-amber-300"
+        items={checkOuts.map(b => ({
+          id: b.id,
+          name: b.guestName,
+          room: b.room?.name || "—",
+          time: new Date(b.checkOut).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 11:00 AM",
+          ref: b.reference,
+        }))}
+        loading={loading}
+        emptyMsg="No check-outs scheduled today."
+      />
+    </div>
+  );
+}
+
+function MovementColumn({
+  title, icon: Icon, accent, items, loading, emptyMsg,
+}: {
+  title: string;
+  icon: React.ElementType;
+  accent: string;
+  items: Array<{ id: string; name: string; room: string; time: string; ref?: string }>;
+  loading: boolean;
+  emptyMsg: string;
+}) {
+  return (
+    <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">
+      <div className="flex items-center gap-2">
+        <Icon className={cn("h-4 w-4", accent)} />
+        <h3 className="font-serif text-base text-ivory">{title}</h3>
+        <span className="ml-auto rounded-full border border-champagne/15 px-2 py-0.5 text-[10px] text-ivory/60">
+          {items.length}
+        </span>
+      </div>
+      {loading ? (
+        <div className="mt-3 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading…
+        </div>
+      ) : items.length === 0 ? (
+        <p className="mt-3 text-xs text-ivory/40">{emptyMsg}</p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {items.map(b => (
+            <li key={b.id} className="flex items-center gap-3 rounded-lg border border-champagne/5 bg-ink/40 p-2.5">
+              <div className="grid h-9 w-9 place-items-center rounded-full border border-champagne/15 bg-gradient-to-br from-champagne/15 to-transparent font-serif text-sm text-gold-foil">
+                {b.name.charAt(0)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-semibold text-ivory">{b.name}</p>
+                <p className="truncate text-[10px] text-ivory/50">{b.room} · {b.time}</p>
+              </div>
+              {b.ref && <span className="font-mono text-[10px] text-champagne/80">{b.ref}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function BookingFunnelCard() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/analytics?days=30", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setData(j); })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const funnel = data?.funnel;
+  const visitors = funnel?.visitors ?? 0;
+  const started = funnel?.bookingStarted ?? 0;
+  const completed = funnel?.bookingCompleted ?? 0;
+  const conversionRate = funnel?.conversionRate ?? 0;
+  const maxCount = Math.max(1, visitors, started, completed);
+
+  const bar = (label: string, value: number, color: string) => (
+    <div className="flex items-center gap-3">
+      <div className="w-32 flex-shrink-0 text-xs text-ivory/70">{label}</div>
+      <div className="relative h-7 flex-1 overflow-hidden rounded-md border border-champagne/10 bg-ink">
+        <div
+          className={`h-full rounded-md ${color}`}
+          style={{ width: `${Math.max(2, Math.round((value / maxCount) * 100))}%` }}
+        />
+        <span className="absolute inset-y-0 right-2 flex items-center text-[10px] font-semibold text-ivory/80">
+          {value.toLocaleString("en-IN")}
+        </span>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="mt-6 rounded-xl border border-champagne/10 bg-ink/50 p-5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-champagne" />
+          <h3 className="font-serif text-lg text-ivory">Booking Funnel</h3>
+        </div>
+        <span className="rounded-full border border-champagne/20 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-champagne">last 30 days</span>
+      </div>
+
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading analytics…
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 grid gap-2.5">
+            {bar("Page Views", visitors, "bg-blue-500/60")}
+            {bar("Booking Started", started, "bg-amber-500/60")}
+            {bar("Booking Completed", completed, "bg-green-500/60")}
+          </div>
+          <div className="mt-4 flex items-center gap-3 rounded-lg border border-champagne/15 bg-gradient-to-br from-champagne/10 to-transparent p-3">
+            <div className="grid h-10 w-10 place-items-center rounded-full border border-champagne/30 bg-ink/60">
+              <TrendingUp className="h-5 w-5 text-gold-foil" />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-ivory/50">Conversion Rate</p>
+              <p className="font-serif text-2xl text-gold-foil">{conversionRate}%</p>
+            </div>
+            <p className="ml-auto text-right text-[10px] text-ivory/40">
+              {completed.toLocaleString("en-IN")} of {visitors.toLocaleString("en-IN")} visitors booked
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 }

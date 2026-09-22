@@ -293,5 +293,7 @@ export const DEFAULT_FEATURE_FLAGS = [
   { key: "GUEST_REGISTRATION", label: "Guest Self-Registration", description: "Allow guests to create accounts", enabled: true },
   { key: "OTP_LOGIN", label: "OTP Login", description: "Allow phone OTP login", enabled: true },
   { key: "MAINTENANCE_MODE", label: "Maintenance Mode", description: "Show holding page to guests (admin still works)", enabled: false },
+  { key: "FESTIVAL_BANNER", label: "Festival Countdown Banner", description: "Show 'X days until [festival]' banner on homepage", enabled: true },
+  { key: "TEMPLE_TIMINGS_WIDGET", label: "Temple Timings Widget", description: "Show live temple darshan timings on homepage", enabled: true },
   { key: "SEO_PAGES", label: "SEO Landing Pages", description: "Show 35+ SEO landing pages", enabled: true },
 ];

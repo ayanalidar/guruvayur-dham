@@ -41,7 +41,27 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { authorName, authorEmail, authorPhone, rating, text, roomSlug, stayDate } = parsed.data;
+  const { authorName, authorEmail, authorPhone, rating, text, roomSlug, stayDate, bookingRef } = parsed.data;
+
+  // Verified Stay badge: if the guest provided a bookingRef, look up the
+  // Booking table. If a booking exists with this reference AND the guest's
+  // phone matches, mark the review as verified. This is the basis for the
+  // "Verified Stay" badge shown next to the review on the public site.
+  let verifiedStay = false;
+  if (bookingRef) {
+    try {
+      const booking = await db.booking.findUnique({
+        where: { reference: bookingRef },
+        select: { guestPhone: true, status: true },
+      });
+      if (booking && booking.guestPhone && authorPhone &&
+          booking.guestPhone.replace(/[^0-9]/g, "") === authorPhone.replace(/[^0-9]/g, "")) {
+        verifiedStay = true;
+      }
+    } catch {
+      // DB blip — leave verifiedStay=false (fail-open, review still accepted)
+    }
+  }
 
   const review = await db.review.create({
     data: {
@@ -58,6 +78,8 @@ export async function POST(req: NextRequest) {
       guestPhone: authorPhone || null,
       roomSlug: roomSlug || null,
       stayDate: stayDate ? new Date(stayDate) : null,
+      bookingRef: bookingRef || null,
+      verifiedStay,
     },
   });
 

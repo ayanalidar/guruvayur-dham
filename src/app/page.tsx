@@ -31,6 +31,7 @@ import TermsPage from "@/pages/TermsPage";
 import GuestBookingPage from "@/pages/GuestBookingPage";
 import KitchenOrderPage from "@/pages/KitchenOrderPage";
 import VirtualTourPage from "@/pages/VirtualTourPage";
+import PilgrimagePlannerPage from "@/pages/PilgrimagePlannerPage";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import ReviewSubmitPage from "@/pages/ReviewSubmitPage";
@@ -48,6 +49,7 @@ import AdminChannels from "@/pages/admin/AdminChannels";
 import AdminHub from "@/pages/admin/AdminHub";
 import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
 import MaintenancePage from "@/pages/MaintenancePage";
+import FestivalBanner from "@/components/site/FestivalBanner";
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -113,6 +115,7 @@ export default function Home() {
     if (path === "/terms") return <TermsPage />;
     if (path === "/book") return <GuestBookingPage />;
     if (path === "/tour") return <VirtualTourPage />;
+    if (path === "/planner") return <PilgrimagePlannerPage />;
     if (path === "/login") return <LoginPage />;
     if (path === "/dashboard") return <DashboardPage />;
     if (path === "/review") return <ReviewSubmitPage />;
@@ -149,6 +152,7 @@ export default function Home() {
     <>
       <AnimatePresence>{loading && <PageLoader onDone={() => setLoading(false)} />}</AnimatePresence>
 
+      {!isLoginPage && !isResetPage && <FestivalBanner />}
       {!isLoginPage && <Navbar />}
       <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>
         <AnimatePresence mode="wait">

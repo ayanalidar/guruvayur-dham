@@ -2,15 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Quote, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { Star, Quote, ChevronLeft, ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { GoldFoilText, SectionHeader } from "@/components/site/visuals";
 import { useRealtime } from "@/lib/use-realtime";
 import { cn } from "@/lib/utils";
+import GuestReviewForm from "./GuestReviewForm";
 
 export default function ReviewsWidget() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [idx, setIdx] = useState(0);
+  const [showForm, setShowForm] = useState(false);
   const { lastEvent } = useRealtime(["review:new", "reviews:imported"]);
 
   useEffect(() => {
@@ -39,7 +41,22 @@ export default function ReviewsWidget() {
   const next = () => setIdx((i) => (i + 1) % Math.max(reviews.length, 1));
   const prev = () => setIdx((i) => (i - 1 + reviews.length) % Math.max(reviews.length, 1));
 
-  if (reviews.length === 0) return null;
+  if (reviews.length === 0) {
+    return (
+      <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
+        <div className="container-x">
+          <SectionHeader
+            eyebrow="Guest Reviews"
+            title={<>Be the first to <GoldFoilText>share your experience</GoldFoilText></>}
+            subtitle="Stayed with us recently? We'd love to hear from you. Be the first to leave a review."
+          />
+          <div className="mx-auto mt-8 max-w-2xl">
+            <GuestReviewForm />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const review = reviews[idx];
 
@@ -97,7 +114,21 @@ export default function ReviewsWidget() {
                   </div>
                 )}
                 <div>
-                  <p className="font-semibold text-ivory">{review.authorName}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-ivory">{review.authorName}</p>
+                    {/* Verified Stay badge — driven by the bookingRef check
+                        done in /api/reviews/submit (booking reference + guest
+                        phone matched an existing Booking row). */}
+                    {review.verifiedStay && (
+                      <span
+                        title={`Verified Stay · booking ${review.bookingRef || ""}`}
+                        className="inline-flex items-center gap-1 rounded-full border border-green-500/30 bg-green-500/15 px-2 py-0.5 text-[10px] font-semibold text-green-300"
+                      >
+                        <ShieldCheck className="h-3 w-3" />
+                        Verified Stay
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     <div className="flex gap-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
@@ -138,8 +169,8 @@ export default function ReviewsWidget() {
           </button>
         </div>
 
-        {/* Link to Google */}
-        <div className="mt-6 text-center">
+        {/* Link to Google + Write a Review CTA */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
           <a
             href="https://share.google/x0YWO22UQQiol8qYa"
             target="_blank"
@@ -148,8 +179,32 @@ export default function ReviewsWidget() {
           >
             View all reviews on Google <ExternalLink className="h-3 w-3" />
           </a>
+          <button
+            onClick={() => setShowForm(s => !s)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-champagne/30 bg-champagne/10 px-4 py-1.5 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/20"
+          >
+            {showForm ? "Hide review form" : "Write a review"}
+          </button>
         </div>
+
+        {/* Embedded GuestReviewForm — shown below the carousel when the
+            user clicks "Write a review". The form submits to the public
+            /api/reviews/submit endpoint, shows a success toast, and
+            clears itself. */}
+        <AnimatePresence>
+          {showForm && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-8 max-w-2xl overflow-hidden mx-auto"
+            >
+              <GuestReviewForm />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
 }
+

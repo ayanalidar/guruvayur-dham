@@ -11,6 +11,7 @@ import { getIcon } from "@/components/site/icon-map";
 import {
   GoldFoilText, TiltCard, MagneticButton, ImageReveal, MandalaDivider,
 } from "@/components/site/visuals";
+import VirtualRoomTour from "@/components/site/VirtualRoomTour";
 import { useViewerCount } from "@/lib/use-realtime";
 
 const amenityLabels: Record<string, string> = {
@@ -222,6 +223,27 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <MandalaDivider />
+
+      {/* 360° Virtual Room Tour (F8) — uses existing room.gallery photos */}
+      <section className="bg-ink py-16 lg:py-20">
+        <div className="container-x">
+          <h2 className="font-serif text-3xl text-ivory">360° Virtual Room Tour</h2>
+          <p className="mt-2 text-sm text-ivory/60">
+            Take an immersive walk through {room.name}. Drag to pan, scroll to zoom, and use the thumbnail strip to switch between angles.
+          </p>
+          <div className="mt-6">
+            <VirtualRoomTour
+              roomName={room.name}
+              roomDescription={room.shortDesc}
+              gallery={room.gallery}
+              roomSlug={room.slug}
+              badge={room.badge}
+            />
           </div>
         </div>
       </section>

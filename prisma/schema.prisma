@@ -480,9 +480,11 @@ model Review {
   featured        Boolean  @default(false) // show on homepage
   // Guest submission fields
   guestEmail      String?
-  guestPhone      String?
+  guestPhone     String?
   roomSlug        String?  // which room they stayed in
   stayDate        DateTime? // when they stayed
+  bookingRef      String?  // optional booking reference — verified against Booking table (drives "Verified Stay" badge)
+  verifiedStay    Boolean  @default(false) // true if admin/system matched a Booking row for bookingRef + guestPhone
   moderated       Boolean  @default(false) // has admin reviewed this submission
   moderatedBy     String?  // staff user ID who moderated
   moderatedAt     DateTime?
