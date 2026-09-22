@@ -12,6 +12,7 @@ import { SITE, waLink } from "@/lib/site-data";
 import { useContent } from "@/lib/use-cms";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import OAuthButtons from "@/components/site/OAuthButtons";
+import LanguageSelector from "@/components/site/LanguageSelector";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -256,7 +257,11 @@ export default function LoginPage() {
       </div>
 
       {/* ===== RIGHT: Login form ===== */}
-      <div className="flex min-h-screen items-center justify-center px-4 pb-12 pt-8 sm:pt-12 lg:min-h-screen lg:pt-0">
+      <div className="relative flex min-h-screen items-center justify-center px-4 pb-12 pt-8 sm:pt-12 lg:min-h-screen lg:pt-0">
+        {/* Language selector — top-right of right panel */}
+        <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
+          <LanguageSelector />
+        </div>
         <div className="w-full max-w-md">
           {/* Mobile logo + features */}
           <div className="mb-8 flex flex-col items-center gap-4 lg:hidden">

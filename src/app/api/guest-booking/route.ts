@@ -510,8 +510,8 @@ Need help?
 We look forward to welcoming you. Jai Shri Krishna!
 
 — Guruvayur Dham Team
-   16 premium rooms · 2 min from Mathura Station
-   {{phone}}  ·  bookings@guruvayurdham.co.in
+   52 premium rooms · 2 min walk to East Nada
+   {{phone}}  ·  stay@guruvayurdham.com
 `;
 
 /**

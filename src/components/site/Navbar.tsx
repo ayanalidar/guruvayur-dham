@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle, Settings, User, CreditCard, ChevronDown, BookOpen, MapPin, Calendar } from "lucide-react";
+import { Menu, X, Phone, CreditCard, ChevronDown, BookOpen, MapPin, Calendar, User } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { SEO_PAGES, getSEOPagesByCategory, ALL_SEO_PAGES } from "@/lib/seo-pages";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
-import ThemeToggle from "@/components/site/ThemeToggle";
-import LanguageSelector from "@/components/site/LanguageSelector";
 import { useI18n } from "@/lib/i18n/context";
 
 export default function Navbar() {
@@ -206,19 +204,9 @@ export default function Navbar() {
             onClick={() => go("/login")}
             className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"
             aria-label="Login"
-            title="Guest Login"
+            title="Login"
           >
             <User className="h-4 w-4" />
-          </button>
-          <ThemeToggle />
-          <LanguageSelector />
-          <button
-            onClick={() => go("/admin")}
-            className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"
-            aria-label="Admin Dashboard"
-            title="Admin Dashboard"
-          >
-            <Settings className="h-4 w-4" />
           </button>
           <a
             href={`tel:${phoneRaw}`}
@@ -313,15 +301,7 @@ export default function Navbar() {
                   onClick={() => go("/login")}
                   className="mt-2 block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
                 >
-                  <User className="mr-2 inline h-4 w-4" /> {t("nav.login") || "Guest Login"}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => go("/admin")}
-                  className="block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
-                >
-                  <Settings className="mr-2 inline h-4 w-4" /> {t("nav.admin") || "Admin Dashboard"}
+                  <User className="mr-2 inline h-4 w-4" /> {t("nav.login") || "Login"}
                 </button>
               </li>
             </ul>
