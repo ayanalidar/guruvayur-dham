@@ -16,7 +16,7 @@ const CHANNELS = [
 const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; label: string }> = [
   { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
   { key: "site.phone", value: "+91-90908 20208", category: "site", label: "Phone" },
-  { key: "site.email", value: "stay@guruvayurdham.com", category: "site", label: "Email" },
+  { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Email" },
   { key: "site.address", value: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001", category: "site", label: "Address" },
   { key: "hero.headline", value: "Where Your Stay Becomes Part of the Journey", category: "hero", label: "Hero Headline" },
   { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land", category: "hero", label: "Hero Subheadline" },

@@ -196,7 +196,7 @@ export default function Footer() {
             <li className="flex gap-3">
               <BedDouble className="mt-0.5 h-4 w-4 flex-shrink-0 text-champagne/80" />
               <span className="text-ivory/60">
-                {totalRooms} {t('hero.rooms') || "rooms"} · {distanceToTemple}
+                {totalRooms}+ {t('hero.rooms') || "rooms"} · {distanceToTemple}
               </span>
             </li>
           </ul>

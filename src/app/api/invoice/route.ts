@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     fromName: "Guruvayur Dham",
     fromAddress: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001",
     fromPhone: "+91-90908 20208",
-    fromEmail: "stay@guruvayurdham.com",
+    fromEmail: "bookings@guruvayurdham.co.in",
     fromGST: "32ABCDE1234F1Z5",
     // To
     toName: booking.guestName,

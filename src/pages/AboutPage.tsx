@@ -11,7 +11,7 @@ import { GoldFoilText, ImageReveal, MandalaDivider, MagneticButton, CountUp, OmW
 const HIGHLIGHTS = [
   "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
   "Family-run since 1998 · three generations of warm hospitality",
-  "52 rooms across AC, non-AC, family, and dormitory categories",
+  "16+ rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
   "Tie-ups with pure-veg pure-veg restaurants for in-room meal delivery",
