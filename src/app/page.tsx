@@ -74,13 +74,24 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
-  // Check maintenance mode on mount + every 60 seconds
+  // Check maintenance mode on mount + every 60 seconds.
+  // SAFETY: any fetch error OR malformed response keeps the site online.
+  // The MAINTENANCE_MODE flag is ONLY honored when the API explicitly returns
+  // { enabled: true } from a reachable DB. Default state is `false`.
   useEffect(() => {
     const checkMaintenance = () => {
       fetch("/api/maintenance/mode", { cache: "no-store" })
-        .then(r => r.json())
-        .then(j => setMaintenanceMode(j.enabled || false))
-        .catch(() => {});
+        .then(r => r.ok ? r.json() : null)
+        .then(j => {
+          // Only set to true if the API explicitly says so.
+          // Missing field / null response / network error → stays false.
+          if (j && j.enabled === true) setMaintenanceMode(true);
+          else setMaintenanceMode(false);
+        })
+        .catch(() => {
+          // Network/DB failure — keep the site online.
+          setMaintenanceMode(false);
+        });
     };
     checkMaintenance();
     const interval = setInterval(checkMaintenance, 60000);

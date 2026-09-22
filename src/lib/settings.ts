@@ -187,7 +187,17 @@ export async function isSettingConfigured(key: string): Promise<boolean> {
 
 /**
  * Check if a feature flag is enabled.
- * Falls back to `true` if the flag doesn't exist (opt-in flags default to on).
+ *
+ * Fallback chain (safest-first):
+ *   1. Cache hit (if not stale)
+ *   2. DB row exists → use its `enabled` value
+ *   3. DB row missing → use the default from DEFAULT_FEATURE_FLAGS below
+ *   4. DB unreachable → for MAINTENANCE_MODE return false (NEVER break the site);
+ *      for other flags, fall back to the DEFAULT_FEATURE_FLAGS default.
+ *
+ * SAFETY INVARIANT: MAINTENANCE_MODE must never default to true.
+ * If we can't read the DB, the site must stay online — a broken DB should
+ * not take the entire guest-facing site offline.
  */
 export async function getFeatureFlag(key: string): Promise<boolean> {
   const cached = flagCache.get(key);
@@ -195,13 +205,20 @@ export async function getFeatureFlag(key: string): Promise<boolean> {
     return cached.enabled;
   }
 
+  // Fallback default from the in-code DEFAULT_FEATURE_FLAGS list.
+  // This is used when the DB row is missing (seed not run yet) OR DB unreachable.
+  const defaultFlag = DEFAULT_FEATURE_FLAGS.find((f) => f.key === key);
+  const fallbackDefault =
+    key === "MAINTENANCE_MODE" ? false : defaultFlag?.enabled ?? true;
+
   try {
     const row = await db.featureFlag.findUnique({ where: { key } });
-    const enabled = row ? row.enabled : true; // default: enabled
+    const enabled = row ? row.enabled : fallbackDefault;
     flagCache.set(key, { enabled, at: Date.now() });
     return enabled;
   } catch {
-    return true; // DB unreachable — assume enabled
+    // DB unreachable — fall back to safe default.
+    return fallbackDefault;
   }
 }
 
