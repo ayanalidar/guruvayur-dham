@@ -95,7 +95,7 @@ function ErrorFallback({ error, onRetry }: { error: string; onRetry: () => void 
           <button onClick={onRetry} className="btn-luxe text-sm">
             <RefreshCw className="h-4 w-4" /> Try Again
           </button>
-          <button onClick={() => { window.location.hash = "#/"; window.location.reload(); }} className="btn-ghost-luxe text-sm">
+          <button onClick={() => { window.location.href = "/"; }} className="btn-ghost-luxe text-sm">
             <Home className="h-4 w-4" /> Go Home
           </button>
         </div>

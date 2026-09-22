@@ -28,13 +28,20 @@ const ToggleMaintenanceSchema = z.object({
 
 /**
  * GET /api/maintenance/mode
+ *
+ * PUBLIC — any visitor can check this. The homepage calls it on mount
+ * to decide whether to show the MaintenancePage holding screen.
+ * (Previously required MANAGER auth, which broke the homepage with a 401
+ * and caused JSON.parse on the empty body to throw.)
  */
 export async function GET(req: NextRequest) {
-  const { error } = await requireStaff(req, ["MANAGER"]);
-  if (error) return error;
-
-  const enabled = await getFeatureFlag("MAINTENANCE_MODE");
-  return NextResponse.json({ enabled });
+  try {
+    const enabled = await getFeatureFlag("MAINTENANCE_MODE");
+    return NextResponse.json({ enabled });
+  } catch (e: any) {
+    // If DB is unreachable, default to NOT in maintenance mode (don't break the homepage).
+    return NextResponse.json({ enabled: false, error: "DB unreachable" });
+  }
 }
 
 /**

@@ -284,7 +284,7 @@ async function seed() {
   console.log(`✓ ${demoBookings.length} demo bookings seeded with sync logs`);
 
   console.log("\n✅ Seed complete!");
-  console.log("\n📋 Admin: visit /#/admin");
+  console.log("\n📋 Admin: visit /admin");
   await db.$disconnect();
 }
 

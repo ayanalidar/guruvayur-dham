@@ -1,3 +1,9 @@
 {
+  "rewrites": [
+    {
+      "source": "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|logo-.*\\.png|guruyavur\\.png|rooms/.*|manifest\\.webmanifest|sw\\.js|workbox-.*\\.js).*)",
+      "destination": "/"
+    }
+  ],
   "crons": []
 }

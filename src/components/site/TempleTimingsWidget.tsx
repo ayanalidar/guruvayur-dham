@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, MapPin, ChevronRight } from "lucide-react";
 import { SITE } from "@/lib/site-data";
@@ -9,7 +10,7 @@ import { useHashRoute } from "@/lib/router";
 /**
  * Temple Timings Widget
  * Shows live darshan timings for all 7 Mathura temples with "open now" status.
- * 
+ *
  * CMS-editable:
  * - templeTimings.enabled (feature flag)
  * - Each temple's timings stored in SITE.nearbyTemples (editable via site-data)
@@ -19,9 +20,20 @@ export default function TempleTimingsWidget() {
   const { get } = useContent();
   const { navigate } = useHashRoute();
 
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentMin = now.getMinutes();
+  // Client-only "now" — avoids SSR/CSR hydration mismatch (React #418).
+  // Server has no concept of "current time" matching client; render closed state
+  // initially, then re-render with real time after mount.
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    // Tick every 60 seconds so the open/closed status stays fresh.
+    const tick = () => setNow(new Date());
+    tick();
+    const id = setInterval(tick, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const currentHour = now?.getHours() ?? 0;
+  const currentMin = now?.getMinutes() ?? 0;
   const currentTime = currentHour * 60 + currentMin; // minutes since midnight
 
   // Parse a timing string like "5 AM - 12 PM, 4 - 9:30 PM" into session objects
@@ -46,6 +58,8 @@ export default function TempleTimingsWidget() {
   }
 
   function isOpenNow(timingStr: string): { open: boolean; nextSession?: string } {
+    // Before client mounts (now === null), return closed state — avoids hydration mismatch.
+    if (!now) return { open: false };
     const sessions = parseTimings(timingStr);
     for (const s of sessions) {
       if (currentTime >= s.start && currentTime < s.end) {

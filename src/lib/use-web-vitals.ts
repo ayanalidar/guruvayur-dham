@@ -25,7 +25,7 @@ export function useWebVitals() {
     if (!shouldTrack) return;
 
     const reportMetric = (metric: { name: string; value: number }) => {
-      const page = window.location.hash.replace("#", "/") || "/";
+      const page = window.location.pathname || "/";
       const data: any = { page };
 
       switch (metric.name) {

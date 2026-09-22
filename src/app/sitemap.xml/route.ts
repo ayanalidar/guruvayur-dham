@@ -17,22 +17,22 @@ const SITE_URL = "https://www.guruvayurdham.co.in";
 export async function GET() {
   const today = new Date().toISOString().slice(0, 10);
 
-  // Static hash routes — every page the SPA serves
+  // Static routes — every page the SPA serves (clean URLs, no #/)
   const staticRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = [
     { path: "/", priority: "1.0", changefreq: "daily" },
-    { path: "/#/rooms", priority: "0.9", changefreq: "weekly" },
-    { path: "/#/pooja", priority: "0.9", changefreq: "weekly" },
-    { path: "/#/about", priority: "0.7", changefreq: "monthly" },
-    { path: "/#/gallery", priority: "0.6", changefreq: "monthly" },
-    { path: "/#/events", priority: "0.8", changefreq: "weekly" },
-    { path: "/#/blog", priority: "0.8", changefreq: "daily" },
-    { path: "/#/faq", priority: "0.6", changefreq: "monthly" },
-    { path: "/#/contact", priority: "0.7", changefreq: "monthly" },
+    { path: "/rooms", priority: "0.9", changefreq: "weekly" },
+    { path: "/pooja", priority: "0.9", changefreq: "weekly" },
+    { path: "/about", priority: "0.7", changefreq: "monthly" },
+    { path: "/gallery", priority: "0.6", changefreq: "monthly" },
+    { path: "/events", priority: "0.8", changefreq: "weekly" },
+    { path: "/blog", priority: "0.8", changefreq: "daily" },
+    { path: "/faq", priority: "0.6", changefreq: "monthly" },
+    { path: "/contact", priority: "0.7", changefreq: "monthly" },
   ];
 
   // SEO landing pages — festivals, hotels-near, darshan-timings
   const seoRoutes: Array<{ path: string; priority: string; changefreq: string; lastmod?: string }> = ALL_SEO_PAGES.map((p) => ({
-    path: `/#/${p.slug}`,
+    path: `/${p.slug}`,
     priority: p.category === "festivals" ? "0.9" : p.category === "hotels-near" ? "0.85" : "0.8",
     changefreq: p.category === "festivals" ? "monthly" : "weekly",
   }));
@@ -46,7 +46,7 @@ export async function GET() {
       select: { slug: true, updatedAt: true },
     });
     blogRoutes = posts.map((p) => ({
-      path: `/#/blog/${p.slug}`,
+      path: `/blog/${p.slug}`,
       priority: "0.7",
       changefreq: "monthly",
       lastmod: p.updatedAt.toISOString().slice(0, 10),

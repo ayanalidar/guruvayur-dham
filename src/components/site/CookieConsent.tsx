@@ -89,7 +89,7 @@ export default function CookieConsent() {
                 <button onClick={() => accept("essential")} className="rounded-full border border-champagne/20 px-4 py-2 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/10">
                   Essential Only
                 </button>
-                <button onClick={() => { window.location.hash = "#/privacy"; }} className="rounded-full border border-champagne/10 px-4 py-2 text-xs text-ivory/50 hover:text-ivory">
+                <button onClick={() => { window.location.href = "/privacy"; }} className="rounded-full border border-champagne/10 px-4 py-2 text-xs text-ivory/50 hover:text-ivory">
                   Privacy Policy
                 </button>
               </div>
