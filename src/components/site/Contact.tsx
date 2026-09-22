@@ -247,7 +247,7 @@ ${data.message}`;
                           <FormLabel>Full Name *</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Rajesh Menon"
+                              placeholder="Rajesh Sharma"
                               className="focus-ring"
                               {...field}
                             />

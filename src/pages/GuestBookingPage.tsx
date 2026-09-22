@@ -333,7 +333,7 @@ export default function GuestBookingPage() {
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Name *</label>
-                    <input value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Rajesh Menon" className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                    <input value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Rajesh Sharma" className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
                   </div>
                   <div>
                     <label className="text-[10px] uppercase tracking-wider text-ivory/50">Phone / WhatsApp *</label>

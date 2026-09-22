@@ -42,7 +42,7 @@ export default function EventsPage() {
           "@type": "PostalAddress",
           streetAddress: "temple gate, Guruvayur",
           addressLocality: "Guruvayur",
-          addressRegion: "Kerala",
+          addressRegion: "Uttar Pradesh",
           addressCountry: "IN",
         },
       },

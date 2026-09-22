@@ -230,7 +230,7 @@ function HousekeepingSection() {
       <h2 className="font-serif text-2xl text-ivory">Housekeeping Dashboard</h2>
       <p className="mt-1 text-sm text-ivory/60">Tap a room to update its status. Bulk actions below.</p>
       <div className="mt-4 flex gap-2">
-        <button onClick={() => fetch("/api/housekeeping", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fromStatus: "DIRTY", toStatus: "CLEANING", assignedTo: "Ravi Menon" }) }).then(load)} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs text-champagne hover:bg-champagne/10">
+        <button onClick={() => fetch("/api/housekeeping", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fromStatus: "DIRTY", toStatus: "CLEANING", assignedTo: "Ravi Sharma" }) }).then(load)} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs text-champagne hover:bg-champagne/10">
           Mark all dirty → cleaning
         </button>
         <button onClick={() => fetch("/api/housekeeping", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fromStatus: "CLEANING", toStatus: "READY" }) }).then(load)} className="rounded-full border border-champagne/20 px-3 py-1.5 text-xs text-champagne hover:bg-champagne/10">
@@ -421,7 +421,7 @@ function PricingSection() {
             <p className="flex justify-between text-ivory/70"><span>Early Bird (30+ days)</span><span className="text-green-300">-10%</span></p>
             <p className="flex justify-between text-ivory/70"><span>Last-Minute (same day)</span><span className="text-green-300">-15%</span></p>
             <p className="flex justify-between text-ivory/70"><span>Summer Off-Season</span><span className="text-green-300">-15%</span></p>
-            <p className="flex justify-between text-ivory/70"><span>Ekadasi Early Bird</span><span className="text-green-300">-15%</span></p>
+            <p className="flex justify-between text-ivory/70"><span>Janmashtami Early Bird</span><span className="text-green-300">-15%</span></p>
           </div>
         </div>
         <div className="rounded-xl border border-champagne/10 bg-ink/50 p-4">

@@ -363,7 +363,7 @@ export default function LoginPage() {
                   {guestMode === "register" && (
                     <div className="space-y-4">
                       <Field icon={UserIcon} label="Full Name">
-                        <input value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Rajesh Menon" className="input-luxe" />
+                        <input value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Rajesh Sharma" className="input-luxe" />
                       </Field>
                       <Field icon={Mail} label="Email">
                         <input type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} placeholder="rajesh@example.com" className="input-luxe" />

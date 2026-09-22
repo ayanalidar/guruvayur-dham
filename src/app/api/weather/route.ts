@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const date = dateParam ? new Date(dateParam) : new Date();
   const month = date.getMonth();
 
-  // Kerala climate patterns by month
+  // Mathura climate patterns by month
   const seasons = [
     { name: "Winter", tempRange: [22, 32], humidity: 65, rain: 5, desc: "Pleasant mornings, cool evenings" }, // Jan
     { name: "Winter", tempRange: [23, 33], humidity: 65, rain: 5, desc: "Pleasant mornings, warm days" }, // Feb
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
   });
 
   return NextResponse.json({
-    location: "Guruvayur, Kerala, India",
+    location: "Mathura, Uttar Pradesh, India",
     coordinates: { lat: 10.5945, lng: 76.0424 },
     current: isToday ? {
       temp,

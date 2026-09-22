@@ -258,10 +258,12 @@ export async function getCrowdForecast(date: Date): Promise<{ level: string; per
   const month = date.getMonth();
   const dom = date.getDate();
   let festival = "";
-  if (month === 11 && dom === 8) festival = "Guruvayur Ekadasi";
-  else if (month === 3 && dom === 14) festival = "Vishu";
-  else if (month === 1 && dom >= 26 && dom <= 30) festival = "Utsavam";
-  else if (month === 7 && dom === 25) festival = "Ashtami Rohini";
+  // Mathura/Braj festivals — these trigger "Very High" crowd forecast + surge pricing
+  if (month === 7 && dom === 26) festival = "Janmashtami"; // Aug 26 — Krishna's birthday
+  else if (month === 2 && dom === 14) festival = "Holi"; // Mar 14 — Lathmar Holi
+  else if (month === 10 && dom === 5) festival = "Kartik Purnima"; // Nov 5
+  else if (month === 9 && dom === 21) festival = "Diwali"; // Oct 21
+  else if (month === 8 && dom === 10) festival = "Radhashtami"; // Sep 10
 
   if (festival) {
     return { level: "Very High", percentage: 95, reason: `${festival} festival` };

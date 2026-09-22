@@ -129,7 +129,7 @@ export default function ReviewSubmitPage() {
               <input
                 value={form.authorName}
                 onChange={(e) => setForm({ ...form, authorName: e.target.value })}
-                placeholder="Rajesh Menon"
+                placeholder="Rajesh Sharma"
                 className="input-luxe mt-1"
               />
             </div>

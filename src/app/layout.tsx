@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     "AC rooms Guruvayur",
     "stay near Guruvayur temple",
     "Guruvayur darshan timings",
-    "Kerala temple stay",
+    "Mathura temple stay",
   ],
   authors: [{ name: "Guruvayur Dham" }],
   creator: "Guruvayur Dham",

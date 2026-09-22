@@ -660,7 +660,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
     jsonLdType: "FAQPage",
     eyebrow: "Travel Tips",
     intro: [
-      "Mathura temples have a modest dress code that all visitors are expected to follow. While the rules are not as strict as some South Indian temples, dressing appropriately shows respect for the sacred space and ensures a smooth entry without being turned away. This guide covers what to wear, what to carry, and what to avoid.",
+      "Mathura temples have a modest dress code that all visitors are expected to follow. While the dress code is traditional, dressing appropriately shows respect for the sacred space and ensures a smooth entry without being turned away. This guide covers what to wear, what to carry, and what to avoid.",
     ],
     sections: [
       {

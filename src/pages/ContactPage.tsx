@@ -170,7 +170,7 @@ ${data.message}`;
                       <FormField control={form.control} name="name" render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-ivory/70">Full Name *</FormLabel>
-                          <FormControl><Input placeholder="Rajesh Menon" {...field} /></FormControl>
+                          <FormControl><Input placeholder="Rajesh Sharma" {...field} /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />

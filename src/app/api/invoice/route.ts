@@ -46,8 +46,8 @@ export async function GET(req: NextRequest) {
     dueDate: new Date(booking.checkIn).toISOString().slice(0, 10),
     // From
     fromName: "Guruvayur Dham",
-    fromAddress: "temple road, Near Shri Krishna Janmabhoomi, Guruvayur, Kerala 680101",
-    fromPhone: "+91 98765 43210",
+    fromAddress: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001",
+    fromPhone: "+91-90908 20208",
     fromEmail: "bookings@guruvayurdham.co.in",
     fromGST: "32ABCDE1234F1Z5",
     // To

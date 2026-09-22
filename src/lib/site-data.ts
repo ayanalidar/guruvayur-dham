@@ -375,25 +375,25 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Anand Krishnan",
     city: "Chennai",
     rating: 5,
-    text: "Stayed for two nights during Ekadasi. The room was spotless, the staff arranged our 3 AM Mangala Aarti darshan slot, and we were inside the temple in literally four minutes from check-out. The chai at reception was a beautiful touch. Will come back every year.",
+    text: "Stayed for two nights during Janmashtami. The room was spotless, the staff arranged our 5 AM Mangala Aarti darshan slot, and we were inside the temple in literally four minutes from check-out. The chai at reception was a beautiful touch. Will come back every year.",
     room: "Deluxe AC Room",
   },
   {
-    name: "Lakshmi Pillai",
+    name: "Lakshmi Sharma",
     city: "Bengaluru",
     rating: 5,
     text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked, and the staff kept a wheelchair ready for amma. They even booked our Archana pooja in advance. Felt like staying with relatives, not at a hotel.",
     room: "Family Suite AC",
   },
   {
-    name: "Rajesh Menon",
+    name: "Rajesh Sharma",
     city: "Mumbai",
     rating: 5,
     text: "Booked the Deluxe room for a quick darshan trip. Honestly didn't expect much for ₹1,500, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
     room: "Deluxe Room",
   },
   {
-    name: "Sunita Nair",
+    name: "Sunita Sharma",
     city: "Kolkata",
     rating: 5,
     text: "We did our daughter's Annaprashan here. The Guruvayur Dham team coordinated with the temple pandit, arranged the prasadam kit, and even booked a photographer. The whole ceremony felt sacred and stress-free. Forever grateful.",
@@ -489,8 +489,8 @@ export const GALLERY_IMAGES: GalleryImage[] = [
   {
     tab: "Surroundings",
     src: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=600&fit=crop",
-    alt: "Kerala backwater near Guruvayur",
-    caption: "Nearby Punnathur Kotta elephant sanctuary",
+    alt: "Yamuna river at Vishram Ghat, Mathura",
+    caption: "Vishram Ghat on the Yamuna river — evening aarti",
   },
   {
     tab: "Surroundings",
@@ -761,7 +761,7 @@ export const FAQS = [
   },
   {
     q: "Can I get a refund if I cancel my booking?",
-    a: "Cancellations made 7+ days before check-in: 90% refund. 3-6 days before: 50% refund. Less than 72 hours before: no refund. Festival dates (Ekadasi, Vishu, Utsavam) have a strict no-refund policy but can be rescheduled within 60 days at no charge.",
+    a: "Cancellations made 7+ days before check-in: 90% refund. 3-6 days before: 50% refund. Less than 72 hours before: no refund. Festival dates (Janmashtami, Holi) have a strict no-refund policy but can be rescheduled within 60 days at no charge.",
   },
   {
     q: "Is WiFi free? How fast is it?",

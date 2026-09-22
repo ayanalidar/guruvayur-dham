@@ -243,7 +243,7 @@ function WalkInDialog({ open, onClose, rooms, onCreated }: any) {
             </Select>
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Guest Name *"><Input value={form.guestName} onChange={(e) => setForm({ ...form, guestName: e.target.value })} placeholder="Rajesh Menon" /></Field>
+            <Field label="Guest Name *"><Input value={form.guestName} onChange={(e) => setForm({ ...form, guestName: e.target.value })} placeholder="Rajesh Sharma" /></Field>
             <Field label="Phone *"><Input value={form.guestPhone} onChange={(e) => setForm({ ...form, guestPhone: e.target.value })} placeholder="+91 98765 43210" /></Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
