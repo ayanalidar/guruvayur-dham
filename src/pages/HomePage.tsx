@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
-import { ChevronRight, Star, ArrowUpRight, MapPin, Sparkles, Quote, Phone } from "lucide-react";
+import { ChevronRight, Star, ArrowUpRight, MapPin, Sparkles, Quote, Phone, Route, Clock, CalendarDays, Wand2, CheckCircle2 } from "lucide-react";
 import {
   TRUST_BADGES,
   WHY_CHOOSE_US,
@@ -43,6 +43,7 @@ export default function HomePage() {
       <TempleTimingsWidget />
       <WhyChooseUs />
       <RoomPreviews />
+      <PlannerCard />
       <PlanDarshan />
       <PoojaPreview />
       <ReviewsWidget />
@@ -472,6 +473,194 @@ function PlanDarshan() {
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============ PILGRIMAGE PLANNER — stunning feature card ============ */
+const PLANNER_DAYS = [
+  {
+    day: 1,
+    title: "Day 1 · Mathura",
+    summary: "Krishna Janmabhoomi → Dwarkadhish → Vishram Ghat",
+    stops: 3,
+    icon: "🏛",
+    highlight: "Mangala Aarti at 5 AM",
+  },
+  {
+    day: 2,
+    title: "Day 2 · Vrindavan",
+    summary: "Banke Bihari → Prem Mandir → ISKCON",
+    stops: 3,
+    icon: "🪷",
+    highlight: "Sandhya Aarti at 6 PM",
+  },
+  {
+    day: 3,
+    title: "Day 3 · Barsana",
+    summary: "Radha Rani Mandir → Nandgaon → Return",
+    stops: 2,
+    icon: "🌸",
+    highlight: "Sunset from Radha Kund",
+  },
+];
+
+function PlannerCard() {
+  const { navigate } = useHashRoute();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  // 3D tilt — subtle, premium feel
+  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), { stiffness: 200, damping: 20 });
+  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), { stiffness: 200, damping: 20 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    my.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const onLeave = () => {
+    mx.set(0);
+    my.set(0);
+  };
+
+  const go = () => navigate("/planner");
+
+  return (
+    <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
+      {/* Ambient backdrop — mandala glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-1/2 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-champagne/[0.06] blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 select-none font-serif text-[28rem] leading-none text-champagne/[0.03]">
+          ☺
+        </div>
+      </div>
+
+      <div className="container-x relative">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+          className="mx-auto max-w-4xl text-center"
+        >
+          <span className="section-eyebrow">
+            <Wand2 className="h-3.5 w-3.5" /> Free Interactive Tool
+          </span>
+          <h2 className="section-title mt-3">
+            Plan Your <GoldFoilText>Sacred Journey</GoldFoilText> in 60 Seconds
+          </h2>
+          <p className="section-subtitle mt-3">
+            Pick 1-3 days, choose which of the 7 Mathura temples to include, and we'll
+            auto-build a day-by-day itinerary with darshan timings, travel time from
+            Guruvayur Dham, and pro tips — all editable.
+          </p>
+        </motion.div>
+
+        {/* The big card — clickable, tilt-enabled */}
+        <motion.div
+          ref={containerRef}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          onClick={go}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
+          className="group relative mx-auto mt-12 max-w-5xl cursor-pointer overflow-hidden rounded-3xl border border-champagne/25 bg-gradient-to-br from-ink-card via-ink-card to-ink-soft p-8 shadow-luxe-lg sm:p-12"
+        >
+          {/* Hover glow */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-champagne/0 via-champagne/0 to-champagne/0 transition-colors duration-500 group-hover:from-champagne/0 group-hover:via-champagne/[0.02] group-hover:to-champagne/[0.05]" />
+          {/* Corner sparkles */}
+          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gradient-to-br from-champagne/15 to-transparent opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
+          <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-gradient-to-tr from-champagne/10 to-transparent opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
+
+          {/* Header row */}
+          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="grid h-9 w-9 place-items-center rounded-full border border-champagne/25 bg-champagne/5 text-champagne">
+                  <Route className="h-4 w-4" />
+                </span>
+                <h3 className="font-serif text-2xl text-ivory sm:text-3xl">
+                  Pilgrimage <GoldFoilText>Planner</GoldFoilText>
+                </h3>
+              </div>
+              <p className="mt-2 text-sm text-ivory/60">
+                1-day · 2-day · 3-day itineraries · auto-optimized for darshan timings
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-champagne/20 bg-champagne/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-champagne sm:self-auto">
+              <CheckCircle2 className="h-3 w-3" /> Free · No signup
+            </span>
+          </div>
+
+          {/* 3-day preview cards */}
+          <div className="relative mt-8 grid gap-4 sm:grid-cols-3" style={{ transform: "translateZ(40px)" }}>
+            {PLANNER_DAYS.map((d, i) => (
+              <motion.div
+                key={d.day}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.15 + i * 0.1 }}
+                className="relative overflow-hidden rounded-2xl border border-champagne/10 bg-ink/40 p-5 backdrop-blur-sm transition-all duration-300 hover:border-champagne/30 hover:bg-ink/60"
+              >
+                <div className="flex items-start justify-between">
+                  <span className="font-serif text-3xl text-champagne/80">{d.icon}</span>
+                  <span className="rounded-full border border-champagne/15 bg-champagne/5 px-2 py-0.5 text-[10px] font-semibold text-champagne/80">
+                    Day {d.day}
+                  </span>
+                </div>
+                <h4 className="mt-3 font-serif text-lg text-ivory">{d.title}</h4>
+                <p className="mt-1 text-xs leading-relaxed text-ivory/55">{d.summary}</p>
+                <div className="mt-3 flex items-center gap-3 text-[10px] text-ivory/40">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-3 w-3" /> {d.stops} stops
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <Clock className="h-3 w-3" /> {d.highlight}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Feature bullets */}
+          <div className="relative mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-ivory/50">
+            {[
+              "7 Mathura temples pre-loaded",
+              "Auto darshan-timing aware",
+              "Travel time from hotel included",
+              "Save as PDF",
+            ].map((f, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5">
+                <CheckCircle2 className="h-3 w-3 text-champagne/60" /> {f}
+              </span>
+            ))}
+          </div>
+
+          {/* Big CTA */}
+          <div className="relative mt-8 flex justify-center" style={{ transform: "translateZ(50px)" }}>
+            <motion.button
+              onClick={go}
+              whileTap={{ scale: 0.98 }}
+              className="btn-luxe inline-flex items-center gap-2 text-base sm:text-lg"
+            >
+              <CalendarDays className="h-5 w-5" /> Open Pilgrimage Planner
+              <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Sub-caption */}
+        <p className="mt-5 text-center text-xs text-ivory/40">
+          Click anywhere on the card to launch the planner in this tab.
+        </p>
       </div>
     </section>
   );
