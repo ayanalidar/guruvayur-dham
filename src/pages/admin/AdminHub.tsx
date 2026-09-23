@@ -7,7 +7,7 @@ import {
   Users, Utensils, Flame, Tag, TrendingUp, Building2, Image, BookOpen,
   Wrench, Receipt, Download, Bell, Bot, CloudSun, MapPin, Star, ShoppingCart,
   RefreshCw, Check, X, Plus, Phone, Mail, ExternalLink, AlertCircle,
-  ShieldCheck, Lock,
+  ShieldCheck, Lock, SlidersHorizontal,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -45,6 +45,7 @@ const SECTIONS = [
   { key: "chatbot", label: "AI Chatbot", icon: Bot },
   { key: "weather", label: "Weather & Crowd", icon: CloudSun },
   { key: "staff", label: "Staff", icon: Settings },
+  { key: "system", label: "System Settings · Integrations", icon: SlidersHorizontal, route: "/admin/system" },
 ];
 
 export default function AdminHub() {
