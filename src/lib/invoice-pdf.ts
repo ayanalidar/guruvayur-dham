@@ -1,10 +1,15 @@
 /**
  * PDF generator for tax invoices.
  *
- * Uses pdfmake (lightweight, Vercel-compatible, ~600KB) to build the PDF
- * matching the sample invoice layout — dark red accents (#8B0000),
+ * Uses pdfmake v0.3 (lightweight, Vercel-compatible, ~600KB) to build
+ * the PDF matching the sample invoice layout — dark red accents (#8B0000),
  * black address box, dark red table header, dark red G. TOTAL box,
  * dotted-line separators in customer/stay-details sections.
+ *
+ * pdfmake v0.3 API:
+ *   - import('pdfmake') returns an INSTANCE (not the Printer class)
+ *   - instance has createPdf(docDefinition, options) → OutputDocumentServer
+ *   - OutputDocumentServer.getBuffer() → Promise<Buffer>
  *
  * Layout matches sample PDF exactly:
  *   1. Top bar: GSTIN | TAX INVOICE | Original
@@ -26,67 +31,74 @@ import type { InvoiceData } from "@/lib/invoice";
 
 // Dark red accent — matches sample invoice
 const DARK_RED = "#8B0000";
-const DARK_RED_LIGHT = "#A52A2A";
 const TEXT_DARK = "#333333";
 const TEXT_GREY = "#666666";
 const LINE_GREY = "#CCCCCC";
 const BG_BLACK = "#000000";
 
-let printerInitialized = false;
-let PdfPrinter: any = null;
-let printerInstance: any = null; // instantiated once, reused
+// Singleton pdfmake instance (instantiated once per cold start, reused)
+let pdfmakeInstance: any = null;
 
-async function initPrinter(): Promise<any> {
-  if (printerInitialized && printerInstance) return printerInstance;
-  // Dynamic import — pdfmake uses Node fs module under the hood, so it must
-  // run in the Node.js runtime (which is the default for Vercel functions).
-  const printerMod: any = await import("pdfmake");
+async function initPdfmake(): Promise<any> {
+  if (pdfmakeInstance) return pdfmakeInstance;
+  // pdfmake v0.3 — the main entry exports an instance of the base class.
+  // Dynamic import works in Vercel serverless Node runtime.
+  const mod: any = await import("pdfmake");
+  // The actual instance is wrapped — find it through multiple fallbacks.
+  const instance = mod.default || mod["module.exports"] || mod.default?.["module.exports"] || mod;
 
-  // DEBUG: log the import shape so we can see what pdfmake actually exports
-  console.log("[invoice-pdf] pdfmake import shape:", {
-    type: typeof printerMod,
-    keys: Object.keys(printerMod || {}),
-    hasDefault: !!printerMod.default,
-    defaultType: typeof printerMod?.default,
-    hasPrinter: !!printerMod?.Printer,
-    printerType: typeof printerMod?.Printer,
-  });
-
-  // pdfmake's ESM export shape varies — try multiple fallbacks
-  const PrinterClass =
-    printerMod.default ||              // ESM: import PdfPrinter from "pdfmake"
-    printerMod.Printer ||              // named export
-    printerMod.default?.Printer ||     // .default.Printer (some bundlings)
-    printerMod;                        // CJS: module.exports = Printer
-
-  if (typeof PrinterClass !== "function") {
-    throw new Error(
-      `pdfmake Printer could not be resolved — ` +
-      `typeof PrinterClass=${typeof PrinterClass}, ` +
-      `keys=${Object.keys(printerMod || {}).join(",")}`,
-    );
+  // Load the bundled Roboto fonts VFS (has ₹ glyph since 2014).
+  // ESM import() requires explicit .js extension — pdfmake's vfs_fonts.js
+  // exports each font DIRECTLY as a top-level property (NOT nested under .vfs).
+  let vfsMod: any;
+  try {
+    vfsMod = await import("pdfmake/build/vfs_fonts.js");
+  } catch {
+    // Fallback to bare specifier (some bundlers like Next.js handle this)
+    vfsMod = await import("pdfmake/build/vfs_fonts");
+  }
+  // Also try require() if both imports failed (Edge/Node interop)
+  if (!vfsMod || (typeof vfsMod !== "object" && typeof vfsMod !== "function")) {
+    const createRequire = (await import("module")).default?.createRequire;
+    if (createRequire) {
+      const req = createRequire(import.meta.url);
+      vfsMod = req("pdfmake/build/vfs_fonts");
+    }
+  }
+  // vfsMod.vfs might exist in some versions; otherwise fonts are inside .default
+  // (ESM wraps CJS exports under .default when dynamic-imported)
+  const vfsData = vfsMod.vfs || vfsMod.default || vfsMod["module.exports"] || vfsMod;
+  if (instance.virtualfs && instance.virtualfs.storage) {
+    for (const [filename, content] of Object.entries(vfsData)) {
+      // Skip non-font keys (like __esModule, default). Only process string
+      // values — VFS font entries are base64-encoded strings.
+      if (typeof content !== "string") continue;
+      try {
+        instance.virtualfs.writeFileSync(filename, content, "base64");
+      } catch {
+        instance.virtualfs.storage[filename] = Buffer.from(content, "base64");
+      }
+    }
+  } else {
+    instance.virtualfs = { storage: {} };
+    for (const [filename, content] of Object.entries(vfsData)) {
+      if (typeof content !== "string") continue;
+      instance.virtualfs.storage[filename] = Buffer.from(content, "base64");
+    }
   }
 
-  PdfPrinter = PrinterClass;
-  // Register the bundled Roboto fonts (has ₹ glyph since 2014)
-  const vfsMod: any = await import("pdfmake/build/vfs_fonts");
-  // VFS shape varies between versions — try .default.vfs, then .vfs
-  const vfs = (vfsMod.default && vfsMod.default.vfs) || vfsMod.vfs || vfsMod;
-  PdfPrinter.vfs = vfs;
-  // Roboto variants — defined inside vfs_fonts. Pass to Printer constructor
-  // (modern pdfmake v0.2+ requires fonts config in constructor).
-  const fontsConfig = {
+  // Register fonts config — Roboto variants (must match VFS keys).
+  instance.setFonts({
     Roboto: {
       normal: "Roboto-Regular.ttf",
       bold: "Roboto-Medium.ttf",
       italics: "Roboto-Italic.ttf",
       bolditalics: "Roboto-MediumItalic.ttf",
     },
-  };
-  // Instantiate the printer ONCE — reuse on subsequent calls (warmer = faster)
-  printerInstance = new PdfPrinter(fontsConfig);
-  printerInitialized = true;
-  return printerInstance;
+  });
+
+  pdfmakeInstance = instance;
+  return instance;
 }
 
 /**
@@ -97,14 +109,12 @@ async function initPrinter(): Promise<any> {
 async function loadLogoBase64(logoPath: string): Promise<string | null> {
   if (!logoPath) return null;
   try {
-    // Resolve to absolute path. Accepts both /public/foo.png and public/foo.png.
     const abs = logoPath.startsWith("/")
       ? path.join(process.cwd(), logoPath)
       : path.join(process.cwd(), logoPath);
     const buf = await fs.readFile(abs);
     return `data:image/png;base64,${buf.toString("base64")}`;
   } catch {
-    // Fall back to fetching from the deployed site
     try {
       const url = logoPath.startsWith("http")
         ? logoPath
@@ -121,10 +131,9 @@ async function loadLogoBase64(logoPath: string): Promise<string | null> {
 
 /**
  * Build the pdfmake document definition for the invoice.
- * Pure data — no rendering. The actual PDF is rendered by createPdfKitDocument.
  */
 function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
-  // Helpers — dotted-line separator for customer/stay-details sections
+  // Helpers — bold label + value row, used in customer/stay sections
   const dottedRow = (label: string, value: string): any => ({
     columns: [
       { text: label, bold: true, fontSize: 10, color: TEXT_DARK, width: 80 },
@@ -133,10 +142,10 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 2, 0, 2],
   });
 
-  // Total row (right-aligned, no border)
+  // Total row — right-aligned, no border (except G. TOTAL which is boxed)
   const totalRow = (label: string, value: string, isBoxed = false): any => {
     if (isBoxed) {
-      // Dark red box for G. TOTAL — white text, full width of totals column
+      // Dark red box for G. TOTAL — white text
       return {
         stack: [
           {
@@ -147,7 +156,6 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
             margin: [4, 6, 4, 6],
           },
         ],
-        // Fill the row with dark red
         background: DARK_RED,
         margin: [0, 4, 0, 0],
       };
@@ -161,10 +169,9 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     };
   };
 
-  // Build customer + stay details 2-column grid with dotted separators
+  // Customer + stay details block
   const customerStayBlock = {
     stack: [
-      // Customer row
       {
         columns: [
           dottedRow("Name:", data.toName),
@@ -183,7 +190,6 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
           { text: "", width: "*" },
         ],
       },
-      // Stay details row
       {
         columns: [
           {
@@ -216,14 +222,13 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 10, 0, 10],
   };
 
-  // Items table body
+  // Items table
   const tableHeader = [
     { text: "SR. NO.", style: "tableHeader", alignment: "center" },
     { text: "PARTICULARS", style: "tableHeader", alignment: "left" },
     { text: "RATE", style: "tableHeader", alignment: "center" },
     { text: "AMOUNT", style: "tableHeader", alignment: "right" },
   ];
-
   const tableRows = data.items.map((it) => [
     { text: String(it.srNo), alignment: "center", fontSize: 10, color: TEXT_DARK },
     { text: it.description, alignment: "left", fontSize: 10, color: TEXT_DARK },
@@ -240,7 +245,7 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     if (data.sgstRate > 0) taxLines.push(totalRow(`SGST (${data.sgstRate}%)`, data.sgstAmount));
   }
 
-  // Totals stack (right-aligned column)
+  // Totals stack (right-aligned)
   const totalsStack = {
     stack: [
       totalRow("Total", data.subtotal),
@@ -250,10 +255,9 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     ],
     width: 280,
     margin: [0, 4, 0, 10],
-    alignment: "right" as const,
   };
 
-  // Bank details block (left, below totals)
+  // Bank details
   const bankBlock = {
     stack: [
       { text: "BANK DETAILS", bold: true, fontSize: 10, color: DARK_RED, decoration: "underline", margin: [0, 0, 0, 4] },
@@ -266,34 +270,26 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 8, 0, 0],
   };
 
-  // Footer — 2 columns: terms (left) + authorized (right)
+  // Footer — 2 columns
   const footerBlock = {
     columns: [
-      // Left: terms + customer signature
       {
         stack: [
           { text: "E. & O. E.", italics: true, fontSize: 8, color: TEXT_GREY },
           { text: "TERMS & CONDITIONS", bold: true, fontSize: 10, color: DARK_RED, decoration: "underline", margin: [0, 4, 0, 2] },
-          ...data.terms.map((t, i) => ({
-            text: `${i + 1}. ${t.replace(/^\d+\.\s*/, "")}`,
+          ...data.terms.map((t) => ({
+            text: t.replace(/^\d+\.\s*/, "").match(/^\d+\./) ? t : `${data.terms.indexOf(t) + 1}. ${t}`,
             fontSize: 9, color: TEXT_DARK, margin: [0, 0, 0, 1],
           })),
           { text: "", margin: [0, 20, 0, 0] },
           {
-            canvas: [
-              {
-                type: "line",
-                x1: 0, y1: 0, x2: 200, y2: 0,
-                lineWidth: 1, lineColor: TEXT_DARK,
-              },
-            ],
+            canvas: [{ type: "line", x1: 0, y1: 0, x2: 200, y2: 0, lineWidth: 1, lineColor: TEXT_DARK }],
             margin: [0, 30, 0, 2],
           },
           { text: "Customer Signature", fontSize: 9, color: TEXT_GREY },
         ],
         width: "*",
       },
-      // Right: authorized signatory
       {
         stack: [
           { text: "Certified that the particulars given above are true and correct", italics: true, fontSize: 9, color: TEXT_GREY, alignment: "center", margin: [0, 0, 0, 20] },
@@ -307,28 +303,19 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 20, 0, 0],
   };
 
-  // Build the top branding row (logo + hotel name + address box)
+  // Branding row (logo + hotel info)
   const brandingRow: any = {
     columns: [
-      // Logo
       logoBase64
-        ? {
-            image: logoBase64,
-            width: 120,
-            height: 60,
-            margin: [0, 0, 10, 0],
-          }
+        ? { image: logoBase64, width: 120, height: 60, margin: [0, 0, 10, 0] }
         : { text: "", width: 120 },
-      // Hotel name + address + phone/email
       {
         stack: [
           { text: data.fromName.toUpperCase(), bold: true, fontSize: 22, color: DARK_RED, alignment: "center" as const },
           {
-            // Black-bg address box
             stack: [{ text: data.fromAddress, color: "#FFFFFF", fontSize: 9, alignment: "center" as const }],
             background: BG_BLACK,
             margin: [0, 4, 0, 4],
-            padding: [3, 3, 3, 3],
           },
           {
             text: `Mob: ${data.fromPhones}  |  Email: ${data.fromEmail}`,
@@ -337,32 +324,20 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
         ],
         width: "*",
       },
-      // Empty right spacer
       { text: "", width: 100 },
     ],
     margin: [0, 6, 0, 6],
   };
 
-  // Build the full document
   return {
     pageSize: "A4",
     pageMargins: [30, 30, 30, 30],
-    defaultStyle: {
-      font: "Roboto",
-      fontSize: 10,
-      color: TEXT_DARK,
-      lineHeight: 1.15,
-    },
+    defaultStyle: { font: "Roboto", fontSize: 10, color: TEXT_DARK, lineHeight: 1.15 },
     styles: {
-      tableHeader: {
-        bold: true,
-        fontSize: 10,
-        color: "#FFFFFF",
-        fillColor: DARK_RED,
-      },
+      tableHeader: { bold: true, fontSize: 10, color: "#FFFFFF", fillColor: DARK_RED },
     },
     content: [
-      // 1. Top bar (3-column)
+      // 1. Top bar
       {
         columns: [
           { text: `GSTIN: ${data.fromGSTIN}`, fontSize: 9, color: TEXT_DARK, width: "*" },
@@ -371,13 +346,12 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
         ],
         margin: [0, 0, 0, 4],
       },
-      // Thin grey separator
       { canvas: [{ type: "line", x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5, lineColor: LINE_GREY }], margin: [0, 0, 0, 4] },
 
-      // 2. Branding row
+      // 2. Branding
       brandingRow,
 
-      // 3. Invoice meta (3-column: NO | INVOICE | DATE)
+      // 3. Invoice meta
       {
         columns: [
           {
@@ -387,15 +361,7 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
             ],
             width: 120,
           },
-          {
-            text: "INVOICE",
-            bold: true,
-            fontSize: 22,
-            color: DARK_RED,
-            alignment: "center" as const,
-            characterSpacing: 4,
-            width: "*",
-          },
+          { text: "INVOICE", bold: true, fontSize: 22, color: DARK_RED, alignment: "center" as const, characterSpacing: 4, width: "*" },
           {
             stack: [
               { text: "DATE", fontSize: 8, color: TEXT_GREY, alignment: "right" as const, characterSpacing: 1 },
@@ -406,10 +372,9 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
         ],
         margin: [0, 8, 0, 8],
       },
-      // Thin grey separator below invoice meta
       { canvas: [{ type: "line", x1: 0, y1: 0, x2: 535, y2: 0, lineWidth: 0.5, lineColor: LINE_GREY }], margin: [0, 0, 0, 4] },
 
-      // 4. Customer + stay details block
+      // 4. Customer + stay
       customerStayBlock,
 
       // 5. Items table
@@ -420,8 +385,7 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
           body: [tableHeader, ...tableRows],
         },
         layout: {
-          fillColor: (rowIndex: number) =>
-            rowIndex === 0 ? DARK_RED : null,
+          fillColor: (rowIndex: number) => (rowIndex === 0 ? DARK_RED : null),
           hLineColor: () => LINE_GREY,
           vLineColor: () => LINE_GREY,
           hLineWidth: () => 0.5,
@@ -437,7 +401,6 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
       // 6. Totals + bank row
       {
         columns: [
-          // Left: payment method + bank
           {
             stack: [
               { text: `Payment Method: ${data.paymentMethod}`, fontSize: 10, color: TEXT_DARK, margin: [0, 0, 0, 8] },
@@ -445,20 +408,15 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
             ],
             width: "*",
           },
-          // Right: totals (right-aligned)
-          {
-            stack: [totalsStack],
-            alignment: "right" as const,
-            width: 300,
-          },
+          { stack: [totalsStack], alignment: "right" as const, width: 300 },
         ],
         margin: [0, 0, 0, 12],
       },
 
-      // 7. Footer (2-column: terms + authorized)
+      // 7. Footer
       footerBlock,
 
-      // 8. Bottom disclaimers (centered)
+      // 8. Bottom disclaimers
       {
         stack: [
           { text: "This is an auto-generated copy, doesn't require any signature.", italics: true, fontSize: 8, color: TEXT_GREY, alignment: "center" as const, margin: [0, 14, 0, 1] },
@@ -467,14 +425,12 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
             columns: [
               { text: "", width: "*" },
               {
-                stack: [
-                  {
-                    text: [
-                      { text: "Powered By: ", fontSize: 9, color: TEXT_GREY },
-                      { text: "GUARDIANX", fontSize: 9, color: DARK_RED, bold: true },
-                    ],
-                  },
-                ],
+                stack: [{
+                  text: [
+                    { text: "Powered By: ", fontSize: 9, color: TEXT_GREY },
+                    { text: "GUARDIANX", fontSize: 9, color: DARK_RED, bold: true },
+                  ],
+                }],
                 alignment: "center" as const,
                 width: "auto",
               },
@@ -494,23 +450,15 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
  * Usage:
  *   const pdfBuffer = await generateInvoicePdf(invoiceData);
  *   // pdfBuffer is a Node.js Buffer containing the PDF binary
- *   // → send as response, attach to email, save to S3, etc.
  */
 export async function generateInvoicePdf(data: InvoiceData): Promise<Buffer> {
-  const printer = await initPrinter();
+  const pdfmake = await initPdfmake();
   const logoBase64 = await loadLogoBase64(data.logoPath);
   const docDefinition = buildDocDefinition(data, logoBase64);
 
-  return new Promise<Buffer>((resolve, reject) => {
-    try {
-      const pdfDoc = printer.createPdfKitDocument(docDefinition, {});
-      const chunks: Buffer[] = [];
-      pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
-      pdfDoc.on("end", () => resolve(Buffer.concat(chunks)));
-      pdfDoc.on("error", (err: any) => reject(err));
-      pdfDoc.end();
-    } catch (e) {
-      reject(e);
-    }
-  });
+  // pdfmake v0.3 API: instance.createPdf() returns an OutputDocumentServer
+  // which has a getBuffer() method returning a Promise<Buffer>.
+  const pdfDoc = pdfmake.createPdf(docDefinition, {});
+  const buffer: Buffer = await pdfDoc.getBuffer();
+  return buffer;
 }
