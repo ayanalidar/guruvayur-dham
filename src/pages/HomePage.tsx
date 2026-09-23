@@ -31,6 +31,7 @@ import {
 import TempleTimingsWidget from "@/components/site/TempleTimingsWidget";
 import ReviewsWidget from "@/components/site/ReviewsWidget";
 import { useI18n } from "@/lib/i18n/context";
+import { useContent } from "@/lib/use-cms";
 
 export default function HomePage() {
   const { navigate } = useHashRoute();
@@ -294,6 +295,41 @@ function MarqueeStrip() {
 function WhyChooseUs() {
   const { t } = useI18n();
   const { navigate } = useHashRoute();
+  const { get } = useContent();
+
+  // Homepage stats — CMS-editable via:
+  //   homepage.stats.rooms  (e.g. "16")
+  //   homepage.stats.years (e.g. "10")
+  //   homepage.stats.guests (e.g. "15000")
+  //   homepage.stats.rating (e.g. "4.8")
+  // Hardcoded fallbacks below match the values the user specified.
+  const stats = [
+    {
+      value: Number(get("homepage.stats.rooms", "16")),
+      suffix: "+",
+      label: "AC & non-AC rooms",
+      decimals: 0,
+    },
+    {
+      value: Number(get("homepage.stats.years", "10")),
+      suffix: "+",
+      label: "years of service",
+      decimals: 0,
+    },
+    {
+      value: Number(get("homepage.stats.guests", "15000")),
+      suffix: "+",
+      label: "happy guests",
+      decimals: 0,
+    },
+    {
+      value: Number(get("homepage.stats.rating", "4.8")),
+      suffix: " ★",
+      label: "Google rating",
+      decimals: 1,
+    },
+  ];
+
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
       <OmWatermark className="left-[-6rem] top-20" size="18rem" />
@@ -327,7 +363,7 @@ function WhyChooseUs() {
           })}
         </div>
 
-        {/* Stats strip with count-up */}
+        {/* Stats strip with count-up — values are CMS-editable */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -335,12 +371,7 @@ function WhyChooseUs() {
           transition={{ duration: 0.6 }}
           className="mt-16 grid grid-cols-2 gap-4 rounded-3xl border border-champagne/15 bg-ink-card p-8 sm:grid-cols-4 lg:p-10"
         >
-          {[
-            { value: 52, suffix: "", label: "AC & non-AC rooms" },
-            { value: 25, suffix: "+", label: "years of service" },
-            { value: 1000, suffix: "+", label: "happy guests" },
-            { value: 4.9, suffix: " ★", label: "Google rating", decimals: 1 },
-          ].map((s, i) => (
+          {stats.map((s, i) => (
             <div key={i} className="text-center">
               <p className="font-serif text-4xl text-gold-foil sm:text-5xl">
                 <CountUp to={s.value} suffix={s.suffix} decimals={s.decimals || 0} />

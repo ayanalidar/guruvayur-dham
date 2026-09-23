@@ -42,6 +42,12 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "whyChooseUs.title", value: "More Than a Stay · A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
   { key: "whyChooseUs.subtitle", value: "We've hosted over 15,000 pilgrims since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
 
+  /* ----- Homepage stats strip (WhyChooseUs section) ----- */
+  { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
+  { key: "homepage.stats.years", value: "10", category: "homepage", label: "Homepage Stat · Years of Service" },
+  { key: "homepage.stats.guests", value: "15000", category: "homepage", label: "Homepage Stat · Happy Guests" },
+  { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },
+
   /* ----- Rooms section ----- */
   { key: "rooms.eyebrow", value: "Rooms & Suites", category: "rooms", label: "Rooms Eyebrow" },
   { key: "rooms.title", value: "Cinematic Dark-Luxe Rooms", category: "rooms", label: "Rooms Title" },

@@ -110,6 +110,11 @@ export async function POST(req: NextRequest) {
     { key: "contact.shortAddress", value: "Natwar Nagar, Dholi Pyau, Mathura 281001", category: "contact", label: "Short Address" },
     { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in" },
     { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out" },
+    // Homepage stats strip — WhyChooseUs section
+    { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
+    { key: "homepage.stats.years", value: "10", category: "homepage", label: "Homepage Stat · Years of Service" },
+    { key: "homepage.stats.guests", value: "15000", category: "homepage", label: "Homepage Stat · Happy Guests" },
+    { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },
   ];
   await step("Seed content blocks", async () => {
     for (const b of blocks) {
