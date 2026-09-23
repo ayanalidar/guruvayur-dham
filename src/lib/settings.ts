@@ -284,6 +284,10 @@ export const DEFAULT_SETTINGS = [
   { key: "SMTP_USER", label: "SMTP User", category: "INTEGRATION", isSecret: true },
   { key: "SMTP_PASS", label: "SMTP Password", category: "INTEGRATION", isSecret: true },
   { key: "FROM_EMAIL", label: "From Email Address", category: "INTEGRATION", isSecret: false },
+  // Hostinger Mail API (preferred over SMTP — 1 token + mailbox ID vs 5 SMTP vars)
+  { key: "HOSTINGER_MAIL_TOKEN", label: "Hostinger Mail API Token", category: "INTEGRATION", isSecret: true },
+  { key: "HOSTINGER_MAILBOX_ID", label: "Hostinger Mailbox Resource ID", category: "INTEGRATION", isSecret: false },
+  { key: "HOSTINGER_MAIL_DISPLAY_NAME", label: "Hostinger Mail Display Name", category: "INTEGRATION", isSecret: false },
   { key: "GOOGLE_PLACES_API_KEY", label: "Google Places API Key (reviews)", category: "INTEGRATION", isSecret: true },
   { key: "UPSTASH_REDIS_REST_URL", label: "Upstash Redis REST URL", category: "INTEGRATION", isSecret: true },
   { key: "UPSTASH_REDIS_REST_TOKEN", label: "Upstash Redis REST Token", category: "INTEGRATION", isSecret: true },

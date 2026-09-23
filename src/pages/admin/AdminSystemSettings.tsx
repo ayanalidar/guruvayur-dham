@@ -35,6 +35,7 @@ const INTEGRATION_ICONS: Record<string, any> = {
   RAZORPAY: CreditCard, GROQ: Bot, WHATSAPP: MessageSquare,
   SMTP: Mail, BLOB: Image, UPSTASH: Database, VAPID: Bell,
   GOOGLE: Shield, FACEBOOK: Shield, CRON: Clock, REALTIME: Wifi,
+  HOSTINGER: Mail,
 };
 
 export default function SystemSettingsPage() {
@@ -125,6 +126,70 @@ export default function SystemSettingsPage() {
       else toast.error(`${j.result?.label || service}: ${j.result?.message || "test failed"}`);
     } catch {
       toast.error("Test failed — network error");
+    } finally {
+      setTesting(null);
+    }
+  };
+
+  /**
+   * Send a real test email via Hostinger Mail API.
+   * Prompts for a recipient address (default: the current staff's email if available).
+   */
+  const sendTestEmail = async () => {
+    const to = window.prompt("Send a test email to:", "");
+    if (!to) return; // user cancelled
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    setTesting("hostinger-mail");
+    try {
+      const r = await fetch("/api/email/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to }),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        toast.success(`✓ Test email sent to ${to}`);
+      } else {
+        toast.error(`Test email failed: ${j.error || "unknown error"}`);
+      }
+    } catch (e: any) {
+      toast.error(`Network error: ${e?.message || "failed"}`);
+    } finally {
+      setTesting(null);
+    }
+  };
+
+  /**
+   * Lookup available mailboxes for the configured Hostinger Mail token.
+   * Useful when the admin has a fresh token but doesn't know their mailboxResourceId.
+   */
+  const lookupMailboxes = async () => {
+    setTesting("hostinger-mailboxes");
+    try {
+      const r = await fetch("/api/email/mailboxes");
+      const j = await r.json();
+      if (j.ok && j.mailboxes?.length > 0) {
+        const lines = j.mailboxes.map((m: any) => `${m.resourceId}  →  ${m.address}`).join("\n");
+        toast.success(`Found ${j.mailboxes.length} mailbox(es) — see console`);
+        console.info("Hostinger Mail mailboxes for this token:\n", lines);
+        // Also copy the first mailbox ID to clipboard for convenience
+        const first = j.mailboxes[0];
+        if (first?.resourceId) {
+          try {
+            await navigator.clipboard.writeText(first.resourceId);
+            toast.info(`Copied first mailbox ID to clipboard: ${first.resourceId}`);
+          } catch {}
+        }
+      } else if (j.ok && j.mailboxes?.length === 0) {
+        toast.info("Token is valid but no mailboxes are accessible. Check the token's scope in hPanel.");
+      } else {
+        toast.error(`Lookup failed: ${j.error || "unknown error"}`);
+      }
+    } catch (e: any) {
+      toast.error(`Network error: ${e?.message || "failed"}`);
     } finally {
       setTesting(null);
     }
@@ -289,6 +354,24 @@ export default function SystemSettingsPage() {
                                   </div>
                                 ) : (
                                   <div className="flex items-center gap-2">
+                                    {s.key === "HOSTINGER_MAIL_TOKEN" && (
+                                      <button
+                                        onClick={sendTestEmail}
+                                        disabled={testing === "hostinger-mail"}
+                                        className="rounded-lg bg-champagne/15 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/25 disabled:opacity-50"
+                                      >
+                                        {testing === "hostinger-mail" ? "Sending…" : "Send Test"}
+                                      </button>
+                                    )}
+                                    {s.key === "HOSTINGER_MAILBOX_ID" && (
+                                      <button
+                                        onClick={lookupMailboxes}
+                                        disabled={testing === "hostinger-mailboxes"}
+                                        className="rounded-lg bg-champagne/15 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/25 disabled:opacity-50"
+                                      >
+                                        {testing === "hostinger-mailboxes" ? "Looking up…" : "Find ID"}
+                                      </button>
+                                    )}
                                     {s.key.includes("RAZORPAY") || s.key.includes("GROQ") || s.key.includes("WHATSAPP") || s.key.includes("SMTP") || s.key.includes("UPSTASH") || s.key.includes("BLOB") ? (
                                       <button
                                         onClick={() => testIntegration(s.key.split("_")[0].toLowerCase())}

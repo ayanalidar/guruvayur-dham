@@ -5,6 +5,7 @@ import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampa
 import { generateRef } from "@/lib/auth";
 import { getSetting } from "@/lib/settings";
 import { withRetry } from "@/lib/retry";
+import { sendEmailViaHostinger, isHostingerMailConfigured } from "@/lib/email";
 
 const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
 const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
@@ -576,15 +577,19 @@ function buildBookingWhatsAppMessage(opts: {
 }
 
 /**
- * Send the booking-confirmation email via the SMTP pipeline.
- * - Reads SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL from the
- *   encrypted Setting table (admin Settings UI) with process.env fallback.
- * - Uses `nodemailer` (already installed in /api/email/send) with withRetry.
- * - On any error: silently swallow — the booking is still confirmed; the
- *   notification row is the audit trail.
+ * Send the booking-confirmation email.
  *
- * If SMTP is not configured, this is a no-op (the EMAIL notification row
- * created above will sit in QUEUED status for a cron/manual send).
+ * Tries Hostinger Mail API first (preferred — 1 token + mailbox ID,
+ * no SMTP/DKIM/SPF config, no port/TLS confusion). Falls back to
+ * nodemailer SMTP if Hostinger Mail isn't configured but SMTP vars are.
+ *
+ * Reads from the encrypted Setting table (admin Settings UI).
+ *
+ * On any error: silently swallow — the booking is still confirmed; the
+ * EMAIL notification row is the audit trail.
+ *
+ * If neither method is configured, this is a no-op (the EMAIL notification
+ * row created above will sit in QUEUED status for a cron/manual send).
  */
 async function sendBookingConfirmationEmail(
   to: string,
@@ -593,10 +598,31 @@ async function sendBookingConfirmationEmail(
   _bookingRef: string,
 ): Promise<void> {
   if (!to) return;
+
+  // ── Path 1: Hostinger Mail API (preferred) ──────────────────────────
+  if (await isHostingerMailConfigured()) {
+    try {
+      const result = await sendEmailViaHostinger({
+        to,
+        subject,
+        text: body,
+        // SECURITY: HTML-escape body before injecting <br> tags so a
+        // customer-supplied value can't XSS the recipient's mail client.
+        html: escapeHtmlForEmail(body).replace(/\n/g, "<br>"),
+      });
+      if (result.ok) return;
+      console.error("Hostinger Mail send failed:", result.message);
+    } catch (e: any) {
+      console.error("Hostinger Mail send error:", e?.message);
+    }
+    // Fall through to SMTP if Hostinger failed
+  }
+
+  // ── Path 2: SMTP via nodemailer (fallback) ──────────────────────────
   const smtpHost = await getSetting("SMTP_HOST");
   const smtpUser = await getSetting("SMTP_USER");
   const smtpPass = await getSetting("SMTP_PASS");
-  if (!smtpHost || !smtpUser || !smtpPass) return; // SMTP not configured — skip silently
+  if (!smtpHost || !smtpUser || !smtpPass) return; // neither method configured — skip silently
 
   try {
     const nodemailer = await import("nodemailer" as string).catch(() => null) as any;
@@ -619,6 +645,16 @@ async function sendBookingConfirmationEmail(
   } catch {
     // swallow — booking still confirmed
   }
+}
+
+/** HTML-escape helper — kept local to avoid changing the import surface. */
+function escapeHtmlForEmail(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /**

@@ -26,6 +26,7 @@ export async function runAllHealthChecks(): Promise<{
     checkRazorpay(),
     checkGroq(),
     checkWhatsApp(),
+    checkHostingerMail(),
     checkSMTP(),
     checkUpstash(),
     checkBlob(),
@@ -151,6 +152,33 @@ async function checkSMTP(): Promise<HealthCheckResult> {
     return { service: "smtp", label: "Email (SMTP)", status: "not_configured", message: "SMTP_USER or SMTP_PASS not set", category: "INTEGRATION" };
   }
   return { service: "smtp", label: "Email (SMTP)", status: "ok", message: `Configured (${host})`, category: "INTEGRATION" };
+}
+
+/**
+ * Check Hostinger Mail API (preferred path over SMTP).
+ * Just verifies the 2 settings are set — doesn't make a network call
+ * (so the admin dashboard loads fast). The actual send is exercised via
+ * the "Send Test Email" button in /admin/system.
+ */
+async function checkHostingerMail(): Promise<HealthCheckResult> {
+  const token = await getSetting("HOSTINGER_MAIL_TOKEN");
+  const mailboxId = await getSetting("HOSTINGER_MAILBOX_ID");
+  if (!token || !mailboxId) {
+    return {
+      service: "hostinger-mail",
+      label: "Hostinger Mail API (preferred)",
+      status: "not_configured",
+      message: "HOSTINGER_MAIL_TOKEN or HOSTINGER_MAILBOX_ID not set (admin → Settings → Integration)",
+      category: "INTEGRATION",
+    };
+  }
+  return {
+    service: "hostinger-mail",
+    label: "Hostinger Mail API (preferred)",
+    status: "ok",
+    message: `Configured (mailbox ${mailboxId.slice(0, 6)}…${mailboxId.slice(-4)})`,
+    category: "INTEGRATION",
+  };
 }
 
 async function checkUpstash(): Promise<HealthCheckResult> {
