@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   User as UserIcon, Calendar, Star, Award, Settings, LogOut, ChevronRight,
-  Phone, Mail, MapPin, Gift, Clock, Loader2,
+  Phone, Mail, MapPin, Gift, Clock, Loader2, FileText, Download,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -161,6 +161,25 @@ export default function DashboardPage() {
                       </div>
                       {b.source !== "DIRECT" && (
                         <p className="mt-2 text-xs text-ivory/40">Booked via {b.source.replace(/_/g, " ")}</p>
+                      )}
+                      {/* Download invoice button — only for confirmed bookings */}
+                      {(b.status === "CONFIRMED" || b.status === "CHECKED_IN" || b.status === "CHECKED_OUT") && (
+                        <div className="mt-3 flex gap-2 border-t border-champagne/10 pt-3">
+                          <a
+                            href={`/api/invoice/pdf?bookingId=${b.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-champagne/20 bg-champagne/5 px-3 py-1.5 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/15"
+                          >
+                            <FileText className="h-3.5 w-3.5" /> View Invoice
+                          </a>
+                          <a
+                            href={`/api/invoice/pdf?bookingId=${b.id}&download=1`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-champagne/20 bg-champagne/5 px-3 py-1.5 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/15"
+                          >
+                            <Download className="h-3.5 w-3.5" /> Download PDF
+                          </a>
+                        </div>
                       )}
                     </motion.div>
                   ))}

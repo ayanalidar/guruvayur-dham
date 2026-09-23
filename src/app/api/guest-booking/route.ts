@@ -6,6 +6,8 @@ import { generateRef } from "@/lib/auth";
 import { getSetting } from "@/lib/settings";
 import { withRetry } from "@/lib/retry";
 import { sendEmailViaHostinger, isHostingerMailConfigured } from "@/lib/email";
+import { buildInvoiceData } from "@/lib/invoice";
+import { generateInvoicePdf } from "@/lib/invoice-pdf";
 
 const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
 const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
@@ -15,6 +17,11 @@ const CreateGuestBookingSchema = z.object({
   guestName: z.string().min(1).max(200),
   guestPhone: z.string().min(1).max(30),
   guestEmail: z.string().email().optional(),
+  // Invoice-specific guest fields (optional — used on tax invoice PDF)
+  guestGSTIN: z.string().max(15).optional(),
+  guestAddress: z.string().max(500).optional(),
+  arrivalTime: z.string().max(20).optional(),   // e.g. "08:32 pm"
+  departureTime: z.string().max(20).optional(),  // e.g. "09:30 am"
   checkIn: z.string().min(1),
   checkOut: z.string().min(1),
   guests: z.coerce.number().int().min(1).default(2),
@@ -54,6 +61,7 @@ export async function POST(req: NextRequest) {
   }
   const {
     roomSlug, guestName, guestPhone, guestEmail,
+    guestGSTIN, guestAddress, arrivalTime, departureTime,
     checkIn, checkOut, guests = 2, couponCode,
     darshanSlot, paymentMethod = "RAZORPAY",
     paymentId: clientPaymentId,
@@ -183,6 +191,12 @@ export async function POST(req: NextRequest) {
       reference: ref,
       roomId: room.id,
       guestName, guestPhone, guestEmail: guestEmail || null,
+      // Invoice-specific fields (optional — empty string is fine if not provided)
+      guestGSTIN: guestGSTIN || null,
+      guestAddress: guestAddress || null,
+      arrivalTime: arrivalTime || null,
+      departureTime: departureTime || null,
+      paymentMethod,
       checkIn: ci, checkOut: co,
       nights, guests,
       amount: finalAmount,
@@ -193,7 +207,6 @@ export async function POST(req: NextRequest) {
         earlyBird: { active: earlyBird.active, discount: earlyBirdDiscount, campaign: earlyBird.campaignName },
         coupon: couponResult?.valid ? { code: couponCode, discount: couponDiscount } : null,
         darshanSlot: darshanSlot || null,
-        paymentMethod,
         paymentId: verifiedPaymentId, // real verified paymentId (was random fake)
         pricingBreakdown: pricing.breakdown.map(b => ({ date: "", base: b.basePrice, final: b.finalPrice, rules: b.appliedRules })),
       }),
@@ -341,7 +354,8 @@ export async function POST(req: NextRequest) {
 
   // Fire-and-forget email send (errors swallowed — booking is still
   // confirmed; the notification row is the audit trail).
-  sendBookingConfirmationEmail(guestEmail || "", emailSubject, emailBody, ref).catch(() => {});
+  // Pass booking.id so the email can attach the invoice PDF (matched to this booking).
+  sendBookingConfirmationEmail(guestEmail || "", emailSubject, emailBody, ref, booking.id).catch(() => {});
 
   // WhatsApp message body (kept short for SMS-style readability).
   const whatsappMessage = buildBookingWhatsAppMessage({
@@ -596,8 +610,46 @@ async function sendBookingConfirmationEmail(
   subject: string,
   body: string,
   _bookingRef: string,
+  bookingId?: string,
 ): Promise<void> {
   if (!to) return;
+
+  // ── Generate the invoice PDF to attach (if we have a bookingId) ────
+  // Wrap in try/catch — if PDF generation fails for any reason, the email
+  // still sends without the attachment (better than no email at all).
+  let pdfAttachment: { filename: string; contentType: string; content: string } | null = null;
+  let invoiceNumber = "";
+  if (bookingId) {
+    try {
+      const invoiceData = await buildInvoiceData(bookingId);
+      if (invoiceData) {
+        invoiceNumber = invoiceData.invoiceNumber;
+        const pdfBuffer = await generateInvoicePdf(invoiceData);
+        pdfAttachment = {
+          filename: `invoice-${invoiceNumber || "GVD"}.pdf`,
+          contentType: "application/pdf",
+          content: pdfBuffer.toString("base64"),
+        };
+        // Cache the PDF in the Invoice row so subsequent downloads are instant.
+        // Fire-and-forget — don't block the email send on this.
+        db.invoice.update({
+          where: { bookingId },
+          data: { pdfBase64: pdfBuffer.toString("base64") },
+        }).catch(() => {});
+      }
+    } catch (e: any) {
+      console.error("Invoice PDF generation failed — email will send without attachment:", e?.message || e);
+    }
+  }
+
+  // Build the HTML body — also include a "Download Invoice" link as backup
+  // (in case the recipient can't open attachments on their device).
+  const downloadLink = bookingId
+    ? `https://www.guruvayurdham.co.in/api/invoice/pdf?bookingId=${bookingId}`
+    : "";
+  const htmlBody = `${escapeHtmlForEmail(body).replace(/\n/g, "<br>")}
+${downloadLink ? `<br><br><a href="${downloadLink}" style="display:inline-block;padding:10px 20px;background:#8B0000;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;">Download Invoice${invoiceNumber ? ` #${invoiceNumber}` : ""} (PDF)</a>` : ""}
+<br><br><p style="font-size:11px;color:#666;">The invoice is also attached to this email as a PDF. If you can't see the attachment, click the button above to download it directly.</p>`;
 
   // ── Path 1: Hostinger Mail API (preferred) ──────────────────────────
   if (await isHostingerMailConfigured()) {
@@ -605,11 +657,12 @@ async function sendBookingConfirmationEmail(
       const result = await sendEmailViaHostinger({
         to,
         subject,
-        text: body,
-        // SECURITY: HTML-escape body before injecting <br> tags so a
-        // customer-supplied value can't XSS the recipient's mail client.
-        html: escapeHtmlForEmail(body).replace(/\n/g, "<br>"),
-      });
+        text: body + (downloadLink ? `\n\nDownload invoice: ${downloadLink}` : ""),
+        html: htmlBody,
+        // Pass attachments as a custom field — sendEmailViaHostinger will
+        // include them in the V1SendRequest body.
+        ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
+      } as any);
       if (result.ok) return;
       console.error("Hostinger Mail send failed:", result.message);
     } catch (e: any) {
@@ -639,6 +692,8 @@ async function sendBookingConfirmationEmail(
       () => transporter.sendMail({
         from: `"Guruvayur Dham" <${fromEmail}>`,
         to, subject, text: body,
+        html: htmlBody,
+        ...(pdfAttachment ? { attachments: [{ filename: pdfAttachment.filename, content: Buffer.from(pdfAttachment.content, "base64") }] } : {}),
       }),
       { maxRetries: 2, circuitBreakerKey: "smtp" },
     );

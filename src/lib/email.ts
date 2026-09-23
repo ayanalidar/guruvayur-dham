@@ -35,6 +35,13 @@ export interface SendEmailInput {
   cc?: string[];
   bcc?: string[];
   displayName?: string;
+  // Hostinger Mail API attachments — V1SendAttachment shape:
+  // { filename: string, contentType: string, content: string (base64) }
+  attachments?: Array<{
+    filename: string;
+    contentType: string;
+    content: string; // base64-encoded binary content
+  }>;
 }
 
 export interface SendEmailResult {
@@ -90,6 +97,10 @@ export async function sendEmailViaHostinger(input: SendEmailInput): Promise<Send
   if (input.html) body.html = input.html;
   if (input.cc && input.cc.length) body.cc = input.cc;
   if (input.bcc && input.bcc.length) body.bcc = input.bcc;
+  // Attachments (e.g. invoice PDF) — Hostinger Mail API V1SendAttachment shape
+  if (input.attachments && input.attachments.length > 0) {
+    body.attachments = input.attachments;
+  }
 
   const url = `${HOSTINGER_MAIL_BASE}/api/v1/mailboxes/${mailboxId}/send`;
 

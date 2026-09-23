@@ -5,11 +5,15 @@
  */
 
 export const SITE = {
-  name: "Guruvayur Dham",
+  name: "GuruVayur Dham",
   tagline: "2 Minutes from Mathura Station",
-  phone: "+91-90908 20208",
-  phoneRaw: "+919090820208",
-  whatsapp: "919090820208",
+  // Two contact numbers (per invoice sample)
+  phone: "+91 8445555584",          // primary (used for tel: links)
+  phoneRaw: "+918445555584",
+  phone2: "+91 9410077786",         // secondary (display only)
+  phone2Raw: "+919410077786",
+  phones: "+91 8445555584, +91 9410077786",  // combined display string
+  whatsapp: "918445555584",          // WhatsApp uses primary
   email: "bookings@guruvayurdham.co.in",
   emails: {
     bookings: "bookings@guruvayurdham.co.in",
@@ -17,17 +21,35 @@ export const SITE = {
     sales: "sales@guruvayurdham.co.in",
   },
   domain: "guruvayurdham.co.in",
-  address: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001",
-  shortAddress: "Natwar Nagar, Dholi Pyau, Mathura 281001",
+  // Real GSTIN (UP state code 09)
+  gstin: "09ABAFG2373H1ZG",
+  // Address per invoice sample (includes house no. + "Opp." prefix)
+  address: "68/396 Mali Para, Opp. Mata Pathwari Mandir, Dholi Pyau, Mathura, Uttar Pradesh - 281001",
+  shortAddress: "Mali Para, Dholi Pyau, Mathura 281001",
+  // Bank details per invoice sample
+  bank: {
+    name: "AU Small Finance Bank",
+    accountNumber: "2502421377158310",
+    ifsc: "AUBL0004213",
+    branch: "Mathura",
+  },
   mapEmbed:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zMjfCsDI5JzQwLjYiTiA3N8KwNDEnMjQuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
-  mapLink: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Natwar+Nagar+Dholi+Pyau+Mathura+281001",
+  mapLink: "https://www.google.com/maps/search/?api=1&query=Mata+Pathwari+Mandir+Dholi+Pyau+Mathura+281001",
   checkIn: "12:00 PM",
   checkOut: "11:00 AM",
   rating: 4.9,
   reviewCount: 847,
   totalRooms: 16,
   distanceToTemple: "Walk to Mata Pathwari Mandir",
+  // Default GST rates (editable via admin → Settings → INTEGRATION category)
+  // Per India GST brackets — admin can override these in CMS.
+  // When IGST > 0, CGST and SGST are ignored (inter-state supply).
+  defaultGstRates: {
+    cgst: 2.5,   // % — within-state, intra-state bookings
+    sgst: 2.5,   // % — within-state, intra-state bookings
+    igst: 0,     // % — inter-state bookings (if 0, CGST+SGST apply)
+  },
   nearbyTemples: [
     { name: "Shri Krishna Janmabhoomi", distance: "1.5 km", timings: "5 AM - 12 PM, 4 - 9:30 PM", description: "Birthplace of Lord Krishna" },
     { name: "Dwarkadhish Temple", distance: "2 km", timings: "6:30 - 10:30 AM, 4 - 7 PM", description: "Grand temple of Lord Krishna as King of Dwarka" },

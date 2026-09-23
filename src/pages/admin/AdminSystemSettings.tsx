@@ -6,7 +6,7 @@ import {
   Settings, Shield, Activity, ToggleLeft, ToggleRight, RefreshCw,
   CreditCard, Bot, MessageSquare, Mail, Database, Zap, Image,
   CheckCircle, XCircle, AlertCircle, TestTube, Save, Bell,
-  Server, HardDrive, Clock, Wifi, WifiOff, Wrench, Lock,
+  Server, HardDrive, Clock, Wifi, WifiOff, Wrench, Lock, FileText,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -311,6 +311,23 @@ export default function SystemSettingsPage() {
                 {/* === INTEGRATIONS TAB === */}
                 {activeTab === "integrations" && (
                   <div className="space-y-8">
+                    {/* Quick action bar — verify Hostinger Mail + invoice PDF work end-to-end */}
+                    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-champagne/15 bg-ink-card p-4">
+                      <p className="text-xs text-ivory/60">Quick verify:</p>
+                      <button
+                        onClick={() => {
+                          window.open("/api/invoice/pdf?demo=1", "_blank");
+                          toast.info("Opening sample invoice in new tab…");
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-champagne/20 bg-champagne/10 px-3 py-1.5 text-xs font-semibold text-champagne hover:bg-champagne/20"
+                      >
+                        <FileText className="h-3.5 w-3.5" /> Preview Sample Invoice
+                      </button>
+                      <p className="text-[10px] text-ivory/40">
+                        Opens a sample invoice PDF in a new tab — verify pdfmake works end-to-end on Vercel.
+                      </p>
+                    </div>
+
                     {Object.entries(grouped).map(([category, items]) => (
                       <div key={category} className="rounded-2xl border border-champagne/15 bg-ink-card p-6">
                         <h3 className="mb-4 font-serif text-lg text-ivory">{category}</h3>

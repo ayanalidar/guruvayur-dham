@@ -47,6 +47,12 @@ model Booking {
   guestName       String
   guestPhone      String
   guestEmail      String?
+  // Invoice-specific guest fields (optional, collected at checkout for B2B guests)
+  guestGSTIN      String?         // customer's GST number (for tax invoice)
+  guestAddress    String?         // customer's billing address
+  arrivalTime     String?         // e.g. "08:32 pm" — check-in time (separate from check-in date)
+  departureTime   String?         // e.g. "09:30 am" — check-out time
+  paymentMethod   String?         // UPI | CASH | CARD | RAZORPAY — used on invoice
   checkIn         DateTime
   checkOut        DateTime
   nights          Int
@@ -59,6 +65,18 @@ model Booking {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   syncLogs        SyncLog[]
+  invoice         Invoice?
+}
+
+/* ============ INVOICES ============ */
+model Invoice {
+  id              String         @id @default(cuid())
+  number          Int            @unique @default(autoincrement()) // sequential invoice number (e.g. 635)
+  bookingId       String         @unique
+  booking         Booking        @relation(fields: [bookingId], references: [id])
+  pdfBase64       String?        // cached PDF to avoid regenerating on every download
+  generatedAt     DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 /* ============ RATE PLANS (per room, per channel) ============ */

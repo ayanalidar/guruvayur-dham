@@ -46,6 +46,12 @@ export default function GuestBookingPage() {
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
+  // Invoice-specific fields (optional — for B2B guests who want GST invoice)
+  const [guestGSTIN, setGuestGSTIN] = useState("");
+  const [guestAddress, setGuestAddress] = useState("");
+  const [arrivalTime, setArrivalTime] = useState("");
+  const [departureTime, setDepartureTime] = useState("");
+  const [showInvoiceFields, setShowInvoiceFields] = useState(false);
   const [darshanSlot, setDarshanSlot] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("RAZORPAY");
@@ -199,6 +205,11 @@ export default function GuestBookingPage() {
         body: JSON.stringify({
           roomSlug: selectedRoom,
           guestName, guestPhone, guestEmail,
+          // Optional invoice fields (only sent if filled in)
+          guestGSTIN: guestGSTIN || undefined,
+          guestAddress: guestAddress || undefined,
+          arrivalTime: arrivalTime || undefined,
+          departureTime: departureTime || undefined,
           checkIn, checkOut, guests,
           couponCode: couponResult?.valid ? couponCode : undefined,
           darshanSlot: darshanSlot || undefined,
@@ -350,6 +361,65 @@ export default function GuestBookingPage() {
                     {DARSHAN_SLOTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                   </select>
                 </div>
+
+                {/* Optional GST invoice fields — collapsible, for B2B guests */}
+                <div className="mt-4 rounded-xl border border-champagne/15 bg-ink-card/50 p-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowInvoiceFields(v => !v)}
+                    className="flex w-full items-center justify-between text-left"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-champagne">
+                      Need a GST invoice? (optional)
+                    </span>
+                    <ChevronRight className={`h-3 w-3 text-champagne transition-transform ${showInvoiceFields ? "rotate-90" : ""}`} />
+                  </button>
+                  {showInvoiceFields && (
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Your GSTIN</label>
+                        <input
+                          value={guestGSTIN}
+                          onChange={(e) => setGuestGSTIN(e.target.value.toUpperCase())}
+                          placeholder="09ABCDE1234F1Z5"
+                          maxLength={15}
+                          className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Billing Address</label>
+                        <input
+                          value={guestAddress}
+                          onChange={(e) => setGuestAddress(e.target.value)}
+                          placeholder="City, State"
+                          className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Arrival Time</label>
+                        <input
+                          value={arrivalTime}
+                          onChange={(e) => setArrivalTime(e.target.value)}
+                          placeholder="08:32 pm"
+                          className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Departure Time</label>
+                        <input
+                          value={departureTime}
+                          onChange={(e) => setDepartureTime(e.target.value)}
+                          placeholder="09:30 am"
+                          className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                        />
+                      </div>
+                      <p className="col-span-2 text-[10px] text-ivory/40">
+                        These appear on your tax invoice. Leave blank if not applicable.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 <div className="mt-6 flex justify-between">
                   <button onClick={() => setStep(0)} className="btn-ghost-luxe"><ChevronLeft className="h-4 w-4" /> Back</button>
                   <button onClick={() => setStep(2)} disabled={!guestName || !guestPhone} className="btn-luxe disabled:opacity-40">Continue <ChevronRight className="h-4 w-4" /></button>
