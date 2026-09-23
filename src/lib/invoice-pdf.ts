@@ -41,8 +41,33 @@ async function initPrinter(): Promise<any> {
   // Dynamic import — pdfmake uses Node fs module under the hood, so it must
   // run in the Node.js runtime (which is the default for Vercel functions).
   const printerMod: any = await import("pdfmake");
-  // pdfmake's ESM export shape varies — try .default first, fall back to module
-  PdfPrinter = printerMod.default || printerMod.Printer || printerMod;
+
+  // DEBUG: log the import shape so we can see what pdfmake actually exports
+  console.log("[invoice-pdf] pdfmake import shape:", {
+    type: typeof printerMod,
+    keys: Object.keys(printerMod || {}),
+    hasDefault: !!printerMod.default,
+    defaultType: typeof printerMod?.default,
+    hasPrinter: !!printerMod?.Printer,
+    printerType: typeof printerMod?.Printer,
+  });
+
+  // pdfmake's ESM export shape varies — try multiple fallbacks
+  const PrinterClass =
+    printerMod.default ||              // ESM: import PdfPrinter from "pdfmake"
+    printerMod.Printer ||              // named export
+    printerMod.default?.Printer ||     // .default.Printer (some bundlings)
+    printerMod;                        // CJS: module.exports = Printer
+
+  if (typeof PrinterClass !== "function") {
+    throw new Error(
+      `pdfmake Printer could not be resolved — ` +
+      `typeof PrinterClass=${typeof PrinterClass}, ` +
+      `keys=${Object.keys(printerMod || {}).join(",")}`,
+    );
+  }
+
+  PdfPrinter = PrinterClass;
   // Register the bundled Roboto fonts (has ₹ glyph since 2014)
   const vfsMod: any = await import("pdfmake/build/vfs_fonts");
   // VFS shape varies between versions — try .default.vfs, then .vfs
