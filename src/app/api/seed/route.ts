@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
     { key: "invoice.bank.branch", value: "Mathura", category: "invoice", label: "Invoice · Bank Branch" },
     { key: "invoice.terms", value: "1. Subjected to Mathura jurisdiction only.\n2. Goods once sold will not be taken back.\n3. Interest @ 24% p.a. will be charged if bill not paid within 15 days.", category: "invoice", label: "Invoice · Terms & Conditions" },
     { key: "invoice.footerCredit", value: "Powered By: GUARDIANX", category: "invoice", label: "Invoice · Footer Credit" },
-    { key: "invoice.logoPath", value: "/public/logo-large.png", category: "invoice", label: "Invoice · Logo Path" },
+    { key: "invoice.logoPath", value: "/public/logo-invoice.png", category: "invoice", label: "Invoice · Logo Path" },
   ];
   await step("Seed content blocks", async () => {
     for (const b of blocks) {

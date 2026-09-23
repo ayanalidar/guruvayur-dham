@@ -137,7 +137,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "invoice.bank.branch", value: "Mathura", category: "invoice", label: "Invoice · Bank Branch" },
   { key: "invoice.terms", value: "1. Subjected to Mathura jurisdiction only.\n2. Goods once sold will not be taken back.\n3. Interest @ 24% p.a. will be charged if bill not paid within 15 days.", category: "invoice", label: "Invoice · Terms & Conditions (newline-separated)" },
   { key: "invoice.footerCredit", value: "Powered By: GUARDIANX", category: "invoice", label: "Invoice · Footer Credit" },
-  { key: "invoice.logoPath", value: "/public/logo-large.png", category: "invoice", label: "Invoice · Logo Path (in project)" },
+  { key: "invoice.logoPath", value: "/public/logo-invoice.png", category: "invoice", label: "Invoice · Logo Path (in project)" },
 
   /* ----- Plan Your Darshan section ----- */
   { key: "darshan.eyebrow", value: "Plan Your Darshan", category: "darshan", label: "Darshan Eyebrow" },

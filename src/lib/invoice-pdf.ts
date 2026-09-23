@@ -307,8 +307,8 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
   const brandingRow: any = {
     columns: [
       logoBase64
-        ? { image: logoBase64, width: 120, height: 60, margin: [0, 0, 10, 0] }
-        : { text: "", width: 120 },
+        ? { image: logoBase64, width: 100, height: 100, margin: [0, 0, 10, 0] }
+        : { text: "", width: 100 },
       {
         stack: [
           { text: data.fromName.toUpperCase(), bold: true, fontSize: 22, color: DARK_RED, alignment: "center" as const },

@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
           "Interest @ 24% p.a. will be charged if bill not paid within 15 days.",
         ],
         footerCredit: "Powered By: GUARDIANX",
-        logoPath: SITE.bank ? "/public/logo-large.png" : "/public/logo-large.png",
+        logoPath: "/public/logo-invoice.png",
       };
       const pdf = await generateInvoicePdf(demoData as any);
       return new NextResponse(new Uint8Array(pdf), {
