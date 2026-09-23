@@ -34,18 +34,23 @@ const BG_BLACK = "#000000";
 
 let printerInitialized = false;
 let PdfPrinter: any = null;
+let printerInstance: any = null; // instantiated once, reused
 
-async function initPrinter() {
-  if (printerInitialized && PdfPrinter) return PdfPrinter;
+async function initPrinter(): Promise<any> {
+  if (printerInitialized && printerInstance) return printerInstance;
   // Dynamic import — pdfmake uses Node fs module under the hood, so it must
   // run in the Node.js runtime (which is the default for Vercel functions).
-  const printerMod = await import("pdfmake");
-  PdfPrinter = (printerMod as any).default || (printerMod as any);
+  const printerMod: any = await import("pdfmake");
+  // pdfmake's ESM export shape varies — try .default first, fall back to module
+  PdfPrinter = printerMod.default || printerMod.Printer || printerMod;
   // Register the bundled Roboto fonts (has ₹ glyph since 2014)
   const vfsMod: any = await import("pdfmake/build/vfs_fonts");
-  PdfPrinter.vfs = vfsMod.vfs;
-  // Roboto variants — defined inside vfs_fonts
-  PdfPrinter.fonts = {
+  // VFS shape varies between versions — try .default.vfs, then .vfs
+  const vfs = (vfsMod.default && vfsMod.default.vfs) || vfsMod.vfs || vfsMod;
+  PdfPrinter.vfs = vfs;
+  // Roboto variants — defined inside vfs_fonts. Pass to Printer constructor
+  // (modern pdfmake v0.2+ requires fonts config in constructor).
+  const fontsConfig = {
     Roboto: {
       normal: "Roboto-Regular.ttf",
       bold: "Roboto-Medium.ttf",
@@ -53,8 +58,10 @@ async function initPrinter() {
       bolditalics: "Roboto-MediumItalic.ttf",
     },
   };
+  // Instantiate the printer ONCE — reuse on subsequent calls (warmer = faster)
+  printerInstance = new PdfPrinter(fontsConfig);
   printerInitialized = true;
-  return PdfPrinter;
+  return printerInstance;
 }
 
 /**
@@ -465,13 +472,13 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
  *   // → send as response, attach to email, save to S3, etc.
  */
 export async function generateInvoicePdf(data: InvoiceData): Promise<Buffer> {
-  const Printer = await initPrinter();
+  const printer = await initPrinter();
   const logoBase64 = await loadLogoBase64(data.logoPath);
   const docDefinition = buildDocDefinition(data, logoBase64);
 
   return new Promise<Buffer>((resolve, reject) => {
     try {
-      const pdfDoc = Printer.createPdfKitDocument(docDefinition, {});
+      const pdfDoc = printer.createPdfKitDocument(docDefinition, {});
       const chunks: Buffer[] = [];
       pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
       pdfDoc.on("end", () => resolve(Buffer.concat(chunks)));
