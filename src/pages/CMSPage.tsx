@@ -563,21 +563,24 @@ function GalleryCMS() {
   const [tab, setTab] = useState("Rooms");
 
   const load = () => {
-    broadcastCMSUpdate("cms-page-save");
-    fetch(`/api/gallery?tab=${tab}`, { cache: "no-store" }).then(r => r.json()).then(j => setImages(j.images || []));
+    fetch(`/api/gallery?tab=${tab}`, { cache: "no-store" }).then(r => r.json()).then(j => {
+      setImages(j.images || []);
+      // Broadcast AFTER fetch completes so other tabs get fresh data
+      broadcastCMSUpdate("gallery-load");
+    });
   };
   useEffect(() => { load(); }, [tab]);
 
   const addImage = async (url: string) => {
     await fetch("/api/gallery", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tab, src: url, alt: `${tab} photo`, caption: `${tab} at Guruvayur Dham` }) });
-    toast.success("Photo added to gallery");
+    toast.success("Photo added to gallery · live now");
     load();
   };
 
   const deleteImage = async (id: string) => {
     if (!confirm("Delete this photo?")) return;
     await fetch(`/api/gallery?id=${id}`, { method: "DELETE" });
-    toast.success("Photo deleted");
+    toast.success("Photo deleted · live now");
     load();
   };
 
