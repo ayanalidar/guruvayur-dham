@@ -16,7 +16,7 @@ const scrollTo = (id: string) => {
 
 const HIGHLIGHTS = [
   "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
-  "Family-run since 1998 · three generations of warm hospitality",
+  "Modern pilgrim hospitality since 2020 · 10,000+ pilgrims served",
   "16+ rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
@@ -27,13 +27,13 @@ export default function AboutSection() {
   const { get } = useContent();
 
   const eyebrow = get("about.eyebrow", "About Guruvayur Dham");
-  const title = get("about.title", "A Family-Run Pilgrim Home Since 1998");
+  const title = get("about.title", "A Modern Pilgrim Home Since 2020");
   const story = get(
     "about.story",
-    "Namaste and welcome to Mathura! I am Ram Meena, the proud owner and dedicated host of Hotel Guruvayur Dham. Born and raised with deep roots in the holy Braj region, my goal is to ensure every devotee, family, and traveler experiences warm hospitality, peace of mind, and absolute comfort during their spiritual pilgrimage.\n\nGuruvayur Dham is an inviting haven of comfort and warm hospitality located in the sacred city of Mathura. Situated in Dholi Pyau, within convenient proximity to Mathura Junction Railway Station, the hotel is an ideal destination for pilgrims, families, tourists, and business travelers. Designed with elegant wooden interiors, modern ambient lighting, and well-appointed rooms ranging from cozy double setups to spacious family suites, Guruvayur Dham ensures a peaceful and restful stay during your divine Braj Darshan journey.\n\nWhether you need personalized guidance for Mathura-Vrindavan temple darshan, quick local travel tips, or simply want to ensure your family's stay is comfortable and secure, my team and I are available round-the-clock to make your trip effortless and memorable. At Hotel Guruvayur Dham, we don't just offer rooms; we welcome you as part of our extended family.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English"
+    "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable."
   );
 
-  // Split title — "Since 1998" should be the gradient-highlighted part
+  // Split title — "Since 2020" should be the gradient-highlighted part
   const titleParts = title.split(/Since\s+/i);
   const titlePre = titleParts.length > 1 ? titleParts[0] + "Since " : title;
   const titleHighlight = titleParts.length > 1 ? titleParts[1] : "";
@@ -57,7 +57,7 @@ export default function AboutSection() {
               <div className="space-y-4">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=800&fit=crop"
+                    src="/about/hotel-exterior.jpg"
                     alt="Guruvayur Dham reception and lobby area"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -66,7 +66,7 @@ export default function AboutSection() {
                 </div>
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=600&fit=crop"
+                    src="/about/hotel-reception.jpg"
                     alt="Pure-veg restaurant partner near Guruvayur Dham"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -77,7 +77,7 @@ export default function AboutSection() {
               <div className="space-y-4 pt-8">
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&h=600&fit=crop"
+                    src="/about/hotel-lobby.jpg"
                     alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -86,7 +86,7 @@ export default function AboutSection() {
                 </div>
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&h=800&fit=crop"
+                    src="/about/hotel-interior.jpg"
                     alt="Deluxe AC room interior at Guruvayur Dham"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -157,7 +157,7 @@ export default function AboutSection() {
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-gold" />
                 <div>
-                  <p className="font-serif text-lg text-foreground">4.9 ★</p>
+                  <p className="font-serif text-lg text-foreground">4.8 ★</p>
                   <p className="text-xs text-muted-foreground">Google rating</p>
                 </div>
               </div>

@@ -25,13 +25,13 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "site.address", value: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001", category: "site", label: "Address" },
   { key: "site.checkIn", value: "12:00 PM", category: "site", label: "Check-in Time" },
   { key: "site.checkOut", value: "11:00 AM", category: "site", label: "Check-out Time" },
-  { key: "site.rating", value: "4.9", category: "site", label: "Rating" },
-  { key: "site.reviewCount", value: "847", category: "site", label: "Review Count" },
+  { key: "site.rating", value: "4.8", category: "site", label: "Rating" },
+  { key: "site.reviewCount", value: "120", category: "site", label: "Review Count" },
   { key: "site.totalRooms", value: "16", category: "site", label: "Total Rooms" },
   { key: "site.distanceToTemple", value: "Walk to Mata Pathwari Mandir", category: "site", label: "Distance to Temple" },
 
   /* ----- Hero section ----- */
-  { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 1998", category: "hero", label: "Hero Eyebrow" },
+  { key: "hero.eyebrow", value: "Stay · Pooja · Blessing · Since 2020", category: "hero", label: "Hero Eyebrow" },
   { key: "hero.headline", value: "Stay 2 Minutes from", category: "hero", label: "Hero Headline (first part)" },
   { key: "hero.headlineHighlight", value: "Guruvayur Temple", category: "hero", label: "Hero Headline Highlight (gold foil)" },
   { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
@@ -40,12 +40,12 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   /* ----- Why Choose Us section ----- */
   { key: "whyChooseUs.eyebrow", value: "Why Pilgrims Choose Us", category: "whyChooseUs", label: "Why Us Eyebrow" },
   { key: "whyChooseUs.title", value: "More Than a Stay · A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
-  { key: "whyChooseUs.subtitle", value: "We've hosted over 15,000 pilgrims since 1998. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
+  { key: "whyChooseUs.subtitle", value: "We've welcomed 10,000+ pilgrims since 2020. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
 
   /* ----- Homepage stats strip (WhyChooseUs section) ----- */
   { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
-  { key: "homepage.stats.years", value: "10", category: "homepage", label: "Homepage Stat · Years of Service" },
-  { key: "homepage.stats.guests", value: "15000", category: "homepage", label: "Homepage Stat · Happy Guests" },
+  { key: "homepage.stats.years", value: "5", category: "homepage", label: "Homepage Stat · Years of Service" },
+  { key: "homepage.stats.guests", value: "10000", category: "homepage", label: "Homepage Stat · Happy Guests" },
   { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },
 
   /* ----- Rooms section ----- */
@@ -60,8 +60,8 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
 
   /* ----- About section ----- */
   { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
-  { key: "about.title", value: "A Family-Run Pilgrim Home Since 1998", category: "about", label: "About Title" },
-  { key: "about.story", value: "Namaste and welcome to Mathura! I am Ram Meena, the proud owner and dedicated host of Hotel Guruvayur Dham. Born and raised with deep roots in the holy Braj region, my goal is to ensure every devotee, family, and traveler experiences warm hospitality, peace of mind, and absolute comfort during their spiritual pilgrimage.\n\nGuruvayur Dham is an inviting haven of comfort and warm hospitality located in the sacred city of Mathura. Situated in Dholi Pyau, within convenient proximity to Mathura Junction Railway Station, the hotel is an ideal destination for pilgrims, families, tourists, and business travelers. Designed with elegant wooden interiors, modern ambient lighting, and well-appointed rooms ranging from cozy double setups to spacious family suites, Guruvayur Dham ensures a peaceful and restful stay during your divine Braj Darshan journey.\n\nWhether you need personalized guidance for Mathura-Vrindavan temple darshan, quick local travel tips, or simply want to ensure your family's stay is comfortable and secure, my team and I are available round-the-clock to make your trip effortless and memorable. At Hotel Guruvayur Dham, we don't just offer rooms; we welcome you as part of our extended family.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story" },
+  { key: "about.title", value: "A Modern Pilgrim Home Since 2020", category: "about", label: "About Title" },
+  { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story" },
 
   /* ----- Contact section ----- */
   { key: "contact.eyebrow", value: "Get in Touch", category: "contact", label: "Contact Eyebrow" },
@@ -91,8 +91,8 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
 
   /* ----- Testimonials section ----- */
   { key: "testimonials.eyebrow", value: "Guest Stories", category: "testimonials", label: "Testimonials Eyebrow" },
-  { key: "testimonials.title", value: "Loved by 15,000+ Pilgrims", category: "testimonials", label: "Testimonials Title" },
-  { key: "testimonials.subtitle", value: "4.9 ★ average rating across Google, Booking.com & MakeMyTrip from 847+ verified reviews.", category: "testimonials", label: "Testimonials Subtitle" },
+  { key: "testimonials.title", value: "Loved by 10,000+ Pilgrims", category: "testimonials", label: "Testimonials Title" },
+  { key: "testimonials.subtitle", value: "4.8 ★ average rating across Google, Booking.com & MakeMyTrip from 120+ verified reviews.", category: "testimonials", label: "Testimonials Subtitle" },
 
   /* ----- FAQ section ----- */
   { key: "faq.eyebrow", value: "Frequently Asked", category: "faq", label: "FAQ Eyebrow" },

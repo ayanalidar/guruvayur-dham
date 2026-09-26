@@ -66,8 +66,8 @@ export default function ReviewsWidget() {
       <div className="container-x">
         <SectionHeader
           eyebrow="Google Reviews"
-          title={<>Loved by <GoldFoilText>{stats?.total || 847}+ Pilgrims</GoldFoilText></>}
-          subtitle={`${stats?.averageRating || 4.9} ★ average rating on Google. Reviews update in real-time · when a guest posts a new review, it appears here instantly.`}
+          title={<>Loved by <GoldFoilText>{stats?.total || 120}+ Pilgrims</GoldFoilText></>}
+          subtitle={`${stats?.averageRating || 4.8} ★ average rating on Google. Reviews update in real-time · when a guest posts a new review, it appears here instantly.`}
         />
 
         {/* Google rating badge */}
@@ -81,7 +81,7 @@ export default function ReviewsWidget() {
             </svg>
             <div>
               <p className="text-xs text-ivory/50">Google Rating</p>
-              <p className="font-serif text-2xl text-gold-foil">{stats?.averageRating || 4.9}</p>
+              <p className="font-serif text-2xl text-gold-foil">{stats?.averageRating || 4.8}</p>
             </div>
           </div>
           <div className="h-12 w-px bg-champagne/15" />
@@ -91,7 +91,7 @@ export default function ReviewsWidget() {
                 <Star key={i} className="h-4 w-4 fill-gold text-gold" />
               ))}
             </div>
-            <p className="mt-1 text-xs text-ivory/50">{stats?.total || 847} reviews</p>
+            <p className="mt-1 text-xs text-ivory/50">{stats?.total || 120} reviews</p>
           </div>
         </div>
 

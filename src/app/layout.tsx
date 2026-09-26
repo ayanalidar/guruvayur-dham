@@ -135,7 +135,7 @@ export default function RootLayout({
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
     priceRange: "₹1500 - ₹3500",
-    starRating: { "@type": "Rating", ratingValue: "4.9", reviewCount: "847" },
+    starRating: { "@type": "Rating", ratingValue: "4.8", reviewCount: "120" },
     address: {
       "@type": "PostalAddress",
       streetAddress: "Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau",

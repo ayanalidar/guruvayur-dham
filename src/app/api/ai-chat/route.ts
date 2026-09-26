@@ -41,8 +41,8 @@ KNOWLEDGE BASE:
 - Price range: ₹1,500 to ₹3,500 per night
 - Check-in: 12:00 PM, Check-out: 11:00 AM
 - 24×7 hot water, free WiFi, free parking
-- Rating: 4.9 stars (847+ reviews)
-- Family-run since 1998
+- Rating: 4.8 stars (120+ reviews)
+- Modern pilgrim hospitality since 2020
 
 MATHURA TEMPLE TIMINGS:
 - Krishna Janmabhoomi: 5:00 AM - 12:00 PM, 4:00 PM - 9:30 PM

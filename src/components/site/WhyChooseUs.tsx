@@ -16,7 +16,7 @@ export default function WhyChooseUs() {
   const title = get("whyChooseUs.title", "More Than a Stay · A Pilgrim Companion");
   const subtitle = get(
     "whyChooseUs.subtitle",
-    "We've hosted over 15,000 pilgrims since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+    "We've hosted 10,000+ pilgrims since 2020. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
   );
 
   // Split title so the second half gets the gradient style (preserve original visual)
@@ -86,8 +86,8 @@ export default function WhyChooseUs() {
           {[
             { value: "200 m", label: "to temple gate" },
             { value: "52", label: "AC & non-AC rooms" },
-            { value: "15,000+", label: "happy pilgrims" },
-            { value: "4.9 ★", label: "Google rating" },
+            { value: "10,000+", label: "happy pilgrims" },
+            { value: "4.8 ★", label: "Google rating" },
           ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="font-serif text-3xl text-gold-light sm:text-4xl">{s.value}</p>

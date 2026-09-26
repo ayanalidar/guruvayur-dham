@@ -10,7 +10,7 @@ import { GoldFoilText, ImageReveal, MandalaDivider, MagneticButton, CountUp, OmW
 
 const HIGHLIGHTS = [
   "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
-  "Family-run since 1998 · three generations of warm hospitality",
+  "Modern pilgrim hospitality since 2020 · 10,000+ pilgrims served",
   "16+ rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
@@ -22,7 +22,7 @@ export default function AboutPage() {
   const { get } = useContent();
 
   const eyebrow = get("about.eyebrow", "About Guruvayur Dham");
-  const title = get("about.title", "A Family-Run Pilgrim Home Since 1998");
+  const title = get("about.title", "A Modern Pilgrim Home Since 2020");
   const story = get("about.story", "Namaste and welcome to Mathura! I am Ram Meena, the proud owner and dedicated host of Hotel Guruvayur Dham. Born and raised with deep roots in the holy Braj region, my goal is to ensure every devotee, family, and traveler experiences warm hospitality, peace of mind, and absolute comfort during their spiritual pilgrimage.\n\nGuruvayur Dham is an inviting haven of comfort and warm hospitality located in the sacred city of Mathura. Situated in Dholi Pyau, within convenient proximity to Mathura Junction Railway Station, the hotel is an ideal destination for pilgrims, families, tourists, and business travelers. Designed with elegant wooden interiors, modern ambient lighting, and well-appointed rooms ranging from cozy double setups to spacious family suites, Guruvayur Dham ensures a peaceful and restful stay during your divine Braj Darshan journey.\n\nWhether you need personalized guidance for Mathura-Vrindavan temple darshan, quick local travel tips, or simply want to ensure your family's stay is comfortable and secure, my team and I are available round-the-clock to make your trip effortless and memorable. At Hotel Guruvayur Dham, we don't just offer rooms; we welcome you as part of our extended family.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English");
   const paragraphs = story.split(/\n\n+/).filter(Boolean);
 
@@ -53,24 +53,24 @@ export default function AboutPage() {
           >
             <div className="grid grid-cols-2 gap-4">
               <ImageReveal
-                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=800&fit=crop"
+                src="/about/hotel-exterior.jpg"
                 alt="Guruvayur Dham reception and lobby"
                 className="aspect-[3/4] rounded-2xl border border-champagne/15 shadow-luxe"
               />
               <ImageReveal
-                src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=600&fit=crop"
+                src="/about/hotel-reception.jpg"
                 alt="Pure-veg restaurant partner near Guruvayur Dham"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
             </div>
             <div className="grid grid-cols-2 gap-4 pt-6">
               <ImageReveal
-                src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&h=600&fit=crop"
+                src="/about/hotel-lobby.jpg"
                 alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
               <ImageReveal
-                src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&h=800&fit=crop"
+                src="/about/hotel-interior.jpg"
                 alt="Deluxe AC room interior at Guruvayur Dham"
                 className="aspect-[3/4] rounded-2xl border border-champagne/15 shadow-luxe"
               />
@@ -86,28 +86,12 @@ export default function AboutPage() {
             <h2 className="font-serif text-3xl text-ivory sm:text-4xl">Our Story</h2>
             <div className="mt-5 space-y-4 text-base leading-relaxed text-ivory/70">
               <p>
-                Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather
-                Shri Krishna Sharma · himself a daily devotee at the temple · noticed that
-                pilgrims arriving from distant states had nowhere clean, affordable, and
-                walking-distance to stay. What started as a single rented house has, over
-                25 years and three generations, grown into a 16-room property that has
-                welcomed over 15,000 pilgrims from across India and the diaspora.
-              </p>
-              <p>
-                We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
-                reception shift during Mangala Aarti darshan to the complimentary chai service
-                before temple visits, is made with the devotee in mind. Our pooja-booking
-                coordinator works directly with the temple pandit's office to secure your
-                slots, and our housekeeping team inspects every room against a 22-point
-                checklist before check-in.
-              </p>
-              <p>
-                Our mission is simple: to make every pilgrim's Guruvayur visit spiritually
-                fulfilling, physically comfortable, and logistically effortless. Whether
-                you're a solo traveller on a quick darshan trip or a multi-generational
-                family here for a child's Annaprashan ceremony, you'll find a warm welcome,
-                honest pricing, and the kind of personal care that only a family-run home
-                can offer.
+                Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura.
+                Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium
+                furnishings, and proximity to all major Braj temples. Owner Ram Meena and his
+                team provide round-the-clock hospitality — from temple darshan guidance to
+                local travel tips — making every pilgrim's Braj journey effortless and
+                memorable.
               </p>
             </div>
 
@@ -148,7 +132,7 @@ export default function AboutPage() {
               { value: 25, suffix: "+", label: "Years of Service" },
               { value: 52, suffix: "", label: "Rooms & Suites" },
               { value: 50000, suffix: "+", label: "Pilgrims Served" },
-              { value: 4.9, suffix: " ★", label: "Google Rating", decimals: 1 },
+              { value: 4.8, suffix: " ★", label: "Google Rating", decimals: 1 },
             ].map((s, i) => (
               <motion.div
                 key={i}
@@ -181,7 +165,7 @@ export default function AboutPage() {
               comfortable, and logistically effortless. Whether you're a solo traveller on
               a quick darshan trip or a multi-generational family here for a child's Annaprashan
               ceremony, you'll find a warm welcome, honest pricing, and the kind of personal
-              care that only a family-run home can offer.
+              care that makes every pilgrim feel at home.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[

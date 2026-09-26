@@ -21,7 +21,7 @@ export default function Hero() {
   const cmsBadges = useCMSList<TrustBadgeItem>("trustBadges", []);
   const badges = cmsBadges.length > 0 ? cmsBadges.map(mapTrustBadge) : TRUST_BADGES;
 
-  const eyebrow = get("hero.eyebrow", "Stay · Pooja · Blessing · Since 1998");
+  const eyebrow = get("hero.eyebrow", "Stay · Pooja · Blessing · Since 2020");
   const headlinePre = get("hero.headline", "Where Your Stay");
   const headlineHighlight = get("hero.headlineHighlight", "Journey");
   const subheadline = get(

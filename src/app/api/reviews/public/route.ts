@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
       summary: {
         total: allPublished.length,
         averageRating: Math.round(avgRating * 10) / 10,
-        googleRating: 4.9, // would come from Google Places API in production
-        googleReviewCount: 847,
+        googleRating: 4.8, // would come from Google Places API in production
+        googleReviewCount: 120,
       },
     });
   } catch (e: any) {
@@ -51,8 +51,8 @@ export async function GET(req: NextRequest) {
       summary: {
         total: 0,
         averageRating: 0,
-        googleRating: 4.9,
-        googleReviewCount: 847,
+        googleRating: 4.8,
+        googleReviewCount: 120,
       },
       note: "Reviews unavailable — DB may be unreachable or Review table not seeded yet. Run /api/seed to fix.",
     });

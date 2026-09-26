@@ -107,7 +107,7 @@ function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-champagne/25 bg-ink-soft/50 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-champagne backdrop-blur-md"
           >
             <span className="h-1.5 w-1.5 animate-diya rounded-full bg-saffron" />
-            Stay · Pooja · Blessing · Since 1998
+            Stay · Pooja · Blessing · Since 2020
           </motion.div>
 
           <motion.h1
@@ -244,8 +244,8 @@ function Hero() {
               <div className="flex items-center gap-1">
                 {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-gold text-gold" />)}
               </div>
-              <p className="mt-1 font-serif text-2xl text-gold-foil">4.9</p>
-              <p className="text-[10px] text-ivory/60">847 reviews</p>
+              <p className="mt-1 font-serif text-2xl text-gold-foil">4.8</p>
+              <p className="text-[10px] text-ivory/60">120 reviews</p>
             </div>
           </motion.div>
         </motion.div>
@@ -280,12 +280,12 @@ function MarqueeStrip() {
         "Archana",
         "Annaprashan",
         "Walk to temple gate",
-        "4.9 ★ Google Rating",
+        "4.8 ★ Google Rating",
         "24×7 Hot Water",
         "Free Parking",
         "Pooja Booking",
         "Family Suites",
-        "Since 1998",
+        "Since 2020",
       ]}
     />
   );
@@ -311,13 +311,13 @@ function WhyChooseUs() {
       decimals: 0,
     },
     {
-      value: Number(get("homepage.stats.years", "10")),
+      value: Number(get("homepage.stats.years", "5")),
       suffix: "+",
       label: "years of service",
       decimals: 0,
     },
     {
-      value: Number(get("homepage.stats.guests", "15000")),
+      value: Number(get("homepage.stats.guests", "10000")),
       suffix: "+",
       label: "happy guests",
       decimals: 0,
@@ -337,7 +337,7 @@ function WhyChooseUs() {
         <SectionHeader
           eyebrow={t("section.whyUs")}
           title={<>More Than a Stay · A <GoldFoilText>Pilgrim Companion</GoldFoilText></>}
-          subtitle="We've hosted over 15,000 pilgrims since 1998. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
+          subtitle="We've welcomed 10,000+ pilgrims since 2020. Every detail · from 24×7 hot water to free temple darshan guidance · is designed around what a pilgrim actually needs."
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -773,7 +773,7 @@ function Testimonials() {
       <div className="container-x relative">
         <SectionHeader
           eyebrow={t("section.testimonials")}
-          title={<>Loved by <GoldFoilText>15,000+ Pilgrims</GoldFoilText></>}
+          title={<>Loved by <GoldFoilText>10,000+ Pilgrims</GoldFoilText></>}
           subtitle={`${SITE.rating} ★ average rating across Google, Booking.com & MakeMyTrip from ${SITE.reviewCount}+ verified reviews.`}
         />
 
@@ -856,14 +856,15 @@ function AboutTeaser() {
             <SectionHeader
               align="left"
               eyebrow={t("section.about")}
-              title={<>A Family-Run Pilgrim Home Since <GoldFoilText>1998</GoldFoilText></>}
+              title={<>A Modern Pilgrim Home Since <GoldFoilText>2020</GoldFoilText></>}
               className="!mx-0"
             />
             <p className="mt-5 text-base leading-relaxed text-ivory/70">
-              Guruvayur Dham began as a small four-room lodge in 1998, when our grandfather
-              noticed that pilgrims arriving from distant states had nowhere clean, affordable,
-              and walking-distance to stay. Over 25 years and three generations, it has grown
-              into a 16-room boutique property that has welcomed over 15,000 pilgrims.
+              Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura.
+              Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium
+              furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team
+              provide round-the-clock hospitality — from temple darshan guidance to local travel
+              tips — making every pilgrim's Braj journey effortless and memorable.
             </p>
             <p className="mt-4 text-base leading-relaxed text-ivory/70">
               We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM
