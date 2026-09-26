@@ -573,8 +573,17 @@ export function PageLoader({ onDone }: { onDone?: () => void }) {
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="mt-6 font-serif text-2xl tracking-[0.15em] text-champagne"
+          style={{ textShadow: "0 0 20px rgba(212,196,168,0.3)" }}
+        >
+          राधे राधे
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.5 }}
-          className="mt-6 font-serif text-sm uppercase tracking-[0.4em] text-champagne/80"
+          className="mt-2 font-serif text-sm uppercase tracking-[0.4em] text-champagne/80"
         >
           Guruvayur Dham
         </motion.p>
