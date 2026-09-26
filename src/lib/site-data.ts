@@ -7,13 +7,13 @@
 export const SITE = {
   name: "GuruVayur Dham",
   tagline: "2 Minutes from Mathura Station",
-  // Two contact numbers (per invoice sample)
-  phone: "+91 8445555584",          // primary (used for tel: links)
-  phoneRaw: "+918445555584",
-  phone2: "+91 9410077786",         // secondary (display only)
-  phone2Raw: "+919410077786",
-  phones: "+91 8445555584, +91 9410077786",  // combined display string
-  whatsapp: "918445555584",          // WhatsApp uses primary
+  // Two contact numbers — +91-90908 20208 is MAIN (also WhatsApp), +91 8445555584 is secondary
+  phone: "+91-90908 20208",          // primary (used for tel: links + WhatsApp)
+  phoneRaw: "+919090820208",
+  phone2: "+91 8445555584",           // secondary (display only)
+  phone2Raw: "+918445555584",
+  phones: "+91-90908 20208, +91 8445555584",  // combined display string
+  whatsapp: "919090820208",          // WhatsApp uses primary
   email: "bookings@guruvayurdham.co.in",
   emails: {
     bookings: "bookings@guruvayurdham.co.in",

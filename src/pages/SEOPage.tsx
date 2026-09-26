@@ -340,7 +340,7 @@ export default function SEOPage({ slug }: { slug: string }) {
             Ready to Book Your Stay?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-cream/80">
-            Guruvayur Dham — clean rooms, honest pricing, and warm pilgrim hospitality since 1998.
+            Guruvayur Dham — clean rooms, honest pricing, and warm pilgrim hospitality since 2020.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button onClick={() => navigate("/rooms")} className="btn-luxe text-sm">

@@ -20,7 +20,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   /* ----- Site settings ----- */
   { key: "site.name", value: "Guruvayur Dham", category: "site", label: "Site Name" },
   { key: "site.tagline", value: "Stay 2 Minutes from the Divine", category: "site", label: "Tagline" },
-  { key: "site.phone", value: "+91 98765 43210", category: "site", label: "Phone" },
+  { key: "site.phone", value: "+91-90908 20208", category: "site", label: "Phone" },
   { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Email" },
   { key: "site.address", value: "Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001", category: "site", label: "Address" },
   { key: "site.checkIn", value: "12:00 PM", category: "site", label: "Check-in Time" },
@@ -67,11 +67,11 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "contact.eyebrow", value: "Get in Touch", category: "contact", label: "Contact Eyebrow" },
   { key: "contact.title", value: "Book Your Stay or Ask Anything", category: "contact", label: "Contact Title" },
   { key: "contact.subtitle", value: "Fill the form below and we'll WhatsApp you back within minutes — or reach us directly through any of the channels here.", category: "contact", label: "Contact Subtitle" },
-  { key: "contact.phone", value: "+91 8445555584", category: "contact", label: "Primary Phone (display + tel: link)" },
-  { key: "contact.phoneRaw", value: "+918445555584", category: "contact", label: "Primary Phone (tel: link — no spaces)" },
-  { key: "contact.phone2", value: "+91 9410077786", category: "contact", label: "Secondary Phone (display only)" },
-  { key: "contact.phones", value: "+91 8445555584, +91 9410077786", category: "contact", label: "Combined Phones Display" },
-  { key: "contact.whatsapp", value: "918445555584", category: "contact", label: "WhatsApp Number (country code + number, no +)" },
+  { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Primary Phone (display + tel: link)" },
+  { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Primary Phone (tel: link — no spaces)" },
+  { key: "contact.phone2", value: "+91 8445555584", category: "contact", label: "Secondary Phone (display only)" },
+  { key: "contact.phones", value: "+91-90908 20208, +91 8445555584", category: "contact", label: "Combined Phones Display" },
+  { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp Number (country code + number, no +)" },
   { key: "contact.email", value: "bookings@guruvayurdham.co.in", category: "contact", label: "Email Address" },
   { key: "contact.shortAddress", value: "Mali Para, Dholi Pyau, Mathura 281001", category: "contact", label: "Short Address (for cards)" },
   { key: "contact.mapEmbed", value: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3549.5552!2d77.6900!3d27.4924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3973715d2a2a2a2a%3A0x0!2zMjfCsDI5JzQwLjYiTiA3N8KwNDEnMjQuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin", category: "contact", label: "Google Maps Embed URL" },
@@ -129,7 +129,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "invoice.hotelName", value: "GuruVayur Dham", category: "invoice", label: "Invoice · Hotel Name" },
   { key: "invoice.gstin", value: "09ABAFG2373H1ZG", category: "invoice", label: "Invoice · Hotel GSTIN" },
   { key: "invoice.address", value: "68/396 Mali Para, Opp. Mata Pathwari Mandir, Dholi Pyau, Mathura, Uttar Pradesh - 281001", category: "invoice", label: "Invoice · Hotel Address" },
-  { key: "invoice.phones", value: "+91 8445555584, +91 9410077786", category: "invoice", label: "Invoice · Hotel Phones (display)" },
+  { key: "invoice.phones", value: "+91-90908 20208, +91 8445555584", category: "invoice", label: "Invoice · Hotel Phones (display)" },
   { key: "invoice.email", value: "bookings@guruvayurdham.co.in", category: "invoice", label: "Invoice · Hotel Email" },
   { key: "invoice.bank.name", value: "AU Small Finance Bank", category: "invoice", label: "Invoice · Bank Name" },
   { key: "invoice.bank.accountNumber", value: "2502421377158310", category: "invoice", label: "Invoice · Bank Account Number" },
@@ -246,7 +246,7 @@ async function seed() {
   console.log(`✓ Availability initialized for 90 days × ${rooms.length} rooms`);
 
   const demoBookings = [
-    { guestName: "Anand Krishnan", guestPhone: "+91 98765 43210", source: "BOOKING_COM", channelBookingId: "BC-887412", nights: 2, guests: 2, roomSlug: "deluxe-ac-room", offsetDays: 3 },
+    { guestName: "Anand Krishnan", guestPhone: "+91-90908 20208", source: "BOOKING_COM", channelBookingId: "BC-887412", nights: 2, guests: 2, roomSlug: "deluxe-ac-room", offsetDays: 3 },
     { guestName: "Lakshmi Pillai", guestPhone: "+91 99876 54321", source: "MAKEMYTRIP", channelBookingId: "MMT-552103", nights: 3, guests: 4, roomSlug: "family-suite-ac", offsetDays: 5 },
     { guestName: "Rajesh Menon", guestPhone: "+91 90123 45678", source: "WALKIN", nights: 1, guests: 2, roomSlug: "non-ac-room", offsetDays: 1 },
     { guestName: "Sunita Nair", guestPhone: "+91 91234 56789", source: "DIRECT", nights: 2, guests: 2, roomSlug: "standard-ac-room", offsetDays: 7 },

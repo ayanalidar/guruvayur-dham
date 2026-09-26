@@ -57,7 +57,7 @@ export default function AboutSection() {
               <div className="space-y-4">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="/about/hotel-exterior.jpg"
+                    src="/about/hotel-building.jpg"
                     alt="Guruvayur Dham reception and lobby area"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -66,7 +66,7 @@ export default function AboutSection() {
                 </div>
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="/about/hotel-reception.jpg"
+                    src="/about/ram-meena.jpg"
                     alt="Pure-veg restaurant partner near Guruvayur Dham"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -77,7 +77,7 @@ export default function AboutSection() {
               <div className="space-y-4 pt-8">
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="/about/hotel-lobby.jpg"
+                    src="/about/room-suite.jpg"
                     alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
@@ -86,7 +86,7 @@ export default function AboutSection() {
                 </div>
                 <div className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-warm">
                   <Image
-                    src="/about/hotel-interior.jpg"
+                    src="/about/room-king.jpg"
                     alt="Deluxe AC room interior at Guruvayur Dham"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"

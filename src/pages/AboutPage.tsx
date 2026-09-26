@@ -53,24 +53,24 @@ export default function AboutPage() {
           >
             <div className="grid grid-cols-2 gap-4">
               <ImageReveal
-                src="/about/hotel-exterior.jpg"
+                src="/about/hotel-building.jpg"
                 alt="Guruvayur Dham reception and lobby"
                 className="aspect-[3/4] rounded-2xl border border-champagne/15 shadow-luxe"
               />
               <ImageReveal
-                src="/about/hotel-reception.jpg"
+                src="/about/ram-meena.jpg"
                 alt="Pure-veg restaurant partner near Guruvayur Dham"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
             </div>
             <div className="grid grid-cols-2 gap-4 pt-6">
               <ImageReveal
-                src="/about/hotel-lobby.jpg"
+                src="/about/room-suite.jpg"
                 alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
               <ImageReveal
-                src="/about/hotel-interior.jpg"
+                src="/about/room-king.jpg"
                 alt="Deluxe AC room interior at Guruvayur Dham"
                 className="aspect-[3/4] rounded-2xl border border-champagne/15 shadow-luxe"
               />
