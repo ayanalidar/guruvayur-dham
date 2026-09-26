@@ -98,6 +98,8 @@ export async function POST(req: NextRequest) {
     { key: "hero.headlineHighlight", value: "Journey", category: "hero", label: "Hero Highlight" },
     { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
     { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story (Ram Meena host bio)" },
+    { key: "about.title", value: "A Modern Pilgrim Home Since 2020", category: "about", label: "About Title" },
+    { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
     { key: "footer.tagline", value: "Luxury Pilgrim Stay", category: "footer", label: "Footer Tagline" },
     { key: "site.name", value: "GuruVayur Dham", category: "site", label: "Site Name" },
     { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Site Email" },
