@@ -27,7 +27,19 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   for (const b of blocks) map[b.key] = b.value;
   return NextResponse.json(
     { blocks, map },
-    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        // Surrogate-Control: tells Vercel's edge CDN NOT to cache this response.
+        // Without this, the CDN may serve stale JSON to other users even though
+        // we tell the browser "no-store".
+        "Surrogate-Control": "no-store",
+        // Pragma: no-cache — extra belt-and-suspenders for legacy HTTP/1.0 caches.
+        "Pragma": "no-cache",
+        // Tells the CDN+browser: this response expired at epoch 0 (always stale)
+        "Expires": "0",
+      },
+    }
   );
 });
 

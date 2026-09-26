@@ -183,7 +183,14 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(
     { data },
-    { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Surrogate-Control": "no-store",
+        "Pragma": "no-cache",
+        "Expires": "0",
+      },
+    }
   );
 }
 

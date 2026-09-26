@@ -57,70 +57,91 @@ const FALLBACK_DAY1 = JSON.stringify([
     temple: "Shri Krishna Janmabhoomi",
     slot: "Morning",
     time: "5 AM - 12 PM, 4 - 9:30 PM",
-    travelFromGD: "1.5 km · 5 min drive / 20 min walk",
-    note: "Most peaceful at 5 AM Mangala Aarti. Reach before 6 AM to avoid crowds.",
+    travelFromGD: "1.5 km · ~10-15 min drive",
+    note: "Reach before 6 AM for the most peaceful darshan. On Janmashtami, the midnight 108-medicine abhishek from Kamdhenu Gomukh is once-in-a-lifetime. Panchamrit Mahabhishek at the garbha-griha stone (where Krishna appeared). Prasadam: Makhan-Mishri, Panjeeri.",
   },
   {
-    temple: "Dwarkadhish Temple",
+    temple: "Shri Bhuteshwar Mahadev",
+    slot: "Morning",
+    time: "5 AM - 9 PM",
+    travelFromGD: "1.8 km · ~10 min drive (10 min walk from Janmabhoomi)",
+    note: "Mathura's Kshetrapal (city protector) — ancient Shiva linga. Krishna came here for permission before entering Mathura. Begin Braj Parikrama only after Kshetrapal's aagman. Bhasma + Ak-Dhatura + Bel-patra abhishek. Savan Mondays have Rudra-path + Maha-aarti.",
+  },
+  {
+    temple: "Shri Dwarkadhish Temple",
     slot: "Afternoon",
     time: "6:30 - 10:30 AM, 4 - 7 PM",
-    travelFromGD: "2 km · 7 min drive",
-    note: "Sandhya Aarti at 6 PM is the highlight.",
+    travelFromGD: "2 km · ~15 min drive",
+    note: "Built 1814 by Seth Gokuldas Parekh near Vishram Ghat. Krishna in Rajadhiraj form (King of Dwarka). Pushtimarg Ashtayam seva (8 services: Mangala, Gwal, Rajbhog, Utthapan, Bhog, Sandhya Aarti, Shayan). Sandhya Aarti at 6 PM is the highlight. Savan swings + Sharad Purnima white attire + Holi abeer-gulal.",
   },
   {
-    temple: "Vishram Ghat",
+    temple: "Vishram Ghat & Yamuna Maharani Mandir",
     slot: "Sunset",
-    time: "Open all day · best at sunset",
-    travelFromGD: "2.5 km · 8 min drive",
-    note: "Evening aarti with floating diyas on the Yamuna — magical at dusk.",
+    time: "Open all day · best at sunrise/sunset for Aarti",
+    travelFromGD: "2.2 km · ~15 min drive",
+    note: "Krishna + Balaram rested here after killing Kansa. Starting point of the 25-pradakshina Braj parikrama. Chunari Manorath + Deepadan. Sunset Yamuna Aarti with floating diyas — magical. End Day 1 here.",
   },
 ]);
 
 const FALLBACK_DAY2 = JSON.stringify([
   {
-    temple: "Banke Bihari Temple (Vrindavan)",
+    temple: "Shri Nand Bhavan (Chaurasi Khambha)",
     slot: "Morning",
-    time: "7:45 AM - 12 PM, 5:30 - 9:30 PM",
-    travelFromGD: "15 km · 25 min drive (auto Rs 250)",
-    note: "Reach by 8 AM for peaceful darshan. Unique curtain darshan.",
+    time: "6 AM - 8 PM",
+    travelFromGD: "10 km · ~25 min drive (Gokul)",
+    note: "Vishwakarma-built palace with 84 carved pillars symbolizing 84 lakh species — Krishna's childhood home. Bal Laddu Gopal palna (swing) seva. Devotees tie mouli + chunari for santan-prapti (child boon). Prasadam: fresh white Makhan, Mishri, Doodh-Peda, Malpua. Janmashtami midnight palna seva is special.",
   },
   {
-    temple: "Prem Mandir (Vrindavan)",
+    temple: "Shri Raman Reti",
+    slot: "Morning",
+    time: "6 AM - 8 PM",
+    travelFromGD: "11 km · ~30 min drive (Gokul)",
+    note: "Sacred sandy ground where Krishna played with Shridama, Subal + cows. Sant Gynananand Maharaj's tapasya sthal. Famous for raj-snan — rolling in the sacred dust for physical + mental peace. Gau-seva, deer-feeding. The dust itself is the prasadam (raj-tilak on forehead).",
+  },
+  {
+    temple: "Shri Brahmand Ghat",
     slot: "Afternoon",
-    time: "8:30 AM - 8:30 PM",
-    travelFromGD: "15 km · 25 min drive",
-    note: "White marble temple, life-size dioramas. Stay for evening light show at 6:30 PM.",
+    time: "6 AM - 8 PM",
+    travelFromGD: "12 km · ~30 min drive (Gokul)",
+    note: "Where child Krishna ate mud + when Yashoda opened his mouth, she saw the entire universe (Brahmand) inside. Sacred clay worship + clay prasad (symbolic khand-mishri). Yamuna Aarti at sunset. Take a pinch of clay as prasadam.",
   },
   {
-    temple: "ISKCON Temple (Vrindavan)",
+    temple: "Shri Thakurani Ghat (Vallabh Baithak Ji)",
     slot: "Evening",
-    time: "5 AM - 8:30 PM",
-    travelFromGD: "16 km · 25 min drive",
-    note: "Kirtan starts at 7 PM. Great way to end the Vrindavan day.",
+    time: "6 AM - 8 PM",
+    travelFromGD: "12.5 km · ~30 min drive (Gokul)",
+    note: "Gokul's most prominent ghat — where Vallabhacharya received direct darshan of Yamuna Maharani + composed Shri Yamunashtak stotra. Pushtimarg sampradaya's first Baithak Ji. Brahm-sambandh diksha sthal (initiation site). End Day 2 here with Yamuna Aarti.",
   },
 ]);
 
 const FALLBACK_DAY3 = JSON.stringify([
   {
-    temple: "Radha Rani Mandir (Barsana)",
+    temple: "Shri Banke Bihari Temple",
     slot: "Morning",
-    time: "6 AM - 9 PM",
-    travelFromGD: "45 km · 1 hr drive",
-    note: "200 steps to the hilltop temple. Start at 7 AM for peaceful darshan.",
+    time: "7:45 AM - 12 PM, 5:30 - 9:30 PM (NO Mangala Aarti except Janmashtami)",
+    travelFromGD: "15 km · ~25 min drive (Vrindavan)",
+    note: "Self-manifested (prakatya) Radha-Krishna combined vigraha from Swami Haridas's tapasya (15th century). Curtain opens/closes every 2 minutes — don't stare fixedly (Bihari Ji gets 'bound'). NO Mangala Aarti except Janmashtami (Bihari Ji 'tired' from ras-leela). Prasadam: Matki Peda, Bal-bhog Kachori-Jalebi, evening Mohan-thal. Reach by 8 AM for peaceful darshan.",
   },
   {
-    temple: "Nanda Bhavan (Nandgaon)",
+    temple: "Shri Radha Raman Temple",
     slot: "Afternoon",
-    time: "7 AM - 12 PM, 3 - 8 PM",
-    travelFromGD: "8 km from Barsana · 50 km from Mathura",
-    note: "Krishna's childhood village. Visit Pavan Sarovar nearby.",
+    time: "5 AM (Mangala) - 12 PM, 6 - 9:30 PM",
+    travelFromGD: "15.5 km · ~30 min drive (Vrindavan)",
+    note: "Self-manifested (svayambhu) from Damodar Shaligram shila in 1542 by Gopal Bhatt Goswami (Gaudiya sampradaya). 500-year unbroken kitchen fire still cooks bhog thali — visit the kitchen. No separate Radha murti (Gomati chakra + Radha's crown on left side of vigraha). Morning Dughd-Mishri Mahabhishek. Best on Gaur Purnima (Holi) + Radhashtami.",
   },
   {
-    temple: "Mata Pathwari Mandir",
+    temple: "Shri Prem Mandir",
+    slot: "Sunset",
+    time: "8:30 AM - 8:30 PM",
+    travelFromGD: "16 km · ~30 min drive (Vrindavan)",
+    note: "54-acre Italian Carrara marble temple built by Jagadguru Kripalu Maharaj. Walls carved with Krishna's leela. STAY for evening LED lighting + musical fountains show ras-leela + Giridhar-dharan (sunset). Sankirtan-pradhana upasana. Modest dress required; no photography inside garbha-griha.",
+  },
+  {
+    temple: "Pavitra Nidhivan Raj",
     slot: "Evening",
-    time: "5 AM - 9 PM",
-    travelFromGD: "Next door to Guruvayur Dham · 2 min walk",
-    note: "Wind down with a short walk to the adjacent temple.",
+    time: "6 AM - 7 PM (STRICT — closes at sunset)",
+    travelFromGD: "15.5 km · ~30 min drive (Vrindavan)",
+    note: "Sacred grove where Krishna + Radha + gopis perform ras-leela every night. Trees embrace in pairs (yugal form). Rang Mahal shayan seva (chandan bed + datun + paan + water + shringar — found used next morning). ⚠️ STRICT RULE: After sunset, even animals + birds leave the grove. NO HUMAN may stay overnight. Plan morning-only visit.",
   },
 ]);
 
@@ -191,17 +212,17 @@ export default function PilgrimagePlannerPage() {
 
     const day1: DayPlan = {
       title: "Day 1 · Mathura",
-      summary: "Krishna Janmabhoomi (morning) → Dwarkadhish (afternoon) → Vishram Ghat (sunset)",
+      summary: "Krishna Janmabhoomi → Bhuteshwar Mahadev → Dwarkadhish → Vishram Ghat (4 mandirs)",
       stops: day1Stops,
     };
     const day2: DayPlan = {
-      title: "Day 2 · Vrindavan",
-      summary: "Banke Bihari → Prem Mandir → ISKCON",
+      title: "Day 2 · Gokul",
+      summary: "Nand Bhavan (Chaurasi Khambha) → Raman Reti → Brahmand Ghat → Thakurani Ghat (4 mandirs)",
       stops: day2Stops,
     };
     const day3: DayPlan = {
-      title: "Day 3 · Barsana & Nandgaon",
-      summary: "Radha Rani Mandir → Nandgaon → Mata Pathwari (return)",
+      title: "Day 3 · Vrindavan",
+      summary: "Banke Bihari → Radha Raman → Prem Mandir → Nidhivan Raj (4 mandirs)",
       stops: day3Stops,
     };
 

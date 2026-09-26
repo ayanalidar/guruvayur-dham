@@ -6,14 +6,22 @@
  * These hooks fetch editable content from /api/content (key/value blocks)
  * and /api/cms (structured lists like events, testimonials, FAQs).
  *
- * Every hook accepts a hardcoded fallback (from src/lib/site-data.ts) so the
- * site still renders correctly if:
- *   - The DB is unreachable
- *   - The CMS hasn't been seeded yet
- *   - The user is viewing the static export
+ * CACHE STRATEGY (FIXED — was the cause of "data never reflects on frontend"):
  *
- * Edits made in /admin/content or /admin/cms propagate to the live site
- * on the next page load (we use cache: "no-store").
+ *   1. Module-level cache with TTL=0 — every page mount triggers a fresh fetch.
+ *      Slight perf cost (~30ms per navigation) but guarantees fresh data.
+ *
+ *   2. visibilitychange listener — when user switches back to the tab,
+ *      the cache is invalidated so the next read fetches fresh data.
+ *      Solves the "open in new tab" scenario where admin saves in tab 1
+ *      and the user comes back to tab 2.
+ *
+ *   3. localStorage 'cms-updated' broadcast — when admin saves, we write
+ *      to localStorage which fires a 'storage' event in OTHER tabs of
+ *      the same browser. Those tabs invalidate their cache instantly.
+ *
+ *   4. invalidateCMSCache() — still called after admin saves in the SAME
+ *      tab, for instant feedback to the admin.
  *
  * I18N INTEGRATION
  * ----------------
@@ -24,41 +32,32 @@
  *   3. The translations.ts file: e.g. `hero.headline` (built-in translations
  *      for en/hi/mr/gu/ml)
  *   4. The provided fallback string
- *
- * This means language switching works automatically for built-in keys, and
- * admins can optionally translate any block by adding a `<key>__<lang>` row.
  */
 
 import { useEffect, useState } from "react";
 import type { ContentMap } from "./api-client";
 import { useI18n } from "./i18n/context";
 
-/* ---------- in-memory cache with TTL ---------- */
+/* ---------- in-memory cache ---------- */
 //
-// PROBLEM (user-reported): "data updated on backend doesn't reflect on frontend"
+// TTL=0 means "always stale" — every fetchContentMap() call refetches.
+// The fetch is deduplicated (contentPromise) so concurrent mounts don't
+// fire 2 requests.
 //
-// Root cause: contentCache and cmsListCache were module-level variables with
-// NO TTL — once set on first page load, they never refreshed for the entire
-// browser session. invalidateCMSCache() was only called from the admin CMS
-// editor (CMSPage.tsx), so only the admin's browser cleared its cache.
-// Regular users kept seeing stale data forever.
+// Module-level because:
+//   - Same-tab navigation should reuse the cache (React doesn't re-render
+//     the SPA page component, so useContent's useEffect doesn't re-run on
+//     every nav — but if it does re-run, we want fresh data)
+//   - Cross-tab invalidation happens via localStorage events (below)
 //
-// FIX: add a TTL (30 seconds). Every fetchContentMap() / fetchCMSList() call
-// checks if the cache is older than the TTL; if so, it refetches from the
-// server. This ensures all users see admin edits within 30 seconds, without
-// spamming the API on every page navigation.
-//
-// The admin editor still calls invalidateCMSCache() after saves for instant
-// feedback in their own browser.
-
-const CMS_CACHE_TTL_MS = 30 * 1000; // 30 seconds
+const CMS_CACHE_TTL_MS = 0; // 0 = always refetch on mount
 
 let contentCache: ContentMap | null = null;
-let contentCacheAt = 0; // timestamp when contentCache was populated
+let contentCacheAt = 0;
 let contentPromise: Promise<ContentMap> | null = null;
 
 const cmsListCache: Partial<Record<string, any[]>> = {};
-const cmsListCacheAt: Partial<Record<string, number>> = {}; // per-type timestamp
+const cmsListCacheAt: Partial<Record<string, number>> = {};
 const cmsListPromises: Partial<Record<string, Promise<any[]>>> = {};
 
 function isContentStale(): boolean {
@@ -73,9 +72,7 @@ function isListStale(type: string): boolean {
 }
 
 async function fetchContentMap(force = false): Promise<ContentMap> {
-  // Return cached data if fresh (within TTL) and not forced.
   if (contentCache && !force && !isContentStale()) return contentCache;
-  // If a fetch is already in flight, deduplicate.
   if (contentPromise) return contentPromise;
   contentPromise = (async () => {
     try {
@@ -96,7 +93,6 @@ async function fetchContentMap(force = false): Promise<ContentMap> {
 }
 
 async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
-  // Return cached data if fresh (within TTL) and not forced.
   if (cmsListCache[type] && !force && !isListStale(type)) {
     return cmsListCache[type] as T[];
   }
@@ -121,7 +117,7 @@ async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
 
 /**
  * Invalidate caches — call after admin saves content so the next read is fresh.
- * Also called automatically by the TTL expiry (30 seconds).
+ * Also called automatically by the TTL expiry (0 = always stale).
  */
 export function invalidateCMSCache() {
   contentCache = null;
@@ -129,6 +125,22 @@ export function invalidateCMSCache() {
   for (const k of Object.keys(cmsListCache)) {
     delete cmsListCache[k];
     delete cmsListCacheAt[k];
+  }
+}
+
+/**
+ * Broadcast a CMS update to ALL open tabs of this browser.
+ * Writes a sentinel value to localStorage which fires a 'storage' event
+ * in OTHER tabs (same-origin only). Those tabs invalidate their cache.
+ *
+ * Call this from admin save handlers AFTER invalidateCMSCache().
+ */
+export function broadcastCMSUpdate(reason?: string) {
+  invalidateCMSCache();
+  try {
+    localStorage.setItem("cms-updated", `${Date.now()}:${reason || "save"}`);
+  } catch {
+    // localStorage may be disabled (private mode) — silent fallback
   }
 }
 
@@ -144,16 +156,39 @@ export async function refreshCMSData() {
   ]);
 }
 
+/* ---------- Cross-tab sync via localStorage events ---------- */
+//
+// When ANOTHER tab writes to localStorage (via broadcastCMSUpdate),
+// this tab receives a 'storage' event. We invalidate our cache so the
+// next read fetches fresh data.
+//
+// This is what makes admin saves propagate to OTHER open tabs of the
+// same browser — without it, only the admin's tab sees the update.
+//
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === "cms-updated") {
+      invalidateCMSCache();
+    }
+  });
+
+  // visibilitychange — when user returns to this tab after switching away,
+  // invalidate the cache so the next read fetches fresh data.
+  // This catches the scenario where admin saves in tab 1, user comes back
+  // to tab 2 — they should see fresh data without waiting.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      invalidateCMSCache();
+    }
+  });
+}
+
 /* ---------- Hooks ---------- */
 
 /**
  * useContent() — load all key/value content blocks.
  * Returns `{ map, get, loading }`. `get(key, fallback)` returns the block
  * value or the fallback if missing.
- *
- * I18N AWARE: `get()` checks `<key>__<lang>` first (admin-curated translations),
- * then `<key>` (English default), then `t(key)` (built-in translations file),
- * then the fallback string.
  */
 export function useContent() {
   const { lang, t } = useI18n();
@@ -162,9 +197,6 @@ export function useContent() {
 
   useEffect(() => {
     let active = true;
-    // fetchContentMap() now checks TTL internally — if the cache is older
-    // than 30 seconds, it refetches from the server. This ensures admin
-    // edits propagate to all users within 30 seconds.
     fetchContentMap().then((m) => {
       if (!active) return;
       setMap(m);
@@ -184,9 +216,6 @@ export function useContent() {
     // 2) Default-language DB block
     const dbVal = map[key];
     if (dbVal && dbVal.length > 0) {
-      // For English, the DB value is the final answer.
-      // For other languages, prefer the built-in translation if one exists
-      // (so "हिंदी" wins over a possibly-English DB value when no __hi row was set).
       if (lang === "en") return dbVal;
       const tx = t(key);
       if (tx && tx !== key) return tx;
@@ -214,12 +243,8 @@ export function useCMSList<T = any>(type: string, fallback: T[]): T[] {
 
   useEffect(() => {
     let active = true;
-    // fetchCMSList() now checks TTL internally — if the cache is older than
-    // 30 seconds, it refetches from the server. Removed the `if (loaded) return`
-    // guard that was preventing TTL-based refresh on subsequent mounts.
     fetchCMSList<T>(type).then((data) => {
       if (!active) return;
-      // Only use CMS data if it's non-empty; otherwise keep fallback
       if (data && data.length > 0) {
         setList(data);
       }
@@ -276,11 +301,11 @@ export type BlogPostItem = {
   readTime: string;
   date: string;
   image: string;
-  content: string; // JSON array of paragraphs (stringified)
+  content: string;
   published: boolean;
 };
 
-/* ---------- Mappers that convert CMS rows to the shape site-data.ts exports ---------- */
+/* ---------- Mappers ---------- */
 
 export function mapEvent(e: EventItem) {
   return {
@@ -315,11 +340,6 @@ export function mapTrustBadge(t: TrustBadgeItem) {
   return { icon: t.icon, text: t.text };
 }
 
-/**
- * Blog posts come back from /api/cms as BlogPostItem (with `content` as a
- * JSON string). The frontend expects { content: string[] } (an array of
- * paragraphs). This mapper parses the JSON safely.
- */
 export function mapBlogPost(p: BlogPostItem) {
   let paragraphs: string[] = [];
   try {

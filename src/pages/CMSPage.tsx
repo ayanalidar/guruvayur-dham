@@ -13,7 +13,7 @@ import { GoldFoilText } from "@/components/site/visuals";
 import { SEO_PAGES, getSEOPage } from "@/lib/seo-pages";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { invalidateCMSCache } from "@/lib/use-cms";
+import { invalidateCMSCache, broadcastCMSUpdate } from "@/lib/use-cms";
 
 type Tab = "rooms" | "poojas" | "gallery" | "carousel" | "features" | "events" | "testimonials" | "faqs" | "trustBadges" | "blogPosts" | "seoPages" | "pricingRules";
 
@@ -151,7 +151,7 @@ function RoomsCMS() {
   });
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch("/api/rooms", { cache: "no-store" }).then(r => r.json()).then(j => setRooms(j.rooms || []));
   };
   useEffect(() => { load(); }, []);
@@ -174,7 +174,7 @@ function RoomsCMS() {
       toast.error(j.error);
       return;
     }
-    toast.success("Room added"); invalidateCMSCache();// — visible on website now");
+    toast.success("Room added"); broadcastCMSUpdate("cms-page-save");// — visible on website now");
     setShowAdd(false);
     setNewRoom({
       name: "", slug: "", type: "AC", price: 1500, capacity: 2,
@@ -455,7 +455,7 @@ function PoojaCMS() {
   const [newPooja, setNewPooja] = useState({ name: "", price: 51, duration: "15 min", description: "", prasadam: "", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop", significance: "" });
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch("/api/poojas-admin", { cache: "no-store" }).then(r => r.json()).then(j => setPoojas(j.poojas || []));
   };
   useEffect(() => { load(); }, []);
@@ -563,7 +563,7 @@ function GalleryCMS() {
   const [tab, setTab] = useState("Rooms");
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch(`/api/gallery?tab=${tab}`, { cache: "no-store" }).then(r => r.json()).then(j => setImages(j.images || []));
   };
   useEffect(() => { load(); }, [tab]);
@@ -625,7 +625,7 @@ function CarouselCMS() {
   const [newSlide, setNewSlide] = useState({ title: "", subtitle: "", image: "", ctaText: "Book Now", ctaLink: "/#/book" });
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch("/api/carousel", { cache: "no-store" }).then(r => r.json()).then(j => setSlides(j.slides || []));
   };
   useEffect(() => { load(); }, []);
@@ -733,7 +733,7 @@ function GenericCMS({ type, title, fields }: { type: string; title: string; fiel
   const [newItem, setNewItem] = useState<Record<string, string>>({});
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch(`/api/cms?type=${type}`, { cache: "no-store" })
       .then(r => r.json())
       .then(j => setItems(j.data || []));
@@ -890,7 +890,7 @@ function BlogCMS() {
   });
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch(`/api/cms?type=blogPosts`, { cache: "no-store" })
       .then(r => r.json())
       .then(j => setItems(j.data || []));
@@ -1137,7 +1137,7 @@ function SEOPagesCMS() {
   const [draft, setDraft] = useState<any>(null);
 
   const load = async () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     const r = await fetch("/api/content", { cache: "no-store" });
     const j = await r.json();
     setContentMap(j.map || {});
@@ -1393,7 +1393,7 @@ function PricingRulesCMS() {
   });
 
   const load = () => {
-    invalidateCMSCache();
+    broadcastCMSUpdate("cms-page-save");
     fetch("/api/pricing-rules", { cache: "no-store" })
       .then(r => r.json())
       .then(j => setRules(j.rules || []));
