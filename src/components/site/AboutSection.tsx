@@ -104,7 +104,7 @@ export default function AboutSection() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded-2xl bg-gradient-saffron px-6 py-4 text-center text-white shadow-warm-lg"
             >
-              <p className="font-serif text-3xl">25+</p>
+              <p className="font-serif text-3xl">5+</p>
               <p className="text-xs uppercase tracking-wider">Years of Service</p>
             </motion.div>
           </motion.div>

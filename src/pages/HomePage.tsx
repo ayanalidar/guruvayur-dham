@@ -846,7 +846,7 @@ function AboutTeaser() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="absolute -bottom-6 -right-4 rounded-2xl border border-champagne/20 bg-ink-card p-5 shadow-luxe-lg backdrop-blur-md sm:-right-6"
             >
-              <p className="font-serif text-3xl text-gold-foil">25+</p>
+              <p className="font-serif text-3xl text-gold-foil">5+</p>
               <p className="text-xs uppercase tracking-[0.15em] text-ivory/60">Years of Service</p>
             </motion.div>
           </div>
