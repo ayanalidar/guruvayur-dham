@@ -171,7 +171,7 @@ export async function validateCoupon(code: string, bookingAmount: number): Promi
 }
 
 /**
- * Mark coupon as used (increment usedCount) — atomic conditional update.
+ * Mark coupon as used (increment usedCount) - atomic conditional update.
  *
  * SECURITY (Round 3 S21 fix): uses updateMany with a `usedCount < usageLimit`
  * condition instead of read-then-increment. Two concurrent bookings for a
@@ -196,7 +196,7 @@ export async function markCouponUsed(code: string): Promise<void> {
     });
     return;
   }
-  // Conditional update — only increments if under the limit.
+  // Conditional update - only increments if under the limit.
   const result = await db.coupon.updateMany({
     where: {
       code: upperCode,
@@ -205,7 +205,7 @@ export async function markCouponUsed(code: string): Promise<void> {
     data: { usedCount: { increment: 1 } },
   });
   if (result.count === 0) {
-    // Race lost — another booking grabbed the last usage slot.
+    // Race lost - another booking grabbed the last usage slot.
     throw new Error("COUPON_LIMIT_REACHED");
   }
 }
@@ -258,9 +258,9 @@ export async function getCrowdForecast(date: Date): Promise<{ level: string; per
   const month = date.getMonth();
   const dom = date.getDate();
   let festival = "";
-  // Mathura/Braj festivals — these trigger "Very High" crowd forecast + surge pricing
-  if (month === 7 && dom === 26) festival = "Janmashtami"; // Aug 26 — Krishna's birthday
-  else if (month === 2 && dom === 14) festival = "Holi"; // Mar 14 — Lathmar Holi
+  // Mathura/Braj festivals - these trigger "Very High" crowd forecast + surge pricing
+  if (month === 7 && dom === 26) festival = "Janmashtami"; // Aug 26 - Krishna's birthday
+  else if (month === 2 && dom === 14) festival = "Holi"; // Mar 14 - Lathmar Holi
   else if (month === 10 && dom === 5) festival = "Kartik Purnima"; // Nov 5
   else if (month === 9 && dom === 21) festival = "Diwali"; // Oct 21
   else if (month === 8 && dom === 10) festival = "Radhashtami"; // Sep 10

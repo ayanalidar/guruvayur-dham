@@ -26,7 +26,7 @@ export default function FestivalBanner() {
   useEffect(() => {
     // Check if the festival banner feature flag is enabled
     getFeatureFlag("FESTIVAL_BANNER").then(setEnabled);
-    // Check if user dismissed it this session — deferred to avoid setState-in-effect
+    // Check if user dismissed it this session - deferred to avoid setState-in-effect
     queueMicrotask(() => {
       if (sessionStorage.getItem("festival-banner-dismissed")) setDismissed(false);
     });
@@ -46,7 +46,7 @@ export default function FestivalBanner() {
   const text = customText || `Janmashtami is in ${daysUntil} days`;
 
   // Use the actual festival name if auto-calculating
-  const displayText = customText || `${nextFestival.name} in ${daysUntil} day${daysUntil !== 1 ? 's' : ''} — book now to secure your room`;
+  const displayText = customText || `${nextFestival.name} in ${daysUntil} day${daysUntil !== 1 ? 's' : ''} - book now to secure your room`;
 
   return (
     <AnimatePresence>

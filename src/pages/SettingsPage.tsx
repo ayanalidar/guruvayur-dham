@@ -124,7 +124,7 @@ export default function SettingsPage() {
 
   const runSeoAudit = async () => {
     setSeoRunning(true);
-    toast.info("Running SEO audit — checking base HTML, SPA routes, sitemap, robots.txt, manifest…");
+    toast.info("Running SEO audit - checking base HTML, SPA routes, sitemap, robots.txt, manifest…");
     try {
       const r = await fetch("/api/seo-audit", { method: "POST" });
       const j = await r.json();

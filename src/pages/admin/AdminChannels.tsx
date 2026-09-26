@@ -108,7 +108,7 @@ export default function AdminChannels() {
                     <p className="flex items-center justify-between"><span>Bookings</span><span className="font-semibold text-ivory">{p.bookingCount}</span></p>
                     <p className="flex items-center justify-between"><span>Revenue</span><span className="font-semibold text-gold-foil">₹{p.totalRevenue.toLocaleString("en-IN")}</span></p>
                     <p className="flex items-center justify-between"><span>Syncs (7d)</span><span className="font-semibold text-ivory">{p.syncsLast7Days}</span></p>
-                    <p className="flex items-center justify-between"><span>Last sync</span><span className="font-semibold text-ivory">{p.lastSyncAt ? new Date(p.lastSyncAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</span></p>
+                    <p className="flex items-center justify-between"><span>Last sync</span><span className="font-semibold text-ivory">{p.lastSyncAt ? new Date(p.lastSyncAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "-"}</span></p>
                   </div>
                   <button
                     onClick={() => toggleConnect(p.code, !p.connected)}

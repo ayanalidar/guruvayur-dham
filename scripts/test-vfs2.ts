@@ -1,4 +1,4 @@
-// Direct test — bypass my code, just test if pdfmake itself can find Roboto
+// Direct test - bypass my code, just test if pdfmake itself can find Roboto
 const vfsMod = require("pdfmake/build/vfs_fonts");
 const pdfmakeMod = require("pdfmake");
 const instance = pdfmakeMod.default || pdfmakeMod["module.exports"] || pdfmakeMod;

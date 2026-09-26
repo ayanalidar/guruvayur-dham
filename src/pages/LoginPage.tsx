@@ -25,7 +25,7 @@ export default function LoginPage() {
   const { navigate } = useHashRoute();
   const { t } = useI18n();
   const { get } = useContent();
-  // Login page images — editable via CMS content blocks
+  // Login page images - editable via CMS content blocks
   const loginBgImage = get(
     "login.bgImage",
     "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=1600&fit=crop"
@@ -258,7 +258,7 @@ export default function LoginPage() {
 
       {/* ===== RIGHT: Login form ===== */}
       <div className="relative flex min-h-screen items-center justify-center px-4 pb-12 pt-8 sm:pt-12 lg:min-h-screen lg:pt-0">
-        {/* Language selector — top-right of right panel */}
+        {/* Language selector - top-right of right panel */}
         <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
           <LanguageSelector />
         </div>

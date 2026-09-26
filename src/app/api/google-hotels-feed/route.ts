@@ -16,12 +16,12 @@ import { ROOMS, SITE } from "@/lib/site-data";
  * The feed includes:
  *   - <Property> info (name, address, phone, URL, latitude/longitude, currency, language)
  *   - <RoomTypes> with all room types from the ROOMS array (or the live
- *     Room table — uses DB if reachable, falls back to ROOMS constant)
+ *     Room table - uses DB if reachable, falls back to ROOMS constant)
  *   - <Rates> with each room's nightly price (and originalPrice for the
  *     strikethrough comparison)
  *
  * Reference: Google Hotel Center "Properties" feed structure (simplified
- * for our 16-room property — production Google feeds can be hundreds of
+ * for our 16-room property - production Google feeds can be hundreds of
  * fields; we publish the ones Google actually indexes).
  */
 export async function GET() {
@@ -135,7 +135,7 @@ ${roomTypeXml}
   });
 }
 
-/** Minimal XML escaper — sufficient for our static + DB-driven content. */
+/** Minimal XML escaper - sufficient for our static + DB-driven content. */
 function xmlEscape(s: string): string {
   return String(s || "")
     .replace(/&/g, "&amp;")

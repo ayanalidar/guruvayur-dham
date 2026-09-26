@@ -19,7 +19,7 @@ const QUICK_REPLIES = [
 ];
 
 /**
- * WhatsAppChat — floating chat widget that connects to /api/whatsapp-bot.
+ * WhatsAppChat - floating chat widget that connects to /api/whatsapp-bot.
  *
  * The bot handles intent recognition (booking, pooja, darshan, festivals, etc.)
  * and falls back to AI for general questions. Conversations are logged in the
@@ -62,7 +62,7 @@ export default function WhatsAppChat() {
     if (hasAutoOpened.current) return;
     const seen = sessionStorage.getItem("gd-chat-autoopened");
     if (seen) return;
-    // Don't auto-open on mobile — it covers too much screen
+    // Don't auto-open on mobile - it covers too much screen
     if (window.innerWidth < 640) return;
     const t = setTimeout(() => {
       if (messages.length === 0 && !open) {

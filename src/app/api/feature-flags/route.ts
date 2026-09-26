@@ -7,8 +7,8 @@ import { getAllFeatureFlags, setFeatureFlag } from "@/lib/settings";
 /**
  * Feature Flags API
  *
- * GET  /api/feature-flags         — list all flags
- * POST /api/feature-flags         — toggle a flag
+ * GET  /api/feature-flags         - list all flags
+ * POST /api/feature-flags         - toggle a flag
  *
  * Both MANAGER-only. Writes an AuditLog row on POST.
  */
@@ -16,7 +16,7 @@ import { getAllFeatureFlags, setFeatureFlag } from "@/lib/settings";
 const ToggleFlagSchema = z.object({
   key: z.string().min(1).max(200),
   enabled: z.boolean(),
-  // Optional metadata the admin UI may pass — used only when creating a
+  // Optional metadata the admin UI may pass - used only when creating a
   // brand-new flag row (existing flags keep their label/description).
   label: z.string().max(200).optional(),
   description: z.string().max(500).optional(),

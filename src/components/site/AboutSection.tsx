@@ -30,10 +30,10 @@ export default function AboutSection() {
   const title = get("about.title", "A Modern Pilgrim Home Since 2020");
   const story = get(
     "about.story",
-    "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable."
+    "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality - from temple darshan guidance to local travel tips - making every pilgrim's Braj journey effortless and memorable."
   );
 
-  // Split title — "Since 2020" should be the gradient-highlighted part
+  // Split title - "Since 2020" should be the gradient-highlighted part
   const titleParts = title.split(/Since\s+/i);
   const titlePre = titleParts.length > 1 ? titleParts[0] + "Since " : title;
   const titleHighlight = titleParts.length > 1 ? titleParts[1] : "";

@@ -82,7 +82,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     <style
       dangerouslySetInnerHTML={{
         // SECURITY (Phase D L9): sanitize color values before injecting into
-        // a <style> block. Was: admin-controlled color strings injected raw —
+        // a <style> block. Was: admin-controlled color strings injected raw -
         // a compromised staff member could set color to "; } body { ... }"
         // and inject CSS that exfiltrates data. Now we only allow hex codes
         // and CSS color function syntax.

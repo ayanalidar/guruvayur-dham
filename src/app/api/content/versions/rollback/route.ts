@@ -17,7 +17,7 @@ import { requireStaff } from "@/lib/auth";
  * Behaviour:
  *   1. Look up the requested ContentVersion row.
  *   2. Snapshot the CURRENT live value into a NEW ContentVersion (so the
- *      rollback itself is reversible — "undo the undo").
+ *      rollback itself is reversible - "undo the undo").
  *   3. Write the old value back into the live row.
  *      - For ContentBlock keys: update ContentBlock.value.
  *      - For CMS keys (cms:<type>:<id>): parse the type + id, deserialize
@@ -25,7 +25,7 @@ import { requireStaff } from "@/lib/auth";
  *        corresponding CMS table row.
  *   4. Write an AuditLog entry.
  *
- * MANAGER-only — rollback bypasses the normal Zod-validated CMS schemas,
+ * MANAGER-only - rollback bypasses the normal Zod-validated CMS schemas,
  * so it must be gated to the highest-privilege role.
  *
  * SelfReliant-Phase2-4.
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       const id = parts[2];
       if (!type || !id) {
         return NextResponse.json(
-          { error: "Invalid CMS version key — expected cms:<type>:<id>" },
+          { error: "Invalid CMS version key - expected cms:<type>:<id>" },
           { status: 400 },
         );
       }
@@ -189,7 +189,7 @@ async function fetchCmsRow(type: string, id: string): Promise<any> {
  * the update so we never accidentally overwrite primary keys or timestamps.
  *
  * For blogPosts, the version snapshot's `content` is stored as a JSON-string
- * (the live column type) — we pass it through unchanged.
+ * (the live column type) - we pass it through unchanged.
  */
 async function restoreCmsRow(type: string, id: string, jsonSnapshot: string): Promise<void> {
   let parsed: any;

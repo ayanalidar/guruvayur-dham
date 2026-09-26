@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   const daysUntilCheckIn = Math.floor((checkIn.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
   // FUNCTIONAL (Round 3 F14 fix): removed dead 'isFestival' + 'festivalDate'
-  // variables — they were computed but never used in the refund calculation.
+  // variables - they were computed but never used in the refund calculation.
   // The documented "festival dates: no refund (but can reschedule)" rule
   // is not currently implemented; if you want to enforce it, add a Festival
   // table lookup here and override refundPercent = 0 when the booking

@@ -67,11 +67,11 @@ export async function POST(req: NextRequest) {
   }
   const { name, email, phone, socialPlatform, socialHandle, followerCount } = parsed.data;
 
-  // SECURITY (Round 3 M7 fix): anti-enumeration — return same response shape
+  // SECURITY (Round 3 M7 fix): anti-enumeration - return same response shape
   // whether email exists or not (was: 409 "This email is already registered").
   const existing = await db.influencer.findUnique({ where: { email } });
   if (existing) {
-    // Don't reveal existence — queue a "duplicate application" notification
+    // Don't reveal existence - queue a "duplicate application" notification
     // to the existing email so the legitimate owner is notified.
     await db.notification.create({
       data: {
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
   }
 
   // SECURITY (Round 3 M8 fix): generate cryptographically-secure unique code.
-  // Was: "GD" + name.slice(0,4) + Math.floor(Math.random() * 90 + 10) — only
+  // Was: "GD" + name.slice(0,4) + Math.floor(Math.random() * 90 + 10) - only
   // 90 possible 2-digit suffixes, predictable name prefix, attacker could
   // enumerate ~90 codes per name to find active influencer codes (used for
   // commission attribution via /api/influencer-track).

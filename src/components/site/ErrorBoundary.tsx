@@ -21,7 +21,7 @@ export default function ErrorBoundary({
   const [errorInfo, setErrorInfo] = useState<string>("");
 
   useEffect(() => {
-    // Global error handler — catches errors that escape React's error boundary
+    // Global error handler - catches errors that escape React's error boundary
     const handleError = (event: ErrorEvent) => {
       console.error("Global error caught:", event.error);
       event.preventDefault(); // Prevent the default browser error handling

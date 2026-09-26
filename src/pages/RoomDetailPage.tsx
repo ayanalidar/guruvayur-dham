@@ -229,7 +229,7 @@ export default function RoomDetailPage({ slug }: { slug: string }) {
 
       <MandalaDivider />
 
-      {/* 360° Virtual Room Tour (F8) — uses existing room.gallery photos */}
+      {/* 360° Virtual Room Tour (F8) - uses existing room.gallery photos */}
       <section className="bg-ink py-16 lg:py-20">
         <div className="container-x">
           <h2 className="font-serif text-3xl text-ivory">360° Virtual Room Tour</h2>

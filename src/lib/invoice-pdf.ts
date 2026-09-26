@@ -2,7 +2,7 @@
  * PDF generator for tax invoices.
  *
  * Uses pdfmake v0.3 (lightweight, Vercel-compatible, ~600KB) to build
- * the PDF matching the sample invoice layout — dark red accents (#8B0000),
+ * the PDF matching the sample invoice layout - dark red accents (#8B0000),
  * black address box, dark red table header, dark red G. TOTAL box,
  * dotted-line separators in customer/stay-details sections.
  *
@@ -29,7 +29,7 @@ import path from "path";
 import fs from "fs/promises";
 import type { InvoiceData } from "@/lib/invoice";
 
-// Dark red accent — matches sample invoice
+// Dark red accent - matches sample invoice
 const DARK_RED = "#8B0000";
 const TEXT_DARK = "#333333";
 const TEXT_GREY = "#666666";
@@ -41,14 +41,14 @@ let pdfmakeInstance: any = null;
 
 async function initPdfmake(): Promise<any> {
   if (pdfmakeInstance) return pdfmakeInstance;
-  // pdfmake v0.3 — the main entry exports an instance of the base class.
+  // pdfmake v0.3 - the main entry exports an instance of the base class.
   // Dynamic import works in Vercel serverless Node runtime.
   const mod: any = await import("pdfmake");
-  // The actual instance is wrapped — find it through multiple fallbacks.
+  // The actual instance is wrapped - find it through multiple fallbacks.
   const instance = mod.default || mod["module.exports"] || mod.default?.["module.exports"] || mod;
 
   // Load the bundled Roboto fonts VFS (has ₹ glyph since 2014).
-  // ESM import() requires explicit .js extension — pdfmake's vfs_fonts.js
+  // ESM import() requires explicit .js extension - pdfmake's vfs_fonts.js
   // exports each font DIRECTLY as a top-level property (NOT nested under .vfs).
   let vfsMod: any;
   try {
@@ -71,7 +71,7 @@ async function initPdfmake(): Promise<any> {
   if (instance.virtualfs && instance.virtualfs.storage) {
     for (const [filename, content] of Object.entries(vfsData)) {
       // Skip non-font keys (like __esModule, default). Only process string
-      // values — VFS font entries are base64-encoded strings.
+      // values - VFS font entries are base64-encoded strings.
       if (typeof content !== "string") continue;
       try {
         instance.virtualfs.writeFileSync(filename, content, "base64");
@@ -87,7 +87,7 @@ async function initPdfmake(): Promise<any> {
     }
   }
 
-  // Register fonts config — Roboto variants (must match VFS keys).
+  // Register fonts config - Roboto variants (must match VFS keys).
   instance.setFonts({
     Roboto: {
       normal: "Roboto-Regular.ttf",
@@ -133,7 +133,7 @@ async function loadLogoBase64(logoPath: string): Promise<string | null> {
  * Build the pdfmake document definition for the invoice.
  */
 function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
-  // Helpers — bold label + value row, used in customer/stay sections
+  // Helpers - bold label + value row, used in customer/stay sections
   const dottedRow = (label: string, value: string): any => ({
     columns: [
       { text: label, bold: true, fontSize: 10, color: TEXT_DARK, width: 80 },
@@ -142,10 +142,10 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 2, 0, 2],
   });
 
-  // Total row — right-aligned, no border (except G. TOTAL which is boxed)
+  // Total row - right-aligned, no border (except G. TOTAL which is boxed)
   const totalRow = (label: string, value: string, isBoxed = false): any => {
     if (isBoxed) {
-      // Dark red box for G. TOTAL — white text
+      // Dark red box for G. TOTAL - white text
       return {
         stack: [
           {
@@ -236,7 +236,7 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     { text: it.amount, alignment: "right", fontSize: 10, color: TEXT_DARK },
   ]);
 
-  // Tax lines — only show non-zero rates
+  // Tax lines - only show non-zero rates
   const taxLines: any[] = [];
   if (data.igstRate > 0) {
     taxLines.push(totalRow(`IGST (${data.igstRate}%)`, data.igstAmount));
@@ -270,7 +270,7 @@ function buildDocDefinition(data: InvoiceData, logoBase64: string | null): any {
     margin: [0, 8, 0, 0],
   };
 
-  // Footer — 2 columns
+  // Footer - 2 columns
   const footerBlock = {
     columns: [
       {

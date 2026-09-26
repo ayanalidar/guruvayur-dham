@@ -6,15 +6,15 @@ import { requireStaff } from "@/lib/auth";
 /**
  * Admin Notifications API
  *
- * GET    /api/admin-notifications            — list unread alerts for current user
- * POST   /api/admin-notifications            — mark one alert as read
- * DELETE /api/admin-notifications            — clear all alerts already read by current user
+ * GET    /api/admin-notifications            - list unread alerts for current user
+ * POST   /api/admin-notifications            - mark one alert as read
+ * DELETE /api/admin-notifications            - clear all alerts already read by current user
  *
  * Auth: any staff member (the GET is "any staff"). POST + DELETE are also
- * staff-only — there's no MANAGER restriction here because every staff role
+ * staff-only - there's no MANAGER restriction here because every staff role
  * needs to be able to clear their own dismissals.
  *
- * Query: ?severity=CRITICAL — filter by severity (INFO | WARNING | CRITICAL)
+ * Query: ?severity=CRITICAL - filter by severity (INFO | WARNING | CRITICAL)
  */
 
 const SeverityEnum = z.enum(["INFO", "WARNING", "CRITICAL"]);
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   const severityParsed = severityParam ? SeverityEnum.safeParse(severityParam) : null;
   if (severityParam && (!severityParsed || !severityParsed.success)) {
     return NextResponse.json(
-      { error: "Invalid severity — must be INFO | WARNING | CRITICAL" },
+      { error: "Invalid severity - must be INFO | WARNING | CRITICAL" },
       { status: 400 },
     );
   }
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Notification not found" }, { status: 404 });
   }
   if (existing.readBy.includes(session.user.id)) {
-    // Idempotent — already dismissed.
+    // Idempotent - already dismissed.
     return NextResponse.json({ ok: true, alreadyRead: true });
   }
 
@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
  *
  * "Clear" here means removing the user's id from readBy on every row that
  * contains it, so the row disappears from their unread view. The underlying
- * AdminNotification rows themselves are NOT deleted — other staff may still
+ * AdminNotification rows themselves are NOT deleted - other staff may still
  * need to see them.
  *
  * If a manager later wants to truly delete rows, they can do so via a
@@ -124,7 +124,7 @@ export async function DELETE(req: NextRequest) {
   }
 
   // Prisma doesn't expose a "remove element from array" on the SQL side
-  // directly via updateMany — but the simplest "clear" semantics for the
+  // directly via updateMany - but the simplest "clear" semantics for the
   // current user is to delete the row entirely if no one else has read it,
   // OR leave it alone (it'll just not show up in this user's unread list
   // anymore since readBy already contains them).
@@ -133,7 +133,7 @@ export async function DELETE(req: NextRequest) {
   // user has dismissed is removed from their view (their id is already in
   // readBy, so the GET filter excludes them). To actually "clear" the
   // stored list of dismissed IDs we delete rows where this user is the
-  // ONLY reader — leaves rows that others still need.
+  // ONLY reader - leaves rows that others still need.
   const staleNotifications = await db.adminNotification.findMany({
     where: { readBy: { has: session.user.id } },
     select: { id: true, readBy: true },

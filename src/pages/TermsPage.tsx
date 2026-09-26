@@ -16,7 +16,7 @@ const SECTIONS = [
   {
     h: "2. GST Compliance (Goods and Services Tax)",
     p: [
-      `GSTIN: 09ABCDE1234F1Z5 (placeholder — replace with actual GSTIN)`,
+      `GSTIN: 09ABCDE1234F1Z5 (placeholder - replace with actual GSTIN)`,
       `All prices displayed on our website are exclusive of taxes. 12% GST (6% CGST + 6% SGST) applies to all room bookings, as per the GST Act, 2017 for hotel accommodation with room tariff between ₹1,000 and ₹7,500.`,
       `For room tariffs below ₹1,000/night: 5% GST (2.5% CGST + 2.5% SGST).`,
       `For room tariffs above ₹7,500/night: 18% GST (9% CGST + 9% SGST).`,
@@ -27,10 +27,10 @@ const SECTIONS = [
     h: "3. Consumer Protection (Consumer Protection Act, 2019)",
     p: [
       `As per the Consumer Protection Act, 2019, we ensure:`,
-      `• No unfair trade practices — all prices, terms, and conditions are transparently displayed before booking`,
-      `• No misleading advertisements — all images and descriptions on our website are accurate representations of our property`,
-      `• Right to information — complete details about room types, amenities, pricing, and cancellation policies are available before booking`,
-      `• Grievance redressal — complaints can be filed with our Manager at ${SITE.phone} or registered with the Consumer Disputes Redressal Commission if unresolved within 30 days`,
+      `• No unfair trade practices - all prices, terms, and conditions are transparently displayed before booking`,
+      `• No misleading advertisements - all images and descriptions on our website are accurate representations of our property`,
+      `• Right to information - complete details about room types, amenities, pricing, and cancellation policies are available before booking`,
+      `• Grievance redressal - complaints can be filed with our Manager at ${SITE.phone} or registered with the Consumer Disputes Redressal Commission if unresolved within 30 days`,
     ],
   },
   {
@@ -40,7 +40,7 @@ const SECTIONS = [
       `• We follow reasonable security practices and procedures (ISO 27001-aligned) for protecting sensitive personal data`,
       `• We have a published Privacy Policy (see our Privacy Policy page) that details what data we collect and how we use it`,
       `• We obtain consent before collecting sensitive personal data (phone, email, ID numbers)`,
-      `• We have designated a Grievance Officer (as per IT Rules, 2011 and DPDP Act, 2023) — details on our Privacy Policy page`,
+      `• We have designated a Grievance Officer (as per IT Rules, 2011 and DPDP Act, 2023) - details on our Privacy Policy page`,
     ],
   },
   {
@@ -53,7 +53,7 @@ const SECTIONS = [
   {
     h: "6. Payment",
     p: [
-      `We accept UPI, credit/debit cards, net banking (via Razorpay — PCI-DSS Level 1 certified), and cash. All online payments are secured with 256-bit SSL encryption. We do NOT store card details on our servers.`,
+      `We accept UPI, credit/debit cards, net banking (via Razorpay - PCI-DSS Level 1 certified), and cash. All online payments are secured with 256-bit SSL encryption. We do NOT store card details on our servers.`,
       `A 25% advance is required for festival-season bookings. Group bookings (10+ guests) require 50% advance.`,
     ],
   },
@@ -75,7 +75,7 @@ const SECTIONS = [
       `• Wheelchair-accessible entrance and ground-floor rooms`,
       `• Elevator access to all floors`,
       `• Dedicated accessible bathroom on the ground floor`,
-      `• Assistance for guests with mobility, visual, or hearing impairments — please inform us in advance`,
+      `• Assistance for guests with mobility, visual, or hearing impairments - please inform us in advance`,
       `• Our website follows WCAG 2.1 AA accessibility guidelines (semantic HTML, ARIA labels, keyboard navigation, screen reader support)`,
     ],
   },

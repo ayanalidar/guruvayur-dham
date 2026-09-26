@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 
 /**
- * Settings library — encrypted key-value store for the self-reliant platform.
+ * Settings library - encrypted key-value store for the self-reliant platform.
  *
  * HOW IT WORKS:
  * - Secrets (API keys, tokens) are encrypted with AES-256-GCM using
@@ -93,17 +93,17 @@ export async function getSetting(key: string): Promise<string | null> {
     if (value === null) {
       value = process.env[key] || null;
     }
-    // Cache the result (even if null — prevents repeated DB queries)
+    // Cache the result (even if null - prevents repeated DB queries)
     settingsCache.set(key, { value, at: Date.now() });
     return value;
   } catch {
-    // DB unreachable — fall back to process.env
+    // DB unreachable - fall back to process.env
     return process.env[key] || null;
   }
 }
 
 /**
- * Get a setting value synchronously (from cache only — does NOT query DB).
+ * Get a setting value synchronously (from cache only - does NOT query DB).
  * Returns null if not cached. Use getSetting() for the full async path.
  */
 export function getCachedSetting(key: string): string | null {
@@ -196,7 +196,7 @@ export async function isSettingConfigured(key: string): Promise<boolean> {
  *      for other flags, fall back to the DEFAULT_FEATURE_FLAGS default.
  *
  * SAFETY INVARIANT: MAINTENANCE_MODE must never default to true.
- * If we can't read the DB, the site must stay online — a broken DB should
+ * If we can't read the DB, the site must stay online - a broken DB should
  * not take the entire guest-facing site offline.
  */
 export async function getFeatureFlag(key: string): Promise<boolean> {
@@ -217,7 +217,7 @@ export async function getFeatureFlag(key: string): Promise<boolean> {
     flagCache.set(key, { enabled, at: Date.now() });
     return enabled;
   } catch {
-    // DB unreachable — fall back to safe default.
+    // DB unreachable - fall back to safe default.
     return fallbackDefault;
   }
 }
@@ -261,7 +261,7 @@ export async function getAllFeatureFlags(): Promise<Array<{
 }
 
 /**
- * Invalidate all caches — call after bulk settings changes.
+ * Invalidate all caches - call after bulk settings changes.
  */
 export function invalidateAllSettingsCaches() {
   settingsCache.clear();
@@ -284,16 +284,16 @@ export const DEFAULT_SETTINGS = [
   { key: "SMTP_USER", label: "SMTP User", category: "INTEGRATION", isSecret: true },
   { key: "SMTP_PASS", label: "SMTP Password", category: "INTEGRATION", isSecret: true },
   { key: "FROM_EMAIL", label: "From Email Address", category: "INTEGRATION", isSecret: false },
-  // Hostinger Mail API (preferred over SMTP — 1 token + mailbox ID vs 5 SMTP vars)
+  // Hostinger Mail API (preferred over SMTP - 1 token + mailbox ID vs 5 SMTP vars)
   { key: "HOSTINGER_MAIL_TOKEN", label: "Hostinger Mail API Token", category: "INTEGRATION", isSecret: true },
   { key: "HOSTINGER_MAILBOX_ID", label: "Hostinger Mailbox Resource ID", category: "INTEGRATION", isSecret: false },
   { key: "HOSTINGER_MAIL_DISPLAY_NAME", label: "Hostinger Mail Display Name", category: "INTEGRATION", isSecret: false },
-  // GST rates (editable) — applied to all booking invoices
+  // GST rates (editable) - applied to all booking invoices
   // When IGST_RATE > 0, only IGST is shown on invoices (inter-state supply).
   // When IGST_RATE = 0, CGST_RATE + SGST_RATE are shown (intra-state supply).
   { key: "GST_CGST_RATE", label: "GST · CGST Rate (%)", category: "INTEGRATION", isSecret: false },
   { key: "GST_SGST_RATE", label: "GST · SGST Rate (%)", category: "INTEGRATION", isSecret: false },
-  { key: "GST_IGST_RATE", label: "GST · IGST Rate (%) — set >0 for inter-state bookings", category: "INTEGRATION", isSecret: false },
+  { key: "GST_IGST_RATE", label: "GST · IGST Rate (%) - set >0 for inter-state bookings", category: "INTEGRATION", isSecret: false },
   { key: "GOOGLE_PLACES_API_KEY", label: "Google Places API Key (reviews)", category: "INTEGRATION", isSecret: true },
   { key: "UPSTASH_REDIS_REST_URL", label: "Upstash Redis REST URL", category: "INTEGRATION", isSecret: true },
   { key: "UPSTASH_REDIS_REST_TOKEN", label: "Upstash Redis REST Token", category: "INTEGRATION", isSecret: true },

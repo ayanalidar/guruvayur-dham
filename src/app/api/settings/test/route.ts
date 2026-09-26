@@ -17,7 +17,7 @@ import {
  *
  * Returns: { service, status, latency?, message }
  *
- * MANAGER-only — the test probes hit external APIs with stored credentials,
+ * MANAGER-only - the test probes hit external APIs with stored credentials,
  * so we don't want non-managers triggering it.
  */
 
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const { service } = parsed.data;
 
   // runAllHealthChecks calls all probes in parallel. To test just one,
-  // we run the whole batch (cheap — ~2s) and pick the matching service.
+  // we run the whole batch (cheap - ~2s) and pick the matching service.
   // withRetry wraps the call so a one-off probe failure is retried.
   let checks: HealthCheckResult[];
   try {

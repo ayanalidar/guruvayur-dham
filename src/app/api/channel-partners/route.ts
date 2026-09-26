@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     partners: partners.map((p) => {
-      // Strip ?key=... from webhookUrl before returning — the key is a secret
+      // Strip ?key=... from webhookUrl before returning - the key is a secret
       // used by /api/channel-webhook/[code] for inbound-booking auth.
       let safeWebhookUrl = p.webhookUrl;
       try {
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
         u.searchParams.delete("key");
         safeWebhookUrl = u.toString();
       } catch {
-        // not a URL — leave as-is
+        // not a URL - leave as-is
       }
       return {
         ...p,

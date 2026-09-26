@@ -9,13 +9,13 @@ import { getFeatureFlag, setFeatureFlag } from "@/lib/settings";
  *
  * NOTE on path:
  *   The existing /api/maintenance route handles ROOM maintenance blocks
- *   (MaintenanceBlock table — scheduling room outages). This route at
+ *   (MaintenanceBlock table - scheduling room outages). This route at
  *   /api/maintenance/mode handles the maintenance MODE feature flag
  *   (toggle the holding page shown to guests). Two distinct concepts;
  *   separated by sub-path so the existing room-block UIs keep working.
  *
- * GET  /api/maintenance/mode  — return current maintenance mode status
- * POST /api/maintenance/mode  — toggle maintenance mode on/off
+ * GET  /api/maintenance/mode  - return current maintenance mode status
+ * POST /api/maintenance/mode  - toggle maintenance mode on/off
  *
  * Both MANAGER-only. POST writes an AuditLog + creates an AdminNotification
  * (CRITICAL severity) so other managers see the toggle in their dashboard.
@@ -29,7 +29,7 @@ const ToggleMaintenanceSchema = z.object({
 /**
  * GET /api/maintenance/mode
  *
- * PUBLIC — any visitor can check this. The homepage calls it on mount
+ * PUBLIC - any visitor can check this. The homepage calls it on mount
  * to decide whether to show the MaintenancePage holding screen.
  * (Previously required MANAGER auth, which broke the homepage with a 401
  * and caused JSON.parse on the empty body to throw.)
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   await setFeatureFlag("MAINTENANCE_MODE", enabled, session.user.id);
 
-  // Audit log — record who toggled + the reason.
+  // Audit log - record who toggled + the reason.
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
   const ua = req.headers.get("user-agent") || "unknown";
   await db.auditLog.create({
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Admin notification — surface the toggle so other managers see it
+  // Admin notification - surface the toggle so other managers see it
   // immediately on their dashboard. CRITICAL severity when enabling (guests
   // now see a holding page); WARNING when disabling (back to normal).
   await db.adminNotification.create({

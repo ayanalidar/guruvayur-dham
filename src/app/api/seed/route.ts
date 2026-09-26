@@ -7,10 +7,10 @@ import crypto from "crypto";
 /**
  * POST /api/seed
  *
- * Database seeding endpoint — NO AUTH REQUIRED.
+ * Database seeding endpoint - NO AUTH REQUIRED.
  * This is a bootstrap/setup tool that creates initial data so you can login.
  *
- * Safe to call multiple times (uses upsert — creates or updates).
+ * Safe to call multiple times (uses upsert - creates or updates).
  * The only "risk" is overwriting CMS content with defaults.
  *
  * Resilient: if one step fails, the next step still runs.
@@ -41,12 +41,12 @@ export async function POST(req: NextRequest) {
     await db.$queryRaw`SELECT 1`;
   });
   if (errors.length === 1 && errors[0].startsWith("✗ DB ping")) {
-    // Can't reach DB — fail fast
+    // Can't reach DB - fail fast
     return NextResponse.json({
       ok: false,
       error: "Cannot reach database",
       message: errors[0],
-      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s — try once more.",
+      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s - try once more.",
       results,
       errors,
     }, { status: 500 });
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
     { key: "hero.headline", value: "Where Your Stay", category: "hero", label: "Hero Headline" },
     { key: "hero.headlineHighlight", value: "Journey", category: "hero", label: "Hero Highlight" },
     { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land.", category: "hero", label: "Hero Subheadline" },
-    { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story (Ram Meena host bio)" },
+    { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality - from temple darshan guidance to local travel tips - making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story (Ram Meena host bio)" },
     { key: "about.title", value: "A Modern Pilgrim Home Since 2020", category: "about", label: "About Title" },
     { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
     { key: "footer.tagline", value: "Luxury Pilgrim Stay", category: "footer", label: "Footer Tagline" },
@@ -115,12 +115,12 @@ export async function POST(req: NextRequest) {
     { key: "contact.shortAddress", value: "Mali Para, Dholi Pyau, Mathura 281001", category: "contact", label: "Short Address" },
     { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in" },
     { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out" },
-    // Homepage stats strip — WhyChooseUs section
+    // Homepage stats strip - WhyChooseUs section
     { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
     { key: "homepage.stats.years", value: "5", category: "homepage", label: "Homepage Stat · Years of Service" },
     { key: "homepage.stats.guests", value: "10000", category: "homepage", label: "Homepage Stat · Happy Guests" },
     { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },
-    // Invoice / Tax settings — synced to sample PDF
+    // Invoice / Tax settings - synced to sample PDF
     { key: "invoice.hotelName", value: "GuruVayur Dham", category: "invoice", label: "Invoice · Hotel Name" },
     { key: "invoice.gstin", value: "09ABAFG2373H1ZG", category: "invoice", label: "Invoice · Hotel GSTIN" },
     { key: "invoice.address", value: "68/396 Mali Para, Opp. Mata Pathwari Mandir, Dholi Pyau, Mathura, Uttar Pradesh - 281001", category: "invoice", label: "Invoice · Hotel Address" },
@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  // 11. Seed staff users — MANAGER pin is the most important (login)
+  // 11. Seed staff users - MANAGER pin is the most important (login)
   const pins: string[] = [];
   await step("Seed staff users", async () => {
     const staff = [
@@ -241,16 +241,16 @@ export async function POST(req: NextRequest) {
   const ok = errors.length === 0;
   return NextResponse.json({
     ok,
-    message: ok ? "Seed complete!" : `Seed partially complete — ${errors.length} step(s) failed`,
+    message: ok ? "Seed complete!" : `Seed partially complete - ${errors.length} step(s) failed`,
     results,
     errors,
     staffPins: pins,
-    hint: ok ? "" : "If only 'Seed staff users' failed, you may have a database column mismatch — check Prisma schema vs migrations.",
+    hint: ok ? "" : "If only 'Seed staff users' failed, you may have a database column mismatch - check Prisma schema vs migrations.",
   }, { status: ok ? 200 : 500 });
 }
 
 export async function GET(req: NextRequest) {
-  // No auth required — this is a status check (safe to expose)
+  // No auth required - this is a status check (safe to expose)
   try {
     const [rooms, settings, flags, poojas, faqs, staff] = await Promise.all([
       db.room.count(), db.setting.count(), db.featureFlag.count(),
@@ -266,7 +266,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       error: "DB check failed",
       message: e?.message || String(e),
-      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s — try once more.",
+      hint: "Check DATABASE_URL on Vercel (Settings → Environment Variables). Neon cold start can take 2-3s - try once more.",
     }, { status: 500 });
   }
 }

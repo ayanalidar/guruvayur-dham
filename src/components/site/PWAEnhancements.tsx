@@ -88,10 +88,10 @@ export default function PWAEnhancements() {
       const reg = await navigator.serviceWorker.ready;
       // SECURITY (Phase D L8): require NEXT_PUBLIC_VAPID_PUBLIC_KEY env var.
       // Was: fell back to Google's well-known demo key whose private key is
-      // public — anyone could send push notifications to all subscribers.
+      // public - anyone could send push notifications to all subscribers.
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!vapidKey) {
-        console.warn("Push notifications disabled — NEXT_PUBLIC_VAPID_PUBLIC_KEY env var not set.");
+        console.warn("Push notifications disabled - NEXT_PUBLIC_VAPID_PUBLIC_KEY env var not set.");
         setShowPushPrompt(false);
         localStorage.setItem("push-prompt-dismissed", "true");
         return;

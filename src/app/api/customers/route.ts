@@ -15,7 +15,7 @@ const CreateCustomerSchema = z.object({
 
 const UpdateCustomerSchema = z.object({
   id: z.string().min(1),
-  // SECURITY (Phase2-MassAssignment): explicit whitelist — financial fields
+  // SECURITY (Phase2-MassAssignment): explicit whitelist - financial fields
   // (totalRevenue, loyaltyPoints, totalBookings) are server-controlled via
   // PUT /api/customers (record-booking flow) and must not be writable here.
   data: z.object({

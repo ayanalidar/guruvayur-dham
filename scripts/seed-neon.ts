@@ -1,5 +1,5 @@
 /**
- * Seed script — uses process.env.DATABASE_URL directly (bypasses .env loading issues)
+ * Seed script - uses process.env.DATABASE_URL directly (bypasses .env loading issues)
  */
 import { PrismaClient } from "@prisma/client";
 import { ROOMS, POOJAS, FAQS, TESTIMONIALS, SITE, BLOG_POSTS, GALLERY_IMAGES } from "../src/lib/site-data";
@@ -22,8 +22,8 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "hero.subheadline", value: "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land", category: "hero", label: "Hero Subheadline" },
 ];
 
-// Staff — PINs are randomized at seed time (NOT hardcoded).
-// The seeded PINs are printed to the console — copy them to a safe place.
+// Staff - PINs are randomized at seed time (NOT hardcoded).
+// The seeded PINs are printed to the console - copy them to a safe place.
 // Override with env vars SEED_MANAGER_PIN etc. if you want stable PINs.
 import crypto from "crypto";
 function randPin(): string {
@@ -124,7 +124,7 @@ async function main() {
     await db.staffUser.upsert({ where: { email: s.email }, create: s, update: {} });
   }
   console.log(`✓ ${STAFF.length} staff users`);
-  // Print PINs so the operator can copy them — they're not stored anywhere else.
+  // Print PINs so the operator can copy them - they're not stored anywhere else.
   console.log("\n========== STAFF PIN CREDENTIALS (copy these now) ==========");
   for (const s of STAFF) {
     console.log(`  ${s.role.padEnd(12)} | ${s.email.padEnd(40)} | PIN: ${s.pin}`);

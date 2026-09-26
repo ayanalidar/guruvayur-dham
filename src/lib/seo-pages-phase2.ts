@@ -1,5 +1,5 @@
 /**
- * SEO Pages — Phase 2 (22 additional pages)
+ * SEO Pages - Phase 2 (22 additional pages)
  *
  * Categories:
  *   - how-to-reach (9): 5 how-to-reach + 4 distance pages

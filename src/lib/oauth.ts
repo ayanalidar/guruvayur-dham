@@ -90,7 +90,7 @@ export const authOptions: NextAuthOptions = {
 
       // SECURITY (Round 3 F2 fix): bridge NextAuth session to the app's own
       // session system. NextAuth's JWT cookie (`next-auth.session-token`) is
-      // NOT read by `getUserFromRequest` — that function only reads
+      // NOT read by `getUserFromRequest` - that function only reads
       // `__Host-session_token` / `session_token` from the DB Session table.
       // Without this bridge, OAuth users appear logged-in to NextAuth but
       // logged-out to every API route, breaking the entire post-login flow.

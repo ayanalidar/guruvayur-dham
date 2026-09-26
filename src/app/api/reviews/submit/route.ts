@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         verifiedStay = true;
       }
     } catch {
-      // DB blip — leave verifiedStay=false (fail-open, review still accepted)
+      // DB blip - leave verifiedStay=false (fail-open, review still accepted)
     }
   }
 

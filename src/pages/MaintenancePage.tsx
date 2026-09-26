@@ -7,7 +7,7 @@ import { SITE, waLink } from "@/lib/site-data";
 import { GoldFoilText } from "@/components/site/visuals";
 
 /**
- * MaintenancePage — shown to guests when MAINTENANCE_MODE feature flag is on.
+ * MaintenancePage - shown to guests when MAINTENANCE_MODE feature flag is on.
  * Admin routes (/admin/*, /login, /cms, /settings) still work normally.
  */
 export default function MaintenancePage() {

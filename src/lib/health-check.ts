@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { getSetting, isSettingConfigured } from "@/lib/settings";
 
 /**
- * Health check library — tests all integrations for the System Health Dashboard.
+ * Health check library - tests all integrations for the System Health Dashboard.
  *
  * Each check returns { status: "ok" | "error" | "not_configured", latency?, message? }
  * Runs in parallel for speed. Total check takes ~2-3 seconds.
@@ -156,7 +156,7 @@ async function checkSMTP(): Promise<HealthCheckResult> {
 
 /**
  * Check Hostinger Mail API (preferred path over SMTP).
- * Just verifies the 2 settings are set — doesn't make a network call
+ * Just verifies the 2 settings are set - doesn't make a network call
  * (so the admin dashboard loads fast). The actual send is exercised via
  * the "Send Test Email" button in /admin/system.
  */
@@ -224,7 +224,7 @@ async function checkRealtime(): Promise<HealthCheckResult> {
     }
     return { service: "realtime", label: "Realtime Service (Socket.io)", status: "error", latency: Date.now() - start, message: `HTTP ${res.status}`, category: "INFRASTRUCTURE" };
   } catch {
-    return { service: "realtime", label: "Realtime Service (Socket.io)", status: "not_configured", message: "Service not reachable (optional — site works without it)", category: "INFRASTRUCTURE" };
+    return { service: "realtime", label: "Realtime Service (Socket.io)", status: "not_configured", message: "Service not reachable (optional - site works without it)", category: "INFRASTRUCTURE" };
   }
 }
 

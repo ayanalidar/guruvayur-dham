@@ -14,7 +14,7 @@ import { JsonLd } from "@/components/site/JsonLd";
 export default function FAQPage() {
   const { get } = useContent();
   const cmsFAQs = useCMSList<FAQEntry>("faqs", []);
-  // Deduplicate by question text (defensive — DB may have duplicates from
+  // Deduplicate by question text (defensive - DB may have duplicates from
   // multiple seed runs)
   const rawFaqs = cmsFAQs.length > 0 ? cmsFAQs.map(mapFAQ) : FAQS;
   const seen = new Set<string>();
@@ -37,7 +37,7 @@ export default function FAQPage() {
   const titlePre = titleParts.length > 1 ? titleParts[0] + "," : title;
   const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join(",").trim() : "";
 
-  // JSON-LD FAQPage schema — rich Google search results
+  // JSON-LD FAQPage schema - rich Google search results
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",

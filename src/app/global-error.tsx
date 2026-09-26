@@ -5,7 +5,7 @@ import { RefreshCw, Home } from "lucide-react";
 /**
  * Next.js Global Error Page (app/global-error.tsx)
  *
- * This catches errors that escape ALL other error boundaries — including
+ * This catches errors that escape ALL other error boundaries - including
  * errors in the root layout itself. It replaces the entire HTML document.
  *
  * Must be a full HTML document (includes <html> and <body> tags).

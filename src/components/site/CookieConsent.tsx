@@ -64,15 +64,15 @@ export default function CookieConsent() {
                     <div className="space-y-2 rounded-lg border border-champagne/10 bg-ink/50 p-3 text-xs text-ivory/60">
                       <div className="flex items-center gap-2">
                         <Check className="h-3 w-3 text-green-300" />
-                        <span><strong className="text-ivory/80">Essential cookies</strong> — required for booking, login, and security. Always active.</span>
+                        <span><strong className="text-ivory/80">Essential cookies</strong> - required for booking, login, and security. Always active.</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Check className="h-3 w-3 text-yellow-300" />
-                        <span><strong className="text-ivory/80">Analytics cookies</strong> — help us understand visitor behavior to improve our service.</span>
+                        <span><strong className="text-ivory/80">Analytics cookies</strong> - help us understand visitor behavior to improve our service.</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Check className="h-3 w-3 text-blue-300" />
-                        <span><strong className="text-ivory/80">Marketing cookies</strong> — used to show relevant ads and track campaign performance.</span>
+                        <span><strong className="text-ivory/80">Marketing cookies</strong> - used to show relevant ads and track campaign performance.</span>
                       </div>
                       <p className="mt-2 text-[10px] text-ivory/40">
                         You can withdraw consent at any time by clearing your browser cookies. See our Privacy Policy for details on data collection, processing, and your rights under the Digital Personal Data Protection Act, 2023.

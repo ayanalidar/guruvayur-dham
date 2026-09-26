@@ -18,7 +18,7 @@ const UpdateBlogPostSchema = z.object({
   id: z.string().min(1),
   // SECURITY (Phase2-MassAssignment): explicit whitelist of BlogPost columns.
   // id/createdAt/updatedAt are server-controlled. Spec listed `coverImage`
-  // (Prisma uses `image`) and `tags` (no such column) — adapted to real
+  // (Prisma uses `image`) and `tags` (no such column) - adapted to real
   // Prisma field names. Content accepts string OR array (handler JSON.stringifies
   // arrays before persisting).
   data: z.object({
@@ -96,7 +96,7 @@ export async function PATCH(req: NextRequest) {
   if (data.content && Array.isArray(data.content)) data.content = JSON.stringify(data.content);
   // `as any` kept because Zod's inferred `content: string | any[]` union doesn't
   // narrow to `string` after the runtime Array.isArray check (mutation, not
-  // narrowing). Schema still validates input — security goal met.
+  // narrowing). Schema still validates input - security goal met.
   const post = await db.blogPost.update({ where: { id }, data: data as any });
   return NextResponse.json({ post });
 }

@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
  * SECURITY (Phase D L3): replaces the pattern
  *   `"GD-" + Math.random().toString(36).slice(2, 8).toUpperCase()`
  * which has only ~31 bits of entropy (predictable, collisions after ~50k
- * bookings). Uses crypto.randomBytes instead — 32 bits of true randomness.
+ * bookings). Uses crypto.randomBytes instead - 32 bits of true randomness.
  *
  * Usage:
  *   import { generateRef } from "@/lib/auth";
@@ -23,7 +23,7 @@ export function generateRef(prefix: string): string {
  * In production, use bcrypt or argon2.
  *
  * SECURITY (Phase D L2 fix): hashPassword is now ASYNC (was pbkdf2Sync
- * which blocks the event loop ~100-200ms per call — self-DoS under load).
+ * which blocks the event loop ~100-200ms per call - self-DoS under load).
  * All callers (register, reset-password, /api/staff POST/PATCH) updated
  * to await the result.
  */
@@ -64,10 +64,10 @@ export function generateToken(): string {
  * concurrent sessions (e.g. multiple devices), comment out the deleteMany.
  */
 export async function createSession(userId: string, role: string, daysValid = 7) {
-  // Delete pre-existing sessions for this user — prevents session sprawl and
+  // Delete pre-existing sessions for this user - prevents session sprawl and
   // ensures logout-on-other-device behavior on each new login.
   // (Note: if a user logs in on phone + laptop in quick succession, the
-  // phone session will be invalidated — that's intentional for security.)
+  // phone session will be invalidated - that's intentional for security.)
   await db.session.deleteMany({ where: { userId } }).catch(() => {});
 
   const token = generateToken();
@@ -127,7 +127,7 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
 
   // SECURITY (Phase C M5): reject sessions created BEFORE the user's
   // tokensInvalidatedAt timestamp. This is the global session-invalidation
-  // mechanism — set tokensInvalidatedAt = now() on password reset, 2FA
+  // mechanism - set tokensInvalidatedAt = now() on password reset, 2FA
   // enable, admin force-logout, etc. to revoke all pre-existing sessions.
   const invalidatedAt = (session.user as any).tokensInvalidatedAt;
   if (invalidatedAt && session.createdAt < invalidatedAt) {
@@ -152,7 +152,7 @@ export async function getUserFromRequest(req: Request): Promise<{ user: any; rol
 
 /**
  * Require an authenticated staff user (or specific roles) for an API route.
- * Returns `{ session, error }` — if `error` is set, return it directly.
+ * Returns `{ session, error }` - if `error` is set, return it directly.
  *
  * Usage:
  *   import { requireStaff } from "@/lib/auth";
@@ -186,7 +186,7 @@ export async function requireStaff(
   if (session.role === "GUEST") {
     return {
       session: null,
-      error: NextResponse.json({ error: "Forbidden — staff access required" }, { status: 403 }),
+      error: NextResponse.json({ error: "Forbidden - staff access required" }, { status: 403 }),
     };
   }
 
@@ -194,7 +194,7 @@ export async function requireStaff(
     return {
       session: null,
       error: NextResponse.json(
-        { error: `Forbidden — requires one of: ${roles.join(", ")}` },
+        { error: `Forbidden - requires one of: ${roles.join(", ")}` },
         { status: 403 }
       ),
     };
@@ -225,9 +225,9 @@ export async function requireUser(req: NextRequest): Promise<{
  *
  * SECURITY (Phase D H12 fix):
  * - Production: uses __Host- prefix (forces Secure + Path=/ + no Domain).
- *   This is the strictest cookie prefix — prevents subdomain-based cookie
+ *   This is the strictest cookie prefix - prevents subdomain-based cookie
  *   injection attacks.
- * - SameSite=Strict in production (was Lax) — closes 95% of CSRF vectors
+ * - SameSite=Strict in production (was Lax) - closes 95% of CSRF vectors
  *   by not sending the cookie on cross-site navigations.
  * - Dev: no prefix, SameSite=Lax (so localhost testing works without HTTPS).
  */

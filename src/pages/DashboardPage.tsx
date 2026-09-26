@@ -162,7 +162,7 @@ export default function DashboardPage() {
                       {b.source !== "DIRECT" && (
                         <p className="mt-2 text-xs text-ivory/40">Booked via {b.source.replace(/_/g, " ")}</p>
                       )}
-                      {/* Download invoice button — only for confirmed bookings */}
+                      {/* Download invoice button - only for confirmed bookings */}
                       {(b.status === "CONFIRMED" || b.status === "CHECKED_IN" || b.status === "CHECKED_OUT") && (
                         <div className="mt-3 flex gap-2 border-t border-champagne/10 pt-3">
                           <a

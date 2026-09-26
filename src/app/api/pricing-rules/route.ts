@@ -33,7 +33,7 @@ const UpdatePricingRuleSchema = z.object({
 });
 
 /**
- * GET /api/pricing-rules — Returns all dynamic pricing rules
+ * GET /api/pricing-rules - Returns all dynamic pricing rules
  */
 export async function GET() {
   const rules = await db.dynamicPricingRule.findMany({
@@ -46,7 +46,7 @@ export async function GET() {
 }
 
 /**
- * POST /api/pricing-rules — Create a new dynamic pricing rule
+ * POST /api/pricing-rules - Create a new dynamic pricing rule
  */
 export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * PATCH /api/pricing-rules — Update a pricing rule
+ * PATCH /api/pricing-rules - Update a pricing rule
  * body: { id, data: { ...fields } }
  */
 export async function PATCH(req: NextRequest) {

@@ -21,7 +21,7 @@ export default function BlogPostPage({ slug }: { slug: string }) {
   };
   const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
-  // JSON-LD Article schema — Google rich results for articles
+  // JSON-LD Article schema - Google rich results for articles
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",

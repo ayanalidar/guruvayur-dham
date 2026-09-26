@@ -262,7 +262,7 @@ export default function Navbar() {
                   </li>
                 );
               })}
-              {/* Guides — mobile accordion */}
+              {/* Guides - mobile accordion */}
               <li className="mt-2 border-t border-champagne/10 pt-2">
                 <details className="group">
                   <summary className="cursor-pointer list-none px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-champagne/60">

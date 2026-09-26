@@ -111,7 +111,7 @@ export default function AdminRooms() {
                         </div>
                         <div className="space-y-1">
                           <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Original Price</Label>
-                          <Input type="number" value={d.originalPrice || ""} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, originalPrice: e.target.value } })} placeholder="—" />
+                          <Input type="number" value={d.originalPrice || ""} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, originalPrice: e.target.value } })} placeholder="-" />
                         </div>
                         <div className="space-y-1">
                           <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Total Units</Label>

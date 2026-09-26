@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
 /**
- * GET /api/seo-audit — Returns recent SEO audit results
+ * GET /api/seo-audit - Returns recent SEO audit results
  */
 export async function GET(req: NextRequest) {
   const { error } = await requireStaff(req);
@@ -69,7 +69,7 @@ async function auditHtml(url: string): Promise<AuditResult | null> {
   if (titleLen >= 30 && titleLen <= 60) score += 15;
   else if (titleLen > 0) {
     score += 8;
-    issues.push(`Title length ${titleLen} — ideal: 30–60 chars`);
+    issues.push(`Title length ${titleLen} - ideal: 30-60 chars`);
   } else {
     issues.push("Missing <title> tag");
   }
@@ -81,7 +81,7 @@ async function auditHtml(url: string): Promise<AuditResult | null> {
   if (descLen >= 120 && descLen <= 160) score += 15;
   else if (descLen > 0) {
     score += 8;
-    issues.push(`Description length ${descLen} — ideal: 120–160 chars`);
+    issues.push(`Description length ${descLen} - ideal: 120-160 chars`);
   } else {
     issues.push("Missing meta description");
   }
@@ -125,7 +125,7 @@ async function auditHtml(url: string): Promise<AuditResult | null> {
   wordCount = textContent.split(" ").filter(Boolean).length;
   if (wordCount >= 300) score += 10;
   else if (wordCount > 0) {
-    issues.push(`Low word count (${wordCount}) — aim for 300+ for SEO`);
+    issues.push(`Low word count (${wordCount}) - aim for 300+ for SEO`);
     score += 5;
   }
 
@@ -163,7 +163,7 @@ async function checkAsset(baseUrl: string, path: string): Promise<{ ok: boolean;
 }
 
 /**
- * POST /api/seo-audit — Run a REAL SEO audit
+ * POST /api/seo-audit - Run a REAL SEO audit
  *
  * This is a hash-routed SPA, so every route shares the same server-rendered HTML
  * at `/`. We do a real audit of:
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = req.nextUrl.origin;
 
-  // 1) Real audit of base HTML — this is what search engines actually see
+  // 1) Real audit of base HTML - this is what search engines actually see
   const baseAudit = await auditHtml(`${baseUrl}/`);
 
   // 2) Asset existence checks
@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
       page: "/",
       name: "Base HTML / Shared Metadata",
       score: 0,
-      issues: ["Could not fetch base URL — server may be down or blocking the audit bot"],
+      issues: ["Could not fetch base URL - server may be down or blocking the audit bot"],
       titleLen: 0, descLen: 0, hasH1: false, hasSchema: false, hasCanonical: false,
       hasOg: false, imageCount: 0, imagesNoAlt: 0, wordCount: 0,
     });
@@ -261,7 +261,7 @@ export async function POST(req: NextRequest) {
   for (const asset of assetRows) {
     const issues: string[] = [];
     if (!asset.result.ok) {
-      issues.push(`Missing ${asset.path} — search engines can't discover all pages`);
+      issues.push(`Missing ${asset.path} - search engines can't discover all pages`);
     } else if (asset.result.size < 100) {
       issues.push(`${asset.path} exists but is suspiciously small (${asset.result.size} bytes)`);
     }

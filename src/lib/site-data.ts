@@ -7,7 +7,7 @@
 export const SITE = {
   name: "GuruVayur Dham",
   tagline: "2 Minutes from Mathura Station",
-  // Two contact numbers — +91-90908 20208 is MAIN (also WhatsApp), +91 8445555584 is secondary
+  // Two contact numbers - +91-90908 20208 is MAIN (also WhatsApp), +91 8445555584 is secondary
   phone: "+91-90908 20208",          // primary (used for tel: links + WhatsApp)
   phoneRaw: "+919090820208",
   phone2: "+91 8445555584",           // secondary (display only)
@@ -43,20 +43,20 @@ export const SITE = {
   totalRooms: 16,
   distanceToTemple: "Walk to Mata Pathwari Mandir",
   // Default GST rates (editable via admin → Settings → INTEGRATION category)
-  // Per India GST brackets — admin can override these in CMS.
+  // Per India GST brackets - admin can override these in CMS.
   // When IGST > 0, CGST and SGST are ignored (inter-state supply).
   defaultGstRates: {
-    cgst: 2.5,   // % — within-state, intra-state bookings
-    sgst: 2.5,   // % — within-state, intra-state bookings
-    igst: 0,     // % — inter-state bookings (if 0, CGST+SGST apply)
+    cgst: 2.5,   // % - within-state, intra-state bookings
+    sgst: 2.5,   // % - within-state, intra-state bookings
+    igst: 0,     // % - inter-state bookings (if 0, CGST+SGST apply)
   },
   nearbyTemples: [
-    // ===== Mathura (Day 1) — 4 mandirs from PDF 2 =====
+    // ===== Mathura (Day 1) - 4 mandirs from PDF 2 =====
     {
       name: "Shri Krishna Janmabhoomi",
       distance: "1.5 km · ~10-15 min drive",
       timings: "5 AM - 12 PM, 4 - 9:30 PM",
-      description: "Birthplace of Lord Krishna — the garbha-griha (prison cell where Kansa held Vasudev-Devaki) is the holiest spot. Janmashtami midnight abhishek with 108 medicines from Kamdhenu Gomukh.",
+      description: "Birthplace of Lord Krishna - the garbha-griha (prison cell where Kansa held Vasudev-Devaki) is the holiest spot. Janmashtami midnight abhishek with 108 medicines from Kamdhenu Gomukh.",
       deity: "Bal-Mukund / Vasudev Krishna",
       worshipMethod: "Panchamrit Mahabhishek + Shila-pooja at the garbha-griha stone. Midnight 108-medicine abhishek on Janmashtami.",
       prasadam: "Makhan-Mishri, Panjeeri, Panchmewa, Dhaniya Panjeeri",
@@ -71,10 +71,10 @@ export const SITE = {
       timings: "6:30 - 10:30 AM, 4 - 7 PM",
       description: "Built 1814 by Seth Gokuldas Parekh near Vishram Ghat. Krishna worshipped in his Rajadhiraj (King of Dwarka) form. Ashtayam seva (8 services) follows Pushtimarg tradition.",
       deity: "Rajadhiraj Dwarkadhish",
-      worshipMethod: "Ashtayam seva — Mangala, Gwal, Rajbhog, Utthapan, Bhog, Sandhya Aarti, Shayan (8 services across the day). Savan swings, Sharad Purnima white dress, Holi abeer-gulal.",
+      worshipMethod: "Ashtayam seva - Mangala, Gwal, Rajbhog, Utthapan, Bhog, Sandhya Aarti, Shayan (8 services across the day). Savan swings, Sharad Purnima white dress, Holi abeer-gulal.",
       prasadam: "Rajbhog thali, Sharad Purnima special white-food, Holi special abeer sweets",
       bestTimeToVisit: "Sandhya Aarti at 6 PM; Savan for swings; Sharad Purnima for white attire",
-      specialRules: "Pushtimarg sampradaya — Vallabh kul seva",
+      specialRules: "Pushtimarg sampradaya - Vallabh kul seva",
       dham: "Mathura",
       category: "Rajadhiraj",
     },
@@ -82,7 +82,7 @@ export const SITE = {
       name: "Shri Bhuteshwar Mahadev",
       distance: "1.8 km · ~10 min drive",
       timings: "5 AM - 9 PM",
-      description: "Mathura's Kshetrapal (city protector) — ancient Shiva linga where Krishna came to take permission before entering Mathura. Also a Shakti peeth (Sati's hair fell here).",
+      description: "Mathura's Kshetrapal (city protector) - ancient Shiva linga where Krishna came to take permission before entering Mathura. Also a Shakti peeth (Sati's hair fell here).",
       deity: "Bhuteshwar Shiva (Kshetrapal) + Sati Shakti",
       worshipMethod: "Bhasma + Ak-Dhatura + Bel-patra + Yamuna water abhishek. Rudra-path on Savan Mondays + Mahaaarti.",
       prasadam: "Bhasma, Bel leaves, Dhatura fruits (offered, not consumed)",
@@ -100,22 +100,22 @@ export const SITE = {
       worshipMethod: "Chunari Manorath + Deepadan (lamp offering). Sunrise + sunset Yamuna Aarti.",
       prasadam: "Yamuna-water, Deep-prasadam, Panchamrit",
       bestTimeToVisit: "Sunrise (Mangala Aarti) or sunset (Sandhya Aarti)",
-      specialRules: "Begin Braj Parikrama here — take Kshetrapal's permission at Bhuteshwar first",
+      specialRules: "Begin Braj Parikrama here - take Kshetrapal's permission at Bhuteshwar first",
       dham: "Mathura",
       category: "Yamuna-Poojan",
     },
 
-    // ===== Gokul (Day 2) — 4 mandirs from PDF 3 =====
+    // ===== Gokul (Day 2) - 4 mandirs from PDF 3 =====
     {
       name: "Shri Nand Bhavan (Chaurasi Khambha)",
       distance: "10 km · ~25 min drive (Gokul)",
       timings: "6 AM - 8 PM",
-      description: "Vishwakarma-built palace of Nand Baba with 84 carved pillars symbolizing the 84 lakh species — Krishna's childhood home where Yashoda + Nand raised him.",
+      description: "Vishwakarma-built palace of Nand Baba with 84 carved pillars symbolizing the 84 lakh species - Krishna's childhood home where Yashoda + Nand raised him.",
       deity: "Bal Krishna, Balaram, Yashoda Maiya, Nandray Ji",
       worshipMethod: "Bal Laddu Gopal palna (swing) seva. Devotees tie mouli + chunari for santan-prapti (child boon).",
       prasadam: "Matki fresh white Makhan, Mishri, Doodh-Peda, Malpua",
       bestTimeToVisit: "Janmashtami (palna seva at midnight); daily morning aarti",
-      specialRules: "Pilgrims tie chunari for child boon — do not remove others' chunari",
+      specialRules: "Pilgrims tie chunari for child boon - do not remove others' chunari",
       dham: "Gokul",
       category: "Nand-Mahal",
     },
@@ -123,12 +123,12 @@ export const SITE = {
       name: "Shri Raman Reti",
       distance: "11 km · ~30 min drive (Gokul)",
       timings: "6 AM - 8 PM",
-      description: "Sacred sandy ground where Krishna played with friends (Shridama, Subal) + cows. Sant Gynananand Maharaj's tapasya sthal. Famous for raj-snan — rolling in the sacred dust.",
+      description: "Sacred sandy ground where Krishna played with friends (Shridama, Subal) + cows. Sant Gynananand Maharaj's tapasya sthal. Famous for raj-snan - rolling in the sacred dust.",
       deity: "Raman Bihari Ji",
       worshipMethod: "Raj-snan (rolling in dust for physical + mental peace). Gau-seva, deer-feeding. Daily dhup-deep archana of Raman Bihari Ji.",
       prasadam: "Sacred dust tilak (raj-tilak) on forehead",
       bestTimeToVisit: "Morning (cool sand, deer active); Magh Purnima for special raj-snan",
-      specialRules: "Remove footwear; the dust itself is the prasadam — don't wash it off immediately",
+      specialRules: "Remove footwear; the dust itself is the prasadam - don't wash it off immediately",
       dham: "Gokul",
       category: "Raj-Snan-Tirth",
     },
@@ -139,9 +139,9 @@ export const SITE = {
       description: "Where child Krishna ate mud + when Yashoda opened his mouth, saw the entire universe (Brahmand) inside. Sacred clay worship + clay prasad.",
       deity: "Brahmand Bihari (Krishna with universe in mouth)",
       worshipMethod: "Sacred clay (pavitra mati) worship + tilak on forehead. Symbolic clay-achamana + Yamuna Aarti.",
-      prasadam: "Mati (clay) prasad — symbolic khand-mishri; Dughd (milk) naivedya",
+      prasadam: "Mati (clay) prasad - symbolic khand-mishri; Dughd (milk) naivedya",
       bestTimeToVisit: "Sunrise + Yamuna Aarti sunset",
-      specialRules: "The clay is sacred — collect only a small pinch as prasadam",
+      specialRules: "The clay is sacred - collect only a small pinch as prasadam",
       dham: "Gokul",
       category: "Brahmand-Darshan",
     },
@@ -154,12 +154,12 @@ export const SITE = {
       worshipMethod: "Brahm-sambandh diksha (Pushtimarg initiation). Yamuna-ji stotra path. Deepadan.",
       prasadam: "Yamuna water, Pushtimarg thaal prasadam",
       bestTimeToVisit: "Yamuna Jayanti; daily aarti times",
-      specialRules: "Pushtimarg Vaishnav initiation site — respect sampradaya customs",
+      specialRules: "Pushtimarg Vaishnav initiation site - respect sampradaya customs",
       dham: "Gokul",
       category: "Pushtimarg-Udgam",
     },
 
-    // ===== Vrindavan (Day 3) — 4 mandirs from PDF 4 =====
+    // ===== Vrindavan (Day 3) - 4 mandirs from PDF 4 =====
     {
       name: "Shri Banke Bihari Temple",
       distance: "15 km · ~25 min drive (Vrindavan)",
@@ -169,7 +169,7 @@ export const SITE = {
       worshipMethod: "Sakhya-bhav / Lad-pyar seva. Curtain opens every 2 min (no continuous darshan). NO Mangala Aarti except Janmashtami (Bihari Ji 'tired' from ras-leela).",
       prasadam: "Matki Peda, Bal-bhog Kachori-Jalebi, evening Mohan-thal",
       bestTimeToVisit: "Morning (cool + less crowded); Janmashtami midnight (only day with Mangala Aarti)",
-      specialRules: "No evening visits during Janmashtami rush — book accommodation 60+ days in advance. Don't stare fixedly (Bihari Ji gets 'bound').",
+      specialRules: "No evening visits during Janmashtami rush - book accommodation 60+ days in advance. Don't stare fixedly (Bihari Ji gets 'bound').",
       dham: "Vrindavan",
       category: "Sakhi-Bhav-Seva",
     },
@@ -195,20 +195,20 @@ export const SITE = {
       worshipMethod: "Morning Dughd-Mishri Mahabhishek + sattvik Ashtayam raga-seva. 500-year unbroken kitchen fire cooks bhog thali.",
       prasadam: "Dughd-Mishri mahabhishek prasadam; bhog thali from unbroken agni",
       bestTimeToVisit: "Morning Mangala + Sandhya Aarti; Gaur Purnima (Holi); Radhashtami",
-      specialRules: "Gaudiya Vaishnav sampradaya — Gomati chakra + Radha's crown on left side of vigraha",
+      specialRules: "Gaudiya Vaishnav sampradaya - Gomati chakra + Radha's crown on left side of vigraha",
       dham: "Vrindavan",
       category: "Svayambhu-Shaligram",
     },
     {
       name: "Pavitra Nidhivan Raj",
       distance: "15.5 km · ~30 min drive (Vrindavan)",
-      timings: "6 AM - 7 PM (STRICT — closes at sunset)",
-      description: "Sacred grove where Krishna + Radha + gopis perform ras-leela every night. Trees embrace in pairs (yugal form). Rang Mahal has nightly shayan seva (chandan bed + datun + paan + water + shringar — found used next morning).",
+      timings: "6 AM - 7 PM (STRICT - closes at sunset)",
+      description: "Sacred grove where Krishna + Radha + gopis perform ras-leela every night. Trees embrace in pairs (yugal form). Rang Mahal has nightly shayan seva (chandan bed + datun + paan + water + shringar - found used next morning).",
       deity: "Radha-Krishna yugal + Swami Haridas samadhi",
-      worshipMethod: "Daytime parikrama of the grove. Rang Mahal shayan seva decorated each evening — found used each morning (proof of nightly ras-leela).",
+      worshipMethod: "Daytime parikrama of the grove. Rang Mahal shayan seva decorated each evening - found used each morning (proof of nightly ras-leela).",
       prasadam: "Chandan, paan-beeda; offerings from Rang Mahal",
-      bestTimeToVisit: "Morning (7-10 AM) — leave before sunset STRICTLY",
-      specialRules: "STRICT: After sunset, even animals + birds leave the grove. NO HUMAN may stay overnight — strictly forbidden. Plan morning-only visit.",
+      bestTimeToVisit: "Morning (7-10 AM) - leave before sunset STRICTLY",
+      specialRules: "STRICT: After sunset, even animals + birds leave the grove. NO HUMAN may stay overnight - strictly forbidden. Plan morning-only visit.",
       dham: "Vrindavan",
       category: "Nitya-Ras-Sthali",
     },
@@ -218,7 +218,7 @@ export const SITE = {
       name: "Radha Rani Mandir",
       distance: "45 km · ~60 min drive (Barsana)",
       timings: "6 AM - 9 PM",
-      description: "Birthplace of Radha Rani in Barsana — Ladli Lal (Radha-Krishna together). One of the most important Braj temples.",
+      description: "Birthplace of Radha Rani in Barsana - Ladli Lal (Radha-Krishna together). One of the most important Braj temples.",
       deity: "Ladli Lal (Radha-Krishna)",
       worshipMethod: "Daily aarti; Holi special Lathmar at Radha Rani Mandir (Barsana's famous Lathmar Holi).",
       prasadam: "Gupt-Khajur, Makhan-Mishri; Holi special gujiya + thandai",
@@ -231,7 +231,7 @@ export const SITE = {
       name: "Mata Pathwari Mandir",
       distance: "Next door · 1 min walk",
       timings: "5 AM - 9 PM",
-      description: "Adjacent temple at walking distance from Guruvayur Dham — convenient for morning darshan before pilgrimage begins.",
+      description: "Adjacent temple at walking distance from Guruvayur Dham - convenient for morning darshan before pilgrimage begins.",
       deity: "Mata Pathwari Devi",
       worshipMethod: "Daily aarti + Chunari Manorath on special days",
       prasadam: "Prasad packets; Halwa-Puri on Sundays",
@@ -276,7 +276,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "Train",
     title: "2 Min from Mathura Station",
-    text: "Just a 2-minute walk from Mathura Railway Station. Skip the traffic and reach your room in minutes — perfect for pilgrims arriving by train from Delhi, Agra, or beyond.",
+    text: "Just a 2-minute walk from Mathura Railway Station. Skip the traffic and reach your room in minutes - perfect for pilgrims arriving by train from Delhi, Agra, or beyond.",
   },
   {
     icon: "MapPin",
@@ -286,7 +286,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "BedDouble",
     title: "16 Premium Rooms",
-    text: "Deluxe, Super Deluxe, Superior, and GVD Suite categories — each with fresh linen, 24×7 hot water, attached bathrooms, and family-friendly layouts. Daily sanitised and inspected before every check-in.",
+    text: "Deluxe, Super Deluxe, Superior, and GVD Suite categories - each with fresh linen, 24×7 hot water, attached bathrooms, and family-friendly layouts. Daily sanitised and inspected before every check-in.",
   },
   {
     icon: "HeartHandshake",
@@ -392,7 +392,7 @@ export const ROOMS: Room[] = [
       "/rooms/super-deluxe-room-3.jpg",
     ],
     badge: "Popular Choice",
-    description: "The King Deluxe Room features a king-size bed with an illuminated laser-cut headboard, an extended built-in lounge sofa in timber finish, and contemporary geometric fluted paneling. Tall plush headboard and LED TV create a relaxed, modern feel — ideal for couples or solo pilgrims wanting extra comfort. Plug-and-play charging points, mood lighting, and a private en-suite bathroom with 24/7 hot water round out the experience.",
+    description: "The King Deluxe Room features a king-size bed with an illuminated laser-cut headboard, an extended built-in lounge sofa in timber finish, and contemporary geometric fluted paneling. Tall plush headboard and LED TV create a relaxed, modern feel - ideal for couples or solo pilgrims wanting extra comfort. Plug-and-play charging points, mood lighting, and a private en-suite bathroom with 24/7 hot water round out the experience.",
     amenities: [
       "King-Size Bed",
       "Illuminated Laser-Cut Headboard",
@@ -430,7 +430,7 @@ export const ROOMS: Room[] = [
       "/rooms/superior-room-4.jpg",
     ],
     badge: "Family Choice",
-    description: "The Premium Double Bed Room showcases contemporary geometric fluted paneling, a tall plush headboard, LED TV, a vanity station, and split AC. Designed for small families or groups of 2-3 pilgrims, this room balances modern design with the practical comforts needed for a Mathura pilgrimage — close to Mathura Junction Station and the major Braj temples.",
+    description: "The Premium Double Bed Room showcases contemporary geometric fluted paneling, a tall plush headboard, LED TV, a vanity station, and split AC. Designed for small families or groups of 2-3 pilgrims, this room balances modern design with the practical comforts needed for a Mathura pilgrimage - close to Mathura Junction Station and the major Braj temples.",
     amenities: [
       "Double Bed + Optional Single",
       "Contemporary Fluted Paneling",
@@ -469,7 +469,7 @@ export const ROOMS: Room[] = [
       "/rooms/gvd-suite-5.jpg",
     ],
     badge: "Signature",
-    description: "Our Privilege Suite is the signature offering at Guruvayur Dham — a premium suite with a full living area, plush full-length couch, curved backlit headboard, and a Smart TV with Netflix/OTT access. Separate seating area makes it ideal for families wanting extra space to unwind after a full day of Mathura-Vrindavan-Gokul darshan. Includes priority check-in, welcome tea on arrival, and complimentary breakfast for two.",
+    description: "Our Privilege Suite is the signature offering at Guruvayur Dham - a premium suite with a full living area, plush full-length couch, curved backlit headboard, and a Smart TV with Netflix/OTT access. Separate seating area makes it ideal for families wanting extra space to unwind after a full day of Mathura-Vrindavan-Gokul darshan. Includes priority check-in, welcome tea on arrival, and complimentary breakfast for two.",
     amenities: [
       "King-Size Bed + Full Living Area",
       "Plush Full-Length Couch",
@@ -508,7 +508,7 @@ export const ROOMS: Room[] = [
       "/rooms/family-comfort-triple-room-3.jpg",
     ],
     badge: "Triple Sharing",
-    description: "The Family Comfort Triple Room is purpose-built for small families or groups of 3 pilgrims. Setup includes 1 Double Bed plus 1 Single Bed/Diwan, textured designer walls, cove lighting, and multi-guest flexibility — perfect for parents + child or 3 friends traveling together. Close to Mathura Junction Railway Station (~5-7 min drive) and a short auto ride to Krishna Janmabhoomi, Dwarkadhish, and Vishram Ghat.",
+    description: "The Family Comfort Triple Room is purpose-built for small families or groups of 3 pilgrims. Setup includes 1 Double Bed plus 1 Single Bed/Diwan, textured designer walls, cove lighting, and multi-guest flexibility - perfect for parents + child or 3 friends traveling together. Close to Mathura Junction Railway Station (~5-7 min drive) and a short auto ride to Krishna Janmabhoomi, Dwarkadhish, and Vishram Ghat.",
     amenities: [
       "1 Double Bed + 1 Single/Diwan",
       "Textured Designer Walls",
@@ -540,7 +540,7 @@ export interface Pooja {
   significance: string;
   // Which mandir this pooja is offered at (empty = general pooja across all temples)
   mandir?: string;
-  // Which Dham — Mathura / Gokul / Vrindavan / Barsana
+  // Which Dham - Mathura / Gokul / Vrindavan / Barsana
   dham?: string;
 }
 
@@ -647,7 +647,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
     significance:
-      "Annadan is considered the highest form of donation in Hindu tradition. 'Annadan is Mahadan' — feeding devotees brings infinite blessings.",
+      "Annadan is considered the highest form of donation in Hindu tradition. 'Annadan is Mahadan' - feeding devotees brings infinite blessings.",
     mandir: "Any Mathura mandir",
     dham: "Mathura",
   },
@@ -659,7 +659,7 @@ export const POOJAS: Pooja[] = [
     price: 1100,
     duration: "45 min",
     description:
-      "Panchamrit Mahabhishek at the garbha-griha stone (where Lord Krishna appeared). Includes milk, curd, ghee, honey, sugar + Yamuna Jal abhishek with Vedic chanting by the temple pandit. Book through GVD — zero commission, official temple rate.",
+      "Panchamrit Mahabhishek at the garbha-griha stone (where Lord Krishna appeared). Includes milk, curd, ghee, honey, sugar + Yamuna Jal abhishek with Vedic chanting by the temple pandit. Book through GVD - zero commission, official temple rate.",
     prasadam: "Panchamrit + Makhan-Mishri + Panjeeri + Panchmewa",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
@@ -719,12 +719,12 @@ export const POOJAS: Pooja[] = [
     price: 501,
     duration: "30 min",
     description:
-      "Sponsor the Bal Laddu Gopal palna (swing) seva at Shri Nand Bhavan (Chaurasi Khambha Mandir, Gokul) — Krishna's childhood home. Includes Mouli + Chunari offering for santan-prapti (child boon). Performed by the temple pujari with kirtan.",
+      "Sponsor the Bal Laddu Gopal palna (swing) seva at Shri Nand Bhavan (Chaurasi Khambha Mandir, Gokul) - Krishna's childhood home. Includes Mouli + Chunari offering for santan-prapti (child boon). Performed by the temple pujari with kirtan.",
     prasadam: "Matki fresh white Makhan + Mishri + Doodh-Peda + Malpua",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "The 84 carved pillars of Nand Bhavan symbolize 84 lakh species — sponsoring palna seva here is believed to grant child boon (santan-prapti) + free 84 lakh yonis.",
+      "The 84 carved pillars of Nand Bhavan symbolize 84 lakh species - sponsoring palna seva here is believed to grant child boon (santan-prapti) + free 84 lakh yonis.",
     mandir: "Shri Nand Bhavan (Chaurasi Khambha), Gokul",
     dham: "Gokul",
   },
@@ -734,7 +734,7 @@ export const POOJAS: Pooja[] = [
     price: 1100,
     duration: "20 min",
     description:
-      "Special darshan at Shri Banke Bihari Temple (Vrindavan) — the self-manifested Radha-Krishna combined vigraha from Swami Haridas's tapasya. Sponsorship includes Pushpa-bhog (floral offering) + your name read aloud during the unique 2-minute curtain darshan.",
+      "Special darshan at Shri Banke Bihari Temple (Vrindavan) - the self-manifested Radha-Krishna combined vigraha from Swami Haridas's tapasya. Sponsorship includes Pushpa-bhog (floral offering) + your name read aloud during the unique 2-minute curtain darshan.",
     prasadam: "Matki Peda + Bal-bhog Kachori-Jalebi + evening Mohan-thal",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
@@ -749,12 +749,12 @@ export const POOJAS: Pooja[] = [
     price: 351,
     duration: "1 hour (sunset)",
     description:
-      "Sponsor the sunset Sandhya Aarti at Shri Prem Mandir (Vrindavan) — 54-acre Italian Carrara marble temple built by Jagadguru Kripalu Maharaj. Includes Sankirtan-pradhana upasana + stay for the evening LED lighting + musical fountain show (ras-leela + Giridhar-dharan).",
+      "Sponsor the sunset Sandhya Aarti at Shri Prem Mandir (Vrindavan) - 54-acre Italian Carrara marble temple built by Jagadguru Kripalu Maharaj. Includes Sankirtan-pradhana upasana + stay for the evening LED lighting + musical fountain show (ras-leela + Giridhar-dharan).",
     prasadam: "Sankirtan prasad + blessed flowers",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Prem Mandir follows pure Vedic bhav upasana. Sponsoring the sunset aarti here brings the blessing of Radha-Govind + Sita-Ram yugal — perfect for couples + families.",
+      "Prem Mandir follows pure Vedic bhav upasana. Sponsoring the sunset aarti here brings the blessing of Radha-Govind + Sita-Ram yugal - perfect for couples + families.",
     mandir: "Shri Prem Mandir, Vrindavan",
     dham: "Vrindavan",
   },
@@ -769,7 +769,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
     significance:
-      "Radha Raman is svayambhu (self-manifested) — no chisel ever touched the shila. The 500-year unbroken kitchen fire is a rare living tradition. Sponsoring this Mahabhishek on Gaur Purnima (Holi) or Radhashtami is exceptionally auspicious.",
+      "Radha Raman is svayambhu (self-manifested) - no chisel ever touched the shila. The 500-year unbroken kitchen fire is a rare living tradition. Sponsoring this Mahabhishek on Gaur Purnima (Holi) or Radhashtami is exceptionally auspicious.",
     mandir: "Shri Radha Raman Temple, Vrindavan",
     dham: "Vrindavan",
   },
@@ -779,12 +779,12 @@ export const POOJAS: Pooja[] = [
     price: 750,
     duration: "Evening (before sunset only)",
     description:
-      "Sponsor the Rang Mahal shayan seva — chandan ka palan (sandalwood bed), daatun, paan ka beeda, jal (water), shringar material — decorated each evening before sunset. Found used the next morning (proof of Krishna's nightly ras-leela).",
+      "Sponsor the Rang Mahal shayan seva - chandan ka palan (sandalwood bed), daatun, paan ka beeda, jal (water), shringar material - decorated each evening before sunset. Found used the next morning (proof of Krishna's nightly ras-leela).",
     prasadam: "Chandan + paan-beeda + offerings from Rang Mahal",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Nidhivan is the most mysterious grove in Vrindavan — every night Krishna + Radha + gopis perform ras-leela here. Sponsoring the shayan seva is believed to grant divine dreams + spiritual awakening. STRICT: Grove closes at sunset — no human may stay overnight.",
+      "Nidhivan is the most mysterious grove in Vrindavan - every night Krishna + Radha + gopis perform ras-leela here. Sponsoring the shayan seva is believed to grant divine dreams + spiritual awakening. STRICT: Grove closes at sunset - no human may stay overnight.",
     mandir: "Pavitra Nidhivan Raj, Vrindavan",
     dham: "Vrindavan",
   },
@@ -809,8 +809,8 @@ export const POOJAS: Pooja[] = [
     price: 251,
     duration: "20 min",
     description:
-      "Sponsor the sacred clay (pavitra mati) worship + tilak at Shri Brahmand Ghat, Gokul — where child Krishna ate mud and showed Yashoda the entire universe in his mouth. Includes symbolic clay-achamana + Yamuna Aarti at sunset.",
-    prasadam: "Mati (clay) prasad — symbolic khand-mishri + Dughd (milk) naivedya",
+      "Sponsor the sacred clay (pavitra mati) worship + tilak at Shri Brahmand Ghat, Gokul - where child Krishna ate mud and showed Yashoda the entire universe in his mouth. Includes symbolic clay-achamana + Yamuna Aarti at sunset.",
+    prasadam: "Mati (clay) prasad - symbolic khand-mishri + Dughd (milk) naivedya",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop",
     significance:
@@ -829,7 +829,7 @@ export const POOJAS: Pooja[] = [
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=600&h=400&fit=crop",
     significance:
-      "Thakurani Ghat is where Vallabhacharya received direct darshan of Yamuna Maharani + composed the Shri Yamunashtak stotra. This is the Pushtimarg sampradaya's first Baithak Ji — the most sacred initiation site for Pushtimarg Vaishnavs.",
+      "Thakurani Ghat is where Vallabhacharya received direct darshan of Yamuna Maharani + composed the Shri Yamunashtak stotra. This is the Pushtimarg sampradaya's first Baithak Ji - the most sacred initiation site for Pushtimarg Vaishnavs.",
     mandir: "Shri Thakurani Ghat (Vallabh Mahaprabhu Baithak Ji), Gokul",
     dham: "Gokul",
   },
@@ -944,8 +944,8 @@ export interface GalleryImage {
 }
 
 export const GALLERY_IMAGES: GalleryImage[] = [
-  // ===== Rooms tab — all 22 brochure room photos =====
-  // Deluxe Room (Family Suit/Quad Room — 2 double beds, 6-8 guests, yellow curved headboards)
+  // ===== Rooms tab - all 22 brochure room photos =====
+  // Deluxe Room (Family Suit/Quad Room - 2 double beds, 6-8 guests, yellow curved headboards)
   {
     tab: "Rooms",
     src: "/rooms/deluxe-room-main.jpg",
@@ -973,7 +973,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     caption: "Family Suit · single beds variant",
   },
 
-  // Super Deluxe Room (King Deluxe — king + lounge sofa + TV)
+  // Super Deluxe Room (King Deluxe - king + lounge sofa + TV)
   {
     tab: "Rooms",
     src: "/rooms/super-deluxe-room-main.jpg",
@@ -1002,7 +1002,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     span: "wide",
   },
 
-  // Superior Room (Premium Double Bed — fluted paneling + tall headboard + vanity)
+  // Superior Room (Premium Double Bed - fluted paneling + tall headboard + vanity)
   {
     tab: "Rooms",
     src: "/rooms/superior-room-main.jpg",
@@ -1036,7 +1036,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     caption: "Premium Double · vertical channel · recessed lighting",
   },
 
-  // GVD Suite (Privilege Suite — full living + Smart TV with Netflix)
+  // GVD Suite (Privilege Suite - full living + Smart TV with Netflix)
   {
     tab: "Rooms",
     src: "/rooms/gvd-suite-main.jpg",
@@ -1106,95 +1106,95 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     span: "wide",
   },
 
-  // ===== Temples tab — all 14 Braj mandirs (real photos) =====
+  // ===== Temples tab - all 14 Braj mandirs (real photos) =====
   {
     tab: "Temples",
     src: "/temples/krishna-janmabhoomi.jpg",
-    alt: "Shri Krishna Janmabhoomi temple — birthplace of Lord Krishna",
+    alt: "Shri Krishna Janmabhoomi temple - birthplace of Lord Krishna",
     caption: "Shri Krishna Janmabhoomi · Mathura · birthplace of Krishna · 1.5 km from GVD",
     span: "tall",
   },
   {
     tab: "Temples",
     src: "/temples/dwarkadhish-temple.jpg",
-    alt: "Shri Dwarkadhish Temple — Krishna in Rajadhiraj form",
+    alt: "Shri Dwarkadhish Temple - Krishna in Rajadhiraj form",
     caption: "Shri Dwarkadhish Temple · Mathura · Rajadhiraj form · 2 km from GVD",
   },
   {
     tab: "Temples",
     src: "/temples/bhuteshwar-mahadev.jpg",
-    alt: "Shri Bhuteshwar Mahadev — Mathura's Kshetrapal Shiva linga",
+    alt: "Shri Bhuteshwar Mahadev - Mathura's Kshetrapal Shiva linga",
     caption: "Shri Bhuteshwar Mahadev · Mathura · Kshetrapal · 1.8 km from GVD",
     span: "wide",
   },
   {
     tab: "Temples",
     src: "/temples/vishram-ghat.jpg",
-    alt: "Vishram Ghat at sunset — where Krishna rested after killing Kansa",
+    alt: "Vishram Ghat at sunset - where Krishna rested after killing Kansa",
     caption: "Vishram Ghat + Yamuna Maharani Mandir · Mathura · 2.2 km from GVD",
   },
   {
     tab: "Temples",
     src: "/temples/nand-bhavan.jpg",
-    alt: "Shri Nand Bhavan (Chaurasi Khambha) — Krishna's childhood home in Gokul",
+    alt: "Shri Nand Bhavan (Chaurasi Khambha) - Krishna's childhood home in Gokul",
     caption: "Shri Nand Bhavan (Chaurasi Khambha) · Gokul · 10 km from GVD",
   },
   {
     tab: "Temples",
     src: "/temples/raman-reti.jpg",
-    alt: "Shri Raman Reti — sacred sand where Krishna played as a child",
+    alt: "Shri Raman Reti - sacred sand where Krishna played as a child",
     caption: "Shri Raman Reti · Gokul · 11 km from GVD · raj-snan (sacred dust rolling)",
     span: "tall",
   },
   {
     tab: "Temples",
     src: "/temples/brahmand-ghat.jpg",
-    alt: "Shri Brahmand Ghat — where Krishna showed the universe in his mouth",
+    alt: "Shri Brahmand Ghat - where Krishna showed the universe in his mouth",
     caption: "Shri Brahmand Ghat · Gokul · 12 km from GVD · sacred clay prasadam",
   },
   {
     tab: "Temples",
     src: "/temples/thakurani-ghat.jpg",
-    alt: "Shri Thakurani Ghat — Vallabhacharya's first Baithak Ji in Gokul",
+    alt: "Shri Thakurani Ghat - Vallabhacharya's first Baithak Ji in Gokul",
     caption: "Shri Thakurani Ghat (Vallabh Baithak Ji) · Gokul · 12.5 km from GVD",
     span: "wide",
   },
   {
     tab: "Temples",
     src: "/temples/banke-bihari.jpg",
-    alt: "Shri Banke Bihari Temple — self-manifested Radha-Krishna combined vigraha",
+    alt: "Shri Banke Bihari Temple - self-manifested Radha-Krishna combined vigraha",
     caption: "Shri Banke Bihari Temple · Vrindavan · 15 km from GVD · curtain darshan every 2 min",
   },
   {
     tab: "Temples",
     src: "/temples/prem-mandir.jpg",
-    alt: "Shri Prem Mandir — Italian Carrara marble temple with evening LED show",
+    alt: "Shri Prem Mandir - Italian Carrara marble temple with evening LED show",
     caption: "Shri Prem Mandir · Vrindavan · 16 km from GVD · evening LED + fountain show",
     span: "tall",
   },
   {
     tab: "Temples",
     src: "/temples/radha-raman.jpg",
-    alt: "Shri Radha Raman Temple — self-manifested shaligram with 500-year unbroken kitchen fire",
+    alt: "Shri Radha Raman Temple - self-manifested shaligram with 500-year unbroken kitchen fire",
     caption: "Shri Radha Raman Temple · Vrindavan · 15.5 km from GVD · 500-year unbroken agni",
   },
   {
     tab: "Temples",
     src: "/temples/nidhivan.jpg",
-    alt: "Pavitra Nidhivan Raj — sacred grove of nightly ras-leela",
-    caption: "Pavitra Nidhivan Raj · Vrindavan · 15.5 km from GVD · STRICT — closes at sunset",
+    alt: "Pavitra Nidhivan Raj - sacred grove of nightly ras-leela",
+    caption: "Pavitra Nidhivan Raj · Vrindavan · 15.5 km from GVD · STRICT - closes at sunset",
     span: "wide",
   },
   {
     tab: "Temples",
     src: "/temples/radha-rani-barsana.jpg",
-    alt: "Shri Radha Rani Mandir at Barsana — birthplace of Radha Rani",
+    alt: "Shri Radha Rani Mandir at Barsana - birthplace of Radha Rani",
     caption: "Shri Radha Rani Mandir · Barsana · 45 km from GVD · Lathmar Holi",
   },
   {
     tab: "Temples",
     src: "/temples/mata-pathwari.jpg",
-    alt: "Mata Pathwari Mandir — adjacent temple at walking distance",
+    alt: "Mata Pathwari Mandir - adjacent temple at walking distance",
     caption: "Mata Pathwari Mandir · Mathura · next door to GVD · 1 min walk",
   },
   {
@@ -1221,7 +1221,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     tab: "Surroundings",
     src: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=600&fit=crop",
     alt: "Yamuna river at Vishram Ghat, Mathura",
-    caption: "Vishram Ghat on the Yamuna river — evening aarti",
+    caption: "Vishram Ghat on the Yamuna river - evening aarti",
   },
   {
     tab: "Surroundings",
@@ -1265,17 +1265,17 @@ export const EVENTS: FestEvent[] = [
     date: "Mar 14, 2026",
     dateISO: "2026-03-14",
     description:
-      "Barsana's world-famous Lathmar Holi at Shri Radha Rani Mandir (birthplace of Radha Rani) — men from Nandgaon playfully beaten by women of Barsana with sticks. Dwarkadhish Temple (Mathura) hosts the grand Holi procession with abeer-gulal seva (Krishna in 'Rajadhiraj' form). Banke Bihari Temple (Vrindavan) holds special Phoolon ki Holi (Holi with flowers). Radha Raman Temple hosts Gaur Purnima celebration (white attire + special Mahabhishek). Book 60+ days in advance.",
+      "Barsana's world-famous Lathmar Holi at Shri Radha Rani Mandir (birthplace of Radha Rani) - men from Nandgaon playfully beaten by women of Barsana with sticks. Dwarkadhish Temple (Mathura) hosts the grand Holi procession with abeer-gulal seva (Krishna in 'Rajadhiraj' form). Banke Bihari Temple (Vrindavan) holds special Phoolon ki Holi (Holi with flowers). Radha Raman Temple hosts Gaur Purnima celebration (white attire + special Mahabhishek). Book 60+ days in advance.",
     highlight: "Lathmar Holi at Radha Rani Mandir (Barsana) · Abeer-gulal at Dwarkadhish · Phoolon ki Holi at Banke Bihari · Gaur Purnima at Radha Raman",
     image:
       "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
   },
   {
     name: "Savan Swing Festival at Dwarkadhish",
-    date: "Jul 4 – Aug 31, 2026",
+    date: "Jul 4 - Aug 31, 2026",
     dateISO: "2026-07-04",
     description:
-      "The Hindu month of Savan (Jul-Aug) brings swings (hindole) to Dwarkadhish Temple, where Krishna in Rajadhiraj form swings on gold-silver hindole. Sharad Purnima (Oct 7) sees Krishna dressed in white attire (shwet dhaval vastra) for the moonlight darshan. Bhuteshwar Mahadev hosts Rudra-path + Maha-aarti every Savan Monday — the most powerful day for Shiva worship.",
+      "The Hindu month of Savan (Jul-Aug) brings swings (hindole) to Dwarkadhish Temple, where Krishna in Rajadhiraj form swings on gold-silver hindole. Sharad Purnima (Oct 7) sees Krishna dressed in white attire (shwet dhaval vastra) for the moonlight darshan. Bhuteshwar Mahadev hosts Rudra-path + Maha-aarti every Savan Monday - the most powerful day for Shiva worship.",
     highlight: "Gold-silver hindole (swings) at Dwarkadhish · Sharad Purnima white attire · Savan Monday Rudra-path at Bhuteshwar Mahadev",
     image:
       "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
@@ -1285,7 +1285,7 @@ export const EVENTS: FestEvent[] = [
     date: "Nov 5, 2026",
     dateISO: "2026-11-05",
     description:
-      "The full moon of Kartik month — holiest day for Yamuna poojan. Devotees take sacred dip at Vishram Ghat (where Krishna rested after killing Kansa), followed by deep-daan (108 floating diyas). Yamuna Maharani Mandir hosts Yamuna Aarti at sunset. Thakurani Ghat (Gokul) — Vallabhacharya's first Baithak Ji — has special Pushtimarg seva. Beginning of the 25-pradakshina Braj parikrama.",
+      "The full moon of Kartik month - holiest day for Yamuna poojan. Devotees take sacred dip at Vishram Ghat (where Krishna rested after killing Kansa), followed by deep-daan (108 floating diyas). Yamuna Maharani Mandir hosts Yamuna Aarti at sunset. Thakurani Ghat (Gokul) - Vallabhacharya's first Baithak Ji - has special Pushtimarg seva. Beginning of the 25-pradakshina Braj parikrama.",
     highlight: "Sacred Yamuna dip at Vishram Ghat · 108 floating diyas deep-daan · Yamuna Aarti · Begin Braj Parikrama",
     image:
       "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
@@ -1295,7 +1295,7 @@ export const EVENTS: FestEvent[] = [
     date: "Oct 22, 2026",
     dateISO: "2026-10-22",
     description:
-      "The day after Diwali — celebrates Krishna lifting Gowardhan Hill. Pilgrims do 21-km parikrama of Gowardhan Hill (22 km from Mathura). Mathura mandirs (especially Dwarkadhish) prepare Annakoot — mountain of 108+ food items offered to Krishna in Rajadhiraj form. Banke Bihari has special chappan bhog (56-bhog thali) and Banke Bihari is decorated in special 'Giridhar-dharan' leela attire.",
+      "The day after Diwali - celebrates Krishna lifting Gowardhan Hill. Pilgrims do 21-km parikrama of Gowardhan Hill (22 km from Mathura). Mathura mandirs (especially Dwarkadhish) prepare Annakoot - mountain of 108+ food items offered to Krishna in Rajadhiraj form. Banke Bihari has special chappan bhog (56-bhog thali) and Banke Bihari is decorated in special 'Giridhar-dharan' leela attire.",
     highlight: "Gowardhan parikrama (21 km) · Annakoot at Dwarkadhish · Chappan Bhog at Banke Bihari",
     image:
       "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&h=600&fit=crop",
@@ -1315,7 +1315,7 @@ export const EVENTS: FestEvent[] = [
     date: "Sep 10, 2026",
     dateISO: "2026-09-10",
     description:
-      "Appearance day of Radha Rani at Shri Radha Rani Mandir, Barsana (45 km from Mathura). Grand Mahabhishek + procession. Shri Radha Raman Temple (Vrindavan) celebrates with special Dughd-Mishri Mahabhishek — the only day when the kitchen fire (500-year unbroken) prepares special bhog thali for Radha's appearance. Banke Bihari has special shringar with Ladli Lal form.",
+      "Appearance day of Radha Rani at Shri Radha Rani Mandir, Barsana (45 km from Mathura). Grand Mahabhishek + procession. Shri Radha Raman Temple (Vrindavan) celebrates with special Dughd-Mishri Mahabhishek - the only day when the kitchen fire (500-year unbroken) prepares special bhog thali for Radha's appearance. Banke Bihari has special shringar with Ladli Lal form.",
     highlight: "Grand Mahabhishek at Radha Rani Mandir (Barsana) · Dughd-Mishri Mahabhishek at Radha Raman · Ladli Lal shringar at Banke Bihari",
     image:
       "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
@@ -1325,7 +1325,7 @@ export const EVENTS: FestEvent[] = [
     date: "Feb 4, 2027",
     dateISO: "2027-02-04",
     description:
-      "Magh Purnima is the most auspicious day for raj-snan (rolling in sacred dust) at Shri Raman Reti, Gokul — where Krishna played with friends + cows. Special Gau-seva + deer-feeding. Nand Bhavan (Chaurasi Khambha) has special Bal Gopal palna seva. Brahmand Ghat has sacred clay worship. End the day with Yamuna Aarti at Thakurani Ghat.",
+      "Magh Purnima is the most auspicious day for raj-snan (rolling in sacred dust) at Shri Raman Reti, Gokul - where Krishna played with friends + cows. Special Gau-seva + deer-feeding. Nand Bhavan (Chaurasi Khambha) has special Bal Gopal palna seva. Brahmand Ghat has sacred clay worship. End the day with Yamuna Aarti at Thakurani Ghat.",
     highlight: "Raj-snan at Raman Reti · Gau-seva + deer-feeding · Palna seva at Nand Bhavan · Yamuna Aarti at Thakurani Ghat",
     image:
       "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
@@ -1356,10 +1356,10 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=500&fit=crop",
     content: [
-      "Mathura is home to some of the most sacred Krishna temples in India. The most important is Shri Krishna Janmabhoomi — the birthplace of Lord Krishna — which opens at 5:00 AM every morning. The morning aarti is at 5:30 AM in summer and 6:30 AM in winter. General darshan continues until 12:00 PM, when the temple closes for the afternoon. It reopens at 4:00 PM and stays open until 9:30 PM. During Janmashtami, the temple stays open all night for the midnight abhishekam marking Krishna's birth.",
+      "Mathura is home to some of the most sacred Krishna temples in India. The most important is Shri Krishna Janmabhoomi - the birthplace of Lord Krishna - which opens at 5:00 AM every morning. The morning aarti is at 5:30 AM in summer and 6:30 AM in winter. General darshan continues until 12:00 PM, when the temple closes for the afternoon. It reopens at 4:00 PM and stays open until 9:30 PM. During Janmashtami, the temple stays open all night for the midnight abhishekam marking Krishna's birth.",
       "Dwarkadhish Temple, dedicated to Lord Krishna as the King of Dwarka, is 2 km from Guruvayur Dham. It opens at 6:30 AM for morning darshan (Mangala Aarti at 6:30 AM, Shringar Aarti at 7:15 AM), closes at 10:30 AM, reopens at 4:00 PM, and closes at 7:00 PM after Sandhya Aarti. The temple is especially beautiful during Holi, when the Dwarkadhish Holi procession starts from here.",
-      "Banke Bihari Temple in Vrindavan (15 km from Mathura) has unique timings: morning darshan 7:45 AM to 12:00 PM, and evening darshan 5:30 PM to 9:30 PM. The temple famously does not allow cameras — a rule strictly enforced. During the summer, the temple closes for a midday break and the idol is moved to a cooler room. Plan your visit early morning for the shortest queue.",
-      "Prem Mandir in Vrindavan is open from 8:30 AM to 8:30 PM continuously. Unlike other temples, it doesn't close for an afternoon break. The evening light-and-sound show at 7:30 PM is a must-see — the entire white marble temple is illuminated with colourful LED lights. Entry is free. This is the most accessible temple for elderly pilgrims and families with children.",
+      "Banke Bihari Temple in Vrindavan (15 km from Mathura) has unique timings: morning darshan 7:45 AM to 12:00 PM, and evening darshan 5:30 PM to 9:30 PM. The temple famously does not allow cameras - a rule strictly enforced. During the summer, the temple closes for a midday break and the idol is moved to a cooler room. Plan your visit early morning for the shortest queue.",
+      "Prem Mandir in Vrindavan is open from 8:30 AM to 8:30 PM continuously. Unlike other temples, it doesn't close for an afternoon break. The evening light-and-sound show at 7:30 PM is a must-see - the entire white marble temple is illuminated with colourful LED lights. Entry is free. This is the most accessible temple for elderly pilgrims and families with children.",
       "For the shortest queue at Krishna Janmabhoomi, visit on weekdays (Tuesday-Thursday) between 8:00 AM and 10:00 AM. Weekends and festival days see 5-10× the crowd. Guruvayur Dham's reception provides daily crowd forecasts and can help you plan the best time to visit each temple.",
     ],
   },
@@ -1378,7 +1378,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Women should wear saree, salwar kameez, or modest traditional clothing. At Krishna Janmabhoomi, women are required to cover their heads with a dupatta or saree pallu inside the sanctum. Jeans and Western outfits are permitted at most temples but traditional attire is appreciated. Girls below 12 have no specific dress requirements.",
       "Footwear must be removed at all temples. Free shoe storage is available at Krishna Janmabhoomi (₹2-5 token fee). Leather items (wallets, belts, bags) are generally allowed in the outer temple area but not inside the inner sanctum of some temples. Mobile phones must be switched off or on silent. Photography is strictly prohibited inside Krishna Janmabhoomi and Banke Bihari Temple.",
       "White, saffron, and cream colours are the most auspicious and respectful choices. Avoid wearing black on festival days. Carry a scarf or shawl to cover your head when entering Krishna Janmabhoomi. Guruvayur Dham keeps spare dupattas and dhotis at the reception for guests who arrive unprepared, available against a refundable deposit.",
-      "Children below 10 are not required to follow the dress code strictly, but traditional clothes are appreciated. Photography is prohibited inside all temple sanctums — leave cameras and phones in the locker facilities provided. Guruvayur Dham provides a free locker in every room for valuables.",
+      "Children below 10 are not required to follow the dress code strictly, but traditional clothes are appreciated. Photography is prohibited inside all temple sanctums - leave cameras and phones in the locker facilities provided. Guruvayur Dham provides a free locker in every room for valuables.",
     ],
   },
   {
@@ -1392,11 +1392,11 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
     content: [
-      "Mathura is in western Uttar Pradesh, 145 km south of Delhi and 60 km north of Agra. The city is well-connected by rail, road, and the nearest airports. Guruvayur Dham is located just 2 minutes from Mathura Junction railway station — the closest accommodation to the station in the city.",
-      "By air: The nearest international airport is Indira Gandhi International Airport in Delhi (DEL), about 150 km north of Mathura — a 3-hour drive via the Yamuna Expressway. Pre-paid taxis cost ₹3,000-4,500. Alternatively, Agra's Kheria Airport (AGR) is 60 km south — a 1.5-hour drive. Agra airport has limited flights, so Delhi is the more practical option.",
-      "By train: Mathura Junction (MTJ) is on the Delhi-Mumbai main line and is connected to every major Indian city. Over 50 daily trains serve Mathura, including Shatabdi Express from Delhi (2 hours), Taj Express from Delhi (2.5 hours), and trains from Agra (30 min), Vrindavan (15 min via the Vrindavan-Mathura shuttle), Mumbai, Jaipur, and Varanasi. Guruvayur Dham is a 2-minute walk from the station — you can see the property from the platform exit.",
+      "Mathura is in western Uttar Pradesh, 145 km south of Delhi and 60 km north of Agra. The city is well-connected by rail, road, and the nearest airports. Guruvayur Dham is located just 2 minutes from Mathura Junction railway station - the closest accommodation to the station in the city.",
+      "By air: The nearest international airport is Indira Gandhi International Airport in Delhi (DEL), about 150 km north of Mathura - a 3-hour drive via the Yamuna Expressway. Pre-paid taxis cost ₹3,000-4,500. Alternatively, Agra's Kheria Airport (AGR) is 60 km south - a 1.5-hour drive. Agra airport has limited flights, so Delhi is the more practical option.",
+      "By train: Mathura Junction (MTJ) is on the Delhi-Mumbai main line and is connected to every major Indian city. Over 50 daily trains serve Mathura, including Shatabdi Express from Delhi (2 hours), Taj Express from Delhi (2.5 hours), and trains from Agra (30 min), Vrindavan (15 min via the Vrindavan-Mathura shuttle), Mumbai, Jaipur, and Varanasi. Guruvayur Dham is a 2-minute walk from the station - you can see the property from the platform exit.",
       "By bus: UPSRTC (Uttar Pradesh State Road Transport) operates buses to Mathura from Delhi (every 30 min, ₹150-300, 3 hours), Agra (every 15 min, ₹50, 1 hour), Vrindavan (every 10 min, ₹10, 15 min), and Jaipur (3 daily, ₹250, 5 hours). Private Volvo sleeper buses from Delhi (3 hours, ₹300-500) and Jaipur (5 hours, ₹400-600) arrive at the Mathura bus stand, 1 km from Guruvayur Dham.",
-      "By car: From Delhi, take the Yamuna Expressway (165 km, 2.5 hours, toll ₹400 one-way). From Agra, take NH-19 north (60 km, 1.5 hours). From Vrindavan, take the Mathura-Vrindavan road (15 km, 30 min). From Jaipur, take NH-21 via Bharatpur (200 km, 4 hours). Free parking for 25+ vehicles is available at Guruvayur Dham — reserve your spot on WhatsApp before arrival during festival season.",
+      "By car: From Delhi, take the Yamuna Expressway (165 km, 2.5 hours, toll ₹400 one-way). From Agra, take NH-19 north (60 km, 1.5 hours). From Vrindavan, take the Mathura-Vrindavan road (15 km, 30 min). From Jaipur, take NH-21 via Bharatpur (200 km, 4 hours). Free parking for 25+ vehicles is available at Guruvayur Dham - reserve your spot on WhatsApp before arrival during festival season.",
       "Local transport: Auto-rickshaws are the most common way to get around Mathura (₹30-80 for short hops). For Vrindavan (15 km), shared autos cost ₹30 per person, private auto ₹150-200, or e-rickshaws. For day trips to Barsana (45 km), Gokul (10 km), or Gowardhan (22 km), hire a taxi for ₹1,500-2,500 for a full day. Guruvayur Dham can arrange trusted drivers on request.",
     ],
   },
@@ -1413,10 +1413,10 @@ export const BLOG_POSTS: BlogPost[] = [
     content: [
       "Mathura experiences a typical North Indian climate with four distinct seasons: winter (November-February), spring (March-April), summer (May-June), and monsoon (July-September). Each season has its own character, and the best time to visit depends on whether you want comfortable weather, fewer crowds, or the chance to witness a major festival.",
       "Winter (November to February) is the peak pilgrim season. Daytime temperatures are pleasant at 20-25°C, mornings can be chilly at 8-12°C. This is when most major festivals fall: Kartik Purnima (November), Diwali (October-November), Gowardhan Puja, and the run-up to Janmashtami decorations. Expect heavy crowds on weekends and festival days; book rooms at least 2 months in advance. Guruvayur Dham is fully booked for Janmashtami and Holi by early summer.",
-      "Spring (March to April) is when Holi transforms Mathura into the world's most colourful celebration. Lathmar Holi in Barsana (45 km), Phoolon ki Holi in Vrindavan (15 km), and the Dwarkadhish Temple procession in Mathura are once-in-a-lifetime experiences. Temperatures are comfortable (25-35°C). Book 60+ days ahead — this is the most popular time for international tourists.",
-      "Summer (May to June) is hot — daytime temperatures reach 40-45°C. The temples are less crowded, and you can often get a room without prior booking on weekdays. AC rooms are essential. Carry an umbrella, light cotton clothes, and plenty of water. Hotel rates drop 20-30%. Morning and evening darshan are strongly preferred — the temple floors get hot underfoot by noon.",
-      "Monsoon (July to September) brings relief from the heat with temperatures dropping to 30-35°C. The Yamuna river swells, and the ghats are beautiful. Temples are far less crowded — you can sometimes walk straight into the sanctum on weekday evenings. Rooms are discounted 25-40%. Carry a sturdy umbrella and waterproof footwear. The risk of train delays increases during heavy rain.",
-      "If you must pick one week: the week leading up to Janmashtami (August) is the most magical — temples are decorated, kirtans fill the air, and the midnight abhishekam at Krishna Janmabhoomi is an unforgettable experience. For weather without festival crowds: the first two weeks of December are ideal — pleasant temperatures, thin crowds, and the temples are freshly decorated for winter.",
+      "Spring (March to April) is when Holi transforms Mathura into the world's most colourful celebration. Lathmar Holi in Barsana (45 km), Phoolon ki Holi in Vrindavan (15 km), and the Dwarkadhish Temple procession in Mathura are once-in-a-lifetime experiences. Temperatures are comfortable (25-35°C). Book 60+ days ahead - this is the most popular time for international tourists.",
+      "Summer (May to June) is hot - daytime temperatures reach 40-45°C. The temples are less crowded, and you can often get a room without prior booking on weekdays. AC rooms are essential. Carry an umbrella, light cotton clothes, and plenty of water. Hotel rates drop 20-30%. Morning and evening darshan are strongly preferred - the temple floors get hot underfoot by noon.",
+      "Monsoon (July to September) brings relief from the heat with temperatures dropping to 30-35°C. The Yamuna river swells, and the ghats are beautiful. Temples are far less crowded - you can sometimes walk straight into the sanctum on weekday evenings. Rooms are discounted 25-40%. Carry a sturdy umbrella and waterproof footwear. The risk of train delays increases during heavy rain.",
+      "If you must pick one week: the week leading up to Janmashtami (August) is the most magical - temples are decorated, kirtans fill the air, and the midnight abhishekam at Krishna Janmabhoomi is an unforgettable experience. For weather without festival crowds: the first two weeks of December are ideal - pleasant temperatures, thin crowds, and the temples are freshly decorated for winter.",
     ],
   },
   {
@@ -1430,15 +1430,15 @@ export const BLOG_POSTS: BlogPost[] = [
     image:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
     content: [
-      "The Braj region around Mathura is dense with sacred sites connected to Lord Krishna's life. From his birthplace to his childhood playgrounds, every village and hill has a story. After your darshan at Krishna Janmabhoomi, consider spending extra days exploring these sacred destinations — all within an hour's drive from Guruvayur Dham.",
-      "1. Shri Krishna Janmabhoomi (1.5 km, 5 min): The birthplace of Lord Krishna, built over the prison cell where Devaki and Vasudeva were imprisoned. The main temple has a marble stone marking the exact spot of Krishna's birth. Open 5 AM-12 PM, 4-9:30 PM. Free entry. Photography prohibited inside. This is the most important temple in Mathura — start your pilgrimage here.",
+      "The Braj region around Mathura is dense with sacred sites connected to Lord Krishna's life. From his birthplace to his childhood playgrounds, every village and hill has a story. After your darshan at Krishna Janmabhoomi, consider spending extra days exploring these sacred destinations - all within an hour's drive from Guruvayur Dham.",
+      "1. Shri Krishna Janmabhoomi (1.5 km, 5 min): The birthplace of Lord Krishna, built over the prison cell where Devaki and Vasudeva were imprisoned. The main temple has a marble stone marking the exact spot of Krishna's birth. Open 5 AM-12 PM, 4-9:30 PM. Free entry. Photography prohibited inside. This is the most important temple in Mathura - start your pilgrimage here.",
       "2. Dwarkadhish Temple (2 km, 7 min): A grand 17th-century temple dedicated to Lord Krishna as the King of Dwarka. Known for its intricate Rajasthani architecture and the famous Holi procession that starts from here. Open 6:30-10:30 AM, 4-7 PM. Free entry. The Sandhya Aarti at 6:30 PM is especially beautiful.",
       "3. Banke Bihari Temple, Vrindavan (15 km, 30 min): The most famous Krishna temple in Vrindavan, known for its unique darshan style where the curtain is pulled open and closed every few minutes (the Lord is said to get shy if stared at too long). Open 7:45 AM-12 PM, 5:30-9:30 PM. No photography. Visit early morning for the shortest queue.",
-      "4. Prem Mandir, Vrindavan (15 km, 30 min): A stunning white marble temple built in 2012, dedicated to Radha-Krishna. Beautifully illuminated at night with LED lights. Open 8:30 AM-8:30 PM. Free entry. The evening light-and-sound show at 7:30 PM is a must-see. Most accessible temple for elderly pilgrims — no stairs, wide walkways.",
-      "5. Radha Rani Mandir, Barsana (45 km, 1.5 hours): The birthplace of Radha Rani, perched on a hilltop. This is where the famous Lathmar Holi takes place every March. Open 6 AM-9 PM. Free entry. The climb to the top involves 200+ steps — an auto can take you up for ₹50. The view from the top is spectacular.",
+      "4. Prem Mandir, Vrindavan (15 km, 30 min): A stunning white marble temple built in 2012, dedicated to Radha-Krishna. Beautifully illuminated at night with LED lights. Open 8:30 AM-8:30 PM. Free entry. The evening light-and-sound show at 7:30 PM is a must-see. Most accessible temple for elderly pilgrims - no stairs, wide walkways.",
+      "5. Radha Rani Mandir, Barsana (45 km, 1.5 hours): The birthplace of Radha Rani, perched on a hilltop. This is where the famous Lathmar Holi takes place every March. Open 6 AM-9 PM. Free entry. The climb to the top involves 200+ steps - an auto can take you up for ₹50. The view from the top is spectacular.",
       "6. Raman Reti, Gokul (10 km, 20 min): The sacred sand where baby Krishna is said to have played. Pilgrims rub the sand on their bodies as a blessing. Open 6 AM-8 PM. Free entry. A peaceful spot for meditation, away from the crowds. The nearby Gokulnath Temple is also worth visiting.",
-      "7. Gowardhan Hill (22 km, 45 min): The hill Krishna lifted to protect villagers from Indra's wrath. Pilgrims perform parikrama (circumambulation) — a 21 km walk around the hill that takes 4-5 hours. Mansi Ganga Kund at the base is a holy bathing spot. Visit during Gowardhan Puja (day after Diwali) for the Annakoot celebration.",
-      "8. Vishram Ghat, Mathura (1.5 km, 5 min): The most important ghat on the Yamuna river in Mathura, where Krishna is said to have rested after killing his uncle Kamsa. The evening aarti at sunset is beautiful — hundreds of floating diyas on the Yamuna. Free. Best visited at sunrise or sunset.",
+      "7. Gowardhan Hill (22 km, 45 min): The hill Krishna lifted to protect villagers from Indra's wrath. Pilgrims perform parikrama (circumambulation) - a 21 km walk around the hill that takes 4-5 hours. Mansi Ganga Kund at the base is a holy bathing spot. Visit during Gowardhan Puja (day after Diwali) for the Annakoot celebration.",
+      "8. Vishram Ghat, Mathura (1.5 km, 5 min): The most important ghat on the Yamuna river in Mathura, where Krishna is said to have rested after killing his uncle Kamsa. The evening aarti at sunset is beautiful - hundreds of floating diyas on the Yamuna. Free. Best visited at sunrise or sunset.",
       "9. Nandgaon (50 km, 1.5 hours): The village where Krishna spent his childhood with foster parents Nanda and Yashoda. The Nand Bhavan temple on the hilltop offers panoramic views. Visit during Holi season for the Nandgaon vs Barsana Lathmar Holi exchange.",
       "10. Kesi Ghat, Vrindavan (15 km, 30 min): Where Krishna is said to have killed the demon Kesi. The evening Yamuna Aarti here is one of the most beautiful in Braj. Free. Pair with Banke Bihari and Prem Mandir for a full-day Vrindavan circuit.",
     ],
@@ -1455,7 +1455,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=500&fit=crop",
     content: [
       "Booking a room in Mathura is straightforward once you know what to look for. After hosting thousands of pilgrims at Guruvayur Dham, here are 12 things we wish every guest knew before booking.",
-      "1. Verify the actual distance to Mathura Junction. Many properties claim 'near station' but are 2-3 km away. Ask for the exact distance — anything beyond 500 m means a 7+ minute walk, which is exhausting for elderly pilgrims with luggage. Guruvayur Dham is 2 minutes from Mathura Junction — you can see it from the platform exit.",
+      "1. Verify the actual distance to Mathura Junction. Many properties claim 'near station' but are 2-3 km away. Ask for the exact distance - anything beyond 500 m means a 7+ minute walk, which is exhausting for elderly pilgrims with luggage. Guruvayur Dham is 2 minutes from Mathura Junction - you can see it from the platform exit.",
       "2. Book 60+ days ahead for Janmashtami and Holi. These two festivals see 10× the normal pilgrim crowd. All reputable properties within 2 km of Krishna Janmabhoomi are sold out 2 months in advance. Last-minute bookings on these dates either pay 3× the normal rate or land you far from the temples.",
       "3. Always confirm AC actually works. Many budget listings advertise 'AC room' but the AC is either broken or switched off at night. Ask explicitly: 'Is the AC 24×7? Does it have a remote in the room?' At Guruvayur Dham, every AC room has a working remote and 24×7 cooling.",
       "4. Ask about 24×7 hot water. Standard in good hotels, but many budget lodges run the geyser only from 5 AM to 9 AM. If you want a shower after the noon darshan or before evening aarti, you need 24-hour hot water. Confirm before booking.",
@@ -1463,10 +1463,10 @@ export const BLOG_POSTS: BlogPost[] = [
       "6. Don't pay 100% advance. Reputable properties take 10-25% as booking advance via UPI and the balance on arrival. Anyone demanding full payment via personal UPI is a red flag.",
       "7. Verify room photos are recent. Ask the property to send a fresh WhatsApp photo of the exact room. At Guruvayur Dham, every room has a unique number and live photos are on our website.",
       "8. Confirm parking if driving. On-street parking near temples is impossible during festival days. Ask: 'Do you have on-premise parking? Is it covered?' Guruvayur Dham has free parking for 25+ vehicles.",
-      "9. Ask about Vrindavan transport. Mathura to Vrindavan is 15 km — you'll need auto-rickshaws or taxis daily. A hotel that can arrange trusted drivers saves time and money. Guruvayur Dham arranges transport on request.",
-      "10. Book poojas in advance. Major poojas at Krishna Janmabhoomi have waiting lists during festival season. Your accommodation should help you book these — Guruvayur Dham's reception does this free for all guests.",
-      "11. Check for proximity to multiple temples. Krishna Janmabhoomi (1.5 km), Dwarkadhish (2 km), and Vishram Ghat (1.5 km) are all walkable from Guruvayur Dham. For Vrindavan temples, you'll need transport — stay in Mathura and do day trips.",
-      "12. Save the WhatsApp number. WhatsApp is the fastest way to reach the front desk. Save +91 84455 55584 for direct WhatsApp booking and 24×7 support — average response time under 5 minutes.",
+      "9. Ask about Vrindavan transport. Mathura to Vrindavan is 15 km - you'll need auto-rickshaws or taxis daily. A hotel that can arrange trusted drivers saves time and money. Guruvayur Dham arranges transport on request.",
+      "10. Book poojas in advance. Major poojas at Krishna Janmabhoomi have waiting lists during festival season. Your accommodation should help you book these - Guruvayur Dham's reception does this free for all guests.",
+      "11. Check for proximity to multiple temples. Krishna Janmabhoomi (1.5 km), Dwarkadhish (2 km), and Vishram Ghat (1.5 km) are all walkable from Guruvayur Dham. For Vrindavan temples, you'll need transport - stay in Mathura and do day trips.",
+      "12. Save the WhatsApp number. WhatsApp is the fastest way to reach the front desk. Save +91 84455 55584 for direct WhatsApp booking and 24×7 support - average response time under 5 minutes.",
     ],
   },
   // === Hindi blog posts from PDFs 2/3/4 (authentic Mathura-Gokul-Vrindavan temple guides) ===
@@ -1474,7 +1474,7 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "mathura-ke-divy-devaley-evam-upasana-paddhati",
     title: "मथुरा के दिव्य देवालय एवं उपासना-पद्धति · ब्रजभूमि की पावन परम्परा",
     excerpt:
-      "ब्रजभूमि की पावन परम्परा, विग्रह स्वरूप, विशिष्ट अर्चना विधि एवं सांस्कृतिक महत्व की मार्गदर्शिका — श्री कृष्ण जन्मभूमि, द्वारकाधीश, भूतेश्वर महादेव, विश्राम घाट",
+      "ब्रजभूमि की पावन परम्परा, विग्रह स्वरूप, विशिष्ट अर्चना विधि एवं सांस्कृतिक महत्व की मार्गदर्शिका - श्री कृष्ण जन्मभूमि, द्वारकाधीश, भूतेश्वर महादेव, विश्राम घाट",
     category: "मथुरा मंदिर दर्शन",
     readTime: "10 min",
     date: "Feb 18, 2026",
@@ -1482,11 +1482,11 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=500&fit=crop",
     content: [
       "ब्रज उपासना मर्म: भगवान श्रीकृष्ण की पावन जन्मभूमि मथुरा में पूजा केवल अनुष्ठानिक क्रिया नहीं, बल्कि 'राग-भोग-श्रृंगार' भाव की सेवा है। यहाँ देवाधिदेव को राजाधिराज, बाल गोपाल और युगल सरकार के विभिन्न रूपों में भावपूर्ण लाड लड़ाया जाता है।",
-      "१. श्री कृष्ण जन्मभूमि मंदिर संस्थान (प्राकट्य धाम) — द्वापर युग में कंस के कारागार का मूल स्थान, जहाँ भाद्रपद कृष्ण अष्टमी की निशीथ वेला में भगवान विष्णु ने श्रीकृष्ण रूप में अवतार लिया था। गर्भगृह एवं केशवदेव मंदिर (मथुरा नगरी) में बाल-मुकुंद/वासुदेव कृष्ण पूजे जाते हैं। पूजा विशेषता: यहाँ बाल स्वरूप व गर्भगृह के शिलाखंड की पूजा होती है। पंचामृत (दूध, दही, घृत, शहद, शर्करा) से महाभिषेक की प्रधानता है। विशिष्ट अर्चन: जन्माष्टमी पर मध्यरात्रि १२:०० बजे १०८ औषधियों व कामधेनु गौमुख से अभिषेक कर 'धिरकटा' (मंगला) शंखनाद किया जाता है। भोग अर्पण: माखन-मिश्री, पंजीरी, पंचमेवा व धनिया की पंजीरी का विशेष नैवेद्य।",
-      "२. श्री द्वारकाधीश मंदिर (राजाधिराज स्वरूप) — सन् १८१४ में सेठ गोकुलदास पारेख द्वारा निर्मित यह मंदिर यमुना तट के समीप स्थित है। सम्प्रदाय: वल्लभ कुल/पुष्टिमार्ग। यहाँ श्रीकृष्ण अपने द्वारका के छत्रपति 'राजाधिराज' रूप में पूजे जाते हैं। अष्टयाम सेवा: मंगला, ग्वाल, राजभोग, उत्थापन, भोग, संध्या आरती और शयन तक ८ पहर की नियमित राजसी पूजा। ऋतु अनुसार श्रृंगार: सावन में सोने-चांदी के भव्य हिंडोले (झूला उत्सव), शरद पूर्णिमा पर श्वेत धवल वस्त्र तथा होली पर अबीर-गुलाल की दिव्य छटा।",
-      "३. श्री भूतेश्वर महादेव मंदिर (मथुरा के क्षेत्रपाल) — मान्यता है कि भगवान श्रीकृष्ण के मथुरा आगमन से पूर्व ही भगवान शिव यहाँ नगर-रक्षक रूप में विराजमान हैं। ब्रज परिक्रमा का आरंभ व समापन इनकी आज्ञा से होता है। पूजा विधि: भस्म, आक-धतूरा, बेलपत्र एवं यमुना जल से अभिषेक। सावन के प्रत्येक सोमवार को रुद्र-पाठ व महाआरती। विशेषता: यह सिद्ध शक्तिपीठ भी है जहाँ माता सती के केश गिरे थे; अतः यहाँ शिव और शक्ति दोनों का समन्वय पूजित है।",
-      "४. विश्राम घाट एवं यमुना महारानी मंदिर (यमुना पूजन) — कंस वध के उपरांत भगवान श्रीकृष्ण व बलराम जी ने इसी पावन घाट पर विश्राम किया था। यहाँ से ब्रज की २५ प्रमुख तीर्थ चौकियों की परिक्रमा शुरू होती है। अधिष्ठात्री: श्री यमुना महारानी (सूर्यपुत्री)। प्रधान विधि: चुनरी मनोरथ एवं दीपदान। सूर्योदय व सूर्यास्त पर यमुना आरती का अलौकिक दृश्य — सैकड़ों तैरते दीयों के साथ।",
-      "यात्रा सुझाव: गुरुवायुर धाम (GVD) से श्री कृष्ण जन्मभूमि १.५ किमी (~१०-१५ मिनट ड्राइव) दूर है। भूतेश्वर महादेव १.८ किमी (~१० मिनट)। द्वारकाधीश २ किमी (~१५ मिनट)। विश्राम घाट २.२ किमी (~१५ मिनट)। एक दिन में सभी चार मंदिरों के दर्शन सुविधाजनक हैं — सुबह ५ बजे जन्मभूमि से शुरुआत करें।",
+      "१. श्री कृष्ण जन्मभूमि मंदिर संस्थान (प्राकट्य धाम) - द्वापर युग में कंस के कारागार का मूल स्थान, जहाँ भाद्रपद कृष्ण अष्टमी की निशीथ वेला में भगवान विष्णु ने श्रीकृष्ण रूप में अवतार लिया था। गर्भगृह एवं केशवदेव मंदिर (मथुरा नगरी) में बाल-मुकुंद/वासुदेव कृष्ण पूजे जाते हैं। पूजा विशेषता: यहाँ बाल स्वरूप व गर्भगृह के शिलाखंड की पूजा होती है। पंचामृत (दूध, दही, घृत, शहद, शर्करा) से महाभिषेक की प्रधानता है। विशिष्ट अर्चन: जन्माष्टमी पर मध्यरात्रि १२:०० बजे १०८ औषधियों व कामधेनु गौमुख से अभिषेक कर 'धिरकटा' (मंगला) शंखनाद किया जाता है। भोग अर्पण: माखन-मिश्री, पंजीरी, पंचमेवा व धनिया की पंजीरी का विशेष नैवेद्य।",
+      "२. श्री द्वारकाधीश मंदिर (राजाधिराज स्वरूप) - सन् १८१४ में सेठ गोकुलदास पारेख द्वारा निर्मित यह मंदिर यमुना तट के समीप स्थित है। सम्प्रदाय: वल्लभ कुल/पुष्टिमार्ग। यहाँ श्रीकृष्ण अपने द्वारका के छत्रपति 'राजाधिराज' रूप में पूजे जाते हैं। अष्टयाम सेवा: मंगला, ग्वाल, राजभोग, उत्थापन, भोग, संध्या आरती और शयन तक ८ पहर की नियमित राजसी पूजा। ऋतु अनुसार श्रृंगार: सावन में सोने-चांदी के भव्य हिंडोले (झूला उत्सव), शरद पूर्णिमा पर श्वेत धवल वस्त्र तथा होली पर अबीर-गुलाल की दिव्य छटा।",
+      "३. श्री भूतेश्वर महादेव मंदिर (मथुरा के क्षेत्रपाल) - मान्यता है कि भगवान श्रीकृष्ण के मथुरा आगमन से पूर्व ही भगवान शिव यहाँ नगर-रक्षक रूप में विराजमान हैं। ब्रज परिक्रमा का आरंभ व समापन इनकी आज्ञा से होता है। पूजा विधि: भस्म, आक-धतूरा, बेलपत्र एवं यमुना जल से अभिषेक। सावन के प्रत्येक सोमवार को रुद्र-पाठ व महाआरती। विशेषता: यह सिद्ध शक्तिपीठ भी है जहाँ माता सती के केश गिरे थे; अतः यहाँ शिव और शक्ति दोनों का समन्वय पूजित है।",
+      "४. विश्राम घाट एवं यमुना महारानी मंदिर (यमुना पूजन) - कंस वध के उपरांत भगवान श्रीकृष्ण व बलराम जी ने इसी पावन घाट पर विश्राम किया था। यहाँ से ब्रज की २५ प्रमुख तीर्थ चौकियों की परिक्रमा शुरू होती है। अधिष्ठात्री: श्री यमुना महारानी (सूर्यपुत्री)। प्रधान विधि: चुनरी मनोरथ एवं दीपदान। सूर्योदय व सूर्यास्त पर यमुना आरती का अलौकिक दृश्य - सैकड़ों तैरते दीयों के साथ।",
+      "यात्रा सुझाव: गुरुवायुर धाम (GVD) से श्री कृष्ण जन्मभूमि १.५ किमी (~१०-१५ मिनट ड्राइव) दूर है। भूतेश्वर महादेव १.८ किमी (~१० मिनट)। द्वारकाधीश २ किमी (~१५ मिनट)। विश्राम घाट २.२ किमी (~१५ मिनट)। एक दिन में सभी चार मंदिरों के दर्शन सुविधाजनक हैं - सुबह ५ बजे जन्मभूमि से शुरुआत करें।",
       "पावन प्रसाद: जन्मभूमि से माखन-मिश्री व पंजीरी; द्वारकाधीश से राजभोग थाली; भूतेश्वर से भस्म व बेलपत्र; विश्राम घाट से दीप-प्रसाद व यमुना-जल।",
     ],
   },
@@ -1494,7 +1494,7 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "gokul-dham-ke-pramukh-mandir-evam-pavan-puja-parampara",
     title: "गोकुल धाम के प्रमुख मंदिर एवं पावन पूजा परम्परा · बाल-लीलाओं की रजधानी",
     excerpt:
-      "बाल-लीलाओं की रजधानी: समस्त प्रमुख देवालय, विग्रह स्वरूप, विशिष्ट पूजा विधियां एवं नैवेद्य — नंद भवन, रमण रेती, ब्रह्मांड घाट, ठाकुरानी घाट",
+      "बाल-लीलाओं की रजधानी: समस्त प्रमुख देवालय, विग्रह स्वरूप, विशिष्ट पूजा विधियां एवं नैवेद्य - नंद भवन, रमण रेती, ब्रह्मांड घाट, ठाकुरानी घाट",
     category: "गोकुल मंदिर दर्शन",
     readTime: "10 min",
     date: "Feb 19, 2026",
@@ -1502,19 +1502,19 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=500&fit=crop",
     content: [
       "गोकुल धाम का आध्यात्मिक रहस्य: जन्म मथुरा में लेने के उपरांत वासुदेव जी ने कन्हैया को यमुना पार गोकुल में नंदबाबा के यहाँ सुरक्षित पहुँचाया था। मथुरा में जहाँ प्रभु 'ईश्वर व राजाधिराज' रूप में पूजे जाते हैं, वहीं गोकुल में वे वात्सल्य भाव से 'यशोदा नंदन व बाल-गोपाल' रूप में पलना झुलाए जाते हैं।",
-      "१. श्री नंद भवन (चौरासी खंभा मंदिर) — गोकुल का प्रधान महल। यही वह ऐतिहासिक महल है जहाँ नंदबाबा व यशोदा मैया ने कान्हा का पालन-पोषण किया। इसमें चौरासी नक्काशीदार खंभे हैं, जो ८४ लाख योनियों के भवबंधन काटने के प्रतीक हैं। विश्वकर्मा जी द्वारा निर्मित स्तंभ तथा कृष्ण के स्वर्ण पालने का दर्शन। पूजा विशेषता: यहाँ बाल रूप लड्डू गोपाल को पलना (झूला) झुलाने की विशेष पूजा होती है। भक्त संतान प्राप्ति हेतु मौली व चुनरी बाँधते हैं। भोग: मटकी का ताजा सफेद माखन, मिश्री, दूध पेड़ा और मालपुआ।",
-      "२. श्री रमण रेती (बाल क्रीड़ा रज-भूमि) — इस रेतीले आंगन में कन्हैया अपने सखाओं (श्रीदामा, सुबल आदि) व गायों के संग धूल में खेलते व लोटते थे। संत ज्ञानानंद जी महाराज की यहाँ दीर्घकालीन तपस्या स्थली रही। यहाँ भक्तगण प्रभु के बाल-स्पर्श युक्त पावन रज में लोटकर 'रज-स्नान' करते हैं, जिससे दैहिक व मानसिक शांति मिलती है। पूजा विशेषता: मिट्टी (रज) का तिलक लगाना, गौ-सेवा, हिरणों को दाना अर्पण तथा रमण बिहारी जी का नित्य धूप-दीप अर्चन।",
-      "३. श्री ब्रह्मांड घाट मंदिर — यहाँ कन्हैया ने बाल्यकाल में मिट्टी खाई थी। जब माता यशोदा ने मुख खोलने को कहा, तो कान्हा के मुख में समस्त चराचर जगत, चौदह भुवन व स्वयं यशोदा मैया को अपना ही रूप दिखाई दिया। पूजा विशेषता: ब्रह्मांड घाट की पावन मिट्टी की पूजा व माथे पर तिलक; मिट्टी रूपी 'प्रसादी माटी' का आचमन व यमुना जी की आरती। भोग: माटी भोग (प्रतीकात्मक शुद्ध खांड-मिश्री) एवं दुग्ध नैवेद्य।",
-      "४. श्री ठाकुरानी घाट (वल्लभ महाप्रभु बैठक जी) — पुष्टिमार्ग का उद्गम स्थल। गोकुल का यह सर्वप्रमुख घाट है जहाँ श्री वल्लभाचार्य जी को यमुना महारानी ने साक्षात दर्शन दिए थे और यहीं उन्होंने प्रसिद्ध स्तोत्र 'श्री यमुनाष्टक' की रचना की थी। पुष्टिमार्गीय वैष्णव संप्रदाय का आध्यात्मिक केंद्र और ब्रह्म-संबंध दीक्षा स्थल।",
+      "१. श्री नंद भवन (चौरासी खंभा मंदिर) - गोकुल का प्रधान महल। यही वह ऐतिहासिक महल है जहाँ नंदबाबा व यशोदा मैया ने कान्हा का पालन-पोषण किया। इसमें चौरासी नक्काशीदार खंभे हैं, जो ८४ लाख योनियों के भवबंधन काटने के प्रतीक हैं। विश्वकर्मा जी द्वारा निर्मित स्तंभ तथा कृष्ण के स्वर्ण पालने का दर्शन। पूजा विशेषता: यहाँ बाल रूप लड्डू गोपाल को पलना (झूला) झुलाने की विशेष पूजा होती है। भक्त संतान प्राप्ति हेतु मौली व चुनरी बाँधते हैं। भोग: मटकी का ताजा सफेद माखन, मिश्री, दूध पेड़ा और मालपुआ।",
+      "२. श्री रमण रेती (बाल क्रीड़ा रज-भूमि) - इस रेतीले आंगन में कन्हैया अपने सखाओं (श्रीदामा, सुबल आदि) व गायों के संग धूल में खेलते व लोटते थे। संत ज्ञानानंद जी महाराज की यहाँ दीर्घकालीन तपस्या स्थली रही। यहाँ भक्तगण प्रभु के बाल-स्पर्श युक्त पावन रज में लोटकर 'रज-स्नान' करते हैं, जिससे दैहिक व मानसिक शांति मिलती है। पूजा विशेषता: मिट्टी (रज) का तिलक लगाना, गौ-सेवा, हिरणों को दाना अर्पण तथा रमण बिहारी जी का नित्य धूप-दीप अर्चन।",
+      "३. श्री ब्रह्मांड घाट मंदिर - यहाँ कन्हैया ने बाल्यकाल में मिट्टी खाई थी। जब माता यशोदा ने मुख खोलने को कहा, तो कान्हा के मुख में समस्त चराचर जगत, चौदह भुवन व स्वयं यशोदा मैया को अपना ही रूप दिखाई दिया। पूजा विशेषता: ब्रह्मांड घाट की पावन मिट्टी की पूजा व माथे पर तिलक; मिट्टी रूपी 'प्रसादी माटी' का आचमन व यमुना जी की आरती। भोग: माटी भोग (प्रतीकात्मक शुद्ध खांड-मिश्री) एवं दुग्ध नैवेद्य।",
+      "४. श्री ठाकुरानी घाट (वल्लभ महाप्रभु बैठक जी) - पुष्टिमार्ग का उद्गम स्थल। गोकुल का यह सर्वप्रमुख घाट है जहाँ श्री वल्लभाचार्य जी को यमुना महारानी ने साक्षात दर्शन दिए थे और यहीं उन्होंने प्रसिद्ध स्तोत्र 'श्री यमुनाष्टक' की रचना की थी। पुष्टिमार्गीय वैष्णव संप्रदाय का आध्यात्मिक केंद्र और ब्रह्म-संबंध दीक्षा स्थल।",
       "यात्रा सुझाव: गुरुवायुर धाम (GVD) से गोकुल के सभी ४ मंदिर १०-१३ किमी (~२५-३० मिनट ड्राइव) दूर हैं। एक दिन में सभी के दर्शन संभव हैं। सुबह ६ बजे नंद भवन से शुरुआत करें, दोपहर तक ब्रह्मांड घाट पहुँचें, शाम को ठाकुरानी घाट पर यमुना आरती के साथ दिन समाप्त करें।",
-      "विशेष नोट: गोकुल में कृष्ण 'बाल-गोपाल' रूप में पूजे जाते हैं — अतः यहाँ की सेवा वात्सल्य भाव से होती है, राजसी अनुष्ठानों जैसी नहीं। बाल-लीला का भाव रखें — पलना झुलाने जैसी सरल सेवा सबसे प्रिय है।",
+      "विशेष नोट: गोकुल में कृष्ण 'बाल-गोपाल' रूप में पूजे जाते हैं - अतः यहाँ की सेवा वात्सल्य भाव से होती है, राजसी अनुष्ठानों जैसी नहीं। बाल-लीला का भाव रखें - पलना झुलाने जैसी सरल सेवा सबसे प्रिय है।",
     ],
   },
   {
     slug: "vrindavan-dham-ke-pramukh-devaley-evam-puja-visheshtaye",
     title: "वृंदावन धाम के प्रमुख देवालय एवं पूजा विशेषताएं · राधा-माधव की नित्य क्रीड़ा-स्थली",
     excerpt:
-      "राधा-माधव की नित्य क्रीड़ा-स्थली: प्रमुख मंदिर, स्थापत्य कला, दर्शन नियम व विशिष्ट भोग-श्रृंगार — बांके बिहारी, प्रेम मंदिर, राधा रमण, निधिवन राज",
+      "राधा-माधव की नित्य क्रीड़ा-स्थली: प्रमुख मंदिर, स्थापत्य कला, दर्शन नियम व विशिष्ट भोग-श्रृंगार - बांके बिहारी, प्रेम मंदिर, राधा रमण, निधिवन राज",
     category: "वृंदावन मंदिर दर्शन",
     readTime: "11 min",
     date: "Feb 20, 2026",
@@ -1522,12 +1522,12 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=500&fit=crop",
     content: [
       "वृंदावन धाम का भक्ति-तत्व: वृंदावन प्रेम-भक्ति की सर्वोच्च पीठ है। यहाँ भगवान श्रीकृष्ण 'ठाकुर जी' और 'बिहारी जी' रूप में लाड़-प्यार की त्रिभंग ललित मुद्रा में पूजे जाते हैं। यहाँ कोई घंटानाद नहीं होता ताकि ठाकुर जी के सुख में विघ्न न पड़े।",
-      "१. श्री बांके बिहारी मंदिर (सर्वोपरि जन-आस्था) — संगीत सम्राट स्वामी हरिदास जी की तन्मय साधना से निधिवन में साक्षात राधा-कृष्ण के संयुक्त विग्रह रूप में प्रकट हुए। प्रकटकर्ता: स्वामी हरिदास जी (१५वीं शती)। भाव: सखी भाव/लाड़-प्यार सेवा। विशेषता एवं झांकी पर्दा: यहाँ हर दो मिनट में पर्दा खोला और बंद किया जाता है ताकि कोई भक्त अपनी एकटक दृष्टि से बिहारी जी को बांध न ले। घंटी व मंगला आरती नहीं: बिहारी जी को रात्रि में रासलीला के बाद थकावट न हो, इसलिए यहाँ सुबह मंगला आरती नहीं होती (वर्ष में केवल जन्माष्टमी पर)। भोग: मटकी का पेड़ा, बालभोग में कचौड़ी-जलेबी, शाम को मोहनथाल।",
-      "२. श्री प्रेम मंदिर (दिव्य प्रेम मंदिर) — निर्माता: जगद्गुरु श्री कृपालु जी महाराज। स्वरूप: राधा गोविंद व सीताराम युगल। ५४ एकड़ में फैला यह मंदिर इतालवी कैराड़ा संगमरमर से निर्मित है। इसकी दीवारों पर श्रीकृष्ण की लीलाओं का सजीव शिल्प उकेरा गया है। विशेषता: संध्या समय अत्याधुनिक बहुरंगी प्रकाश (LED Lighting) तथा संगीतमय फव्वारे द्वारा रासलीला व गोवर्धन धारण लीला का प्रदर्शन। पूजा पद्धति: युगल सरकार की संकीर्तन-प्रधान उपासना एवं विशुद्ध वैदिक भाव से नित्य आरती-वंदन।",
-      "३. श्री राधा रमण मंदिर (स्वयंभू शालिग्राम विग्रह) — प्रकटकर्ता: श्री गोपाल भट्ट गोस्वामी (सन् १५४२)। दामोदर शालिग्राम शिला से बिना किसी छेनी-हथौड़े के स्वयं प्रकट हुआ अत्यंत मनोहारी विग्रह। ५०० वर्षों से अखंड रसोई अग्नि: मंदिर में रसोई की अग्नि पिछले पाँच सौ वर्षों से कभी नहीं बुझी है; इसी से भोग तैयार होता है। राधा रानी का स्वरूप: यहाँ राधा जी की कोई पृथक प्रतिमा नहीं है; विग्रह के वाम भाग में गोमती चक्र व राधा जी का ताज पूजित रहता है। पूजा विशेषता: प्रातः काल दूध-मिश्री से महाभिषेक व अत्यंत सात्विक अष्टयाम राग सेवा।",
-      "४. पवित्र निधिवन राज (नित्य रास स्थली) — मान्यता है कि यहाँ आज भी हर रात्रि को भगवान श्रीकृष्ण, श्री राधा जी एवं गोपियों संग रासलीला करने पधारते हैं। यहाँ के वृक्ष युगल रूप में एक-दूसरे से आलिंगनबद्ध हैं। रात्रि में शयन सेवा: रंग महल में प्रतिदिन शाम को चंदन का पलंग, दातुन, पान का बीड़ा, जल व श्रृंगार सामग्री सजाई जाती है; सुबह वह उपयोग की हुई मिलती है। कड़ा नियम: सूर्यास्त के बाद पशु-पक्षी भी इस वन को छोड़ देते हैं। रात्रि में किसी भी मनुष्य का रुकना सर्वथा वर्जित है।",
-      "यात्रा सुझाव: गुरुवायुर धाम (GVD) से वृंदावन के सभी ४ मंदिर १५-१६ किमी (~२५-३० मिनट ड्राइव) दूर हैं। एक दिन में सभी के दर्शन संभव हैं — सुबह ८ बजे बांके बिहारी से शुरुआत करें, दोपहर तक राधा रमण पहुँचें, शाम को प्रेम मंदिर के LED + फव्वारे शो देखें, और सूर्यास्त से पहले निधिवन जाएँ।",
-      "⚠️ निधिवन के लिए विशेष सतर्कता: सूर्यास्त के बाद निधिवन में किसी भी मनुष्य का ठहरना वर्जित है। सुबह ७-१० बजे के बीच ही दर्शन करें, सूर्यास्त से कम से कम ३० मिनट पहले बाहर निकल जाएँ। यह नियम अत्यंत कड़ाई से लागू है — वन के पशु-पक्षी भी स्वयं सूर्यास्त से पहले वन छोड़ देते हैं।",
+      "१. श्री बांके बिहारी मंदिर (सर्वोपरि जन-आस्था) - संगीत सम्राट स्वामी हरिदास जी की तन्मय साधना से निधिवन में साक्षात राधा-कृष्ण के संयुक्त विग्रह रूप में प्रकट हुए। प्रकटकर्ता: स्वामी हरिदास जी (१५वीं शती)। भाव: सखी भाव/लाड़-प्यार सेवा। विशेषता एवं झांकी पर्दा: यहाँ हर दो मिनट में पर्दा खोला और बंद किया जाता है ताकि कोई भक्त अपनी एकटक दृष्टि से बिहारी जी को बांध न ले। घंटी व मंगला आरती नहीं: बिहारी जी को रात्रि में रासलीला के बाद थकावट न हो, इसलिए यहाँ सुबह मंगला आरती नहीं होती (वर्ष में केवल जन्माष्टमी पर)। भोग: मटकी का पेड़ा, बालभोग में कचौड़ी-जलेबी, शाम को मोहनथाल।",
+      "२. श्री प्रेम मंदिर (दिव्य प्रेम मंदिर) - निर्माता: जगद्गुरु श्री कृपालु जी महाराज। स्वरूप: राधा गोविंद व सीताराम युगल। ५४ एकड़ में फैला यह मंदिर इतालवी कैराड़ा संगमरमर से निर्मित है। इसकी दीवारों पर श्रीकृष्ण की लीलाओं का सजीव शिल्प उकेरा गया है। विशेषता: संध्या समय अत्याधुनिक बहुरंगी प्रकाश (LED Lighting) तथा संगीतमय फव्वारे द्वारा रासलीला व गोवर्धन धारण लीला का प्रदर्शन। पूजा पद्धति: युगल सरकार की संकीर्तन-प्रधान उपासना एवं विशुद्ध वैदिक भाव से नित्य आरती-वंदन।",
+      "३. श्री राधा रमण मंदिर (स्वयंभू शालिग्राम विग्रह) - प्रकटकर्ता: श्री गोपाल भट्ट गोस्वामी (सन् १५४२)। दामोदर शालिग्राम शिला से बिना किसी छेनी-हथौड़े के स्वयं प्रकट हुआ अत्यंत मनोहारी विग्रह। ५०० वर्षों से अखंड रसोई अग्नि: मंदिर में रसोई की अग्नि पिछले पाँच सौ वर्षों से कभी नहीं बुझी है; इसी से भोग तैयार होता है। राधा रानी का स्वरूप: यहाँ राधा जी की कोई पृथक प्रतिमा नहीं है; विग्रह के वाम भाग में गोमती चक्र व राधा जी का ताज पूजित रहता है। पूजा विशेषता: प्रातः काल दूध-मिश्री से महाभिषेक व अत्यंत सात्विक अष्टयाम राग सेवा।",
+      "४. पवित्र निधिवन राज (नित्य रास स्थली) - मान्यता है कि यहाँ आज भी हर रात्रि को भगवान श्रीकृष्ण, श्री राधा जी एवं गोपियों संग रासलीला करने पधारते हैं। यहाँ के वृक्ष युगल रूप में एक-दूसरे से आलिंगनबद्ध हैं। रात्रि में शयन सेवा: रंग महल में प्रतिदिन शाम को चंदन का पलंग, दातुन, पान का बीड़ा, जल व श्रृंगार सामग्री सजाई जाती है; सुबह वह उपयोग की हुई मिलती है। कड़ा नियम: सूर्यास्त के बाद पशु-पक्षी भी इस वन को छोड़ देते हैं। रात्रि में किसी भी मनुष्य का रुकना सर्वथा वर्जित है।",
+      "यात्रा सुझाव: गुरुवायुर धाम (GVD) से वृंदावन के सभी ४ मंदिर १५-१६ किमी (~२५-३० मिनट ड्राइव) दूर हैं। एक दिन में सभी के दर्शन संभव हैं - सुबह ८ बजे बांके बिहारी से शुरुआत करें, दोपहर तक राधा रमण पहुँचें, शाम को प्रेम मंदिर के LED + फव्वारे शो देखें, और सूर्यास्त से पहले निधिवन जाएँ।",
+      "⚠️ निधिवन के लिए विशेष सतर्कता: सूर्यास्त के बाद निधिवन में किसी भी मनुष्य का ठहरना वर्जित है। सुबह ७-१० बजे के बीच ही दर्शन करें, सूर्यास्त से कम से कम ३० मिनट पहले बाहर निकल जाएँ। यह नियम अत्यंत कड़ाई से लागू है - वन के पशु-पक्षी भी स्वयं सूर्यास्त से पहले वन छोड़ देते हैं।",
     ],
   },
 ];

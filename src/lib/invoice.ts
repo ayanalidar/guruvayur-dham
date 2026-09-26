@@ -1,5 +1,5 @@
 /**
- * Invoice data helpers — pulls booking + room + CMS-stored invoice data.
+ * Invoice data helpers - pulls booking + room + CMS-stored invoice data.
  *
  * CMS-editable blocks (all in `invoice` category):
  *   invoice.hotelName, invoice.gstin, invoice.address, invoice.phones,
@@ -144,7 +144,7 @@ async function getCMS(key: string, fallback: string): Promise<string> {
  * Reads from:
  *   - Booking (Prisma)
  *   - Room (Prisma, via booking.room)
- *   - Invoice (Prisma, for sequential number — auto-created if missing)
+ *   - Invoice (Prisma, for sequential number - auto-created if missing)
  *   - CMS content blocks (hotel name, GSTIN, address, bank, terms, etc.)
  *   - GST settings (CGST/SGST/IGST rates)
  */
@@ -230,7 +230,7 @@ export async function buildInvoiceData(bookingId: string): Promise<InvoiceData |
     items: [
       {
         srNo: 1,
-        description: `${booking.room.name} — Room Charges`,
+        description: `${booking.room.name} - Room Charges`,
         rate: `${booking.nights} × ${formatINR(perNightRate)}`,
         amount: formatINR(booking.amount),
       },

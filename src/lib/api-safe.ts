@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
  * 2. Returns a proper JSON error response (not a 500 HTML page)
  * 3. Logs the error to the console with context
  * 4. Persists the error to the ErrorLog table (visible on the admin
- *    Health Dashboard and Performance Monitoring UI) — best-effort, never
+ *    Health Dashboard and Performance Monitoring UI) - best-effort, never
  *    throws if the DB itself is down (which is often the cause of the error).
  * 5. Includes the error message in development mode
  *
@@ -44,7 +44,7 @@ export function withErrorHandler(handler: Handler): Handler {
       });
 
       // Persist to ErrorLog so the admin Health Dashboard + Performance
-      // Monitoring UI can surface it. Best-effort — if the DB itself is
+      // Monitoring UI can surface it. Best-effort - if the DB itself is
       // down (often the cause of the error), this silently no-ops.
       try {
         await db.errorLog.create({

@@ -5,12 +5,12 @@ import { requireStaff } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/api-safe";
 import { ROOMS } from "@/lib/site-data";
 
-// Current valid room slugs — any room in the DB with a slug not in this list
+// Current valid room slugs - any room in the DB with a slug not in this list
 // is an old room from a previous seed and should NOT be returned to the frontend.
 const VALID_SLUGS = ROOMS.map(r => r.slug);
 
 // GET /api/rooms · fetch all rooms (with live availability count for next 30 days)
-// Only returns rooms whose slug matches the current ROOMS array — filters out
+// Only returns rooms whose slug matches the current ROOMS array - filters out
 // old rooms from previous seeds that may still be in the database.
 export const GET = withErrorHandler(async (req: NextRequest) => {
   const slug = req.nextUrl.searchParams.get("slug");
@@ -22,7 +22,7 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   const rooms = await db.room.findMany({
     where: {
       active: true,
-      slug: { in: VALID_SLUGS }, // Only return current room types — filters out old rooms
+      slug: { in: VALID_SLUGS }, // Only return current room types - filters out old rooms
     },
     orderBy: { price: "asc" },
     include: { rates: true },
@@ -38,7 +38,7 @@ const UpdateRoomSchema = z.object({
   // SECURITY (Phase2-MassAssignment): explicit whitelist of Room columns.
   // id/createdAt/updatedAt are server-controlled. Note: Prisma model uses
   // `image` (singular) and `gallery` (JSON array of URLs as string), not
-  // `images` — spec list adapted to actual Prisma field names so the admin
+  // `images` - spec list adapted to actual Prisma field names so the admin
   // UI's PATCH {name|price|shortDesc|totalUnits|image|...} continues to work.
   data: z.object({
     slug: z.string().max(200).optional(),
@@ -184,7 +184,7 @@ function serializeRoom(r: any) {
   };
 }
 
-// DELETE /api/rooms?id=xxx — deletes a room and all related data
+// DELETE /api/rooms?id=xxx - deletes a room and all related data
 // (availability, rate plans, sync logs). Bookings are preserved for
 // audit trail but the room reference is cleared.
 export async function DELETE(req: NextRequest) {

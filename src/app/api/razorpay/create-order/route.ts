@@ -7,7 +7,7 @@ import { getSetting } from "@/lib/settings";
  *
  * In production: makes a real API call to Razorpay's /v1/orders endpoint
  * using RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET (read at runtime via
- * getSetting — admin can rotate keys from the Settings UI without a
+ * getSetting - admin can rotate keys from the Settings UI without a
  * redeploy; falls back to process.env for backwards compatibility).
  *
  * In demo mode (no keys): returns a simulated order ID so the checkout flow

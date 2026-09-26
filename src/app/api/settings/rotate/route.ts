@@ -21,7 +21,7 @@ import { setSetting, invalidateAllSettingsCaches } from "@/lib/settings";
  *                         old key (the encrypted Setting table is keyed by
  *                         NEXTAUTH_SECRET). Use only as disaster recovery.
  *
- * MANAGER-only — rotating the JWT signing key is the most destructive
+ * MANAGER-only - rotating the JWT signing key is the most destructive
  * setting operation available.
  *
  * SelfReliant-Phase2-4.
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
   // NEXTAUTH_SECRET rotation requires explicit confirmation because it
   // invalidates every active session AND breaks decryption of every encrypted
   // Setting row (the Setting table is encrypted with NEXTAUTH_SECRET as the
-  // master key — see src/lib/settings.ts). Admin must acknowledge this.
+  // master key - see src/lib/settings.ts). Admin must acknowledge this.
   if (key === "NEXTAUTH_SECRET" && !confirm) {
     return NextResponse.json(
       {
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   // Generate the new value. CRON_SECRET is a 256-bit hex token (good for
   // Bearer-header auth with cron services). NEXTAUTH_SECRET is a 256-bit
-  // base64 token (JWT signing key — base64 keeps it URL-safe in env vars).
+  // base64 token (JWT signing key - base64 keeps it URL-safe in env vars).
   let newValue: string;
   if (key === "CRON_SECRET") {
     newValue = crypto.randomBytes(32).toString("hex");
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
   );
   invalidateAllSettingsCaches();
 
-  // Audit log — never write the actual new value (could be a secret).
+  // Audit log - never write the actual new value (could be a secret).
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
   const ua = req.headers.get("user-agent") || "unknown";
   await db.auditLog.create({
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
         key,
         rotatedBy: session.user.id,
         confirmed: !!confirm,
-        // Length only — never the value.
+        // Length only - never the value.
         newValueLength: newValue.length,
       }),
       ipAddress: ip,
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
   const warning =
     key === "NEXTAUTH_SECRET"
       ? "NEXTAUTH_SECRET rotated. ALL active sessions are now invalid (users must re-login). The encrypted Setting table is now unreadable until the OLD NEXTAUTH_SECRET is restored, OR each secret is re-saved via the Settings UI. Restart the app (docker compose restart app) for the new JWT signing key to take effect."
-      : "CRON_SECRET rotated. Update external cron services (Vercel Cron / VPS crontab) with the new value before their next run — old Bearer tokens will be rejected.";
+      : "CRON_SECRET rotated. Update external cron services (Vercel Cron / VPS crontab) with the new value before their next run - old Bearer tokens will be rejected.";
 
   return NextResponse.json({
     ok: true,

@@ -39,7 +39,7 @@ async function main() {
   console.log(`  Deleted ${av.count} availability rows`);
   const mb = await db.maintenanceBlock.deleteMany({ where: { roomId: { in: garbageIds } } }).catch(() => ({ count: 0 }));
   console.log(`  Deleted ${mb.count} maintenance blocks`);
-  // SyncLog references bookings — already cascaded when bookings deleted, but just in case
+  // SyncLog references bookings - already cascaded when bookings deleted, but just in case
   const sl = await db.syncLog.deleteMany({ where: { bookingId: { in: garbageIds } } }).catch(() => ({ count: 0 }));
   console.log(`  Deleted ${sl.count} sync logs`);
 

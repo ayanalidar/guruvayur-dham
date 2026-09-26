@@ -1,5 +1,5 @@
 /**
- * Seed script v2 — adds menu items, housekeeping rooms, staff users, blog posts, gallery, coupons, pricing rules, etc.
+ * Seed script v2 - adds menu items, housekeeping rooms, staff users, blog posts, gallery, coupons, pricing rules, etc.
  */
 import { PrismaClient } from "@prisma/client";
 import { BLOG_POSTS, GALLERY_IMAGES, ROOMS } from "../src/lib/site-data";
@@ -27,8 +27,8 @@ const MENU_ITEMS = [
   { name: "Buttermilk", description: "Spiced buttermilk", price: 25, category: "BEVERAGES", veg: true, prepTime: 5 },
 ];
 
-// Staff — PINs are randomized at seed time (NOT hardcoded).
-// The seeded PINs are printed to the console — copy them to a safe place.
+// Staff - PINs are randomized at seed time (NOT hardcoded).
+// The seeded PINs are printed to the console - copy them to a safe place.
 // Override with env vars SEED_MANAGER_PIN etc. if you want stable PINs.
 import crypto from "crypto";
 function randPin(): string {
@@ -81,7 +81,7 @@ async function seed() {
     });
   }
   console.log(`✓ ${STAFF.length} staff users seeded`);
-  // Print PINs so the operator can copy them — they're not stored anywhere else.
+  // Print PINs so the operator can copy them - they're not stored anywhere else.
   console.log("\n========== STAFF PIN CREDENTIALS (copy these now) ==========");
   for (const s of STAFF) {
     console.log(`  ${s.role.padEnd(12)} | ${s.email.padEnd(40)} | PIN: ${s.pin}`);
@@ -110,7 +110,7 @@ async function seed() {
   }
   console.log(`✓ ${TRAVEL_AGENTS.length} travel agents seeded`);
 
-  // Housekeeping status — create physical rooms for each room type
+  // Housekeeping status - create physical rooms for each room type
   const rooms = await db.room.findMany();
   const roomNumbersByType: Record<string, string[]> = {};
   for (const room of rooms) {

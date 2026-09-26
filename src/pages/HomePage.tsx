@@ -297,7 +297,7 @@ function WhyChooseUs() {
   const { navigate } = useHashRoute();
   const { get } = useContent();
 
-  // Homepage stats — CMS-editable via:
+  // Homepage stats - CMS-editable via:
   //   homepage.stats.rooms  (e.g. "16")
   //   homepage.stats.years (e.g. "10")
   //   homepage.stats.guests (e.g. "15000")
@@ -363,7 +363,7 @@ function WhyChooseUs() {
           })}
         </div>
 
-        {/* Stats strip with count-up — values are CMS-editable */}
+        {/* Stats strip with count-up - values are CMS-editable */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -509,7 +509,7 @@ function PlanDarshan() {
   );
 }
 
-/* ============ PILGRIMAGE PLANNER — stunning feature card ============ */
+/* ============ PILGRIMAGE PLANNER - stunning feature card ============ */
 const PLANNER_DAYS = [
   {
     day: 1,
@@ -542,7 +542,7 @@ function PlannerCard() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  // 3D tilt — subtle, premium feel
+  // 3D tilt - subtle, premium feel
   const rotX = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), { stiffness: 200, damping: 20 });
   const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), { stiffness: 200, damping: 20 });
 
@@ -562,7 +562,7 @@ function PlannerCard() {
 
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
-      {/* Ambient backdrop — mandala glow */}
+      {/* Ambient backdrop - mandala glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-champagne/[0.06] blur-3xl" />
         <div className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 select-none font-serif text-[28rem] leading-none text-champagne/[0.03]">
@@ -587,11 +587,11 @@ function PlannerCard() {
           <p className="section-subtitle mt-3">
             Pick 1-3 days, choose which of the 7 Mathura temples to include, and we'll
             auto-build a day-by-day itinerary with darshan timings, travel time from
-            Guruvayur Dham, and pro tips — all editable.
+            Guruvayur Dham, and pro tips - all editable.
           </p>
         </motion.div>
 
-        {/* The big card — clickable, tilt-enabled */}
+        {/* The big card - clickable, tilt-enabled */}
         <motion.div
           ref={containerRef}
           onMouseMove={onMove}
@@ -863,8 +863,8 @@ function AboutTeaser() {
               Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura.
               Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium
               furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team
-              provide round-the-clock hospitality — from temple darshan guidance to local travel
-              tips — making every pilgrim's Braj journey effortless and memorable.
+              provide round-the-clock hospitality - from temple darshan guidance to local travel
+              tips - making every pilgrim's Braj journey effortless and memorable.
             </p>
             <p className="mt-4 text-base leading-relaxed text-ivory/70">
               We are not a hotel · we are a pilgrim home. Every decision, from the 3 AM

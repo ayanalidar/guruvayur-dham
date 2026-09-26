@@ -17,13 +17,13 @@ import {
 } from "@/components/ui/accordion";
 
 /**
- * SEOPage — template component that renders any SEO landing page
+ * SEOPage - template component that renders any SEO landing page
  * from the config in src/lib/seo-pages.ts.
  *
  * Features:
  *   - PageHeader with eyebrow, title, breadcrumbs
  *   - Hero section with background image
- *   - Intro section (main SEO content — multi-paragraph)
+ *   - Intro section (main SEO content - multi-paragraph)
  *   - Content sections (heading + body paragraphs)
  *   - FAQ accordion (with FAQPage JSON-LD)
  *   - CTA section with booking buttons
@@ -80,7 +80,7 @@ export default function SEOPage({ slug }: { slug: string }) {
       "@type": "Event",
       name: page.title,
       description: page.metaDescription,
-      startDate: "2026-01-01", // approximate — festivals don't have exact confirmed dates
+      startDate: "2026-01-01", // approximate - festivals don't have exact confirmed dates
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
@@ -260,7 +260,7 @@ export default function SEOPage({ slug }: { slug: string }) {
               )}
             </div>
 
-            {/* Sidebar (1/3 width) — sticky CTA */}
+            {/* Sidebar (1/3 width) - sticky CTA */}
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-24 space-y-4">
                 {/* Booking CTA */}
@@ -340,7 +340,7 @@ export default function SEOPage({ slug }: { slug: string }) {
             Ready to Book Your Stay?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-cream/80">
-            Guruvayur Dham — clean rooms, honest pricing, and warm pilgrim hospitality since 2020.
+            Guruvayur Dham - clean rooms, honest pricing, and warm pilgrim hospitality since 2020.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button onClick={() => navigate("/rooms")} className="btn-luxe text-sm">

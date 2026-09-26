@@ -17,7 +17,7 @@ async function main() {
   console.table(legacyStaff);
 
   if (legacyStaff.length === 0) {
-    console.log("Nothing to delete — exiting.");
+    console.log("Nothing to delete - exiting.");
     return;
   }
 

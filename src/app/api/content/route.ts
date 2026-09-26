@@ -34,7 +34,7 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
         // Without this, the CDN may serve stale JSON to other users even though
         // we tell the browser "no-store".
         "Surrogate-Control": "no-store",
-        // Pragma: no-cache — extra belt-and-suspenders for legacy HTTP/1.0 caches.
+        // Pragma: no-cache - extra belt-and-suspenders for legacy HTTP/1.0 caches.
         "Pragma": "no-cache",
         // Tells the CDN+browser: this response expired at epoch 0 (always stale)
         "Expires": "0",
@@ -62,7 +62,7 @@ export async function PATCH(req: NextRequest) {
     // SelfReliant-Phase2-4: snapshot the current value into ContentVersion
     // BEFORE overwriting, so admins can roll back via /api/content/versions.
     // Best-effort: if the snapshot write fails (e.g. transient DB blip) we
-    // still proceed with the update — losing history is preferable to
+    // still proceed with the update - losing history is preferable to
     // blocking the editor.
     try {
       const existing = await db.contentBlock.findUnique({ where: { key: u.key } });

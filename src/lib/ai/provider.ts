@@ -1,11 +1,11 @@
 /**
- * Unified AI Provider — tries Groq first (free, fast), falls back to z-ai SDK.
+ * Unified AI Provider - tries Groq first (free, fast), falls back to z-ai SDK.
  *
  * Supports:
- * 1. Groq (Llama 3.3 70B) — free tier, very fast, needs GROQ_API_KEY
- * 2. z-ai-web-dev-sdk (GLM) — always available, no key needed
+ * 1. Groq (Llama 3.3 70B) - free tier, very fast, needs GROQ_API_KEY
+ * 2. z-ai-web-dev-sdk (GLM) - always available, no key needed
  *
- * GROQ_API_KEY is read at runtime via getSetting() — checks the encrypted
+ * GROQ_API_KEY is read at runtime via getSetting() - checks the encrypted
  * Setting table first (so admin can rotate keys from the UI without a
  * redeploy) and falls back to process.env.GROQ_API_KEY for backwards
  * compatibility. The synchronous `isGroqAvailable()` uses
@@ -36,7 +36,7 @@ export interface ChatOptions {
 /**
  * Check if Groq is available (key configured).
  *
- * Synchronous — uses `getCachedSetting()` which only checks the in-memory
+ * Synchronous - uses `getCachedSetting()` which only checks the in-memory
  * cache + process.env (no DB hit). The full `getSetting()` async path is
  * used inside `chat()` / `streamChat()` / `getGroqModels()` to surface the
  * real value (and prime the cache for the next call).
@@ -46,7 +46,7 @@ export function isGroqAvailable(): boolean {
 }
 
 /**
- * Chat completion — tries Groq first, falls back to z-ai SDK
+ * Chat completion - tries Groq first, falls back to z-ai SDK
  */
 export async function chat(
   messages: ChatMessage[],

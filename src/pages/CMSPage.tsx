@@ -26,7 +26,7 @@ export default function CMSPage() {
         eyebrow="Content Management"
         icon={ImageIcon}
         title={<>CMS <GoldFoilText>Editor</GoldFoilText></>}
-        subtitle="Edit room images, pooja offerings, gallery photos, and hero carousel. Upload your own images — all changes go live instantly."
+        subtitle="Edit room images, pooja offerings, gallery photos, and hero carousel. Upload your own images - all changes go live instantly."
         crumbs={[{ label: "Home", route: "/" }, { label: "Admin", route: "/admin" }, { label: "CMS" }]}
       />
 
@@ -174,7 +174,7 @@ function RoomsCMS() {
       toast.error(j.error);
       return;
     }
-    toast.success("Room added"); broadcastCMSUpdate("cms-page-save");// — visible on website now");
+    toast.success("Room added"); broadcastCMSUpdate("cms-page-save");// - visible on website now");
     setShowAdd(false);
     setNewRoom({
       name: "", slug: "", type: "AC", price: 1500, capacity: 2,
@@ -190,7 +190,7 @@ function RoomsCMS() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, data: { image: editImage } }),
     });
-    toast.success("Room image updated — live on website now");
+    toast.success("Room image updated - live on website now");
     setEditing(null);
     load();
   };
@@ -398,7 +398,7 @@ function RoomsCMS() {
                   )}
                 </div>
 
-                {/* Image URL display — hide only if base64 data URL */}
+                {/* Image URL display - hide only if base64 data URL */}
                 {(() => {
                   const url = editing === room.id ? editImage : room.image;
                   if (!url || url.startsWith("data:")) return null;
@@ -1049,7 +1049,7 @@ function BlogCMS() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Excerpt (1–2 sentences shown in card)</label>
+                <label className="text-[10px] uppercase tracking-wider text-ivory/50">Excerpt (1-2 sentences shown in card)</label>
                 <textarea
                   value={newPost.excerpt}
                   onChange={(e) => setNewPost({ ...newPost, excerpt: e.target.value })}
@@ -1123,7 +1123,7 @@ function BlogCMS() {
         ))}
         {items.length === 0 && (
           <p className="py-8 text-center text-sm text-ivory/50">
-            No blog posts yet. Click "New Post" to create one — your existing posts will fall back to hardcoded samples.
+            No blog posts yet. Click "New Post" to create one - your existing posts will fall back to hardcoded samples.
           </p>
         )}
       </div>
@@ -1203,7 +1203,7 @@ function SEOPagesCMS() {
         updates: [{ key: `seo.${selectedSlug}`, value: JSON.stringify(data) }],
       }),
     });
-    toast.success("SEO page saved — live on website now");
+    toast.success("SEO page saved - live on website now");
     setSaving(false);
     load();
   };
@@ -1259,7 +1259,7 @@ function SEOPagesCMS() {
           <input value={draft.title || ""} onChange={(e) => updateField("title", e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
         </div>
         <div className="sm:col-span-2">
-          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Meta Description ({(draft.metaDescription || "").length} chars — ideal: 120-160)</label>
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">Meta Description ({(draft.metaDescription || "").length} chars - ideal: 120-160)</label>
           <textarea value={draft.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none resize-none" />
         </div>
         <div>
@@ -1280,7 +1280,7 @@ function SEOPagesCMS() {
       </div>
 
       <div className="mt-6">
-        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Introduction (3 paragraphs — separate with a blank line)</label>
+        <label className="text-[10px] uppercase tracking-wider text-ivory/50">Introduction (3 paragraphs - separate with a blank line)</label>
         <textarea
           value={draft._introText || ""}
           onChange={(e) => updateField("_introText", e.target.value)}
@@ -1326,7 +1326,7 @@ function SEOPagesCMS() {
 
       <div className="mt-6">
         <div className="flex items-center justify-between">
-          <label className="text-[10px] uppercase tracking-wider text-ivory/50">FAQs ({draft._faqs.length}) — also used for Google rich results</label>
+          <label className="text-[10px] uppercase tracking-wider text-ivory/50">FAQs ({draft._faqs.length}) - also used for Google rich results</label>
           <button onClick={addFAQ} className="rounded-full border border-champagne/20 px-3 py-1 text-[10px] font-semibold text-champagne hover:bg-champagne/10">
             <Plus className="h-3 w-3 inline" /> Add FAQ
           </button>

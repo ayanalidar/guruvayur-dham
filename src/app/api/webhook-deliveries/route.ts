@@ -10,10 +10,10 @@ import { requireStaff } from "@/lib/auth";
  * Useful for debugging "did our booking webhook fire?" questions.
  *
  * Query:
- *   ?source=WHATSAPP   — filter by source (WHATSAPP | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA)
- *   ?limit=20          — cap (default 50, max 200)
+ *   ?source=WHATSAPP   - filter by source (WHATSAPP | BOOKING_COM | MAKEMYTRIP | GOIBIBO | AGODA)
+ *   ?limit=20          - cap (default 50, max 200)
  *
- * MANAGER-only — payload bodies may contain PII (guest phone numbers etc.).
+ * MANAGER-only - payload bodies may contain PII (guest phone numbers etc.).
  */
 
 const SourceEnum = z.enum([

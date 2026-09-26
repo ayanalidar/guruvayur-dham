@@ -78,7 +78,7 @@ export async function withRetry<T>(
 
   // Check circuit breaker
   if (circuitBreakerKey && isCircuitOpen(circuitBreakerKey)) {
-    throw new Error(`Circuit breaker open for ${circuitBreakerKey} — skipping retries`);
+    throw new Error(`Circuit breaker open for ${circuitBreakerKey} - skipping retries`);
   }
 
   let lastError: any;
@@ -97,7 +97,7 @@ export async function withRetry<T>(
         result = await fn();
       }
 
-      // Success — record it
+      // Success - record it
       if (circuitBreakerKey) recordSuccess(circuitBreakerKey);
       return result;
     } catch (error: any) {
@@ -111,7 +111,7 @@ export async function withRetry<T>(
     }
   }
 
-  // All retries failed — record circuit breaker failure
+  // All retries failed - record circuit breaker failure
   if (circuitBreakerKey) recordFailure(circuitBreakerKey);
   throw lastError;
 }

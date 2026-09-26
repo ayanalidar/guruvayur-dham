@@ -116,7 +116,7 @@ export default function ReviewsWidget() {
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-ivory">{review.authorName}</p>
-                    {/* Verified Stay badge — driven by the bookingRef check
+                    {/* Verified Stay badge - driven by the bookingRef check
                         done in /api/reviews/submit (booking reference + guest
                         phone matched an existing Booking row). */}
                     {review.verifiedStay && (
@@ -187,7 +187,7 @@ export default function ReviewsWidget() {
           </button>
         </div>
 
-        {/* Embedded GuestReviewForm — shown below the carousel when the
+        {/* Embedded GuestReviewForm - shown below the carousel when the
             user clicks "Write a review". The form submits to the public
             /api/reviews/submit endpoint, shows a success toast, and
             clears itself. */}

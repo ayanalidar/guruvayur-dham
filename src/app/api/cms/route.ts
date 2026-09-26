@@ -16,7 +16,7 @@ const CmsTypeEnum = z.enum([
 
 // SECURITY (Phase2-MassAssignment): per-type explicit whitelists for the CMS
 // `data` blob. Each schema lists ONLY the user-editable columns of the
-// corresponding Prisma model — id/createdAt/updatedAt are server-controlled
+// corresponding Prisma model - id/createdAt/updatedAt are server-controlled
 // and would be rejected by .strict() if an attacker tried to override them.
 //
 // Required-vs-optional matches the Prisma model: NOT NULL columns with no
@@ -104,7 +104,7 @@ const BlogPostsDataSchema = z.object({
   seoKeywords: z.string().max(500).optional(),
 }).strict();
 
-// Lookup table — type → create-schema (required fields per Prisma model).
+// Lookup table - type → create-schema (required fields per Prisma model).
 const CmsCreateDataSchemas = {
   features: FeaturesDataSchema,
   events: EventsDataSchema,
@@ -116,7 +116,7 @@ const CmsCreateDataSchemas = {
   blogPosts: BlogPostsDataSchema,
 } as const;
 
-// Lookup table — type → patch-schema (all fields optional, .strict() preserved).
+// Lookup table - type → patch-schema (all fields optional, .strict() preserved).
 // .partial() on a strict ZodObject returns a strict ZodObject with all-optional fields.
 const CmsPatchDataSchemas = {
   features: FeaturesDataSchema.partial(),
@@ -195,10 +195,10 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * POST /api/cms — Create
+ * POST /api/cms - Create
  * body: { type, data: { ...fields } }
  *
- * SelfReliant-Phase2-4: no version snapshot on POST — there is no previous
+ * SelfReliant-Phase2-4: no version snapshot on POST - there is no previous
  * state to record (the row is being created). Version history accrues on
  * subsequent PATCH calls.
  */
@@ -254,12 +254,12 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * PATCH /api/cms — Update
+ * PATCH /api/cms - Update
  * body: { type, id, data: { ...fields } }
  *
  * SelfReliant-Phase2-4: snapshot the existing row's current state into
  * ContentVersion BEFORE overwriting, so admins can roll back via
- * /api/content/versions. The version key is `cms:<type>:<id>`. Best-effort —
+ * /api/content/versions. The version key is `cms:<type>:<id>`. Best-effort -
  * if the snapshot write fails, we still proceed with the update.
  */
 export async function PATCH(req: NextRequest) {
@@ -334,10 +334,10 @@ export async function PATCH(req: NextRequest) {
 }
 
 /**
- * Fetch the current state of a CMS row by type + id — used by the PATCH
+ * Fetch the current state of a CMS row by type + id - used by the PATCH
  * handler to snapshot the previous state into ContentVersion. Returns null
  * if the row doesn't exist (which means the update will fail with 404 anyway
- * — but we let the update path emit that error).
+ * - but we let the update path emit that error).
  */
 async function fetchCmsRow(type: string, id: string): Promise<any> {
   switch (type) {

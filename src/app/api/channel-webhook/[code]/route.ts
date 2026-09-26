@@ -4,7 +4,7 @@ import { broadcastToChannels } from "@/lib/channel-sync";
 import { requireStaff, generateRef } from "@/lib/auth";
 
 /**
- * Channel Partner Webhook — receives bookings from OTAs.
+ * Channel Partner Webhook - receives bookings from OTAs.
  *
  * Each channel partner POSTs their bookings to this endpoint:
  *   POST /api/channel-webhook/BOOKING_COM
@@ -34,10 +34,10 @@ import { requireStaff, generateRef } from "@/lib/auth";
  *   }
  *
  * Response:
- *   200 — booking imported, inventory blocked on all other channels
- *   409 — room sold out for those dates (double-booking prevented)
- *   401 — invalid API key
- *   404 — channel not found
+ *   200 - booking imported, inventory blocked on all other channels
+ *   409 - room sold out for those dates (double-booking prevented)
+ *   401 - invalid API key
+ *   404 - channel not found
  */
 
 export async function POST(
@@ -69,14 +69,14 @@ export async function POST(
   // Authenticate: check X-Channel-Key header against the webhookUrl ?key= param.
   // SECURITY (Phase B C9 fix): FAIL-CLOSED. Previously, if a channel's
   // webhookUrl had no ?key= param (the default for seeded channels), the
-  // entire auth check was skipped — anyone could POST fake bookings that
+  // entire auth check was skipped - anyone could POST fake bookings that
   // would block inventory across all channels.
   const authHeader = req.headers.get("x-channel-key") || req.headers.get("authorization")?.replace("Bearer ", "");
   let expectedKey: string | null = null;
   try {
     expectedKey = new URL(channel.webhookUrl).searchParams.get("key");
   } catch {
-    // webhookUrl is not a valid URL — no key to compare against.
+    // webhookUrl is not a valid URL - no key to compare against.
     expectedKey = null;
   }
 
@@ -149,7 +149,7 @@ export async function POST(
       where: { roomId_date: { roomId: room.id, date: d } },
     });
     if (!av || av.available <= 0) {
-      // Room sold out — return 409 so the channel shows "sold out"
+      // Room sold out - return 409 so the channel shows "sold out"
       return NextResponse.json({
         error: "ROOM_SOLD_OUT",
         message: `Room ${room.name} is sold out for ${d.toDateString()}`,
@@ -250,7 +250,7 @@ export async function POST(
 }
 
 /**
- * GET /api/channel-webhook/[code] — health check for a channel.
+ * GET /api/channel-webhook/[code] - health check for a channel.
  * Returns the channel's connection status + last sync time.
  * Useful for verifying the webhook URL is correct before configuring
  * it in Booking.com / MakeMyTrip partner dashboards.
@@ -259,7 +259,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
-  // SECURITY: restrict to MANAGER + ACCOUNTANT — the response leaks webhook URL
+  // SECURITY: restrict to MANAGER + ACCOUNTANT - the response leaks webhook URL
   // (with ?key= secret stripped below) and channel partner setup details.
   const { error } = await requireStaff(req, ["MANAGER", "ACCOUNTANT"]);
   if (error) return error;
@@ -277,7 +277,7 @@ export async function GET(
     );
   }
 
-  // SECURITY: strip ?key=SECRET from webhookUrl before returning — the key
+  // SECURITY: strip ?key=SECRET from webhookUrl before returning - the key
   // is the channel's webhook auth secret and must not be exposed in any
   // API response. (The setup instructions tell admins where to find it.)
   let safeWebhookUrl = channel.webhookUrl;

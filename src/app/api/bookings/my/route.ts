@@ -9,7 +9,7 @@ import { getUserFromRequest } from "@/lib/auth";
  * This is the guest-facing variant of /api/bookings (which is now staff-only).
  *
  * SECURITY: requires an authenticated session. The user's own phone/email are
- * the only allowed filter — no `?search=` query param is honored here.
+ * the only allowed filter - no `?search=` query param is honored here.
  */
 export async function GET(req: NextRequest) {
   const session = await getUserFromRequest(req);
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   if (session.role !== "GUEST" && session.role !== "MANAGER" && session.role !== "RECEPTIONIST") {
-    // Staff have access to /api/bookings (full list) — but if they hit /my,
+    // Staff have access to /api/bookings (full list) - but if they hit /my,
     // return their personal bookings too (they may have their own guest bookings).
   }
 
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const email = session.user.email || "";
 
   if (!phone && !email) {
-    return NextResponse.json({ bookings: [], message: "No phone or email on profile — cannot match bookings." });
+    return NextResponse.json({ bookings: [], message: "No phone or email on profile - cannot match bookings." });
   }
 
   // Find bookings where guestPhone matches user's phone OR guestEmail matches.

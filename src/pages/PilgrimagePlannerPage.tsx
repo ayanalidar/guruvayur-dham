@@ -65,7 +65,7 @@ const FALLBACK_DAY1 = JSON.stringify([
     slot: "Morning",
     time: "5 AM - 9 PM",
     travelFromGD: "1.8 km · ~10 min drive (10 min walk from Janmabhoomi)",
-    note: "Mathura's Kshetrapal (city protector) — ancient Shiva linga. Krishna came here for permission before entering Mathura. Begin Braj Parikrama only after Kshetrapal's aagman. Bhasma + Ak-Dhatura + Bel-patra abhishek. Savan Mondays have Rudra-path + Maha-aarti.",
+    note: "Mathura's Kshetrapal (city protector) - ancient Shiva linga. Krishna came here for permission before entering Mathura. Begin Braj Parikrama only after Kshetrapal's aagman. Bhasma + Ak-Dhatura + Bel-patra abhishek. Savan Mondays have Rudra-path + Maha-aarti.",
   },
   {
     temple: "Shri Dwarkadhish Temple",
@@ -79,7 +79,7 @@ const FALLBACK_DAY1 = JSON.stringify([
     slot: "Sunset",
     time: "Open all day · best at sunrise/sunset for Aarti",
     travelFromGD: "2.2 km · ~15 min drive",
-    note: "Krishna + Balaram rested here after killing Kansa. Starting point of the 25-pradakshina Braj parikrama. Chunari Manorath + Deepadan. Sunset Yamuna Aarti with floating diyas — magical. End Day 1 here.",
+    note: "Krishna + Balaram rested here after killing Kansa. Starting point of the 25-pradakshina Braj parikrama. Chunari Manorath + Deepadan. Sunset Yamuna Aarti with floating diyas - magical. End Day 1 here.",
   },
 ]);
 
@@ -89,14 +89,14 @@ const FALLBACK_DAY2 = JSON.stringify([
     slot: "Morning",
     time: "6 AM - 8 PM",
     travelFromGD: "10 km · ~25 min drive (Gokul)",
-    note: "Vishwakarma-built palace with 84 carved pillars symbolizing 84 lakh species — Krishna's childhood home. Bal Laddu Gopal palna (swing) seva. Devotees tie mouli + chunari for santan-prapti (child boon). Prasadam: fresh white Makhan, Mishri, Doodh-Peda, Malpua. Janmashtami midnight palna seva is special.",
+    note: "Vishwakarma-built palace with 84 carved pillars symbolizing 84 lakh species - Krishna's childhood home. Bal Laddu Gopal palna (swing) seva. Devotees tie mouli + chunari for santan-prapti (child boon). Prasadam: fresh white Makhan, Mishri, Doodh-Peda, Malpua. Janmashtami midnight palna seva is special.",
   },
   {
     temple: "Shri Raman Reti",
     slot: "Morning",
     time: "6 AM - 8 PM",
     travelFromGD: "11 km · ~30 min drive (Gokul)",
-    note: "Sacred sandy ground where Krishna played with Shridama, Subal + cows. Sant Gynananand Maharaj's tapasya sthal. Famous for raj-snan — rolling in the sacred dust for physical + mental peace. Gau-seva, deer-feeding. The dust itself is the prasadam (raj-tilak on forehead).",
+    note: "Sacred sandy ground where Krishna played with Shridama, Subal + cows. Sant Gynananand Maharaj's tapasya sthal. Famous for raj-snan - rolling in the sacred dust for physical + mental peace. Gau-seva, deer-feeding. The dust itself is the prasadam (raj-tilak on forehead).",
   },
   {
     temple: "Shri Brahmand Ghat",
@@ -110,7 +110,7 @@ const FALLBACK_DAY2 = JSON.stringify([
     slot: "Evening",
     time: "6 AM - 8 PM",
     travelFromGD: "12.5 km · ~30 min drive (Gokul)",
-    note: "Gokul's most prominent ghat — where Vallabhacharya received direct darshan of Yamuna Maharani + composed Shri Yamunashtak stotra. Pushtimarg sampradaya's first Baithak Ji. Brahm-sambandh diksha sthal (initiation site). End Day 2 here with Yamuna Aarti.",
+    note: "Gokul's most prominent ghat - where Vallabhacharya received direct darshan of Yamuna Maharani + composed Shri Yamunashtak stotra. Pushtimarg sampradaya's first Baithak Ji. Brahm-sambandh diksha sthal (initiation site). End Day 2 here with Yamuna Aarti.",
   },
 ]);
 
@@ -120,14 +120,14 @@ const FALLBACK_DAY3 = JSON.stringify([
     slot: "Morning",
     time: "7:45 AM - 12 PM, 5:30 - 9:30 PM (NO Mangala Aarti except Janmashtami)",
     travelFromGD: "15 km · ~25 min drive (Vrindavan)",
-    note: "Self-manifested (prakatya) Radha-Krishna combined vigraha from Swami Haridas's tapasya (15th century). Curtain opens/closes every 2 minutes — don't stare fixedly (Bihari Ji gets 'bound'). NO Mangala Aarti except Janmashtami (Bihari Ji 'tired' from ras-leela). Prasadam: Matki Peda, Bal-bhog Kachori-Jalebi, evening Mohan-thal. Reach by 8 AM for peaceful darshan.",
+    note: "Self-manifested (prakatya) Radha-Krishna combined vigraha from Swami Haridas's tapasya (15th century). Curtain opens/closes every 2 minutes - don't stare fixedly (Bihari Ji gets 'bound'). NO Mangala Aarti except Janmashtami (Bihari Ji 'tired' from ras-leela). Prasadam: Matki Peda, Bal-bhog Kachori-Jalebi, evening Mohan-thal. Reach by 8 AM for peaceful darshan.",
   },
   {
     temple: "Shri Radha Raman Temple",
     slot: "Afternoon",
     time: "5 AM (Mangala) - 12 PM, 6 - 9:30 PM",
     travelFromGD: "15.5 km · ~30 min drive (Vrindavan)",
-    note: "Self-manifested (svayambhu) from Damodar Shaligram shila in 1542 by Gopal Bhatt Goswami (Gaudiya sampradaya). 500-year unbroken kitchen fire still cooks bhog thali — visit the kitchen. No separate Radha murti (Gomati chakra + Radha's crown on left side of vigraha). Morning Dughd-Mishri Mahabhishek. Best on Gaur Purnima (Holi) + Radhashtami.",
+    note: "Self-manifested (svayambhu) from Damodar Shaligram shila in 1542 by Gopal Bhatt Goswami (Gaudiya sampradaya). 500-year unbroken kitchen fire still cooks bhog thali - visit the kitchen. No separate Radha murti (Gomati chakra + Radha's crown on left side of vigraha). Morning Dughd-Mishri Mahabhishek. Best on Gaur Purnima (Holi) + Radhashtami.",
   },
   {
     temple: "Shri Prem Mandir",
@@ -139,13 +139,13 @@ const FALLBACK_DAY3 = JSON.stringify([
   {
     temple: "Pavitra Nidhivan Raj",
     slot: "Evening",
-    time: "6 AM - 7 PM (STRICT — closes at sunset)",
+    time: "6 AM - 7 PM (STRICT - closes at sunset)",
     travelFromGD: "15.5 km · ~30 min drive (Vrindavan)",
-    note: "Sacred grove where Krishna + Radha + gopis perform ras-leela every night. Trees embrace in pairs (yugal form). Rang Mahal shayan seva (chandan bed + datun + paan + water + shringar — found used next morning). ⚠️ STRICT RULE: After sunset, even animals + birds leave the grove. NO HUMAN may stay overnight. Plan morning-only visit.",
+    note: "Sacred grove where Krishna + Radha + gopis perform ras-leela every night. Trees embrace in pairs (yugal form). Rang Mahal shayan seva (chandan bed + datun + paan + water + shringar - found used next morning). ⚠️ STRICT RULE: After sunset, even animals + birds leave the grove. NO HUMAN may stay overnight. Plan morning-only visit.",
   },
 ]);
 
-/* Stub stops (used if JSON parse fails) — declared BEFORE the
+/* Stub stops (used if JSON parse fails) - declared BEFORE the
  * FALLBACK_PLANS object literal below (const decls are not hoisted). */
 const FALLBACK_DAY1_STUB: ItineraryStop = {
   temple: "Shri Krishna Janmabhoomi",
@@ -194,7 +194,7 @@ export default function PilgrimagePlannerPage() {
   );
 
   // Load CMS-overridden day plans (planner.day1/2/3) with fallback.
-  // Deps: `get` and `map` — `get` is a closure over `map`, so listing both
+  // Deps: `get` and `map` - `get` is a closure over `map`, so listing both
   // keeps the React Compiler happy (inferred = get, source = [get, map]).
   const plans: Record<1 | 2 | 3, DayPlan[]> = useMemo(() => {
     const day1Stops = safeParse(
@@ -422,4 +422,4 @@ export default function PilgrimagePlannerPage() {
   );
 }
 
-// (No trailing helper — component uses useContent() directly.)
+// (No trailing helper - component uses useContent() directly.)

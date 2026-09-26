@@ -28,7 +28,7 @@ export default function Hero() {
     "hero.subheadline",
     "Guruvayur Dham is a premium pilgrimage stay in Mathura, created for travellers seeking comfort, serenity and thoughtful hospitality while experiencing the sacred land."
   );
-  // Hero background image — editable via CMS content block "hero.bgImage"
+  // Hero background image - editable via CMS content block "hero.bgImage"
   const bgImage = get(
     "hero.bgImage",
     "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"

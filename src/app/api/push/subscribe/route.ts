@@ -10,7 +10,7 @@ import { getUserFromRequest } from "@/lib/auth";
  *
  * SECURITY (Round 3 M6 fix):
  * - Zod validation on endpoint (URL, max 500 chars) + keys (object with p256dh + auth)
- * - userId is taken from the SESSION (not the request body) — was: attacker
+ * - userId is taken from the SESSION (not the request body) - was: attacker
  *   could subscribe with another user's userId and receive their push notifications
  * - endpoint max length prevents DB DoS with huge strings
  *
@@ -25,7 +25,7 @@ const SubscribeSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  // Rate limit — 10 subscriptions/min per IP (prevents DB spam).
+  // Rate limit - 10 subscriptions/min per IP (prevents DB spam).
   const rl = await rateLimit(req, { window: 60, max: 10, key: "push:subscribe" });
   if (!rl.ok) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   const { endpoint, keys } = parsed.data;
 
   // Take userId from the session, NOT the request body.
-  // Anonymous users (no session) can still subscribe — userId will be null.
+  // Anonymous users (no session) can still subscribe - userId will be null.
   let userId: string | null = null;
   try {
     const session = await getUserFromRequest(req);

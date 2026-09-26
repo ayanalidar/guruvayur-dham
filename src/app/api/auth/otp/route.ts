@@ -8,16 +8,16 @@ import { rateLimit } from "@/lib/rate-limiter";
  * Sends an OTP to the given phone number.
  *
  * SECURITY:
- * - OTP generated with crypto.randomInt (NOT Math.random — that's predictable).
+ * - OTP generated with crypto.randomInt (NOT Math.random - that's predictable).
  * - OTP returned in response ONLY in dev/demo (NODE_ENV !== "production").
- *   In production, OTP is never returned — must be read from SMS.
+ *   In production, OTP is never returned - must be read from SMS.
  * - Rate limited: 3 OTPs per 10 minutes per IP (prevents SMS bombing).
  *
  * body: { phone }
  * returns: { sent: true, message } (+ otp in dev only)
  */
 export async function POST(req: NextRequest) {
-  // Rate limit — SMS bombing protection.
+  // Rate limit - SMS bombing protection.
   const rl = await rateLimit(req, { window: 600, max: 3, key: "auth:otp" });
   if (!rl.ok) {
     return NextResponse.json(
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   const otp = crypto.randomInt(0, 1000000).toString().padStart(6, "0");
 
   // Store OTP in notification table (simulates SMS send).
-  // The notification body contains the OTP — this is fine because
+  // The notification body contains the OTP - this is fine because
   // /api/notifications now requires staff auth (Phase A C4 fix).
   await db.notification.create({
     data: {
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     sent: true,
     message: `OTP sent to ${phone}`,
   };
-  // Only return the OTP in dev/demo — NEVER in production.
+  // Only return the OTP in dev/demo - NEVER in production.
   if (isDev) {
     res.otp = otp;
     res.demo = true;

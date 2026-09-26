@@ -1,5 +1,5 @@
 /**
- * SEO Pages — Phase 3 (6 additional pages)
+ * SEO Pages - Phase 3 (6 additional pages)
  * - Govardhan, Nandgaon, Barsana temple guides
  * - Vrindavan temple guide
  * - Mathura Vrindavan distance
@@ -18,7 +18,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
     jsonLdType: "TouristAttraction",
     eyebrow: "Pilgrimage Guide",
     intro: [
-      "Govardhan Parikrama is one of the most sacred pilgrim circuits in the Braj region. Devotees circumambulate Govardhan Hill — the hill that Lord Krishna lifted on his little finger to protect the villagers from the wrath of Indra, the rain god. The parikrama covers 21 kilometers and passes through numerous sacred sites associated with Krishna's pastimes.",
+      "Govardhan Parikrama is one of the most sacred pilgrim circuits in the Braj region. Devotees circumambulate Govardhan Hill - the hill that Lord Krishna lifted on his little finger to protect the villagers from the wrath of Indra, the rain god. The parikrama covers 21 kilometers and passes through numerous sacred sites associated with Krishna's pastimes.",
       "The parikrama can be done on foot (takes 5-7 hours), by car (1 hour), or by cycle rickshaw (2-3 hours). Many devotees perform the parikrama barefoot as an act of devotion, while others offer dandavat parikrama (prostrating full-body length after every step), which can take several days.",
       "Guruvayur Dham in Mathura is 25 km from Govardhan Hill (45-minute drive). We arrange guided parikrama tours with transportation, including pickup from our hotel, a knowledgeable guide, and return the same day.",
     ],
@@ -36,7 +36,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
           "Mansi Ganga: The sacred lake where the parikrama begins and ends. Devotees take a holy dip here before starting. Mansi Ganga was created by Krishna himself, according to legend, by bringing Ganga water to Govardhan for the devotees.",
           "Daan Ghati Temple: One of the most important temples on the route. The deity here is believed to accept 'daan' (donations) from devotees. The temple has beautiful architecture and is always bustling with pilgrims.",
           "Radha Kund & Shyam Kund: Two sacred ponds where Radha and Krishna are believed to have bathed. Radha Kund is considered the most sacred spot in the entire Braj region. Taking a dip here is believed to grant spiritual liberation.",
-          "Kusum Sarovar: A beautiful historical reservoir with sandstone architecture. The name means 'flower lake' — Krishna is said to have picked flowers here for Radha. The sunset view from here is stunning.",
+          "Kusum Sarovar: A beautiful historical reservoir with sandstone architecture. The name means 'flower lake' - Krishna is said to have picked flowers here for Radha. The sunset view from here is stunning.",
         ],
       },
     ],
@@ -75,7 +75,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
         heading: "How to Reach Barsana from Mathura",
         body: [
           "Barsana is 40 km from Mathura (1-hour drive via Kosi Kalan). The road is mostly good but narrow in places. Transport options: Taxi (Rs 1,500-2,500 round trip with waiting), Bus (Rs 50, 1.5 hours, infrequent), or Guruvayur Dham guided tour (Rs 1,200-1,500 including car, guide, and all temple visits).",
-          "Best time to visit: October-March (pleasant weather). Visit early morning (7-9 AM) for the most peaceful darshan. During Lathmar Holi (typically 7-8 days before main Holi), the town is extremely crowded — book everything well in advance.",
+          "Best time to visit: October-March (pleasant weather). Visit early morning (7-9 AM) for the most peaceful darshan. During Lathmar Holi (typically 7-8 days before main Holi), the town is extremely crowded - book everything well in advance.",
         ],
       },
     ],
@@ -138,7 +138,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
     eyebrow: "Temple Guide",
     intro: [
       "Vrindavan is home to over 5,000 temples, making it one of the most temple-dense towns in the world. From the famous Banke Bihari Temple to the modern ISKCON and Prem Mandir, each temple tells a unique story from Krishna's life. This guide covers all the must-visit temples with timings, routes, and tips for pilgrims.",
-      "Most temples can be covered in a single day if you start early (7 AM). The key is to plan your route efficiently — the temples are spread across the town but within a 3-4 km radius. A cycle rickshaw or e-rickshaw is the best way to hop between temples.",
+      "Most temples can be covered in a single day if you start early (7 AM). The key is to plan your route efficiently - the temples are spread across the town but within a 3-4 km radius. A cycle rickshaw or e-rickshaw is the best way to hop between temples.",
       "Guruvayur Dham in Mathura (15 km from Vrindavan) arranges full-day Vrindavan temple tours with car, driver, and knowledgeable guide from Rs 800.",
     ],
     sections: [
@@ -198,10 +198,10 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
     ],
     faqs: [
       { q: "What is the Mathura to Vrindavan distance?", a: "15 km. Travel time: 20 min by taxi, 25 min by auto-rickshaw, 30 min by bus. Auto fare: Rs 200-300 one way." },
-      { q: "Is it better to stay in Mathura or Vrindavan?", a: "Stay in Mathura — better hotels, lower prices, railway access. Day-trip to Vrindavan (15 min away). Guruvayur Dham in Mathura is the ideal base." },
+      { q: "Is it better to stay in Mathura or Vrindavan?", a: "Stay in Mathura - better hotels, lower prices, railway access. Day-trip to Vrindavan (15 min away). Guruvayur Dham in Mathura is the ideal base." },
       { q: "Are there buses between Mathura and Vrindavan?", a: "Yes, every 15 minutes. Fare: Rs 20, travel time: 30 min. Shared tempos: Rs 15 per person." },
       { q: "How much is a taxi from Mathura to Vrindavan?", a: "One-way: Rs 400-600. Full-day Vrindavan temple tour: Rs 800-1,200 (including car, driver, waiting time)." },
-      { q: "Can I walk from Mathura to Vrindavan?", a: "The distance is 15 km — too far for most people (3+ hours). Take an auto-rickshaw (Rs 200-300, 25 min) or bus (Rs 20, 30 min)." },
+      { q: "Can I walk from Mathura to Vrindavan?", a: "The distance is 15 km - too far for most people (3+ hours). Take an auto-rickshaw (Rs 200-300, 25 min) or bus (Rs 20, 30 min)." },
     ],
     ctaHeadline: "Stay in Mathura, Visit Vrindavan - 15 Minutes Away",
   },
@@ -215,7 +215,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
     jsonLdType: "TouristAttraction",
     eyebrow: "Complete Guide",
     intro: [
-      "The Braj region encompasses Mathura, Vrindavan, Gokul, Nandgaon, Barsana, and Govardhan — each location associated with specific pastimes of Lord Krishna. Together, these towns contain hundreds of temples, each with its own spiritual significance. This complete guide lists every major temple across the Braj region.",
+      "The Braj region encompasses Mathura, Vrindavan, Gokul, Nandgaon, Barsana, and Govardhan - each location associated with specific pastimes of Lord Krishna. Together, these towns contain hundreds of temples, each with its own spiritual significance. This complete guide lists every major temple across the Braj region.",
       "For pilgrims planning a Braj yatra (pilgrimage), this guide serves as a comprehensive reference. The temples are organized by location, with timings, significance, and transport information. Most temples can be covered in 3-4 days, or the top sites in 2 days.",
     ],
     sections: [
@@ -241,7 +241,7 @@ export const SEO_PAGES_PHASE3: SEOPage[] = [
     faqs: [
       { q: "How many temples are in the Braj region?", a: "Over 5,000 temples across Mathura, Vrindavan, Gokul, Nandgaon, Barsana, and Govardhan. The top 20 can be covered in a 3-day Braj yatra." },
       { q: "How many days for a complete Braj yatra?", a: "3-4 days for all major temples. Day 1: Mathura. Day 2: Vrindavan. Day 3: Gokul + Govardhan. Day 4: Nandgaon + Barsana. Guruvayur Dham arranges the complete 4-day circuit." },
-      { q: "Which is the most important temple in Braj?", a: "Krishna Janmabhoomi (Mathura) — Krishna's birthplace. Banke Bihari (Vrindavan) — most famous Krishna temple. Radha Rani Temple (Barsana) — Radha's birthplace." },
+      { q: "Which is the most important temple in Braj?", a: "Krishna Janmabhoomi (Mathura) - Krishna's birthplace. Banke Bihari (Vrindavan) - most famous Krishna temple. Radha Rani Temple (Barsana) - Radha's birthplace." },
       { q: "What is the best route for Braj yatra?", a: "Start in Mathura (Day 1) -> Vrindavan (Day 2) -> Gokul + Govardhan (Day 3) -> Nandgaon + Barsana (Day 4). Stay at Guruvayur Dham in Mathura as your base." },
       { q: "Are all Braj temples free to enter?", a: "Yes, all temples have free entry. Shoe stands charge Rs 5-10. No VIP darshan. Some temples accept donations but it's not mandatory." },
     ],

@@ -100,16 +100,16 @@ export default function Rooms() {
   }, [allRooms, typeF, budgetF, occF]);
 
   const eyebrow = get("rooms.eyebrow", "Rooms & Suites");
-  const title = get("rooms.title", "Clean Rooms in Guruvayur — Walkable to Temple");
+  const title = get("rooms.title", "Clean Rooms in Guruvayur - Walkable to Temple");
   const subtitle = get(
     "rooms.subtitle",
     "From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate. Filter to find your perfect match."
   );
 
   // Split title on em-dash so the second half gets the gradient
-  const titleParts = title.split("—");
-  const titlePre = titleParts.length > 1 ? titleParts[0] + "— " : title;
-  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("—").trim() : "";
+  const titleParts = title.split("-");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "- " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("-").trim() : "";
 
   return (
     <section id="rooms" className="relative scroll-mt-20 bg-background py-20 lg:py-28">

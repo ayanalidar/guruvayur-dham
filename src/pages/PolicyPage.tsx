@@ -206,7 +206,7 @@ export default function PolicyPage() {
 
             <div className="rounded-xl border border-primary/15 bg-primary/5 p-4 text-center">
               <p className="text-sm text-foreground/70">
-                Questions about our policies? WhatsApp us at <strong className="text-primary">+91-90908 20208</strong> — we reply within 5 minutes.
+                Questions about our policies? WhatsApp us at <strong className="text-primary">+91-90908 20208</strong> - we reply within 5 minutes.
               </p>
             </div>
           </motion.div>

@@ -1,5 +1,5 @@
 /**
- * Audit all SEO pages — verify each has complete content.
+ * Audit all SEO pages - verify each has complete content.
  * Checks: intro length, sections, FAQs, meta description, etc.
  */
 import { SEO_PAGES } from "../src/lib/seo-pages";
@@ -81,5 +81,5 @@ if (issues.length > 0) {
   console.log(`\n⚠️  Issues found (${issues.length}):`);
   issues.forEach(i => console.log(`   • ${i}`));
 } else {
-  console.log(`\n✅ No issues found — all pages have complete content!`);
+  console.log(`\n✅ No issues found - all pages have complete content!`);
 }

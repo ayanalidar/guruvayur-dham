@@ -11,13 +11,13 @@ import { generateInvoicePdf } from "@/lib/invoice-pdf";
  *
  * SECURITY (IDOR protection):
  *   - Staff (any role) can view any booking's invoice.
- *   - Guests can view only their own bookings — matched by phone OR email.
+ *   - Guests can view only their own bookings - matched by phone OR email.
  *
  * Query params:
- *   - bookingId (required) — the booking ID
- *   - download=1 (optional) — forces "Content-Disposition: attachment" (download)
+ *   - bookingId (required) - the booking ID
+ *   - download=1 (optional) - forces "Content-Disposition: attachment" (download)
  *                              otherwise "inline" (preview in browser)
- *   - token (optional) — one-time token for guest link from email (TODO if needed)
+ *   - token (optional) - one-time token for guest link from email (TODO if needed)
  *
  * For test/dev: ?demo=1 returns a sample invoice without auth or booking.
  *   Useful for verifying PDF generation works in production.
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   const isDownload = req.nextUrl.searchParams.get("download") === "1";
   const isDemo = req.nextUrl.searchParams.get("demo") === "1";
 
-  // Demo mode — returns a sample invoice without auth or booking ID.
+  // Demo mode - returns a sample invoice without auth or booking ID.
   // Lets the admin verify PDF generation works end-to-end via /admin/system button.
   if (isDemo) {
     try {
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
         items: [
           {
             srNo: 1,
-            description: "Suite — Room Charges",
+            description: "Suite - Room Charges",
             rate: `2 × ${formatINR(2800)}`,
             amount: formatINR(5600),
           },
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Production path — require bookingId
+  // Production path - require bookingId
   if (!bookingId) {
     return NextResponse.json(
       { error: "bookingId required (or use ?demo=1 for a sample invoice)" },
@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Authorization — staff OR booking owner
+  // Authorization - staff OR booking owner
   const session = await getUserFromRequest(req);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -121,13 +121,13 @@ export async function GET(req: NextRequest) {
 
   const isStaff = session.role !== "GUEST";
   if (!isStaff) {
-    // Guest — must own this booking (match by phone or email)
+    // Guest - must own this booking (match by phone or email)
     const guestPhone = session.user.phone || "";
     const guestEmail = session.user.email || "";
     const owns = booking.guestPhone === guestPhone
       || (booking.guestEmail && booking.guestEmail === guestEmail);
     if (!owns) {
-      return NextResponse.json({ error: "Forbidden — not your booking" }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden - not your booking" }, { status: 403 });
     }
   }
 
@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
     const pdf = await generateInvoicePdf(data);
 
     // Cache the generated PDF in the Invoice row so subsequent downloads are instant.
-    // (We don't cache here on first request to avoid blocking the response — but
+    // (We don't cache here on first request to avoid blocking the response - but
     // the buildInvoiceData function already auto-creates the Invoice row with the
     // sequential number. The pdfBase64 field can be populated by a background job
     // later if needed.)

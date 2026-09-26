@@ -20,7 +20,7 @@ async function main() {
 
   console.log(`   Size: ${info.width}x${info.height}, ${info.channels} channels`);
 
-  // Remove black background — make dark pixels transparent
+  // Remove black background - make dark pixels transparent
   // Use a lower threshold since the logo is bold gold on pure black
   const THRESHOLD = 30;
   for (let i = 0; i < data.length; i += info.channels) {

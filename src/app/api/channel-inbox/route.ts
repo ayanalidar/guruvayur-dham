@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   // SECURITY (Phase B C10 fix): Require channel API key.
-  // Previously this endpoint had NO auth — anyone could POST fake bookings
+  // Previously this endpoint had NO auth - anyone could POST fake bookings
   // for any channel. Now requires X-Channel-Key header matching the channel's
   // webhookUrl ?key= param (same mechanism as /api/channel-webhook/[code]).
   const authHeader = req.headers.get("x-channel-key") || req.headers.get("authorization")?.replace("Bearer ", "");

@@ -8,7 +8,7 @@ import { useEffect, useState, useCallback } from "react";
  * URL format: /rooms, /rooms/deluxe-ac-room, /blog/my-post
  *
  * Why History API instead of hash routing:
- *   - Clean URLs (no /#/ prefix) — better SEO, shareable on WhatsApp, etc.
+ *   - Clean URLs (no /#/ prefix) - better SEO, shareable on WhatsApp, etc.
  *   - Works with Vercel's catch-all rewrite (see vercel.json)
  *   - Browser back/forward works natively via popstate
  *
@@ -31,7 +31,7 @@ export function useHashRoute(): {
     if (window.location.hash && /^#\//.test(window.location.hash)) {
       const clean = window.location.hash.replace(/^#/, "");
       window.history.replaceState(null, "", clean);
-      // Don't scroll — we're just fixing the URL.
+      // Don't scroll - we're just fixing the URL.
     }
 
     const read = () => {

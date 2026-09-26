@@ -93,7 +93,7 @@ export default function Contact() {
       label: "Call Us",
       value: phone,
       href: `tel:${phoneRaw}`,
-      sub: "Mon–Sun, 24×7",
+      sub: "Mon-Sun, 24×7",
     },
     {
       icon: MessageCircle,
@@ -140,8 +140,8 @@ export default function Contact() {
 *Name:* ${data.name}
 *Phone:* ${data.phone}
 *Reason:* ${data.reason}
-*Check-in:* ${data.checkIn || "—"}
-*Check-out:* ${data.checkOut || "—"}
+*Check-in:* ${data.checkIn || "-"}
+*Check-out:* ${data.checkOut || "-"}
 
 *Message:*
 ${data.message}`;

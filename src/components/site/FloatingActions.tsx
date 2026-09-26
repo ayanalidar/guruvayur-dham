@@ -19,7 +19,7 @@ export default function FloatingActions() {
 
   return (
     <>
-      {/* Floating WhatsApp — desktop only (mobile uses bottom bar + WhatsAppChat widget) */}
+      {/* Floating WhatsApp - desktop only (mobile uses bottom bar + WhatsAppChat widget) */}
       <motion.a
         href={waLink("Namaskaram! I have a question about Guruvayur Dham.")}
         target="_blank"

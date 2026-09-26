@@ -5,7 +5,7 @@
  *   - public/logo-large.png  (512×512, for login/footer/JSON-LD)
  *   - public/logo-nav.png    (80×80, for navbar)
  *   - public/logo-footer.png (96×96, for footer)
- *   - public/guruyavur.png   (1024×1024, optimized original — kept for reference)
+ *   - public/guruyavur.png   (1024×1024, optimized original - kept for reference)
  */
 import sharp from "sharp";
 import fs from "fs";

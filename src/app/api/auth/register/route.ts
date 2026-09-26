@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 
-// Common password blocklist — these get tried first by attackers.
+// Common password blocklist - these get tried first by attackers.
 const COMMON_PASSWORDS = [
   "password", "password1", "password123", "12345678", "123456789",
   "qwerty", "qwerty123", "letmein", "welcome", "admin", "manager",
@@ -29,7 +29,7 @@ const PHONE_RE = /^\+?[1-9]\d{7,14}$/;
  * body: { name, email, password, phone? }
  */
 export async function POST(req: NextRequest) {
-  // Rate limit — 3 registrations per hour per IP.
+  // Rate limit - 3 registrations per hour per IP.
   const rl = await rateLimit(req, { window: 3600, max: 3, key: "auth:register" });
   if (!rl.ok) {
     return NextResponse.json(
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Password must contain both letters and numbers" }, { status: 400 });
   }
   if (COMMON_PASSWORDS.includes(password.toLowerCase())) {
-    return NextResponse.json({ error: "Password is too common — choose a stronger one" }, { status: 400 });
+    return NextResponse.json({ error: "Password is too common - choose a stronger one" }, { status: 400 });
   }
 
   // Email format.

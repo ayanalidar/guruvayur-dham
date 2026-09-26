@@ -27,16 +27,16 @@ export default function PoojaSection() {
   const poojas = cmsPoojas.length > 0 ? cmsPoojas.map(mapPooja) : POOJAS;
 
   const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
-  const title = get("pooja.title", "Guruvayur Pooja Booking — prasadam, Archana & More");
+  const title = get("pooja.title", "Guruvayur Pooja Booking - prasadam, Archana & More");
   const subtitle = get(
     "pooja.subtitle",
-    "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room."
+    "Book any temple pooja through Guruvayur Dham at the official temple rate - zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room."
   );
 
   // Split title on em-dash so the second half gets the gradient
-  const titleParts = title.split("—");
-  const titlePre = titleParts.length > 1 ? titleParts[0] + "— " : title;
-  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("—").trim() : "";
+  const titleParts = title.split("-");
+  const titlePre = titleParts.length > 1 ? titleParts[0] + "- " : title;
+  const titleHighlight = titleParts.length > 1 ? titleParts.slice(1).join("-").trim() : "";
 
   return (
     <section
@@ -156,7 +156,7 @@ export default function PoojaSection() {
         {/* Bottom note */}
         <p className="mx-auto mt-10 max-w-2xl text-center text-xs text-muted-foreground">
           * All pooja bookings are subject to temple availability and confirmation by
-          the Guruvayur Devaswom Board. Guruvayur Dham facilitates the booking only —
+          the Guruvayur Devaswom Board. Guruvayur Dham facilitates the booking only -
           no markup is added to the official temple rate.
         </p>
       </div>

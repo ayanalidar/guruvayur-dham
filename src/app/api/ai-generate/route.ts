@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * GET /api/ai-generate — check AI provider status
+ * GET /api/ai-generate - check AI provider status
  */
 export async function GET() {
   const { isGroqAvailable, getGroqModels } = await import("@/lib/ai/provider");

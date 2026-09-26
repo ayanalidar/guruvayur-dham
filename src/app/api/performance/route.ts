@@ -19,14 +19,14 @@ import { getRateLimitStats } from "@/lib/rate-limiter";
  *   - circuitBreakers:  live state from getCircuitBreakerStatus()
  *   - rateLimiter:      live state from getRateLimitStats()
  *
- * MANAGER-only — error messages can leak infrastructure details.
+ * MANAGER-only - error messages can leak infrastructure details.
  *
  * NOTE on "slowest API routes":
  *   The app does NOT record per-request server-side latency in any DB
  *   table. PerformanceMetric holds client-side web vitals (LCP, FID, etc.),
  *   and AnalyticsEvent has no duration field. Until we add a latency
  *   column to ErrorLog (or a new ApiLatencyLog table), the "slowest
- *   routes" list is approximated from error frequency — routes that
+ *   routes" list is approximated from error frequency - routes that
  *   error most often are likely the slowest/most strained. Documented
  *   inline; surfaced as `slowestRoutesApprox` in the response.
  *
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     where: { createdAt: { gte: since } },
   });
 
-  // Top routes by error count (capped at 10 — enough for a dashboard).
+  // Top routes by error count (capped at 10 - enough for a dashboard).
   // Prisma's groupBy requires orderBy when take is provided; we sort by
   // _count of `id` desc so the noisiest routes bubble to the top.
   const errorsByRouteRaw = await db.errorLog.groupBy({

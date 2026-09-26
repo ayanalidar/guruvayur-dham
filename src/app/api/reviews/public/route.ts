@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (e: any) {
     console.error("[reviews/public] DB error:", e?.message || e);
-    // Return empty state — homepage can still render "Be the first to review" CTA.
+    // Return empty state - homepage can still render "Be the first to review" CTA.
     return NextResponse.json({
       reviews: [],
       summary: {
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
         googleRating: 4.8,
         googleReviewCount: 120,
       },
-      note: "Reviews unavailable — DB may be unreachable or Review table not seeded yet. Run /api/seed to fix.",
+      note: "Reviews unavailable - DB may be unreachable or Review table not seeded yet. Run /api/seed to fix.",
     });
   }
 }

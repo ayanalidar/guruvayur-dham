@@ -9,7 +9,7 @@ import { rateLimit } from "@/lib/rate-limiter";
  * Generates a reset token and queues a reset email.
  *
  * SECURITY:
- * - Always returns the same response shape — does NOT reveal whether the
+ * - Always returns the same response shape - does NOT reveal whether the
  *   email exists (prevents enumeration).
  * - Rate limited: 3 requests/hour per IP (prevents enumeration + spam).
  * - demoResetUrl returned ONLY in dev/demo (NODE_ENV !== "production").
@@ -17,7 +17,7 @@ import { rateLimit } from "@/lib/rate-limiter";
  *   requires staff auth to read via /api/notifications).
  */
 export async function POST(req: NextRequest) {
-  // Rate limit — prevents enumeration + spam.
+  // Rate limit - prevents enumeration + spam.
   const rl = await rateLimit(req, { window: 3600, max: 3, key: "auth:forgot" });
   if (!rl.ok) {
     return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const user = await db.user.findUnique({ where: { email } });
   if (!user) {
-    // Don't reveal whether email exists — same response as success path.
+    // Don't reveal whether email exists - same response as success path.
     return NextResponse.json({ ok: true, message: "If an account with that email exists, a reset link has been sent." });
   }
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     ok: true,
     message: "If an account with that email exists, a reset link has been sent.",
   };
-  // Only return the reset URL in dev/demo — NEVER in production.
+  // Only return the reset URL in dev/demo - NEVER in production.
   if (isDev) {
     res.demoResetUrl = resetUrl;
     res.demo = true;

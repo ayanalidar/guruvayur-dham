@@ -8,7 +8,7 @@ import path from "path";
 
 const OUT = "/home/z/my-project/public";
 
-// SVG for the icon — saffron Om on dark maroon circle, gold border
+// SVG for the icon - saffron Om on dark maroon circle, gold border
 function iconSVG(size: number, maskable = false) {
   const padding = maskable ? size * 0.15 : 0;
   const inner = size - padding * 2;

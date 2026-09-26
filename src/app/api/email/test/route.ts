@@ -19,7 +19,7 @@ const TestEmailSchema = z.object({
  * Body: { to: "any@email.com" }
  */
 export async function POST(req: NextRequest) {
-  // Any staff can send a test email (not just MANAGER) — useful for
+  // Any staff can send a test email (not just MANAGER) - useful for
   // receptionists to verify email is working before a shift.
   const { error } = await requireStaff(req);
   if (error) return error;
@@ -52,7 +52,7 @@ This is a test email from the Guruvayur Dham booking platform.
 
 If you're reading this, the Hostinger Mail API integration is working correctly. Booking-confirmation emails will be sent through the same channel.
 
-— Guruvayur Dham
+- Guruvayur Dham
 Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura 281001
 +91-90908 20208 · bookings@guruvayurdham.co.in`;
 

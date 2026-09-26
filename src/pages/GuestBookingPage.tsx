@@ -46,7 +46,7 @@ export default function GuestBookingPage() {
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
-  // Invoice-specific fields (optional — for B2B guests who want GST invoice)
+  // Invoice-specific fields (optional - for B2B guests who want GST invoice)
   const [guestGSTIN, setGuestGSTIN] = useState("");
   const [guestAddress, setGuestAddress] = useState("");
   const [arrivalTime, setArrivalTime] = useState("");
@@ -132,7 +132,7 @@ export default function GuestBookingPage() {
           return;
         }
 
-        // Check if demo mode — skip Razorpay modal, go straight to booking
+        // Check if demo mode - skip Razorpay modal, go straight to booking
         if (order.demo) {
           toast.info("Demo mode: Payment simulated. Add Razorpay keys for real payments.");
           await createBooking("pay_demo_" + Math.random().toString(36).slice(2, 14));
@@ -362,7 +362,7 @@ export default function GuestBookingPage() {
                   </select>
                 </div>
 
-                {/* Optional GST invoice fields — collapsible, for B2B guests */}
+                {/* Optional GST invoice fields - collapsible, for B2B guests */}
                 <div className="mt-4 rounded-xl border border-champagne/15 bg-ink-card/50 p-4">
                   <button
                     type="button"

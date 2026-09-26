@@ -6,21 +6,21 @@
  * These hooks fetch editable content from /api/content (key/value blocks)
  * and /api/cms (structured lists like events, testimonials, FAQs).
  *
- * CACHE STRATEGY (FIXED — was the cause of "data never reflects on frontend"):
+ * CACHE STRATEGY (FIXED - was the cause of "data never reflects on frontend"):
  *
- *   1. Module-level cache with TTL=0 — every page mount triggers a fresh fetch.
+ *   1. Module-level cache with TTL=0 - every page mount triggers a fresh fetch.
  *      Slight perf cost (~30ms per navigation) but guarantees fresh data.
  *
- *   2. visibilitychange listener — when user switches back to the tab,
+ *   2. visibilitychange listener - when user switches back to the tab,
  *      the cache is invalidated so the next read fetches fresh data.
  *      Solves the "open in new tab" scenario where admin saves in tab 1
  *      and the user comes back to tab 2.
  *
- *   3. localStorage 'cms-updated' broadcast — when admin saves, we write
+ *   3. localStorage 'cms-updated' broadcast - when admin saves, we write
  *      to localStorage which fires a 'storage' event in OTHER tabs of
  *      the same browser. Those tabs invalidate their cache instantly.
  *
- *   4. invalidateCMSCache() — still called after admin saves in the SAME
+ *   4. invalidateCMSCache() - still called after admin saves in the SAME
  *      tab, for instant feedback to the admin.
  *
  * I18N INTEGRATION
@@ -40,14 +40,14 @@ import { useI18n } from "./i18n/context";
 
 /* ---------- in-memory cache ---------- */
 //
-// TTL=0 means "always stale" — every fetchContentMap() call refetches.
+// TTL=0 means "always stale" - every fetchContentMap() call refetches.
 // The fetch is deduplicated (contentPromise) so concurrent mounts don't
 // fire 2 requests.
 //
 // Module-level because:
 //   - Same-tab navigation should reuse the cache (React doesn't re-render
 //     the SPA page component, so useContent's useEffect doesn't re-run on
-//     every nav — but if it does re-run, we want fresh data)
+//     every nav - but if it does re-run, we want fresh data)
 //   - Cross-tab invalidation happens via localStorage events (below)
 //
 const CMS_CACHE_TTL_MS = 0; // 0 = always refetch on mount
@@ -116,7 +116,7 @@ async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
 }
 
 /**
- * Invalidate caches — call after admin saves content so the next read is fresh.
+ * Invalidate caches - call after admin saves content so the next read is fresh.
  * Also called automatically by the TTL expiry (0 = always stale).
  */
 export function invalidateCMSCache() {
@@ -140,12 +140,12 @@ export function broadcastCMSUpdate(reason?: string) {
   try {
     localStorage.setItem("cms-updated", `${Date.now()}:${reason || "save"}`);
   } catch {
-    // localStorage may be disabled (private mode) — silent fallback
+    // localStorage may be disabled (private mode) - silent fallback
   }
 }
 
 /**
- * Force a refresh of all CMS data — bypasses the TTL.
+ * Force a refresh of all CMS data - bypasses the TTL.
  * Useful for "refresh" buttons in the admin UI.
  */
 export async function refreshCMSData() {
@@ -163,7 +163,7 @@ export async function refreshCMSData() {
 // next read fetches fresh data.
 //
 // This is what makes admin saves propagate to OTHER open tabs of the
-// same browser — without it, only the admin's tab sees the update.
+// same browser - without it, only the admin's tab sees the update.
 //
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
@@ -172,10 +172,10 @@ if (typeof window !== "undefined") {
     }
   });
 
-  // visibilitychange — when user returns to this tab after switching away,
+  // visibilitychange - when user returns to this tab after switching away,
   // invalidate the cache so the next read fetches fresh data.
   // This catches the scenario where admin saves in tab 1, user comes back
-  // to tab 2 — they should see fresh data without waiting.
+  // to tab 2 - they should see fresh data without waiting.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       invalidateCMSCache();
@@ -186,7 +186,7 @@ if (typeof window !== "undefined") {
 /* ---------- Hooks ---------- */
 
 /**
- * useContent() — load all key/value content blocks.
+ * useContent() - load all key/value content blocks.
  * Returns `{ map, get, loading }`. `get(key, fallback)` returns the block
  * value or the fallback if missing.
  */
@@ -234,7 +234,7 @@ export function useContent() {
 }
 
 /**
- * useCMSList<T>(type, fallback) — load a structured CMS list (events,
+ * useCMSList<T>(type, fallback) - load a structured CMS list (events,
  * testimonials, faqs, features, trustBadges, poojas, carousel, blogPosts).
  * Falls back to the provided array if the CMS has no data or is unreachable.
  */

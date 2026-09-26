@@ -16,18 +16,18 @@ const SendEmailSchema = z.object({
 /**
  * POST /api/email/send
  *
- * Sends an email notification. Tries Hostinger Mail API first (preferred —
+ * Sends an email notification. Tries Hostinger Mail API first (preferred -
  * 1 token + mailbox ID, no SMTP config, no DKIM/SPF to manage). Falls back
  * to nodemailer SMTP if Hostinger Mail is not configured but SMTP vars are.
  *
  * Body: { to, subject, body, type? }
  *
- * Settings (preferred path — Hostinger Mail API):
+ * Settings (preferred path - Hostinger Mail API):
  *   - HOSTINGER_MAIL_TOKEN     (Bearer token from hPanel → Agentic Mail → API)
  *   - HOSTINGER_MAILBOX_ID     (mailboxResourceId, found via /api/email/mailboxes)
- *   - HOSTINGER_MAIL_DISPLAY_NAME (optional — defaults to "Guruvayur Dham")
+ *   - HOSTINGER_MAIL_DISPLAY_NAME (optional - defaults to "Guruvayur Dham")
  *
- * Settings (fallback path — SMTP via nodemailer):
+ * Settings (fallback path - SMTP via nodemailer):
  *   - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL
  */
 export async function POST(req: NextRequest) {
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     }
     const { to, subject, body, type = "GENERAL" } = parsed.data;
 
-    // Log to Notifications table — track every email attempt regardless of method
+    // Log to Notifications table - track every email attempt regardless of method
     const notification = await db.notification.create({
       data: { type: "EMAIL", recipient: to, subject, body, status: "QUEUED" },
     });
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
           notificationId: notification.id,
         });
       }
-      // Hostinger failed — fall through to SMTP if available, otherwise mark FAILED
+      // Hostinger failed - fall through to SMTP if available, otherwise mark FAILED
       console.error("Hostinger Mail send failed:", result.message);
     }
 
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Neither method worked — leave as QUEUED for manual processing
+    // Neither method worked - leave as QUEUED for manual processing
     return NextResponse.json({
       success: true, queued: true, notificationId: notification.id,
       message:
@@ -140,7 +140,7 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#039;");
 }
 
-/** GET /api/email/send — list recent email notifications */
+/** GET /api/email/send - list recent email notifications */
 export async function GET(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;

@@ -17,7 +17,7 @@ const CreateGuestBookingSchema = z.object({
   guestName: z.string().min(1).max(200),
   guestPhone: z.string().min(1).max(30),
   guestEmail: z.string().email().optional(),
-  // Invoice-specific guest fields (optional — used on tax invoice PDF)
+  // Invoice-specific guest fields (optional - used on tax invoice PDF)
   guestGSTIN: z.string().max(15).optional(),
   guestAddress: z.string().max(500).optional(),
   arrivalTime: z.string().max(20).optional(),   // e.g. "08:32 pm"
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         // SelfReliant-Phase2-4: wrap Razorpay payment fetch in withRetry so a
         // transient 5xx/network blip doesn't fail the booking flow. Circuit
         // breaker key "razorpay" auto-trips after 5 consecutive failures
-        // (across all callers) for 5 min — surfaces on the Health Dashboard.
+        // (across all callers) for 5 min - surfaces on the Health Dashboard.
         const verifyRes = await withRetry(
           () => fetch(`https://api.razorpay.com/v1/payments/${clientPaymentId}`, {
             headers: { Authorization: `Basic ${auth}` },
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
         );
         if (!verifyRes.ok) {
           return NextResponse.json(
-            { error: "Payment verification failed — invalid paymentId" },
+            { error: "Payment verification failed - invalid paymentId" },
             { status: 400 }
           );
         }
@@ -119,11 +119,11 @@ export async function POST(req: NextRequest) {
         );
       }
     } else {
-      // Demo mode (no Razorpay keys) — accept client paymentId as-is.
+      // Demo mode (no Razorpay keys) - accept client paymentId as-is.
       verifiedPaymentId = clientPaymentId;
     }
   } else {
-    // COD — booking starts PENDING, staff confirms on check-in.
+    // COD - booking starts PENDING, staff confirms on check-in.
     bookingStatus = "PENDING";
   }
 
@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
       reference: ref,
       roomId: room.id,
       guestName, guestPhone, guestEmail: guestEmail || null,
-      // Invoice-specific fields (optional — empty string is fine if not provided)
+      // Invoice-specific fields (optional - empty string is fine if not provided)
       guestGSTIN: guestGSTIN || null,
       guestAddress: guestAddress || null,
       arrivalTime: arrivalTime || null,
@@ -320,17 +320,17 @@ export async function POST(req: NextRequest) {
   // ===== 11. SEND CONFIRMATION =====
   // Email + WhatsApp confirmation to the guest.
   //
-  // (a) EMAIL — fetch the email.bookingConfirmation content block from the
+  // (a) EMAIL - fetch the email.bookingConfirmation content block from the
   // CMS (so admins can edit the template text without a deploy). Falls back
   // to a hardcoded template if the block is missing. Sends via the internal
   // /api/email/send endpoint (which itself uses Nodemailer + SMTP settings
   // from the admin Settings UI). Cookie forwarding is unnecessary here
-  // because /api/email/send requires a staff session — but the booking flow
+  // because /api/email/send requires a staff session - but the booking flow
   // is guest-facing. We bypass the staff guard by calling the same SMTP
   // pipeline directly via the internal sendBookingEmail helper below (uses
   // the same encrypted Setting table keys + nodemailer withRetry wrap).
   //
-  // (b) WHATSAPP — if WhatsApp Business credentials are configured in the
+  // (b) WHATSAPP - if WhatsApp Business credentials are configured in the
   // Settings UI (WHATSAPP_ACCESS_TOKEN + WHATSAPP_PHONE_NUMBER_ID), send a
   // real confirmation message via the Meta Graph API. Otherwise queue a
   // notification row for manual/cron processing (existing behavior).
@@ -352,7 +352,7 @@ export async function POST(req: NextRequest) {
     paymentMethod,
   });
 
-  // Fire-and-forget email send (errors swallowed — booking is still
+  // Fire-and-forget email send (errors swallowed - booking is still
   // confirmed; the notification row is the audit trail).
   // Pass booking.id so the email can attach the invoice PDF (matched to this booking).
   sendBookingConfirmationEmail(guestEmail || "", emailSubject, emailBody, ref, booking.id).catch(() => {});
@@ -379,7 +379,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Also queue an EMAIL notification row (audit trail) — if guest provided
+  // Also queue an EMAIL notification row (audit trail) - if guest provided
   // an email and SMTP is configured, the email itself was already sent by
   // sendBookingConfirmationEmail above; this row records the attempt.
   if (guestEmail) {
@@ -448,7 +448,7 @@ export async function POST(req: NextRequest) {
  * =====================================================================
  *
  *  These helpers keep the booking flow self-contained: they do not depend
- *  on /api/email/send (which requires a staff session) — instead they
+ *  on /api/email/send (which requires a staff session) - instead they
  *  reuse the same encrypted Setting table keys (SMTP_HOST, SMTP_USER,
  *  SMTP_PASS, FROM_EMAIL) and the same `nodemailer + withRetry` pattern as
  *  /api/email/send, so behaviour is identical for admin-triggered and
@@ -510,12 +510,12 @@ Where to reach us:
 Getting here:
   - 2 minutes walk from Mathura Railway Station.
   - 1.5 km from Shri Krishna Janmabhoomi.
-  - Free pickup from Mathura station for stays of 2+ nights — just WhatsApp us your train details.
+  - Free pickup from Mathura station for stays of 2+ nights - just WhatsApp us your train details.
 
 Darshan assistance:
   - Walk to Mata Pathwari Mandir (next door, 2 min).
   - Krishna Janmabhoomi (1.5 km), Dwarkadhish Temple (2 km).
-  - Vrindavan (Banke Bihari, Prem Mandir) is 15 km — 25 min by auto.
+  - Vrindavan (Banke Bihari, Prem Mandir) is 15 km - 25 min by auto.
   - We coordinate pooja bookings, darshan slots and local transport at zero commission.
 
 Need help?
@@ -524,7 +524,7 @@ Need help?
 
 We look forward to welcoming you. Jai Shri Krishna!
 
-— Guruvayur Dham Team
+- Guruvayur Dham Team
    16+ premium rooms · Walk to Mata Pathwari Mandir
    {{phone}}  ·  bookings@guruvayurdham.co.in
 `;
@@ -544,7 +544,7 @@ async function buildBookingConfirmationEmail(ctx: BookingEmailContext): Promise<
       template = block.value;
     }
   } catch {
-    // DB blip — fall through to hardcoded template.
+    // DB blip - fall through to hardcoded template.
   }
 
   const fmtDate = (d: Date) =>
@@ -562,11 +562,11 @@ async function buildBookingConfirmationEmail(ctx: BookingEmailContext): Promise<
     paymentMethod: ctx.paymentMethod,
     phone: GD_PHONE,
     address: GD_ADDRESS,
-    couponCode: ctx.couponCode || "—",
+    couponCode: ctx.couponCode || "-",
     couponDiscount: ctx.couponDiscount != null ? String(ctx.couponDiscount) : "0",
     earlyBirdActive: ctx.earlyBirdActive ? "Yes" : "No",
     earlyBirdDiscount: String(ctx.earlyBirdDiscount ?? 0),
-    earlyBirdCampaign: ctx.earlyBirdCampaign || "—",
+    earlyBirdCampaign: ctx.earlyBirdCampaign || "-",
   };
 
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => subs[key] ?? "");
@@ -586,20 +586,20 @@ function buildBookingWhatsAppMessage(opts: {
 }): string {
   const fmt = (d: Date) =>
     d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-  // Spec message — verbatim per F10 spec, with runtime values substituted.
+  // Spec message - verbatim per F10 spec, with runtime values substituted.
   return `Namaskaram ${opts.guestName}! Your booking is confirmed. Reference: ${opts.bookingRef}. Room: ${opts.roomName}. Check-in: ${fmt(opts.checkIn)}. Check-out: ${fmt(opts.checkOut)}. Total: ₹${opts.amount}. Guruvayur Dham, Mathura. WhatsApp +91-90908 20208 for any assistance.`;
 }
 
 /**
  * Send the booking-confirmation email.
  *
- * Tries Hostinger Mail API first (preferred — 1 token + mailbox ID,
+ * Tries Hostinger Mail API first (preferred - 1 token + mailbox ID,
  * no SMTP/DKIM/SPF config, no port/TLS confusion). Falls back to
  * nodemailer SMTP if Hostinger Mail isn't configured but SMTP vars are.
  *
  * Reads from the encrypted Setting table (admin Settings UI).
  *
- * On any error: silently swallow — the booking is still confirmed; the
+ * On any error: silently swallow - the booking is still confirmed; the
  * EMAIL notification row is the audit trail.
  *
  * If neither method is configured, this is a no-op (the EMAIL notification
@@ -615,7 +615,7 @@ async function sendBookingConfirmationEmail(
   if (!to) return;
 
   // ── Generate the invoice PDF to attach (if we have a bookingId) ────
-  // Wrap in try/catch — if PDF generation fails for any reason, the email
+  // Wrap in try/catch - if PDF generation fails for any reason, the email
   // still sends without the attachment (better than no email at all).
   let pdfAttachment: { filename: string; contentType: string; content: string } | null = null;
   let invoiceNumber = "";
@@ -631,18 +631,18 @@ async function sendBookingConfirmationEmail(
           content: pdfBuffer.toString("base64"),
         };
         // Cache the PDF in the Invoice row so subsequent downloads are instant.
-        // Fire-and-forget — don't block the email send on this.
+        // Fire-and-forget - don't block the email send on this.
         db.invoice.update({
           where: { bookingId },
           data: { pdfBase64: pdfBuffer.toString("base64") },
         }).catch(() => {});
       }
     } catch (e: any) {
-      console.error("Invoice PDF generation failed — email will send without attachment:", e?.message || e);
+      console.error("Invoice PDF generation failed - email will send without attachment:", e?.message || e);
     }
   }
 
-  // Build the HTML body — also include a "Download Invoice" link as backup
+  // Build the HTML body - also include a "Download Invoice" link as backup
   // (in case the recipient can't open attachments on their device).
   const downloadLink = bookingId
     ? `https://www.guruvayurdham.co.in/api/invoice/pdf?bookingId=${bookingId}`
@@ -659,7 +659,7 @@ ${downloadLink ? `<br><br><a href="${downloadLink}" style="display:inline-block;
         subject,
         text: body + (downloadLink ? `\n\nDownload invoice: ${downloadLink}` : ""),
         html: htmlBody,
-        // Pass attachments as a custom field — sendEmailViaHostinger will
+        // Pass attachments as a custom field - sendEmailViaHostinger will
         // include them in the V1SendRequest body.
         ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
       } as any);
@@ -675,7 +675,7 @@ ${downloadLink ? `<br><br><a href="${downloadLink}" style="display:inline-block;
   const smtpHost = await getSetting("SMTP_HOST");
   const smtpUser = await getSetting("SMTP_USER");
   const smtpPass = await getSetting("SMTP_PASS");
-  if (!smtpHost || !smtpUser || !smtpPass) return; // neither method configured — skip silently
+  if (!smtpHost || !smtpUser || !smtpPass) return; // neither method configured - skip silently
 
   try {
     const nodemailer = await import("nodemailer" as string).catch(() => null) as any;
@@ -698,11 +698,11 @@ ${downloadLink ? `<br><br><a href="${downloadLink}" style="display:inline-block;
       { maxRetries: 2, circuitBreakerKey: "smtp" },
     );
   } catch {
-    // swallow — booking still confirmed
+    // swallow - booking still confirmed
   }
 }
 
-/** HTML-escape helper — kept local to avoid changing the import surface. */
+/** HTML-escape helper - kept local to avoid changing the import surface. */
 function escapeHtmlForEmail(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -724,7 +724,7 @@ function escapeHtmlForEmail(s: string): string {
 async function sendRealWhatsApp(to: string, message: string): Promise<boolean> {
   const token = await getSetting("WHATSAPP_ACCESS_TOKEN");
   const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
-  if (!token || !phoneNumberId) return false; // not configured — caller queues instead
+  if (!token || !phoneNumberId) return false; // not configured - caller queues instead
 
   const formattedPhone = to.replace(/[^0-9]/g, "");
   if (formattedPhone.length < 10) return false;

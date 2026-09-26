@@ -4,7 +4,7 @@ import { requireStaff, hashPassword } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 import crypto from "crypto";
 
-// GET /api/staff · list all staff (excludes PIN — sensitive)
+// GET /api/staff · list all staff (excludes PIN - sensitive)
 export async function GET(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
@@ -20,20 +20,20 @@ export async function GET(req: NextRequest) {
       phone: true,
       lastLoginAt: true,
       createdAt: true,
-      // NOTE: PIN is intentionally excluded — never expose via API.
+      // NOTE: PIN is intentionally excluded - never expose via API.
     },
   });
   return NextResponse.json({ staff });
 }
 
-// POST /api/staff · create staff (MANAGER only — role elevation is sensitive)
+// POST /api/staff · create staff (MANAGER only - role elevation is sensitive)
 // Allowed fields: name, email, phone, role, pin, password, active, mustChangePassword
 export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
   if (error) return error;
 
   const body = await req.json();
-  // Whitelist allowed fields — prevent mass assignment of arbitrary fields.
+  // Whitelist allowed fields - prevent mass assignment of arbitrary fields.
   const { name, email, phone, role, pin, password, active, mustChangePassword } = body;
   if (!name || !email || !role) {
     return NextResponse.json(
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   if (pin !== undefined && (typeof pin !== "string" || !/^\d{4,6}$/.test(pin))) {
     return NextResponse.json({ error: "PIN must be 4-6 digits" }, { status: 400 });
   }
-  // Validate password (if provided) — same policy as guest registration.
+  // Validate password (if provided) - same policy as guest registration.
   let hashedPassword: string | undefined;
   if (password !== undefined) {
     if (typeof password !== "string" || password.length < 8) {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ staff });
 }
 
-// PATCH /api/staff · update staff (role, pin, password, active) — MANAGER only
+// PATCH /api/staff · update staff (role, pin, password, active) - MANAGER only
 // Allowed fields: name, phone, role, pin, password, active, mustChangePassword
 export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
@@ -143,9 +143,9 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json({ staff: safeStaff });
 }
 
-// PUT /api/staff · login with PIN — rate limited to prevent brute force
+// PUT /api/staff · login with PIN - rate limited to prevent brute force
 export async function PUT(req: NextRequest) {
-  // 5 attempts per minute per IP — 4-digit PINs have 10,000 combinations,
+  // 5 attempts per minute per IP - 4-digit PINs have 10,000 combinations,
   // so this makes brute force impractical (would take ~33 hours).
   const rl = await rateLimit(req, { window: 60, max: 5, key: "staff-pin-login" });
   if (!rl.ok) {

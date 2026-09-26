@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
 /**
  * Escape a CSV cell value.
  *
- * SECURITY (Round 3 M1 fix): CSV formula injection — prefix cells starting
+ * SECURITY (Round 3 M1 fix): CSV formula injection - prefix cells starting
  * with =, +, -, @, tab, or carriage return with a single quote so Excel /
  * LibreOffice treat them as text instead of executing them as formulas.
  * Without this, a guest registering with name='=HYPERLINK("http://evil.com")'

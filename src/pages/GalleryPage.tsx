@@ -20,7 +20,7 @@ export default function GalleryPage() {
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [cmsImages, setCmsImages] = useState<GalleryImageRow[] | null>(null);
 
-  // Fetch gallery images from CMS — also called on cross-tab sync events
+  // Fetch gallery images from CMS - also called on cross-tab sync events
   const loadGallery = useCallback(() => {
     fetch("/api/gallery", { cache: "no-store" })
       .then((r) => r.json())

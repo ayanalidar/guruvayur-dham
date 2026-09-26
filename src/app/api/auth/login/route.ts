@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { type } = body;
 
-  // ===== 1. STAFF PIN LOGIN (legacy — 4-digit PIN) =====
+  // ===== 1. STAFF PIN LOGIN (legacy - 4-digit PIN) =====
   if (type === "pin") {
     const { pin } = body;
     if (!pin || pin.length !== 4) {
@@ -58,14 +58,14 @@ export async function POST(req: NextRequest) {
     if (staff.role === "MANAGER") {
       const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
       if (tf?.enabled) {
-        // 2FA is configured — PIN login is not enough, MANAGER must use
+        // 2FA is configured - PIN login is not enough, MANAGER must use
         // email + password + TOTP.
         return NextResponse.json({
           error: "MANAGER 2FA is enabled. Please log in via email + password + 2FA code.",
           requires2FA: true,
         }, { status: 403 });
       }
-      // 2FA not yet set up — allow PIN login (first-login path).
+      // 2FA not yet set up - allow PIN login (first-login path).
     }
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     return res;
   }
 
-  // ===== 2. STAFF EMAIL + PASSWORD (preferred — uses passwordHash) =====
+  // ===== 2. STAFF EMAIL + PASSWORD (preferred - uses passwordHash) =====
   if (type === "staff") {
     const { email, password } = body;
     if (!email || !password) {
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     }
     const staff = await db.staffUser.findUnique({ where: { email } });
     if (!staff || !staff.active) {
-      // M11 timing equalization — run dummy hash to equalize response time.
+      // M11 timing equalization - run dummy hash to equalize response time.
       verifyPassword(password, "dummy:salt:0000000000000000000000000000000000000000000000000000000000000000");
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     if (staff.passwordHash) {
       authed = verifyPassword(password, staff.passwordHash);
     } else {
-      // Legacy fallback — PIN stored in plaintext.
+      // Legacy fallback - PIN stored in plaintext.
       authed = password === staff.pin;
     }
     if (!authed) {
@@ -114,14 +114,14 @@ export async function POST(req: NextRequest) {
     if (staff.role === "MANAGER") {
       const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
       if (tf?.enabled) {
-        // 2FA is configured — require the TOTP challenge.
+        // 2FA is configured - require the TOTP challenge.
         return NextResponse.json({
           requires2FACode: true,
           email,
           message: "Enter your 6-digit authenticator code.",
         }, { status: 200 });
       }
-      // 2FA not yet set up — allow login but flag that 2FA should be configured.
+      // 2FA not yet set up - allow login but flag that 2FA should be configured.
       // This is the first-login path so the MANAGER can access the dashboard
       // and set up 2FA via /api/auth/2fa POST.
     }
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
     let user = await db.user.findFirst({ where: { staffId: staff.id } });
     if (!user) {
       // Should not happen (user created in step 1), but guard anyway.
-      return NextResponse.json({ error: "User record not found — restart login flow" }, { status: 500 });
+      return NextResponse.json({ error: "User record not found - restart login flow" }, { status: 500 });
     }
     const tf = await db.twoFactorSecret.findUnique({ where: { userId: user.id } });
     if (!tf?.enabled) {
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
     if (!codeValid) {
       return NextResponse.json({ error: "Invalid 2FA code" }, { status: 401 });
     }
-    // 2FA verified — create session.
+    // 2FA verified - create session.
     const session = await createSession(user.id, staff.role);
     const res = NextResponse.json({
       user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
@@ -230,7 +230,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Phone and OTP required" }, { status: 400 });
     }
     // SECURITY (Round 3 S1+S2 fix): use exact-match via regex extraction
-    // instead of `body: { contains: otp }` (substring match — let attackers
+    // instead of `body: { contains: otp }` (substring match - let attackers
     // log in with otp:"0" or any common substring). Extract the OTP from
     // the body with a strict regex and compare with timingSafeEqual.
     if (typeof otp !== "string" || !/^\d{4,6}$/.test(otp)) {
@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
       where: {
         type: "SMS",
         recipient: phone,
-        status: "SENT", // NOT "USED" — prevents replay (S2 fix)
+        status: "SENT", // NOT "USED" - prevents replay (S2 fix)
         createdAt: { gte: new Date(Date.now() - 5 * 60 * 1000) }, // 5-min validity
       },
       orderBy: { createdAt: "desc" },

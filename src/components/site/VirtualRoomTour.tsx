@@ -9,14 +9,14 @@ import { useHashRoute } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────────────────────────────────────────────────────
- *  VirtualRoomTour — 360°-style room photo viewer.
+ *  VirtualRoomTour - 360°-style room photo viewer.
  * ───────────────────────────────────────────────────────────────────────
  *
  *  No external library. Pan with mouse drag, zoom with scroll wheel or
  *  +/- buttons. Thumbnail strip at the bottom switches between gallery
  *  images. Room name + description overlay shown on top.
  *
- *  Uses the existing room gallery photos (already editable via CMS —
+ *  Uses the existing room gallery photos (already editable via CMS -
  *  the room.gallery field). Add to any room detail page.
  */
 

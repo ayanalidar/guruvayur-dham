@@ -9,14 +9,14 @@ import { getCircuitBreakerStatus } from "@/lib/retry";
  *
  * Comprehensive system health dashboard for managers.
  * Returns:
- *   - { checks, summary } from runAllHealthChecks() — all integration probes
- *   - dbSize           — PostgreSQL DB size in human-readable form
- *   - activeSessions   — number of currently-active staff sessions
- *   - errorCount24h    — number of ErrorLog rows in the last 24h
- *   - avgApiLatencyMs  — avg API response time (from AnalyticsEvent, if available)
- *   - circuitBreakers  — status of all retry circuit breakers
+ *   - { checks, summary } from runAllHealthChecks() - all integration probes
+ *   - dbSize           - PostgreSQL DB size in human-readable form
+ *   - activeSessions   - number of currently-active staff sessions
+ *   - errorCount24h    - number of ErrorLog rows in the last 24h
+ *   - avgApiLatencyMs  - avg API response time (from AnalyticsEvent, if available)
+ *   - circuitBreakers  - status of all retry circuit breakers
  *
- * MANAGER-only — exposes infrastructure details.
+ * MANAGER-only - exposes infrastructure details.
  */
 export async function GET(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
       where: { expiresAt: { gt: new Date() } },
     }),
     db.errorLog.count({ where: { createdAt: { gte: since } } }),
-    // AnalyticsEvent is the closest proxy for API response time — we don't
+    // AnalyticsEvent is the closest proxy for API response time - we don't
     // log per-request timing anywhere else. PAGE_VIEW events have no
     // duration field; we just count events as a "traffic" signal. Returns 0
     // if the table is empty (e.g. fresh install).
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
 
   // Avg API latency: the app currently doesn't record per-request latency
   // anywhere in the DB. We surface null when there's no data so the UI can
-  // show "—" instead of misleading "0 ms". The PerformanceMetric table
+  // show "-" instead of misleading "0 ms". The PerformanceMetric table
   // holds client-side web-vitals, not server-side API timings.
   const avgApiLatencyMs: number | null = null;
 

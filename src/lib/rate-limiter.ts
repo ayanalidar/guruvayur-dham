@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSetting, getCachedSetting } from "@/lib/settings";
 
 /**
- * Rate limiter — hybrid in-memory + optional Upstash Redis.
+ * Rate limiter - hybrid in-memory + optional Upstash Redis.
  *
  * FUNCTIONAL (Round 3 F10 fix): on Vercel serverless, each function invocation
  * may be a fresh instance → the in-memory Map resets → limits are per-instance,
@@ -15,7 +15,7 @@ import { getSetting, getCachedSetting } from "@/lib/settings";
  * long-lived process, and in dev).
  *
  * SelfReliant-Refactor: UPSTASH_* env vars are now read at runtime via
- * getSetting() — admin can rotate Redis credentials from the Settings UI
+ * getSetting() - admin can rotate Redis credentials from the Settings UI
  * without a redeploy. getRateLimitStats() stays synchronous and uses the
  * cache-only getCachedSetting() to report `redisEnabled` as a best-effort
  * approximation (may lag by up to the 5-minute cache TTL).
@@ -24,7 +24,7 @@ import { getSetting, getCachedSetting } from "@/lib/settings";
  *   1. Create a free Upstash Redis database at https://upstash.com
  *   2. Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN either in .env
  *      or via the admin Settings UI (category INTEGRATION).
- *   3. (Optional) `npm install @upstash/redis` for typed client — currently
+ *   3. (Optional) `npm install @upstash/redis` for typed client - currently
  *      we use raw fetch to avoid adding a dep, but you can swap to the SDK.
  *
  * Usage in API routes:
@@ -32,7 +32,7 @@ import { getSetting, getCachedSetting } from "@/lib/settings";
  *   const allowed = rateLimit(req, { window: 60, max: 10 });
  *   if (!allowed.ok) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
  *
- * Note: rateLimit is async when Redis is configured — callers should `await`
+ * Note: rateLimit is async when Redis is configured - callers should `await`
  * rateLimit(req, opts). For backwards compat, we return a Promise that
  * resolves to the same shape as before.
  */
@@ -118,7 +118,7 @@ async function redisIncrement(key: string, windowSec: number): Promise<number | 
  *
  * Note: this function is now async (returns a Promise) to support Redis.
  * Existing callers using `const rl = rateLimit(req, opts); if (!rl.ok)` will
- * still work because the result has the same shape — but they should `await`
+ * still work because the result has the same shape - but they should `await`
  * to get the real value. (Without await, the result is a Promise which is
  * truthy, so `!rl.ok` is false and the rate limit is silently bypassed.)
  * To catch this, we recommend updating all callers to `await rateLimit(...)`.
@@ -151,7 +151,7 @@ export async function rateLimit(req: NextRequest, opts: RateLimitOptions = {}): 
   if (useRedis) {
     const count = await redisIncrement(key, window);
     if (count === null) {
-      // Redis failed — fall back to in-memory rather than blocking everything.
+      // Redis failed - fall back to in-memory rather than blocking everything.
       return inMemoryIncrement(key, max, now, windowMs, ip);
     }
     if (count > max) {
@@ -183,7 +183,7 @@ function inMemoryIncrement(key: string, max: number, now: number, windowMs: numb
 /**
  * Get blocked IPs stats (for admin dashboard).
  *
- * Sync — uses getCachedSetting() (cache + process.env only, no DB hit) to
+ * Sync - uses getCachedSetting() (cache + process.env only, no DB hit) to
  * report `redisEnabled`. May lag the real value by up to the 5-minute cache
  * TTL, but accurate enough for the dashboard. The first request after a
  * cache expiry will miss, and `rateLimit()` will repopulate the cache via

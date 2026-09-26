@@ -20,7 +20,7 @@ export default function TempleTimingsWidget() {
   const { get } = useContent();
   const { navigate } = useHashRoute();
 
-  // Client-only "now" — avoids SSR/CSR hydration mismatch (React #418).
+  // Client-only "now" - avoids SSR/CSR hydration mismatch (React #418).
   // Server has no concept of "current time" matching client; render closed state
   // initially, then re-render with real time after mount.
   const [now, setNow] = useState<Date | null>(null);
@@ -41,7 +41,7 @@ export default function TempleTimingsWidget() {
     const sessions: Array<{ start: number; end: number; label: string }> = [];
     const parts = timingStr.split(",").map(s => s.trim());
     for (const part of parts) {
-      const match = part.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+      const match = part.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?\s*[--]\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
       if (!match) continue;
       const [_, sh, sm, sap, eh, em, eap] = match;
       let startH = parseInt(sh);
@@ -58,7 +58,7 @@ export default function TempleTimingsWidget() {
   }
 
   function isOpenNow(timingStr: string): { open: boolean; nextSession?: string } {
-    // Before client mounts (now === null), return closed state — avoids hydration mismatch.
+    // Before client mounts (now === null), return closed state - avoids hydration mismatch.
     if (!now) return { open: false };
     const sessions = parseTimings(timingStr);
     for (const s of sessions) {

@@ -12,8 +12,8 @@ import {
 /**
  * Settings + Feature Flags API
  *
- * GET  /api/settings         — returns all settings (masked) + all feature flags
- * POST /api/settings         — update a single setting (encrypted if isSecret)
+ * GET  /api/settings         - returns all settings (masked) + all feature flags
+ * POST /api/settings         - update a single setting (encrypted if isSecret)
  *
  * Both MANAGER-only. Writes an AuditLog row on POST.
  */
@@ -27,7 +27,7 @@ const SettingCategoryEnum = z.enum([
 
 const UpdateSettingSchema = z.object({
   key: z.string().min(1).max(200),
-  value: z.string().max(10000), // 10KB cap — prevents DB bloat / secret smuggling
+  value: z.string().max(10000), // 10KB cap - prevents DB bloat / secret smuggling
   isSecret: z.boolean().optional(),
   category: SettingCategoryEnum.optional(),
   label: z.string().max(200).optional(),
@@ -80,12 +80,12 @@ export async function POST(req: NextRequest) {
     label,
   );
 
-  // Invalidate all caches — setSetting already clears the single key, but
+  // Invalidate all caches - setSetting already clears the single key, but
   // bulk changes (e.g. editing multiple secrets at once) benefit from a
   // full flush so dependent lookups (health checks etc.) see fresh data.
   invalidateAllSettingsCaches();
 
-  // Audit log — never write the actual value (could be a secret).
+  // Audit log - never write the actual value (could be a secret).
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
   const ua = req.headers.get("user-agent") || "unknown";
   await db.auditLog.create({

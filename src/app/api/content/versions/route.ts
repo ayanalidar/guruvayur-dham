@@ -11,9 +11,9 @@ import { requireStaff } from "@/lib/auth";
  *   `cms:<type>:<id>`). Newest-first.
  *
  * POST /api/content/versions/rollback
- *   See ./rollback/route.ts — restores a previous version.
+ *   See ./rollback/route.ts - restores a previous version.
  *
- * Both MANAGER-only — version history can include prior PII (e.g. contact
+ * Both MANAGER-only - version history can include prior PII (e.g. contact
  * details) that was edited out.
  *
  * SelfReliant-Phase2-4.

@@ -120,7 +120,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Primary business schema (Hotel / LodgingBusiness) — server-rendered so
+  // Primary business schema (Hotel / LodgingBusiness) - server-rendered so
   // Google rich-results can pick it up without running client JS.
   const hotelSchema = {
     "@context": "https://schema.org",
@@ -156,7 +156,7 @@ export default function RootLayout({
     checkoutTime: "11:00",
   };
 
-  // WebSite schema — helps Google show sitelinks search box etc.
+  // WebSite schema - helps Google show sitelinks search box etc.
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -171,7 +171,7 @@ export default function RootLayout({
     },
   };
 
-  // Organization schema — for knowledge panel
+  // Organization schema - for knowledge panel
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",

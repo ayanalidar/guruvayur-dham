@@ -9,7 +9,7 @@ import { getUserFromRequest } from "@/lib/auth";
  * Guest-facing variant of /api/customers (which is now staff-only).
  *
  * SECURITY: requires an authenticated session. Only the user's own customer
- * record is returned — no `?search=` query param is honored.
+ * record is returned - no `?search=` query param is honored.
  */
 export async function GET(req: NextRequest) {
   const session = await getUserFromRequest(req);

@@ -11,7 +11,7 @@ import crypto from "crypto";
  * - All handlers now require an authenticated session via requireUser(req).
  * - The userId is taken from the session, NOT from the request body/query.
  *   (Previously, an unauthenticated attacker could enable 2FA on anyone's
- *   account — full account lockout.)
+ *   account - full account lockout.)
  * - GET no longer leaks which users have 2FA enabled (enumeration).
  */
 
@@ -106,7 +106,7 @@ export async function PUT(req: NextRequest) {
   const { session, error } = await requireUser(req);
   if (error || !session) return error || NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // SECURITY (Round 3 M9 fix): rate limit TOTP verification to 5/min/IP —
+  // SECURITY (Round 3 M9 fix): rate limit TOTP verification to 5/min/IP -
   // prevents brute-forcing the 6-digit code (1M combinations, ~3 hours at
   // 100 req/s without this limit).
   const rl = await rateLimit(req, { window: 60, max: 5, key: "auth:2fa:verify" });
@@ -119,7 +119,7 @@ export async function PUT(req: NextRequest) {
   if (!code) return NextResponse.json({ error: "code required" }, { status: 400 });
 
   const tf = await db.twoFactorSecret.findUnique({ where: { userId } });
-  if (!tf) return NextResponse.json({ error: "2FA not set up — call POST first" }, { status: 400 });
+  if (!tf) return NextResponse.json({ error: "2FA not set up - call POST first" }, { status: 400 });
 
   const expectedCode = generateTOTP(tf.secret);
   if (code !== expectedCode) {

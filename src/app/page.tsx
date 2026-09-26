@@ -89,7 +89,7 @@ export default function Home() {
           else setMaintenanceMode(false);
         })
         .catch(() => {
-          // Network/DB failure — keep the site online.
+          // Network/DB failure - keep the site online.
           setMaintenanceMode(false);
         });
     };

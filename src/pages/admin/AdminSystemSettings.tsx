@@ -125,7 +125,7 @@ export default function SystemSettingsPage() {
       else if (j.result?.status === "not_configured") toast.info(`${j.result.label}: not configured`);
       else toast.error(`${j.result?.label || service}: ${j.result?.message || "test failed"}`);
     } catch {
-      toast.error("Test failed — network error");
+      toast.error("Test failed - network error");
     } finally {
       setTesting(null);
     }
@@ -173,7 +173,7 @@ export default function SystemSettingsPage() {
       const j = await r.json();
       if (j.ok && j.mailboxes?.length > 0) {
         const lines = j.mailboxes.map((m: any) => `${m.resourceId}  →  ${m.address}`).join("\n");
-        toast.success(`Found ${j.mailboxes.length} mailbox(es) — see console`);
+        toast.success(`Found ${j.mailboxes.length} mailbox(es) - see console`);
         console.info("Hostinger Mail mailboxes for this token:\n", lines);
         // Also copy the first mailbox ID to clipboard for convenience
         const first = j.mailboxes[0];
@@ -224,10 +224,10 @@ export default function SystemSettingsPage() {
     const flag = flags.find(f => f.key === "MAINTENANCE_MODE");
     if (!flag) return;
     if (flag.enabled) {
-      // Turning off — simple
+      // Turning off - simple
       toggleFlag("MAINTENANCE_MODE", false);
     } else {
-      // Turning on — confirm
+      // Turning on - confirm
       if (confirm("Enable maintenance mode? Guests will see a holding page. Admin still works.")) {
         toggleFlag("MAINTENANCE_MODE", true);
       }
@@ -311,7 +311,7 @@ export default function SystemSettingsPage() {
                 {/* === INTEGRATIONS TAB === */}
                 {activeTab === "integrations" && (
                   <div className="space-y-8">
-                    {/* Quick action bar — verify Hostinger Mail + invoice PDF work end-to-end */}
+                    {/* Quick action bar - verify Hostinger Mail + invoice PDF work end-to-end */}
                     <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-champagne/15 bg-ink-card p-4">
                       <p className="text-xs text-ivory/60">Quick verify:</p>
                       <button
@@ -324,7 +324,7 @@ export default function SystemSettingsPage() {
                         <FileText className="h-3.5 w-3.5" /> Preview Sample Invoice
                       </button>
                       <p className="text-[10px] text-ivory/40">
-                        Opens a sample invoice PDF in a new tab — verify pdfmake works end-to-end on Vercel.
+                        Opens a sample invoice PDF in a new tab - verify pdfmake works end-to-end on Vercel.
                       </p>
                     </div>
 
@@ -490,7 +490,7 @@ export default function SystemSettingsPage() {
                     {notifications.length === 0 ? (
                       <div className="grid place-items-center py-12 text-ivory/40">
                         <Bell className="mb-2 h-8 w-8" />
-                        No alerts — all systems nominal
+                        No alerts - all systems nominal
                       </div>
                     ) : notifications.map(n => (
                       <div key={n.id} className={cn(

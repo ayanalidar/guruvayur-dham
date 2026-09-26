@@ -18,9 +18,9 @@ import { getSetting } from "@/lib/settings";
  *
  * Required configuration (set in encrypted Setting table via admin Settings
  * UI, or in .env for backwards compatibility):
- * - NEXT_PUBLIC_VAPID_PUBLIC_KEY (client-side — MUST stay in process.env,
+ * - NEXT_PUBLIC_VAPID_PUBLIC_KEY (client-side - MUST stay in process.env,
  *   inlined at build time. Not refactored to getSetting.)
- * - VAPID_PRIVATE_KEY (server-only — generate with `npx web-push generate-vapid-keys`)
+ * - VAPID_PRIVATE_KEY (server-only - generate with `npx web-push generate-vapid-keys`)
  * - VAPID_SUBJECT (mailto: or https: URL for push spec compliance)
  *
  * body: {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req, ["MANAGER"]);
   if (error) return error;
 
-  // Rate limit — 10 broadcasts/min/IP (each broadcast iterates all subs).
+  // Rate limit - 10 broadcasts/min/IP (each broadcast iterates all subs).
   const rl = await rateLimit(req, { window: 60, max: 10, key: "push:send" });
   if (!rl.ok) return NextResponse.json({ error: "Too many push broadcasts." }, { status: 429 });
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
   // Verify VAPID configuration. NEXT_PUBLIC_VAPID_PUBLIC_KEY is client-side
   // and MUST stay as process.env (inlined at build time). The private key
-  // and subject are server-only — read via getSetting() so admin can rotate
+  // and subject are server-only - read via getSetting() so admin can rotate
   // them without a redeploy.
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = await getSetting("VAPID_PRIVATE_KEY");
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
       sent++;
     } catch (err: any) {
       failed++;
-      // 404 / 410 = subscription expired or cancelled — mark for deletion.
+      // 404 / 410 = subscription expired or cancelled - mark for deletion.
       if (err.statusCode === 404 || err.statusCode === 410) {
         staleEndpoints.push(sub.endpoint);
       }

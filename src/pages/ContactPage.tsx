@@ -32,7 +32,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const INFO_CARDS = [
-  { icon: Phone, label: "Call Us", value: SITE.phone, href: `tel:${SITE.phoneRaw}`, sub: "Mon–Sun, 24×7" },
+  { icon: Phone, label: "Call Us", value: SITE.phone, href: `tel:${SITE.phoneRaw}`, sub: "Mon-Sun, 24×7" },
   { icon: MessageCircle, label: "WhatsApp", value: SITE.phone, href: waLink("Namaskaram! I'd like to enquire about luxury rooms at Guruvayur Dham."), sub: "Fastest reply · under 5 min" },
   { icon: Mail, label: "Email", value: SITE.email, href: `mailto:${SITE.email}`, sub: "Reply within 4 hours" },
   { icon: MapPin, label: "Visit", value: SITE.shortAddress, href: SITE.mapLink, sub: "2 min from temple gate" },
@@ -70,8 +70,8 @@ export default function ContactPage() {
 *Name:* ${data.name}
 *Phone:* ${data.phone}
 *Reason:* ${data.reason}
-*Check-in:* ${data.checkIn || "—"}
-*Check-out:* ${data.checkOut || "—"}
+*Check-in:* ${data.checkIn || "-"}
+*Check-out:* ${data.checkOut || "-"}
 
 *Message:*
 ${data.message}`;

@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ orders });
 }
 
-// POST /api/kitchen-orders · create new order (from QR code in room — guests)
+// POST /api/kitchen-orders · create new order (from QR code in room - guests)
 export async function POST(req: NextRequest) {
   // Rate limit guest orders to prevent spam (10 per minute per IP).
   const rl = await rateLimit(req, { window: 60, max: 10 });

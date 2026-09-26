@@ -34,7 +34,7 @@ async function main() {
   };
 
   for (const r of ROOMS) {
-    console.log(`Upserting room: ${r.slug} (${r.name}) — ₹${r.price}/night`);
+    console.log(`Upserting room: ${r.slug} (${r.name}) - ₹${r.price}/night`);
     await db.room.upsert({
       where: { slug: r.slug },
       create: {

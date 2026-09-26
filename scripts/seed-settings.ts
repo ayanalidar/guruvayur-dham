@@ -14,7 +14,7 @@ async function main() {
       where: { key: s.key },
       create: {
         key: s.key,
-        value: "", // empty — admin fills in via UI
+        value: "", // empty - admin fills in via UI
         category: s.category,
         label: s.label,
         isSecret: s.isSecret,

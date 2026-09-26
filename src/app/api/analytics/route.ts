@@ -173,12 +173,12 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/analytics
- * Track an analytics event — PUBLIC (called by guests via use-analytics.ts).
- * Rate-limited to prevent spam (60 events/min/IP — covers normal browsing).
+ * Track an analytics event - PUBLIC (called by guests via use-analytics.ts).
+ * Rate-limited to prevent spam (60 events/min/IP - covers normal browsing).
  * body: { eventType, page?, properties? }
  */
 export async function POST(req: NextRequest) {
-  // Rate limit — guests fire ~1 event per page view, so 60/min is plenty.
+  // Rate limit - guests fire ~1 event per page view, so 60/min is plenty.
   const rl = await rateLimit(req, { window: 60, max: 60, key: "analytics:track" });
   if (!rl.ok) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
@@ -230,7 +230,7 @@ export async function POST(req: NextRequest) {
       eventType,
       page: page || null,
       sessionId: sessionMatch?.[1]?.slice(0, 16) || null,
-      userId, // F16 fix — now populated when caller is authed
+      userId, // F16 fix - now populated when caller is authed
       properties: properties ? JSON.stringify(properties) : null,
       referrer,
       userAgent: ua,

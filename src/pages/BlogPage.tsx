@@ -39,7 +39,7 @@ export default function BlogPage() {
           subtitle={subtitle}
           crumbs={[{ label: "Home", route: "/" }, { label: "Blog" }]}
         />
-        <section className="bg-ink py-24 text-center text-ivory/60">No blog posts yet — check back soon.</section>
+        <section className="bg-ink py-24 text-center text-ivory/60">No blog posts yet - check back soon.</section>
       </div>
     );
   }

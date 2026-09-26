@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * useRealtime · stubbed — was previously connecting to socket.io at
+ * useRealtime · stubbed - was previously connecting to socket.io at
  * /?XTransformPort=3003 (Caddy gateway → Node WS service on port 3003).
  *
  * On Vercel there is no WS server, so socket.io was reconnecting forever,
@@ -24,13 +24,13 @@ export function useRealtime(events: string[] = []) {
   const [connected, setConnected] = useState(false);
   const [lastEvent, setLastEvent] = useState<{ event: string; data: any } | null>(null);
 
-  // No connection attempt — silently no-op.
+  // No connection attempt - silently no-op.
   useEffect(() => {
     setConnected(false);
   }, []);
 
   const emit = (_event: string, _data: any) => {
-    // No-op — WS server not deployed.
+    // No-op - WS server not deployed.
   };
 
   return { connected, lastEvent, emit };

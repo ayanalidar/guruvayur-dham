@@ -89,8 +89,8 @@ export default function AboutPage() {
                 Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura.
                 Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium
                 furnishings, and proximity to all major Braj temples. Owner Ram Meena and his
-                team provide round-the-clock hospitality — from temple darshan guidance to
-                local travel tips — making every pilgrim's Braj journey effortless and
+                team provide round-the-clock hospitality - from temple darshan guidance to
+                local travel tips - making every pilgrim's Braj journey effortless and
                 memorable.
               </p>
             </div>

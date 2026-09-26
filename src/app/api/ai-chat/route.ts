@@ -11,10 +11,10 @@ const ChatSchema = z.object({
   })).max(20).optional(),
 });
 
-// POST /api/ai-chat — Guruvayur Guide chatbot
+// POST /api/ai-chat - Guruvayur Guide chatbot
 // Uses Groq (Llama 3.3 70B) first, falls back to z-ai SDK (GLM)
 export async function POST(req: NextRequest) {
-  // Rate limit — 20 messages/min per IP (prevents Groq/GLM API cost abuse).
+  // Rate limit - 20 messages/min per IP (prevents Groq/GLM API cost abuse).
   const rl = await rateLimit(req, { window: 60, max: 20, key: "ai-chat" });
   if (!rl.ok) return NextResponse.json({ error: "Too many messages. Please wait a minute." }, { status: 429 });
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
   const { message, history } = parsed.data;
 
-  const systemPrompt = `You are the Guruvayur Dham AI Guide — a warm, knowledgeable assistant for pilgrims visiting Mathura, Uttar Pradesh, India. You help with:
+  const systemPrompt = `You are the Guruvayur Dham AI Guide - a warm, knowledgeable assistant for pilgrims visiting Mathura, Uttar Pradesh, India. You help with:
 - Temple darshan timings, dress code, and rituals
 - Room bookings at Guruvayur Dham (₹1,500-₹3,500/night)
 - Pooja bookings (Mangala Aarti, Abhishek, Rajbhog, Sandhya Aarti, etc.)
@@ -37,7 +37,7 @@ Always be respectful, warm, and concise. Use "Namaskaram" or "Radhe Radhe" as gr
 KNOWLEDGE BASE:
 - Location: Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001
 - Phone: +91-90908 20208
-- Rooms: 52 total — AC, Non-AC, Family Suite, Dormitory
+- Rooms: 52 total - AC, Non-AC, Family Suite, Dormitory
 - Price range: ₹1,500 to ₹3,500 per night
 - Check-in: 12:00 PM, Check-out: 11:00 AM
 - 24×7 hot water, free WiFi, free parking
@@ -60,7 +60,7 @@ POOJAS AVAILABLE:
 - Phool Bangla: ₹5,100 (flower palace decoration)
 
 MAJOR FESTIVALS:
-- Janmashtami (Aug/Sept): Krishna's birthday — biggest festival
+- Janmashtami (Aug/Sept): Krishna's birthday - biggest festival
 - Holi (March): Lathmar Holi in Barsana, Phoolon ki Holi in Vrindavan
 - Diwali (Oct/Nov): Festival of lights
 - Radhashtami (Aug/Sept): Radha's appearance day
@@ -92,7 +92,7 @@ If you don't know something, say so honestly and suggest the guest WhatsApp us a
     });
   } catch (error: any) {
     return NextResponse.json({
-      reply: `Namaskaram! I'm having trouble connecting right now. For immediate assistance, please WhatsApp us at +91-90908 20208 — we reply within 5 minutes.`,
+      reply: `Namaskaram! I'm having trouble connecting right now. For immediate assistance, please WhatsApp us at +91-90908 20208 - we reply within 5 minutes.`,
       error: "Request failed",
     });
   }

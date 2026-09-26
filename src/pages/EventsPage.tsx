@@ -25,7 +25,7 @@ export default function EventsPage() {
   const titleHighlight = titleParts.length > 3 ? titleParts.slice(-2).join(" ") : "";
   const titlePre = titleHighlight ? titleParts.slice(0, -2).join(" ").trim() : title;
 
-  // JSON-LD Event schema — one entry per upcoming event
+  // JSON-LD Event schema - one entry per upcoming event
   const eventSchema = {
     "@context": "https://schema.org",
     "@graph": events.map((ev) => ({

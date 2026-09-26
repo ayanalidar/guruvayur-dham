@@ -1,6 +1,6 @@
 /**
  * Generate a stunning logo for Guruvayur Dham
- * Creates 3 variations — pick the best one
+ * Creates 3 variations - pick the best one
  * All on pure black background for easy transparency removal
  */
 import ZAI from "z-ai-web-dev-sdk";

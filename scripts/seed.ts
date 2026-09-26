@@ -1,5 +1,5 @@
 /**
- * Seed script — populates DB from existing site-data.ts mock content.
+ * Seed script - populates DB from existing site-data.ts mock content.
  * Run: bun run /home/z/my-project/scripts/seed.ts
  */
 import { PrismaClient } from "@prisma/client";
@@ -40,7 +40,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   /* ----- Why Choose Us section ----- */
   { key: "whyChooseUs.eyebrow", value: "Why Pilgrims Choose Us", category: "whyChooseUs", label: "Why Us Eyebrow" },
   { key: "whyChooseUs.title", value: "More Than a Stay · A Pilgrim Companion", category: "whyChooseUs", label: "Why Us Title" },
-  { key: "whyChooseUs.subtitle", value: "We've welcomed 10,000+ pilgrims since 2020. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
+  { key: "whyChooseUs.subtitle", value: "We've welcomed 10,000+ pilgrims since 2020. Every detail - from 24×7 hot water to free temple darshan guidance - is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
 
   /* ----- Homepage stats strip (WhyChooseUs section) ----- */
   { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
@@ -51,24 +51,24 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   /* ----- Rooms section ----- */
   { key: "rooms.eyebrow", value: "Rooms & Suites", category: "rooms", label: "Rooms Eyebrow" },
   { key: "rooms.title", value: "Cinematic Dark-Luxe Rooms", category: "rooms", label: "Rooms Title" },
-  { key: "rooms.subtitle", value: "From ₹1,500 Deluxe to ₹3,500 GVD Suites — every option is sanitised daily and 2 minutes from Mathura Station.", category: "rooms", label: "Rooms Subtitle" },
+  { key: "rooms.subtitle", value: "From ₹1,500 Deluxe to ₹3,500 GVD Suites - every option is sanitised daily and 2 minutes from Mathura Station.", category: "rooms", label: "Rooms Subtitle" },
 
   /* ----- Pooja section ----- */
   { key: "pooja.eyebrow", value: "Pooja & Offerings", category: "pooja", label: "Pooja Eyebrow" },
-  { key: "pooja.title", value: "Mathura Pooja Booking — Pushpanjali, Abhishek & More", category: "pooja", label: "Pooja Title" },
-  { key: "pooja.subtitle", value: "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue.", category: "pooja", label: "Pooja Subtitle" },
+  { key: "pooja.title", value: "Mathura Pooja Booking - Pushpanjali, Abhishek & More", category: "pooja", label: "Pooja Title" },
+  { key: "pooja.subtitle", value: "Book any temple pooja through Guruvayur Dham at the official temple rate - zero commission, zero waiting in queue.", category: "pooja", label: "Pooja Subtitle" },
 
   /* ----- About section ----- */
   { key: "about.eyebrow", value: "About Guruvayur Dham", category: "about", label: "About Eyebrow" },
   { key: "about.title", value: "A Modern Pilgrim Home Since 2020", category: "about", label: "About Title" },
-  { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality — from temple darshan guidance to local travel tips — making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story" },
+  { key: "about.story", value: "Guruvayur Dham is an inviting haven of comfort and warm hospitality in Mathura. Since 2020, we've welcomed 10,000+ pilgrims with modern AC rooms, premium furnishings, and proximity to all major Braj temples. Owner Ram Meena and his team provide round-the-clock hospitality - from temple darshan guidance to local travel tips - making every pilgrim's Braj journey effortless and memorable.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English", category: "about", label: "About Story" },
 
   /* ----- Contact section ----- */
   { key: "contact.eyebrow", value: "Get in Touch", category: "contact", label: "Contact Eyebrow" },
   { key: "contact.title", value: "Book Your Stay or Ask Anything", category: "contact", label: "Contact Title" },
-  { key: "contact.subtitle", value: "Fill the form below and we'll WhatsApp you back within minutes — or reach us directly through any of the channels here.", category: "contact", label: "Contact Subtitle" },
+  { key: "contact.subtitle", value: "Fill the form below and we'll WhatsApp you back within minutes - or reach us directly through any of the channels here.", category: "contact", label: "Contact Subtitle" },
   { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Primary Phone (display + tel: link)" },
-  { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Primary Phone (tel: link — no spaces)" },
+  { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Primary Phone (tel: link - no spaces)" },
   { key: "contact.phone2", value: "+91 8445555584", category: "contact", label: "Secondary Phone (display only)" },
   { key: "contact.phones", value: "+91-90908 20208, +91 8445555584", category: "contact", label: "Combined Phones Display" },
   { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp Number (country code + number, no +)" },
@@ -146,7 +146,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   {
     key: "darshan.cards",
     category: "darshan",
-    label: "Darshan Cards (JSON array — icon/title/text/cta/href/accent)",
+    label: "Darshan Cards (JSON array - icon/title/text/cta/href/accent)",
     value: JSON.stringify([
       { icon: "Clock", title: "Temple Timings", text: "Krishna Janmabhoomi 5 AM-12 PM, 4-9:30 PM • Dwarkadhish 6:30-10:30 AM, 4-7 PM", cta: "View Full Schedule", href: "#blog", accent: "saffron" },
       { icon: "Flame", title: "Pooja Booking", text: "Pushpanjali, Abhishek, Mangala Aarti, Rajbhog & more. Book in 60 seconds.", cta: "Book a Pooja", href: "#pooja", accent: "maroon" },
@@ -297,7 +297,7 @@ async function seed() {
             channel: ch,
             action: "BLOCK",
             status: "SUCCESS",
-            message: `Room blocked for ${b.guestName} (${ref}) — sync from ${b.source}`,
+            message: `Room blocked for ${b.guestName} (${ref}) - sync from ${b.source}`,
             payload: JSON.stringify({ reference: ref, checkIn, checkOut, roomSlug: b.roomSlug }),
           },
         });

@@ -12,17 +12,17 @@ import { withRetry } from "@/lib/retry";
  * Business API (or Twilio's WhatsApp API). Configure the webhook URL in
  * your Meta Business Manager → WhatsApp Manager → Webhook setup.
  *
- * GET  /api/whatsapp/webhook  — Webhook verification (Meta sends hub.challenge)
- * POST /api/whatsapp/webhook  — Incoming messages
+ * GET  /api/whatsapp/webhook  - Webhook verification (Meta sends hub.challenge)
+ * POST /api/whatsapp/webhook  - Incoming messages
  *
  * Configuration (set in encrypted Setting table via admin Settings UI, or
  * in .env for backwards compatibility):
- *   - WHATSAPP_VERIFY_TOKEN  — the token you set in Meta Business Manager
- *   - WHATSAPP_APP_SECRET    — your Meta app secret (used for signature
- *                              verification of POST payloads — REQUIRED in
+ *   - WHATSAPP_VERIFY_TOKEN  - the token you set in Meta Business Manager
+ *   - WHATSAPP_APP_SECRET    - your Meta app secret (used for signature
+ *                              verification of POST payloads - REQUIRED in
  *                              production for security)
- *   - WHATSAPP_PHONE_NUMBER_ID  — your WhatsApp Business phone number ID
- *   - WHATSAPP_ACCESS_TOKEN  — your WhatsApp Business API access token
+ *   - WHATSAPP_PHONE_NUMBER_ID  - your WhatsApp Business phone number ID
+ *   - WHATSAPP_ACCESS_TOKEN  - your WhatsApp Business API access token
  *
  * SECURITY (Phase B C8 fix):
  * - POST now verifies Meta's X-Hub-Signature-256 HMAC header. Without this,
@@ -30,7 +30,7 @@ import { withRetry } from "@/lib/retry";
  *   leaking booking details to the attacker by phone).
  */
 
-// GET — Webhook verification (Meta calls this when you set up the webhook)
+// GET - Webhook verification (Meta calls this when you set up the webhook)
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const mode = url.searchParams.get("hub.mode");
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ error: "Verification failed" }, { status: 403 });
 }
 
-// POST — Incoming WhatsApp message (signature-verified).
+// POST - Incoming WhatsApp message (signature-verified).
 export async function POST(req: NextRequest) {
   try {
     // ===== Signature verification (X-Hub-Signature-256) =====
@@ -79,15 +79,15 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
       }
     } else if (process.env.NODE_ENV === "production") {
-      // Fail-closed in production — without app secret, we can't verify.
-      console.error("WHATSAPP_APP_SECRET not set — refusing to process WhatsApp webhook in production");
+      // Fail-closed in production - without app secret, we can't verify.
+      console.error("WHATSAPP_APP_SECRET not set - refusing to process WhatsApp webhook in production");
       return NextResponse.json(
         { error: "Server misconfiguration: WHATSAPP_APP_SECRET not set" },
         { status: 503 }
       );
     } else {
-      // Dev only — warn but allow (so you can test without configuring Meta).
-      console.warn("WHATSAPP_APP_SECRET not set — skipping webhook signature verification (dev mode)");
+      // Dev only - warn but allow (so you can test without configuring Meta).
+      console.warn("WHATSAPP_APP_SECRET not set - skipping webhook signature verification (dev mode)");
     }
 
     const body = JSON.parse(rawBody);
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     const contact = change?.value?.contacts?.[0];
 
     if (!message) {
-      // Not a message webhook (could be status update) — acknowledge
+      // Not a message webhook (could be status update) - acknowledge
       return NextResponse.json({ status: "ok" });
     }
 
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     }
 
     // SECURITY (Round 3 M12 fix): idempotency on messageId. Meta retries
-    // webhook delivery on 5xx responses — without this check, a retried
+    // webhook delivery on 5xx responses - without this check, a retried
     // webhook would create a duplicate Notification row + send a duplicate
     // WhatsApp reply to the guest. We use the Notification.relatedRef field
     // (already exists) to store the messageId and check for existing rows
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       });
       if (existing) {
-        // Already processed — log the duplicate attempt + acknowledge.
+        // Already processed - log the duplicate attempt + acknowledge.
         await db.webhookDelivery.create({
           data: {
             source: "WHATSAPP",
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
     // Process the message using the same intent logic as /api/whatsapp-bot
     const reply = await processMessage(from, text);
 
-    // Log the conversation (in dev only — PII in prod logs is risky).
+    // Log the conversation (in dev only - PII in prod logs is risky).
     if (process.env.NODE_ENV !== "production") {
       console.log(`WhatsApp IN from ${from}: ${text.slice(0, 80)}`);
     }
@@ -235,11 +235,11 @@ async function processMessage(phone: string, message: string): Promise<string> {
   }
 
   if (msg.match(/my booking|status|reference/)) {
-    // SECURITY (F4): do NOT return booking details by phone — anyone texting
+    // SECURITY (F4): do NOT return booking details by phone - anyone texting
     // the WhatsApp Business number with "my booking" would learn that phone's
     // booking reference, dates, amount. Ask for booking reference instead
     // (GD-XXXX is a secret known only to the actual guest).
-    return `To check your booking, please share your booking reference (starts with GD-, e.g. GD-AB12CD). You received it via WhatsApp/SMS when you booked. Lost your reference? Please call our front desk at +91-90908 20208 — we'll verify your identity before sharing details.`;
+    return `To check your booking, please share your booking reference (starts with GD-, e.g. GD-AB12CD). You received it via WhatsApp/SMS when you booked. Lost your reference? Please call our front desk at +91-90908 20208 - we'll verify your identity before sharing details.`;
   }
 
   // AI fallback for general questions
@@ -266,7 +266,7 @@ async function sendWhatsAppReply(to: string, message: string): Promise<void> {
   const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
 
   if (!token || !phoneNumberId) {
-    // Only log in dev — PII in prod logs is risky.
+    // Only log in dev - PII in prod logs is risky.
     if (process.env.NODE_ENV !== "production") {
       console.log("[DEV] WhatsApp reply not sent (env vars not set):", message.slice(0, 80));
     }
@@ -279,7 +279,7 @@ async function sendWhatsAppReply(to: string, message: string): Promise<void> {
     // (the inbound message has already been logged; this is the outbound
     // reply path). Circuit breaker key "whatsapp" auto-trips after 5
     // consecutive failures (shared with /api/reviews/checkout-funnel) for
-    // 5 min — surfaces on the Health Dashboard.
+    // 5 min - surfaces on the Health Dashboard.
     const res = await withRetry(
       () => fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
         method: "POST",
@@ -297,7 +297,7 @@ async function sendWhatsAppReply(to: string, message: string): Promise<void> {
       { maxRetries: 2, circuitBreakerKey: "whatsapp" },
     );
     // Drain the body so the connection can be reused. We don't need the
-    // response body — failures are visible in the Notification table.
+    // response body - failures are visible in the Notification table.
     await res.text().catch(() => {});
   } catch (error) {
     console.error("Failed to send WhatsApp reply:", error);

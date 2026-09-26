@@ -17,7 +17,7 @@ const CreateMenuItemSchema = z.object({
 const UpdateMenuItemSchema = z.object({
   id: z.string().min(1),
   // SECURITY (Phase2-MassAssignment): explicit whitelist of MenuItem columns.
-  // No `image` field — Prisma MenuItem has no image column (image is only on
+  // No `image` field - Prisma MenuItem has no image column (image is only on
   // Room/Pooja/Carousel/BlogPost/GalleryImage). id/createdAt/updatedAt are
   // server-controlled.
   data: z.object({

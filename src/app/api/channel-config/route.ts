@@ -5,7 +5,7 @@ import { requireStaff } from "@/lib/auth";
 import { URL } from "url";
 
 /**
- * SSRF guard — validates an API endpoint URL before the server fetches it.
+ * SSRF guard - validates an API endpoint URL before the server fetches it.
  *
  * SECURITY (Round 3 S19 fix): rejects URLs that would let a MANAGER probe
  * internal services or exfiltrate the channel API key to attacker-controlled
@@ -19,7 +19,7 @@ import { URL } from "url";
  *   in 10/8, 172.16/12, 192.168/16, 169.254/16, fc00::/7 ranges
  *
  * Note: this is a hostname-string check. For full protection against DNS
- * rebinding, also resolve the hostname and check the IP — but Node's fetch
+ * rebinding, also resolve the hostname and check the IP - but Node's fetch
  * doesn't expose the resolved IP. Production deployments behind Cloudflare
  * or Vercel already block private-IP egress.
  */
@@ -48,7 +48,7 @@ function isSafeApiEndpoint(rawUrl: string): { ok: boolean; reason?: string } {
     const [, a, b] = ipv4Match.map(Number) as unknown as number[];
     if (a === 10) return { ok: false, reason: "Private IP range (10.x) blocked" };
     if (a === 127) return { ok: false, reason: "Loopback IP (127.x) blocked" };
-    if (a === 169 && b === 254) return { ok: false, reason: "Link-local IP (169.254.x) blocked — AWS metadata endpoint" };
+    if (a === 169 && b === 254) return { ok: false, reason: "Link-local IP (169.254.x) blocked - AWS metadata endpoint" };
     if (a === 172 && b >= 16 && b <= 31) return { ok: false, reason: "Private IP range (172.16-31.x) blocked" };
     if (a === 192 && b === 168) return { ok: false, reason: "Private IP range (192.168.x) blocked" };
     if (a === 0) return { ok: false, reason: "Reserved IP range (0.x) blocked" };
@@ -130,7 +130,7 @@ export async function GET(req: NextRequest) {
         u.searchParams.delete("key");
         safeWebhookUrl = u.toString();
       } catch {
-        // not a URL — leave as-is
+        // not a URL - leave as-is
       }
     }
     return {
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
       apiKey: c.apiKey ? `****${c.apiKey.slice(-4)}` : null,
       apiSecret: c.apiSecret ? `****${c.apiSecret.slice(-4)}` : null,
       webhookUrl: safeWebhookUrl,
-      // Omit config blob — it can contain secrets (per-channel tokens, etc).
+      // Omit config blob - it can contain secrets (per-channel tokens, etc).
       // Only return it if MANAGER explicitly requests ?includeConfig=1.
       config: req.nextUrl.searchParams.get("includeConfig") === "1" ? c.config : null,
     };
@@ -280,7 +280,7 @@ export async function PUT(req: NextRequest) {
     let message = "";
 
     if (config.apiEndpoint) {
-      // SECURITY (Round 3 S19 fix): SSRF allowlist — reject private/internal
+      // SECURITY (Round 3 S19 fix): SSRF allowlist - reject private/internal
       // IP ranges and require HTTPS. Prevents a malicious/compromised MANAGER
       // from probing internal services (e.g. http://169.254.169.254/ for AWS
       // metadata, http://localhost:5432 for DB) or exfiltrating the channel
@@ -307,7 +307,7 @@ export async function PUT(req: NextRequest) {
         ? `Connected successfully (HTTP ${(res as any).status})`
         : `Connection failed: ${(res as any).statusText || "HTTP " + (res as any).status}`;
     } else {
-      // No endpoint — simulate success if key exists
+      // No endpoint - simulate success if key exists
       success = true;
       message = "API key saved. Real connection test will run when API endpoint is configured.";
     }

@@ -9,7 +9,7 @@ import { requireStaff } from "@/lib/auth";
  * Returns detailed status for monitoring dashboards and uptime checks.
  *
  * Query params:
- *   ?detailed=1  — include detailed checks (slower, but more info)
+ *   ?detailed=1  - include detailed checks (slower, but more info)
  */
 export async function GET(req: NextRequest) {
   const detailed = req.nextUrl.searchParams.get("detailed") === "1";
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     await db.$queryRaw`SELECT 1`;
     checks.push({ service: "database", status: "ok", latency: Date.now() - dbStart });
   } catch (error: any) {
-    // Redact raw DB error messages — they can leak connection string details,
+    // Redact raw DB error messages - they can leak connection string details,
     // table names, or internal Postgres error codes useful for attackers.
     // Only show the detailed message when ?detailed=1 (which already required
     // staff auth above).
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     status: allOk ? "healthy" : "degraded",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    // Always safe to expose — NODE_ENV is just "production" / "development".
+    // Always safe to expose - NODE_ENV is just "production" / "development".
     environment: process.env.NODE_ENV,
     checks,
     summary: { total: checks.length, ok: checks.filter(c => c.status === "ok").length, error: checks.filter(c => c.status === "error").length },

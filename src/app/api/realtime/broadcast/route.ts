@@ -33,7 +33,7 @@ const ALLOWED_EVENTS = new Set([
  * Validates the `data` payload matches the expected shape for each event.
  * Without this, a compromised staff token could push a booking:new event
  * with `data.amount: -99999` or `data.reference: "<script>alert(1)</script>"`
- * — React escapes by default so XSS is unlikely, but UI confusion is possible.
+ * - React escapes by default so XSS is unlikely, but UI confusion is possible.
  */
 const EventDataSchemas: Record<string, z.ZodType> = {
   "booking:new": z.object({

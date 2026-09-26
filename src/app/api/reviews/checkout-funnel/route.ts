@@ -6,7 +6,7 @@ import { withRetry } from "@/lib/retry";
 /**
  * POST /api/reviews/checkout-funnel
  *
- * Post-stay review funnel — finds all bookings that checked out ~2 hours ago
+ * Post-stay review funnel - finds all bookings that checked out ~2 hours ago
  * and haven't been sent a review request yet. Creates a ReviewRequest row
  * and sends a WhatsApp message with a direct Google Reviews link.
  *
@@ -27,12 +27,12 @@ import { withRetry } from "@/lib/retry";
  * "reviews.googleLink" (default: https://g.page/r/GURUVAYUR_DHAM/review).
  *
  * Query params:
- *   - ?dryRun=1  — returns what would be sent without actually sending
- *   - ?hours=2   — override the hours-after-checkout window (default: 2)
+ *   - ?dryRun=1  - returns what would be sent without actually sending
+ *   - ?hours=2   - override the hours-after-checkout window (default: 2)
  */
 
 export async function POST(req: NextRequest) {
-  // CRON_SECRET check — fail-closed (if secret is unset, refuse all requests).
+  // CRON_SECRET check - fail-closed (if secret is unset, refuse all requests).
   // This prevents unauthorized triggering of WhatsApp review messages.
   // Vercel Cron sets CRON_SECRET automatically; on VPS, set it in .env or
   // via the admin Settings UI (encrypted Setting table).
@@ -203,7 +203,7 @@ async function sendWhatsAppMessage(to: string, message: string): Promise<boolean
   const phoneNumberId = await getSetting("WHATSAPP_PHONE_NUMBER_ID");
 
   if (!token || !phoneNumberId) {
-    // Only log in dev — PII in prod logs is risky.
+    // Only log in dev - PII in prod logs is risky.
     if (process.env.NODE_ENV !== "production") {
       console.log("[DEV] WhatsApp message not sent (env vars not set):", message.slice(0, 80));
     }

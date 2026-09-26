@@ -25,7 +25,7 @@ async function main() {
     departureTime: "09:30 am",
     nights: 2,
     items: [
-      { srNo: 1, description: "Suite — Room Charges", rate: `2 × ${formatINR(2800)}`, amount: formatINR(5600) },
+      { srNo: 1, description: "Suite - Room Charges", rate: `2 × ${formatINR(2800)}`, amount: formatINR(5600) },
     ],
     subtotal: formatINR(5600),
     taxableAmount: formatINR(5600),
@@ -44,7 +44,7 @@ async function main() {
   };
   const buf = await generateInvoicePdf(demoData as any);
   writeFileSync("/tmp/test-invoice-local.pdf", buf);
-  console.log("✓ Generated PDF — size:", buf.length, "bytes");
+  console.log("✓ Generated PDF - size:", buf.length, "bytes");
   console.log("First 8 bytes:", buf.slice(0, 8).toString("utf-8"));
 }
 main().catch(e => { console.error("ERR:", e); process.exit(1); });

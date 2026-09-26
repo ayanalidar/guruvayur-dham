@@ -21,7 +21,7 @@ const CreateCouponSchema = z.object({
 
 const UpdateCouponSchema = z.object({
   id: z.string().min(1),
-  // SECURITY (Phase2-MassAssignment): explicit whitelist — `code` is immutable
+  // SECURITY (Phase2-MassAssignment): explicit whitelist - `code` is immutable
   // after creation (it's the user-facing identifier) and `usedCount` is
   // server-controlled (incremented by markCouponUsed on each redemption).
   data: z.object({

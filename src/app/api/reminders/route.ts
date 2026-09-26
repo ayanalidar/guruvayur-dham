@@ -104,11 +104,11 @@ export async function PATCH(req: NextRequest) {
 }
 
 // PUT /api/reminders/process · process all due reminders (called by cron).
-// CRON_SECRET-protected — prevents anyone from triggering mass WhatsApp sends.
+// CRON_SECRET-protected - prevents anyone from triggering mass WhatsApp sends.
 // Secret can be set in .env or via the admin Settings UI (encrypted Setting
-// table) — read at runtime via getSetting().
+// table) - read at runtime via getSetting().
 export async function PUT(req: NextRequest) {
-  // CRON_SECRET check — fail-closed.
+  // CRON_SECRET check - fail-closed.
   const cronSecret = await getSetting("CRON_SECRET");
   if (!cronSecret) {
     return NextResponse.json(

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
-// SECURITY (Phase2-MassAssignment): removed `.passthrough()` — default Zod
+// SECURITY (Phase2-MassAssignment): removed `.passthrough()` - default Zod
 // behavior strips unknown fields, which is what we want (no mass-assignment
 // via POST). Schema lists the actual Prisma TravelAgent columns that are
 // user-editable on create.

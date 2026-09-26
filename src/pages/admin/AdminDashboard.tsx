@@ -69,8 +69,8 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon={BedDouble} label="Total Rooms" value={stats?.totalRooms ?? "—"} sub={`${stats?.liveAvailability?.totalUnits ?? "—"} total units`} />
-            <StatCard icon={CalendarDays} label="Active Bookings" value={stats?.activeBookings ?? "—"} sub={`${stats?.bookingsNext7 ?? "—"} arriving in 7 days`} />
+            <StatCard icon={BedDouble} label="Total Rooms" value={stats?.totalRooms ?? "-"} sub={`${stats?.liveAvailability?.totalUnits ?? "-"} total units`} />
+            <StatCard icon={CalendarDays} label="Active Bookings" value={stats?.activeBookings ?? "-"} sub={`${stats?.bookingsNext7 ?? "-"} arriving in 7 days`} />
             <StatCard icon={TrendingUp} label="Occupancy Today" value={`${stats?.liveAvailability?.occupancyRate ?? 0}%`} sub={`${stats?.liveAvailability?.totalUnitsAvailable ?? 0} units available`} />
             <StatCard icon={IndianRupee} label="Total Revenue" value={`₹${(stats?.totalRevenue ?? 0).toLocaleString("en-IN")}`} sub="All-time confirmed" />
           </div>

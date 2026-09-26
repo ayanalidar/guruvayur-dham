@@ -7,11 +7,11 @@ import { rateLimit } from "@/lib/rate-limiter";
  * GET /api/influencer-track?code=GDRAJ42
  * Tracks a click from an influencer's unique link.
  * Called when someone visits the site with ?ref=INFLUENCER_CODE
- * Increments click count + logs click details. PUBLIC — anyone visiting
+ * Increments click count + logs click details. PUBLIC - anyone visiting
  * with a referral code triggers a click track.
  */
 export async function GET(req: NextRequest) {
-  // Rate limit click tracking (GET is state-changing — creates click row,
+  // Rate limit click tracking (GET is state-changing - creates click row,
   // increments click count). Without this, anyone can script massive click
   // fraud against any influencer code.
   const rl = await rateLimit(req, { window: 60, max: 10, key: "influencer-track" });
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
  *
  * SECURITY (Phase C M3 fix): Now requires staff auth. Was: anyone could
  * pass any influencer code + bookingRef and inflate the influencer's
- * totalBookings + totalCommission — financial fraud vector.
+ * totalBookings + totalCommission - financial fraud vector.
  *
  * body: { code, bookingRef }
  */

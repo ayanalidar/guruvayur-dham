@@ -5,9 +5,9 @@ import { getUserFromRequest } from "@/lib/auth";
  * GET /api/auth/session
  * Returns the current logged-in user (or null if not authenticated).
  *
- * SECURITY (Phase A H17 fix — role-based field whitelist):
+ * SECURITY (Phase A H17 fix - role-based field whitelist):
  * - Guests get: id, name, email, role, customerId (their own profile).
- * - Staff get: id, name, role, staffId (NO email/phone/customerId — staff PII
+ * - Staff get: id, name, role, staffId (NO email/phone/customerId - staff PII
  *   minimization. A guest who somehow obtains a staff session token (via XSS,
  *   log leak, etc.) gets only minimal identity fields, not full staff PII.)
  */

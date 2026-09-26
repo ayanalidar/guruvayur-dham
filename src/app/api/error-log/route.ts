@@ -6,16 +6,16 @@ import { requireStaff } from "@/lib/auth";
 /**
  * Error Log API
  *
- * GET  /api/error-log   — list recent errors (with filters)
- * POST /api/error-log   — mark an error as resolved
+ * GET  /api/error-log   - list recent errors (with filters)
+ * POST /api/error-log   - mark an error as resolved
  *
- * Both MANAGER-only — error messages can leak infrastructure details.
+ * Both MANAGER-only - error messages can leak infrastructure details.
  *
  * GET query params:
- *   ?route=/api/bookings     — filter by route prefix (case-sensitive)
- *   ?errorType=DB_ERROR      — filter by error type
- *   ?resolved=true|false     — filter by resolved state
- *   ?limit=50                — cap (default 50, max 500)
+ *   ?route=/api/bookings     - filter by route prefix (case-sensitive)
+ *   ?errorType=DB_ERROR      - filter by error type
+ *   ?resolved=true|false     - filter by resolved state
+ *   ?limit=50                - cap (default 50, max 500)
  */
 
 const ErrorTypeEnum = z.enum([

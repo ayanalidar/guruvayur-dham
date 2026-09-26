@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     if (from) where.checkIn.gte = new Date(from);
     if (to) where.checkIn.lte = new Date(to);
   }
-  // Search filter — matches guest name, phone, email, or booking reference
+  // Search filter - matches guest name, phone, email, or booking reference
   if (search) {
     where.OR = [
       { guestName: { contains: search, mode: "insensitive" } },
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ bookings });
 }
 
-// POST /api/bookings · create a new booking (from any source — guests via /book, staff, channel managers)
+// POST /api/bookings · create a new booking (from any source - guests via /book, staff, channel managers)
 // body: { roomSlug, guestName, guestPhone, guestEmail?, checkIn, checkOut, guests, source, channelBookingId?, notes? }
 // This is the CORE function · when a booking is made here, it broadcasts BLOCK to all channels.
 export async function POST(req: NextRequest) {
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
   // ===== CREATE BOOKING =====
   const ref = generateRef("GD");
   // SECURITY (Round 3 F3 fix): use calculateRoomPrice for proper dynamic pricing
-  // (weekend surge, early-bird, last-minute, festival, coupons) — was flat
+  // (weekend surge, early-bird, last-minute, festival, coupons) - was flat
   // room.price * ratePlan.priceModifier * nights.
   const pricing = await calculateRoomPrice(roomSlug, ci, co);
   // Apply channel markup on top of dynamic price (rate plan modifier).
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
   const amount = Math.round(pricing.totalPrice * modifier);
 
   // SECURITY (Round 3 S20 fix): wrap check+create+decrement in a transaction
-  // using conditional updateMany (atomic) — prevents TOCTOU race where two
+  // using conditional updateMany (atomic) - prevents TOCTOU race where two
   // concurrent bookings both pass the availability check and the room's
   // available count goes negative.
   const booking = await db.booking.create({
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
   // ===== BLOCK AVAILABILITY (atomic conditional decrement) =====
   // For each night, decrement availability ONLY if available > 0.
   // If any night fails (returns count=0), the room was sold out between
-  // our check above and now (race condition) — abort and 409.
+  // our check above and now (race condition) - abort and 409.
   for (let i = 0; i < nights; i++) {
     const d = new Date(ci);
     d.setDate(d.getDate() + i);
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
       },
     });
     if (result.count === 0) {
-      // Race lost — another booking grabbed the last room. Roll back our booking.
+      // Race lost - another booking grabbed the last room. Roll back our booking.
       await db.booking.delete({ where: { id: booking.id } }).catch(() => {});
       // Also roll back any availability decrements we already made for prior nights.
       for (let j = 0; j < i; j++) {
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
         }).catch(() => {});
       }
       return NextResponse.json({
-        error: `Room just sold out on ${d.toDateString()} — please try another date`,
+        error: `Room just sold out on ${d.toDateString()} - please try another date`,
         date: d.toISOString(),
       }, { status: 409 });
     }
@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
 
   // ===== BROADCAST SYNC TO ALL CHANNEL PARTNERS (uses shared helper) =====
   // SECURITY (Round 3 F6 fix): use broadcastToChannels() instead of inline
-  // duplicate — ensures [SIMULATED] prefix is shown in admin dashboard.
+  // duplicate - ensures [SIMULATED] prefix is shown in admin dashboard.
   const syncResults = await broadcastToChannels({
     bookingId: booking.id,
     bookingRef: ref,

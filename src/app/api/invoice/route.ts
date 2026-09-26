@@ -6,10 +6,10 @@ import { requireStaff, getUserFromRequest } from "@/lib/auth";
  * GET /api/invoice?bookingId=xxx
  * Get invoice data for a booking.
  *
- * SECURITY (Phase A C3 fix — IDOR):
+ * SECURITY (Phase A C3 fix - IDOR):
  * - Staff can view any booking's invoice.
  * - Guests can view only invoices for bookings whose guestPhone matches their
- *   own user.phone. This prevents IDOR — without this check, anyone passing
+ *   own user.phone. This prevents IDOR - without this check, anyone passing
  *   any bookingId could retrieve the guest's name, phone, email, and amount.
  */
 export async function GET(req: NextRequest) {
@@ -22,20 +22,20 @@ export async function GET(req: NextRequest) {
   });
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
 
-  // Authorization — staff OR booking owner.
+  // Authorization - staff OR booking owner.
   const session = await getUserFromRequest(req);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const isStaff = session.role !== "GUEST";
   if (!isStaff) {
-    // Guest — must own this booking (match by phone or email).
+    // Guest - must own this booking (match by phone or email).
     const guestPhone = session.user.phone || "";
     const guestEmail = session.user.email || "";
     const owns = booking.guestPhone === guestPhone
       || (booking.guestEmail && booking.guestEmail === guestEmail);
     if (!owns) {
-      return NextResponse.json({ error: "Forbidden — not your booking" }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden - not your booking" }, { status: 403 });
     }
   }
 
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * PATCH /api/invoice · save edited invoice (staff only — admin invoice generator).
+ * PATCH /api/invoice · save edited invoice (staff only - admin invoice generator).
  */
 export async function PATCH(req: NextRequest) {
   const { error } = await requireStaff(req);

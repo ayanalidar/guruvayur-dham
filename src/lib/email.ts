@@ -2,12 +2,12 @@
  * Hostinger Mail API client.
  *
  * Sends transactional emails via Hostinger's Agentic Mail REST API
- * (https://api.mail.hostinger.com). Replaces nodemailer SMTP setup —
+ * (https://api.mail.hostinger.com). Replaces nodemailer SMTP setup -
  * requires only 2 secrets instead of 5 (SMTP_HOST/PORT/USER/PASS/FROM_EMAIL).
  *
  * Required settings (encrypted in Setting table, editable in /admin/system):
  *   - HOSTINGER_MAIL_TOKEN     (Bearer token from hPanel → Agentic Mail → API)
- *   - HOSTINGER_MAILBOX_ID     (mailboxResourceId from /api/v1/me — e.g. "AC1a2b3c4d5e6f7g")
+ *   - HOSTINGER_MAILBOX_ID     (mailboxResourceId from /api/v1/me - e.g. "AC1a2b3c4d5e6f7g")
  *
  * Optional settings:
  *   - HOSTINGER_MAIL_DISPLAY_NAME (defaults to "Guruvayur Dham")
@@ -35,7 +35,7 @@ export interface SendEmailInput {
   cc?: string[];
   bcc?: string[];
   displayName?: string;
-  // Hostinger Mail API attachments — V1SendAttachment shape:
+  // Hostinger Mail API attachments - V1SendAttachment shape:
   // { filename: string, contentType: string, content: string (base64) }
   attachments?: Array<{
     filename: string;
@@ -54,7 +54,7 @@ export interface SendEmailResult {
 
 /**
  * Check if Hostinger Mail is configured (token + mailbox ID both present).
- * Cheap — just reads settings, no network call.
+ * Cheap - just reads settings, no network call.
  */
 export async function isHostingerMailConfigured(): Promise<boolean> {
   const token = await getSetting("HOSTINGER_MAIL_TOKEN");
@@ -87,7 +87,7 @@ export async function sendEmailViaHostinger(input: SendEmailInput): Promise<Send
 
   const toArray = Array.isArray(input.to) ? input.to : [input.to];
 
-  // V1SendRequest body — see V1SendRequest.md in the PHP SDK.
+  // V1SendRequest body - see V1SendRequest.md in the PHP SDK.
   const body: Record<string, unknown> = {
     to: toArray,
     subject: input.subject,
@@ -97,7 +97,7 @@ export async function sendEmailViaHostinger(input: SendEmailInput): Promise<Send
   if (input.html) body.html = input.html;
   if (input.cc && input.cc.length) body.cc = input.cc;
   if (input.bcc && input.bcc.length) body.bcc = input.bcc;
-  // Attachments (e.g. invoice PDF) — Hostinger Mail API V1SendAttachment shape
+  // Attachments (e.g. invoice PDF) - Hostinger Mail API V1SendAttachment shape
   if (input.attachments && input.attachments.length > 0) {
     body.attachments = input.attachments;
   }
@@ -125,7 +125,7 @@ export async function sendEmailViaHostinger(input: SendEmailInput): Promise<Send
     try {
       responseText = await res.text();
     } catch {
-      // body stream already consumed or empty — ignore
+      // body stream already consumed or empty - ignore
     }
 
     if (res.ok) {
@@ -191,7 +191,7 @@ export async function listHostingerMailboxes(): Promise<{
 }
 
 /**
- * HTML-escape helper — used by callers that build plain-text bodies and want
+ * HTML-escape helper - used by callers that build plain-text bodies and want
  * to safely render them as HTML (no stored XSS in mail client).
  */
 export function escapeHtmlForEmail(s: string): string {

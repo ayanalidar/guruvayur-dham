@@ -31,11 +31,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.instantBook": "Instant Book",
     "nav.admin": "Admin",
     "nav.login": "Login",
-    /* Hero section — matches CMS content block keys */
+    /* Hero section - matches CMS content block keys */
     "hero.eyebrow": "Stay · Pooja · Blessing · Since 2020",
     "hero.headline": "Stay 2 Minutes from",
     "hero.headlineHighlight": "Shri Krishna Janmabhoomi",
-    "hero.subheadline": "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to temple gate for Mangala Aarti darshan. Book in 30 seconds — no booking fee, instant WhatsApp confirmation.",
+    "hero.subheadline": "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to temple gate for Mangala Aarti darshan. Book in 30 seconds - no booking fee, instant WhatsApp confirmation.",
     "hero.bookNow": "Instant Book",
     "hero.viewRooms": "View Rooms",
     "hero.rating": "Google Rating",
@@ -45,23 +45,23 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Why Choose Us */
     "whyChooseUs.eyebrow": "Why Pilgrims Choose Us",
     "whyChooseUs.title": "More Than a Stay · A Pilgrim Companion",
-    "whyChooseUs.subtitle": "We've hosted over 10,000 pilgrims since 2020. Every detail — from 24×7 hot water to free temple darshan guidance — is designed around what a pilgrim actually needs.",
+    "whyChooseUs.subtitle": "We've hosted over 10,000 pilgrims since 2020. Every detail - from 24×7 hot water to free temple darshan guidance - is designed around what a pilgrim actually needs.",
     /* Rooms */
     "rooms.eyebrow": "Rooms & Suites",
-    "rooms.title": "Clean Rooms in Guruvayur — Walkable to Temple",
+    "rooms.title": "Clean Rooms in Guruvayur - Walkable to Temple",
     "rooms.subtitle": "From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.",
     /* Pooja */
     "pooja.eyebrow": "Pooja & Offerings",
-    "pooja.title": "Guruvayur Pooja Booking — prasadam, Archana & More",
-    "pooja.subtitle": "Book any temple pooja through Guruvayur Dham at the official temple rate — zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.",
+    "pooja.title": "Guruvayur Pooja Booking - prasadam, Archana & More",
+    "pooja.subtitle": "Book any temple pooja through Guruvayur Dham at the official temple rate - zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.",
     /* About */
     "about.eyebrow": "About Guruvayur Dham",
     "about.title": "A Family-Run Pilgrim Home Since 2020",
-    "about.story": "Guruvayur Dham began as a small four-room property in 2020, when our host Shri Krishna Sharma — himself a daily devotee at the temple — noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 5 years and modern hospitality, grown into a 16-room property that has welcomed over 10,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel — we are a pilgrim home. Every decision, from the 5 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Annaprashan ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a modern home can offer.",
+    "about.story": "Guruvayur Dham began as a small four-room property in 2020, when our host Shri Krishna Sharma - himself a daily devotee at the temple - noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 5 years and modern hospitality, grown into a 16-room property that has welcomed over 10,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel - we are a pilgrim home. Every decision, from the 5 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Annaprashan ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a modern home can offer.",
     /* Contact */
     "contact.eyebrow": "Get in Touch",
     "contact.title": "Book Your Stay or Ask Anything",
-    "contact.subtitle": "Fill the form below and we'll WhatsApp you back within minutes — or reach us directly through any of the channels here.",
+    "contact.subtitle": "Fill the form below and we'll WhatsApp you back within minutes - or reach us directly through any of the channels here.",
     /* Events */
     "events.eyebrow": "Festivals & Events",
     "events.title": "Plan Your Visit Around Sacred Festivals",
@@ -164,7 +164,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.eyebrow": "ठहरें · पूजा · आशीर्वाद · 2020 से",
     "hero.headline": "ईश्वर के पास ठहरें",
     "hero.headlineHighlight": "गुरुवायुर मंदिर",
-    "hero.subheadline": "स्वच्छ एसी और नॉन-एसी कमरे, 24×7 गर्म पानी, परिवार-अनुकूल। 30 सेकंड में बुक करें — कोई बुकिंग शुल्क नहीं, तुरंत पुष्टि।",
+    "hero.subheadline": "स्वच्छ एसी और नॉन-एसी कमरे, 24×7 गर्म पानी, परिवार-अनुकूल। 30 सेकंड में बुक करें - कोई बुकिंग शुल्क नहीं, तुरंत पुष्टि।",
     "hero.bookNow": "तुरंत बुक करें",
     "hero.viewRooms": "कमरे देखें",
     "hero.rating": "गूगल रेटिंग",
@@ -182,11 +182,11 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Pooja */
     "pooja.eyebrow": "पूजा और अर्पण",
     "pooja.title": "गुरुवायुर पूजा बुकिंग · पालपायसम, तुलाभारम और अधिक",
-    "pooja.subtitle": "गुरुवायुर धाम के माध्यम से किसी भी मंदिर की पूजा बुक करें — आधिकारिक दर पर, शून्य कमीशन।",
+    "pooja.subtitle": "गुरुवायुर धाम के माध्यम से किसी भी मंदिर की पूजा बुक करें - आधिकारिक दर पर, शून्य कमीशन।",
     /* About */
     "about.eyebrow": "गुरुवायुर धाम के बारे में",
     "about.title": "2020 से पारिवारिक तीर्थयात्री आवास",
-    "about.story": "गुरुवायुर धाम 2020 में एक छोटे चार-कमरे वाले लॉज के रूप में शुरू हुआ, जब हमारे दादा श्री कृष्ण वारियर — स्वयं मंदिर में रोज़ दर्शन करने वाले — ने देखा कि दूर-दराज के राज्यों से आने वाले तीर्थयात्रियों के पास साफ, किफायती, और मंदिर के पास ठहरने की जगह नहीं थी। जो एक किराये के मकान से शुरू हुआ, वह 25 वर्षों और तीन पीढ़ियों में 52-कमरे वाली संपत्ति बन गई, जिसमें भारत और प्रवासियों से 10,000+ श्रद्धालुओं का स्वागत हुआ।\n\nहम होटल नहीं हैं — हम तीर्थयात्री गृह हैं। हर निर्णय, निर्मल्य दर्शन के दौरान 3 बजे सुबह रिसेप्शन से लेकर मंदिर दौरे से पहले मुफ्त चाय सेवा तक, श्रद्धालु को ध्यान में रखकर लिया जाता है।\n\nहमारा मिशन सरल है: हर तीर्थयात्री की गुरुवायुर यात्रा को आध्यात्मिक रूप से संतोषजनक, शारीरिक रूप से आरामदायक, और तार्किक रूप से सहज बनाना।",
+    "about.story": "गुरुवायुर धाम 2020 में एक छोटे चार-कमरे वाले लॉज के रूप में शुरू हुआ, जब हमारे दादा श्री कृष्ण वारियर - स्वयं मंदिर में रोज़ दर्शन करने वाले - ने देखा कि दूर-दराज के राज्यों से आने वाले तीर्थयात्रियों के पास साफ, किफायती, और मंदिर के पास ठहरने की जगह नहीं थी। जो एक किराये के मकान से शुरू हुआ, वह 25 वर्षों और तीन पीढ़ियों में 52-कमरे वाली संपत्ति बन गई, जिसमें भारत और प्रवासियों से 10,000+ श्रद्धालुओं का स्वागत हुआ।\n\nहम होटल नहीं हैं - हम तीर्थयात्री गृह हैं। हर निर्णय, निर्मल्य दर्शन के दौरान 3 बजे सुबह रिसेप्शन से लेकर मंदिर दौरे से पहले मुफ्त चाय सेवा तक, श्रद्धालु को ध्यान में रखकर लिया जाता है।\n\nहमारा मिशन सरल है: हर तीर्थयात्री की गुरुवायुर यात्रा को आध्यात्मिक रूप से संतोषजनक, शारीरिक रूप से आरामदायक, और तार्किक रूप से सहज बनाना।",
     /* Contact */
     "contact.eyebrow": "संपर्क करें",
     "contact.title": "बुक करें या कुछ भी पूछें",
@@ -343,7 +343,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pooja.subtitle": "शून्य कमिशन, अधिकृत दराने पूजा बुक करा. प्रसाद खोलीत वितरीत.",
     "about.eyebrow": "गुरुवायुर धाम विषयी",
     "about.title": "2020 पासून कौटुंबिक तीर्थयात्री निवास",
-    "about.story": "गुरुवायुर धाम 2020 मध्ये एका छोट्या चार-खोलीच्या लॉजपासून सुरू झाले. आमचे आजोबा श्री कृष्ण वारियर — स्वतः मंदिरात रोज दर्शन घेणारे — यांनी पाहिले की दूरदराजच्या राज्यांतून येणाऱ्या तीर्थयात्रींना स्वच्छ, परवडणारी आणि मंदिराजवळ थांबण्याची जागा नव्हती. एका भाड्याच्या घरापासून सुरू झालेले हे 25 वर्षांत आणि तीन पिढ्यांत 52-खोलींची मालमत्ता बनले, ज्यात भारत आणि प्रवासींमधून 10,000+ भाविकांचे स्वागत झाले.\n\nआम्ही हॉटेल नाही — आम्ही तीर्थयात्री गृह आहोत. निर्मल्य दर्शनादरम्यान सकाळी 3 वाजता रिसेप्शनपासून ते मंदिर भेटीपूर्वी मोफत चहा सेवेपर्यंत प्रत्येक निर्णय भाविकाचा विचार करून घेतला जातो.\n\nआमचे ध्येय सोपे आहे: प्रत्येक तीर्थयात्रीची गुरुवायुर यात्रा आध्यात्मिकदृष्ट्या समाधानकारक, शारीरिकदृष्ट्या आरामदायी आणि तार्किकदृष्ट्या सोपी बनवणे.",
+    "about.story": "गुरुवायुर धाम 2020 मध्ये एका छोट्या चार-खोलीच्या लॉजपासून सुरू झाले. आमचे आजोबा श्री कृष्ण वारियर - स्वतः मंदिरात रोज दर्शन घेणारे - यांनी पाहिले की दूरदराजच्या राज्यांतून येणाऱ्या तीर्थयात्रींना स्वच्छ, परवडणारी आणि मंदिराजवळ थांबण्याची जागा नव्हती. एका भाड्याच्या घरापासून सुरू झालेले हे 25 वर्षांत आणि तीन पिढ्यांत 52-खोलींची मालमत्ता बनले, ज्यात भारत आणि प्रवासींमधून 10,000+ भाविकांचे स्वागत झाले.\n\nआम्ही हॉटेल नाही - आम्ही तीर्थयात्री गृह आहोत. निर्मल्य दर्शनादरम्यान सकाळी 3 वाजता रिसेप्शनपासून ते मंदिर भेटीपूर्वी मोफत चहा सेवेपर्यंत प्रत्येक निर्णय भाविकाचा विचार करून घेतला जातो.\n\nआमचे ध्येय सोपे आहे: प्रत्येक तीर्थयात्रीची गुरुवायुर यात्रा आध्यात्मिकदृष्ट्या समाधानकारक, शारीरिकदृष्ट्या आरामदायी आणि तार्किकदृष्ट्या सोपी बनवणे.",
     "contact.eyebrow": "संपर्क करा",
     "contact.title": "बुक करा किंवा काहीही विचारा",
     "contact.subtitle": "खालील फॉर्म भरा, आम्ही काही मिनिटांत व्हॉट्सअॅपवर उत्तर देऊ.",
@@ -458,7 +458,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pooja.subtitle": "ઝીરો કમિશન, અધિકૃત દરે પૂજા બુક કરો. પ્રસાદ રૂમમાં વિતરિત.",
     "about.eyebrow": "ગુરુવાયુર ધામ વિશે",
     "about.title": "2020 થી કુટુંબિક તીર્થયાત્રી રહેઠાણ",
-    "about.story": "ગુરુવાયુર ધામ 2020 માં એક નાના ચાર-રૂમના લોજથી શરૂ થયું. અમારા દાદા શ્રી કૃષ્ણ વારિયર — સ્વયં મંદિરમાં રોજ દર્શન કરનાર — પાસે જોયું કે દૂરના રાજ્યોમાંથી આવતા તીર્થયાત્રીઓને સ્વચ્છ, પરવડી શકે તેવી અને મંદિર નજીક રોકાવાની જગ્યા નહોતી. એક ભાડાના મકાનથી શરૂ થયેલું આ 25 વર્ષોમાં અને ત્રણ પેઢીઓમાં 52-રૂમની મિલકત બન્યું, જેમાં ભારત અને પ્રવાસીઓમાંથી 10,000+ ભક્તોનું સ્વાગત થયું.\n\nઅમે હોટેલ નથી — અમે તીર્થયાત્રી ગૃહ છીએ. નિર્મલ્ય દર્શન દરમિયાન સવારે 3 વાગ્યે રિસેપ્શનથી લઈને મંદિર મુલાકાત પહેલાં મફત ચા સેવા સુધી દરેક નિર્ણય ભક્તનો વિચાર કરીને લેવામાં આવે છે.\n\nઅમારું ધ્યેય સરળ છે: દરેક તીર્થયાત્રીની ગુરુવાયુર યાત્રા આધ્યાત્મિક રીતે સંતોષજનક, શારીરિક રીતે આરામદાયક અને તાર્કિક રીતે સરળ બનાવવી.",
+    "about.story": "ગુરુવાયુર ધામ 2020 માં એક નાના ચાર-રૂમના લોજથી શરૂ થયું. અમારા દાદા શ્રી કૃષ્ણ વારિયર - સ્વયં મંદિરમાં રોજ દર્શન કરનાર - પાસે જોયું કે દૂરના રાજ્યોમાંથી આવતા તીર્થયાત્રીઓને સ્વચ્છ, પરવડી શકે તેવી અને મંદિર નજીક રોકાવાની જગ્યા નહોતી. એક ભાડાના મકાનથી શરૂ થયેલું આ 25 વર્ષોમાં અને ત્રણ પેઢીઓમાં 52-રૂમની મિલકત બન્યું, જેમાં ભારત અને પ્રવાસીઓમાંથી 10,000+ ભક્તોનું સ્વાગત થયું.\n\nઅમે હોટેલ નથી - અમે તીર્થયાત્રી ગૃહ છીએ. નિર્મલ્ય દર્શન દરમિયાન સવારે 3 વાગ્યે રિસેપ્શનથી લઈને મંદિર મુલાકાત પહેલાં મફત ચા સેવા સુધી દરેક નિર્ણય ભક્તનો વિચાર કરીને લેવામાં આવે છે.\n\nઅમારું ધ્યેય સરળ છે: દરેક તીર્થયાત્રીની ગુરુવાયુર યાત્રા આધ્યાત્મિક રીતે સંતોષજનક, શારીરિક રીતે આરામદાયક અને તાર્કિક રીતે સરળ બનાવવી.",
     "contact.eyebrow": "સંપર્ક કરો",
     "contact.title": "બુક કરો અથવા કંઈપણ પૂછો",
     "contact.subtitle": "નીચેનું ફોર્મ ભરો, અમે કપલ મિનિટમાં જવાબ આપીશું.",
@@ -573,7 +573,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "pooja.subtitle": "പൂജ്യ കമ്മീഷൻ, ഔദ്യോഗിക നിരക്കിൽ പൂജ ബുക്ക് ചെയ്യുക. പ്രസാദം മുറിയിൽ എത്തിക്കും.",
     "about.eyebrow": "ഗുരുവായൂർ ധാമിനെക്കുറിച്ച്",
     "about.title": "2020 മുതൽ കുടുംബം നടത്തുന്ന തീർത്ഥാടന താമസം",
-    "about.story": "ഗുരുവായൂർ ധാം 2020 ൽ ഒരു ചെറിയ നാല്-മുറി ലോഡ്ജായി ആരംഭിച്ചു. ഞങ്ങളുടെ മുത്തച്ഛൻ ശ്രീ കൃഷ്ണ വാരിയർ — സ്വയം ക്ഷേത്രത്തിൽ ദിവസേന ദർശനം നടത്തുന്നയാൾ — ദൂരസ്ഥലങ്ങളിൽ നിന്ന് വരുന്ന തീർത്ഥാടകർക്ക് വൃത്തിയുള്ളതും താങ്ങാനാവുന്നതും ക്ഷേത്രത്തിന് സമീപം താമസിക്കാൻ സ്ഥലമില്ലെന്ന് കണ്ടു. ഒരു വാടക വീട്ടിൽ നിന്ന് തുടങ്ങിയ ഇത് 25 വർഷങ്ങൾക്കും മൂന്ന് തലമുറകൾക്കും ശേഷം 52-മുറികളുള്ള സ്വത്തായി മാറി, ഇതിൽ ഇന്ത്യയിൽ നിന്നും പ്രവാസികളിൽ നിന്നുമായി 10,000+ ഭക്തരെ സ്വാഗതം ചെയ്തിട്ടുണ്ട്.\n\nഞങ്ങൾ ഹോട്ടൽ അല്ല — ഞങ്ങൾ തീർത്ഥാടന ഗൃഹമാണ്. നിർമ്മാല്യ ദർശന സമയത്ത് രാവിലെ 3 മണിക്ക് റിസപ്ഷൻ മുതൽ ക്ഷേത്ര സന്ദർശനത്തിന് മുൻപുള്ള സൗജന്യ ചായ സേവനം വരെ ഓരോ തീരുമാനവും ഭക്തനെ മനസ്സിൽ വെച്ചാണ് എടുക്കുന്നത്.\n\nഞങ്ങളുടെ ലക്ഷ്യം ലളിതമാണ്: ഓരോ തീർത്ഥാടകന്റെയും ഗുരുവായൂർ സന്ദർശനം ആത്മീയമായി സംതൃപ്തികരമാക്കുക, ശാരീരികമായി സുഖപ്പെടുത്തുക, താർക്കികമായി എളുപ്പമാക്കുക.",
+    "about.story": "ഗുരുവായൂർ ധാം 2020 ൽ ഒരു ചെറിയ നാല്-മുറി ലോഡ്ജായി ആരംഭിച്ചു. ഞങ്ങളുടെ മുത്തച്ഛൻ ശ്രീ കൃഷ്ണ വാരിയർ - സ്വയം ക്ഷേത്രത്തിൽ ദിവസേന ദർശനം നടത്തുന്നയാൾ - ദൂരസ്ഥലങ്ങളിൽ നിന്ന് വരുന്ന തീർത്ഥാടകർക്ക് വൃത്തിയുള്ളതും താങ്ങാനാവുന്നതും ക്ഷേത്രത്തിന് സമീപം താമസിക്കാൻ സ്ഥലമില്ലെന്ന് കണ്ടു. ഒരു വാടക വീട്ടിൽ നിന്ന് തുടങ്ങിയ ഇത് 25 വർഷങ്ങൾക്കും മൂന്ന് തലമുറകൾക്കും ശേഷം 52-മുറികളുള്ള സ്വത്തായി മാറി, ഇതിൽ ഇന്ത്യയിൽ നിന്നും പ്രവാസികളിൽ നിന്നുമായി 10,000+ ഭക്തരെ സ്വാഗതം ചെയ്തിട്ടുണ്ട്.\n\nഞങ്ങൾ ഹോട്ടൽ അല്ല - ഞങ്ങൾ തീർത്ഥാടന ഗൃഹമാണ്. നിർമ്മാല്യ ദർശന സമയത്ത് രാവിലെ 3 മണിക്ക് റിസപ്ഷൻ മുതൽ ക്ഷേത്ര സന്ദർശനത്തിന് മുൻപുള്ള സൗജന്യ ചായ സേവനം വരെ ഓരോ തീരുമാനവും ഭക്തനെ മനസ്സിൽ വെച്ചാണ് എടുക്കുന്നത്.\n\nഞങ്ങളുടെ ലക്ഷ്യം ലളിതമാണ്: ഓരോ തീർത്ഥാടകന്റെയും ഗുരുവായൂർ സന്ദർശനം ആത്മീയമായി സംതൃപ്തികരമാക്കുക, ശാരീരികമായി സുഖപ്പെടുത്തുക, താർക്കികമായി എളുപ്പമാക്കുക.",
     "contact.eyebrow": "ബന്ധപ്പെടുക",
     "contact.title": "ബുക്ക് ചെയ്യുക അല്ലെങ്കിൽ എന്തെങ്കിലും ചോദിക്കുക",
     "contact.subtitle": "ചുവടെയുള്ള ഫോം പൂരിപ്പിക്കുക, ഞങ്ങൾ അധികം താമസിയാതെ മറുപടി നൽകും.",

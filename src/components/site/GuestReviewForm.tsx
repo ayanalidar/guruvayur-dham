@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * GuestReviewForm — public review submission form embedded inside the
+ * GuestReviewForm - public review submission form embedded inside the
  * ReviewsWidget section. Submits to /api/reviews/submit (public POST).
  *
  * Fields: name, rating (1-5 stars), text, optional email/phone, optional

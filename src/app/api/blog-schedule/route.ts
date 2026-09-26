@@ -84,13 +84,13 @@ export async function POST(req: NextRequest) {
  * Process scheduled posts · publishes any posts whose scheduledAt has passed.
  * Called by a cron job or manual trigger.
  *
- * SECURITY (Phase A H3 fix): CRON_SECRET-protected — prevents anyone from
+ * SECURITY (Phase A H3 fix): CRON_SECRET-protected - prevents anyone from
  * mass-publishing drafts ahead of schedule or spamming realtime broadcasts.
  * Secret can be set in .env or via the admin Settings UI (encrypted Setting
- * table) — read at runtime via getSetting().
+ * table) - read at runtime via getSetting().
  */
 export async function PATCH(req: NextRequest) {
-  // CRON_SECRET check — fail-closed.
+  // CRON_SECRET check - fail-closed.
   const cronSecret = await getSetting("CRON_SECRET");
   if (!cronSecret) {
     return NextResponse.json(

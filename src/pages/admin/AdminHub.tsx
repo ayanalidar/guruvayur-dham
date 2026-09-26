@@ -136,8 +136,8 @@ function DashboardSection({ stats }: any) {
       <p className="mt-1 text-sm text-ivory/60">Live snapshot of your property. Click any tab above to dive deeper.</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Total Rooms", value: stats?.totalRooms ?? "—", icon: BedDouble, sub: `${stats?.liveAvailability?.totalUnits ?? 0} units` },
-          { label: "Active Bookings", value: stats?.activeBookings ?? "—", icon: CalendarDays, sub: `${stats?.bookingsNext7 ?? 0} in 7 days` },
+          { label: "Total Rooms", value: stats?.totalRooms ?? "-", icon: BedDouble, sub: `${stats?.liveAvailability?.totalUnits ?? 0} units` },
+          { label: "Active Bookings", value: stats?.activeBookings ?? "-", icon: CalendarDays, sub: `${stats?.bookingsNext7 ?? 0} in 7 days` },
           { label: "Occupancy Today", value: `${stats?.liveAvailability?.occupancyRate ?? 0}%`, icon: TrendingUp, sub: `${stats?.liveAvailability?.totalUnitsAvailable ?? 0} available` },
           { label: "Total Revenue", value: `₹${(stats?.totalRevenue ?? 0).toLocaleString("en-IN")}`, icon: Star, sub: "all-time" },
         ].map((s, i) => (
@@ -194,7 +194,7 @@ function CRMSection() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-ivory">{c.name} {c.tags && <span className="ml-2 text-[10px] text-champagne">{c.tags}</span>}</p>
-              <p className="text-xs text-ivory/50">{c.phone} · {c.email || "no email"} · {c.city || "—"}</p>
+              <p className="text-xs text-ivory/50">{c.phone} · {c.email || "no email"} · {c.city || "-"}</p>
             </div>
             <div className="text-right">
               <p className="font-serif text-lg text-gold-foil">₹{c.totalRevenue.toLocaleString("en-IN")}</p>
@@ -486,7 +486,7 @@ function AgentsSection() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-serif text-lg text-ivory">{a.companyName}</p>
-              <p className="text-xs text-ivory/50">{a.contactName} · {a.phone} · {a.email || "—"}</p>
+              <p className="text-xs text-ivory/50">{a.contactName} · {a.phone} · {a.email || "-"}</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-ivory/50">Commission: {(a.commissionRate * 100).toFixed(0)}%</p>
@@ -1248,8 +1248,8 @@ function AnalyticsSection() {
           ))}
         </div>
         <div className="mt-2 flex justify-between text-[10px] text-ivory/40">
-          <span>{(data.revenueTrend || [])[0]?.date || "—"}</span>
-          <span>{(data.revenueTrend || [])[(data.revenueTrend || []).length - 1]?.date || "—"}</span>
+          <span>{(data.revenueTrend || [])[0]?.date || "-"}</span>
+          <span>{(data.revenueTrend || [])[(data.revenueTrend || []).length - 1]?.date || "-"}</span>
         </div>
       </div>
 
@@ -1810,15 +1810,15 @@ function StaffSection() {
  *  Dashboard Enhancement Cards (F5)
  * =====================================================================
  *  Three lightweight cards rendered inside DashboardSection:
- *    1. RevenueOverviewCard — last-30-day total + bar chart (CSS divs) of
+ *    1. RevenueOverviewCard - last-30-day total + bar chart (CSS divs) of
  *       revenue by room type + occupancy rate.
- *    2. TodaysMovementsCard — today's check-ins / check-outs pulled from
+ *    2. TodaysMovementsCard - today's check-ins / check-outs pulled from
  *       /api/bookings?from=today&to=today.
- *    3. BookingFunnelCard — PAGE_VIEW vs BOOKING_COMPLETED counts (from
+ *    3. BookingFunnelCard - PAGE_VIEW vs BOOKING_COMPLETED counts (from
  *       /api/analytics) + conversion rate %.
  *
- *  All data comes from existing API endpoints — no new endpoints created.
- *  No chart library used — bars are pure CSS divs.
+ *  All data comes from existing API endpoints - no new endpoints created.
+ *  No chart library used - bars are pure CSS divs.
  */
 
 function RevenueOverviewCard({ totalRooms = 16 }: { totalRooms?: number }) {
@@ -1915,7 +1915,7 @@ function TodaysMovementsCard() {
   useEffect(() => {
     let active = true;
     // /api/bookings supports ?from & ?to filters that map to checkIn range.
-    // For "today" we use the start-of-day for both — the API does gte/lte
+    // For "today" we use the start-of-day for both - the API does gte/lte
     // on checkIn, so a single today date catches all bookings checking in
     // today. (Check-outs are fetched in a second pass below.)
     const today = new Date();
@@ -1958,7 +1958,7 @@ function TodaysMovementsCard() {
         items={checkIns.map(b => ({
           id: b.id,
           name: b.guestName,
-          room: b.room?.name || "—",
+          room: b.room?.name || "-",
           time: new Date(b.checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 12:00 PM",
           ref: b.reference,
         }))}
@@ -1972,7 +1972,7 @@ function TodaysMovementsCard() {
         items={checkOuts.map(b => ({
           id: b.id,
           name: b.guestName,
-          room: b.room?.name || "—",
+          room: b.room?.name || "-",
           time: new Date(b.checkOut).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 11:00 AM",
           ref: b.reference,
         }))}
