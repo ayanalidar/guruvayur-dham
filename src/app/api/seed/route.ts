@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
     { key: "site.totalRooms", value: "16", category: "site", label: "Total Rooms" },
     { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Primary Phone" },
     { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Phone Raw" },
-    { key: "contact.phone2", value: "+91 9410077786", category: "contact", label: "Secondary Phone" },
+    { key: "contact.phone2", value: "+91 8445555584", category: "contact", label: "Secondary Phone" },
     { key: "contact.phones", value: "+91-90908 20208, +91 8445555584", category: "contact", label: "Combined Phones Display" },
     { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp" },
     { key: "contact.email", value: "bookings@guruvayurdham.co.in", category: "contact", label: "Contact Email" },
