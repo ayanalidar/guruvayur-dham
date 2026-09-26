@@ -944,26 +944,168 @@ export interface GalleryImage {
 }
 
 export const GALLERY_IMAGES: GalleryImage[] = [
+  // ===== Rooms tab — all 22 brochure room photos =====
+  // Deluxe Room (Family Suit/Quad Room — 2 double beds, 6-8 guests, yellow curved headboards)
   {
     tab: "Rooms",
-    src: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=800&fit=crop",
-    alt: "Deluxe AC room with king bed and saffron accent wall at Guruvayur Dham",
-    caption: "Deluxe AC Room · king bed, premium linen",
+    src: "/rooms/deluxe-room-main.jpg",
+    alt: "Family Suit/Quad Room with two double beds, yellow curved headboards, wood-paneled walls",
+    caption: "Family Suit / Quad Room · 2 double beds · 6-8 guests · ₹2,450/night",
+    span: "wide",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/deluxe-room-1.jpg",
+    alt: "Family Suit/Quad Room alternate angle showing yellow headboards and botanical artwork",
+    caption: "Family Suit · alternate angle · wood paneling",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/deluxe-room-2.jpg",
+    alt: "Two-bed family room with brown padded headboards and diagonal striped wall paneling",
+    caption: "Family Suit · two-bed variant",
     span: "tall",
   },
   {
     tab: "Rooms",
-    src: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
-    alt: "Standard AC room interior with queen bed",
-    caption: "Standard AC Room · quiet courtyard view",
+    src: "/rooms/deluxe-room-3.jpg",
+    alt: "Two single beds with distinct bedspreads on tiled floor",
+    caption: "Family Suit · single beds variant",
+  },
+
+  // Super Deluxe Room (King Deluxe — king + lounge sofa + TV)
+  {
+    tab: "Rooms",
+    src: "/rooms/super-deluxe-room-main.jpg",
+    alt: "King Deluxe Room with king bed, teal lounge sofa, wall-mounted TV, cove lighting",
+    caption: "King Deluxe Room · king + lounge sofa · ₹1,250/night",
+    span: "wide",
   },
   {
     tab: "Rooms",
-    src: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
-    alt: "Family suite living area at Guruvayur Dham",
-    caption: "Family Suite · separate sitting area",
+    src: "/rooms/super-deluxe-room-1.jpg",
+    alt: "King Deluxe Room with channel-tufted headboard, wood paneling, botanical artwork",
+    caption: "King Deluxe · channel-tufted headboard",
+    span: "tall",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/super-deluxe-room-2.jpg",
+    alt: "Double bed with blue runner, blue accent pillows, landscape painting above",
+    caption: "King Deluxe · alt angle · blue accents",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/super-deluxe-room-3.jpg",
+    alt: "Double bed with second bed visible, textured gold wallpaper",
+    caption: "King Deluxe · multi-bed variant",
     span: "wide",
   },
+
+  // Superior Room (Premium Double Bed — fluted paneling + tall headboard + vanity)
+  {
+    tab: "Rooms",
+    src: "/rooms/superior-room-main.jpg",
+    alt: "Premium Double Bed Room with king bed, tall vertical channel headboard, vanity nook with backlit mirror",
+    caption: "Premium Double Bed Room · tall headboard + vanity · ₹1,450/night",
+    span: "tall",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/superior-room-1.jpg",
+    alt: "Premium Double Bed Room with yellow vertical channel-tufted headboard",
+    caption: "Premium Double · yellow channel headboard",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/superior-room-2.jpg",
+    alt: "Premium Double Bed Room with olive-green channel-tufted headboard and floating vanity shelf",
+    caption: "Premium Double · olive-green + floating vanity",
+    span: "wide",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/superior-room-3.jpg",
+    alt: "Premium Double Bed Room with diagonal wall paneling and illuminated vanity mirror",
+    caption: "Premium Double · diagonal panel + vanity",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/superior-room-4.jpg",
+    alt: "Premium Double Bed Room with vertical channel-tufted headboard and recessed ceiling lighting",
+    caption: "Premium Double · vertical channel · recessed lighting",
+  },
+
+  // GVD Suite (Privilege Suite — full living + Smart TV with Netflix)
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-main.jpg",
+    alt: "Privilege Suite with king bed, ornate white decorative headboard, wall-mounted TV displaying Netflix",
+    caption: "Privilege Suite with Seating · king + Smart TV with Netflix · ₹2,699/night",
+    span: "wide",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-1.jpg",
+    alt: "Privilege Suite with king bed, padded headboard, green accent wall panel, wall-mounted TV",
+    caption: "Privilege Suite · padded headboard · green accent",
+    span: "tall",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-2.jpg",
+    alt: "Privilege Suite variant with double bed, single mattress on floor, red patterned bed runner",
+    caption: "Privilege Suite · double + single mattress variant",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-3.jpg",
+    alt: "Privilege Suite variant with double bed and second bed visible, textured gold wallpaper",
+    caption: "Privilege Suite · multi-bed variant",
+    span: "wide",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-4.jpg",
+    alt: "Privilege Suite alternate angle with double bed, wood paneling, landscape painting",
+    caption: "Privilege Suite · alt angle",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/gvd-suite-5.jpg",
+    alt: "Privilege Suite with queen bed, vertical channel-tufted headboard, recessed ceiling lighting",
+    caption: "Privilege Suite · vertical channel · recessed lighting",
+  },
+
+  // Family Comfort Triple Room (1 Double + 1 Single/Diwan)
+  {
+    tab: "Rooms",
+    src: "/rooms/family-comfort-triple-room-main.jpg",
+    alt: "Family Comfort Triple Room with double bed, single mattress on floor, red patterned bed runner, textured gold wallpaper",
+    caption: "Family Comfort Triple Room · 1 double + 1 single · ₹1,800/night",
+    span: "wide",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/family-comfort-triple-room-1.jpg",
+    alt: "Family Comfort Triple Room with double bed and second bed visible, textured gold wallpaper",
+    caption: "Family Triple · double + second bed",
+    span: "tall",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/family-comfort-triple-room-2.jpg",
+    alt: "Family Comfort Triple Room with double bed, blue runner, blue accent pillows, wood-paneled walls",
+    caption: "Family Triple · blue accents · wood paneling",
+  },
+  {
+    tab: "Rooms",
+    src: "/rooms/family-comfort-triple-room-3.jpg",
+    alt: "Family Comfort Triple Room two-bed variant with brown padded headboards and diagonal striped wall paneling",
+    caption: "Family Triple · two-bed variant",
+    span: "wide",
+  },
+
   // ===== Temples tab — all 12 Braj mandirs =====
   {
     tab: "Temples",
