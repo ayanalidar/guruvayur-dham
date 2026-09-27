@@ -40,7 +40,7 @@ export const SITE = {
   checkOut: "11:00 AM",
   rating: 4.8,
   reviewCount: 120,
-  totalRooms: 16,
+  totalRooms: 15,
   distanceToTemple: "Walk to Mata Pathwari Mandir",
   // Default GST rates (editable via admin → Settings → INTEGRATION category)
   // Per India GST brackets - admin can override these in CMS.
@@ -451,7 +451,7 @@ export const TRUST_BADGES = [
   { icon: "Star", text: `4.8 Google Rating` },
   { icon: "Train", text: "2 Min from Mathura Station" },
   { icon: "Footprints", text: "Walk to Krishna Janmabhoomi" },
-  { icon: "BedDouble", text: "16 Premium Rooms" },
+  { icon: "BedDouble", text: "15 Premium Rooms" },
 ];
 
 /* ============ WHY CHOOSE US ============ */
@@ -468,7 +468,7 @@ export const WHY_CHOOSE_US = [
   },
   {
     icon: "BedDouble",
-    title: "16 Premium Rooms",
+    title: "15 Premium Rooms",
     text: "Deluxe, Super Deluxe, Superior, and GVD Suite categories - each with fresh linen, 24×7 hot water, attached bathrooms, and family-friendly layouts. Daily sanitised and inspected before every check-in.",
   },
   {

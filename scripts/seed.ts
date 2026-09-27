@@ -27,7 +27,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "site.checkOut", value: "11:00 AM", category: "site", label: "Check-out Time" },
   { key: "site.rating", value: "4.8", category: "site", label: "Rating" },
   { key: "site.reviewCount", value: "120", category: "site", label: "Review Count" },
-  { key: "site.totalRooms", value: "16", category: "site", label: "Total Rooms" },
+  { key: "site.totalRooms", value: "15", category: "site", label: "Total Rooms" },
   { key: "site.distanceToTemple", value: "Walk to Mata Pathwari Mandir", category: "site", label: "Distance to Temple" },
 
   /* ----- Hero section ----- */
@@ -43,7 +43,7 @@ const CONTENT_BLOCKS: Array<{ key: string; value: string; category: string; labe
   { key: "whyChooseUs.subtitle", value: "We've welcomed 10,000+ pilgrims since 2020. Every detail - from 24×7 hot water to free temple darshan guidance - is designed around what a pilgrim actually needs.", category: "whyChooseUs", label: "Why Us Subtitle" },
 
   /* ----- Homepage stats strip (WhyChooseUs section) ----- */
-  { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
+  { key: "homepage.stats.rooms", value: "15", category: "homepage", label: "Homepage Stat · Rooms" },
   { key: "homepage.stats.years", value: "5", category: "homepage", label: "Homepage Stat · Years of Service" },
   { key: "homepage.stats.guests", value: "10000", category: "homepage", label: "Homepage Stat · Happy Guests" },
   { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },

@@ -215,7 +215,7 @@ function Hero() {
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹1,500</p>
-                <p className="font-serif text-base text-ivory">16 Premium Rooms</p>
+                <p className="font-serif text-base text-ivory">15 Premium Rooms</p>
               </div>
             </div>
 
@@ -298,14 +298,14 @@ function WhyChooseUs() {
   const { get } = useContent();
 
   // Homepage stats - CMS-editable via:
-  //   homepage.stats.rooms  (e.g. "16")
+  //   homepage.stats.rooms  (e.g. "15")
   //   homepage.stats.years (e.g. "10")
   //   homepage.stats.guests (e.g. "15000")
   //   homepage.stats.rating (e.g. "4.8")
   // Hardcoded fallbacks below match the values the user specified.
   const stats = [
     {
-      value: Number(get("homepage.stats.rooms", "16")),
+      value: Number(get("homepage.stats.rooms", "15")),
       suffix: "+",
       label: "AC & non-AC rooms",
       decimals: 0,

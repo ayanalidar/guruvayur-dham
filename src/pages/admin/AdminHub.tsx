@@ -151,7 +151,7 @@ function DashboardSection({ stats }: any) {
       </div>
 
       {/* ===== Revenue Overview (last 30 days) + Booking Funnel ===== */}
-      <RevenueOverviewCard totalRooms={stats?.totalRooms ?? 16} />
+      <RevenueOverviewCard totalRooms={stats?.totalRooms ?? 15} />
       <TodaysMovementsCard />
       <BookingFunnelCard />
 
@@ -1821,7 +1821,7 @@ function StaffSection() {
  *  No chart library used - bars are pure CSS divs.
  */
 
-function RevenueOverviewCard({ totalRooms = 16 }: { totalRooms?: number }) {
+function RevenueOverviewCard({ totalRooms = 15 }: { totalRooms?: number }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

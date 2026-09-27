@@ -407,7 +407,7 @@ export default function PilgrimagePlannerPage() {
             <div className="mt-6 rounded-2xl border border-champagne/15 bg-gradient-to-br from-champagne/10 to-transparent p-6 text-center">
               <p className="font-serif text-xl text-ivory">Ready to book your yatra?</p>
               <p className="mt-1 text-sm text-ivory/60">
-                Reserve your room at Guruvayur Dham · 16 premium AC rooms · 2 min from Mathura Station.
+                Reserve your room at Guruvayur Dham · 15 premium AC rooms · 2 min from Mathura Station.
               </p>
               <MagneticButton onClick={() => navigate("/book")} className="mt-4">
                 Book Now <ChevronRight className="h-4 w-4" />

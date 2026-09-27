@@ -21,7 +21,7 @@ import { ROOMS, SITE } from "@/lib/site-data";
  *     strikethrough comparison)
  *
  * Reference: Google Hotel Center "Properties" feed structure (simplified
- * for our 16-room property - production Google feeds can be hundreds of
+ * for our 15-room property - production Google feeds can be hundreds of
  * fields; we publish the ones Google actually indexes).
  */
 export async function GET() {

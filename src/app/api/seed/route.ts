@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     { key: "site.email", value: "bookings@guruvayurdham.co.in", category: "site", label: "Site Email" },
     { key: "site.address", value: "68/396 Mali Para, Opp. Mata Pathwari Mandir, Dholi Pyau, Mathura, Uttar Pradesh - 281001", category: "site", label: "Site Address" },
     { key: "site.distanceToTemple", value: "Walk to Mata Pathwari Mandir", category: "site", label: "Distance to Temple" },
-    { key: "site.totalRooms", value: "16", category: "site", label: "Total Rooms" },
+    { key: "site.totalRooms", value: "15", category: "site", label: "Total Rooms" },
     { key: "contact.phone", value: "+91-90908 20208", category: "contact", label: "Primary Phone" },
     { key: "contact.phoneRaw", value: "+919090820208", category: "contact", label: "Phone Raw" },
     { key: "contact.phone2", value: "+91 8445555584", category: "contact", label: "Secondary Phone" },
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in" },
     { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out" },
     // Homepage stats strip - WhyChooseUs section
-    { key: "homepage.stats.rooms", value: "16", category: "homepage", label: "Homepage Stat · Rooms" },
+    { key: "homepage.stats.rooms", value: "15", category: "homepage", label: "Homepage Stat · Rooms" },
     { key: "homepage.stats.years", value: "5", category: "homepage", label: "Homepage Stat · Years of Service" },
     { key: "homepage.stats.guests", value: "10000", category: "homepage", label: "Homepage Stat · Happy Guests" },
     { key: "homepage.stats.rating", value: "4.8", category: "homepage", label: "Homepage Stat · Google Rating" },

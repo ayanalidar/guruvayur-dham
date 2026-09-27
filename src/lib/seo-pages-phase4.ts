@@ -2,7 +2,7 @@
  * SEO Pages - Phase 4 (6 additional pages)
  *
  * All Phase 4 pages are Mathura-specific (no Kerala references). They
- * reference Guruvayur Dham as a 16-room premium stay in Mathura, 2 min
+ * reference Guruvayur Dham as a 15-room premium stay in Mathura, 2 min
  * from Mathura Station, near Mata Pathwari Mandir.
  *
  * Pages:
@@ -33,14 +33,14 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Banke Bihari",
     title: "Hotels Near Banke Bihari Temple Vrindavan - Stay at Guruvayur Dham Mathura",
     metaDescription:
-      "Hotels near Banke Bihari Temple Vrindavan. Guruvayur Dham Mathura - 16 premium rooms, 2 min from Mathura Station, 15 min drive to Banke Bihari. AC rooms from Rs 1,500/night.",
+      "Hotels near Banke Bihari Temple Vrindavan. Guruvayur Dham Mathura - 15 premium rooms, 2 min from Mathura Station, 15 min drive to Banke Bihari. AC rooms from Rs 1,500/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
     eyebrow: "Hotels Near · Banke Bihari Temple",
     intro: [
       "Banke Bihari Temple in Vrindavan is one of the most revered Krishna temples in India. Devotees travel from across the country for a glimpse of Thakurji (the deity of Banke Bihari), whose darshan is uniquely held behind a curtain that is opened and closed every few minutes - a tradition found nowhere else in the Braj region. If you are planning a pilgrimage to Banke Bihari, your choice of accommodation matters: Vrindavan hotels are often basic and overpriced during festivals, while staying in Mathura gives you a quieter, cleaner base with easy access to both Banke Bihari and other major temples.",
-      "Guruvayur Dham is a 16-room premium stay in Mathura, located 2 minutes from Mathura Railway Station and adjacent to Mata Pathwari Mandir in Natwar Nagar. From here, Banke Bihari Temple is a 15-km, 25-minute drive - easy to time around darshan hours, and easy to return to for a relaxed meal and rest. Our rooms are sanitised daily, with 24×7 hot water, attached bathrooms, free WiFi, and pure-veg restaurant tie-ups within 200 m.",
+      "Guruvayur Dham is a 15-room premium stay in Mathura, located 2 minutes from Mathura Railway Station and adjacent to Mata Pathwari Mandir in Natwar Nagar. From here, Banke Bihari Temple is a 15-km, 25-minute drive - easy to time around darshan hours, and easy to return to for a relaxed meal and rest. Our rooms are sanitised daily, with 24×7 hot water, attached bathrooms, free WiFi, and pure-veg restaurant tie-ups within 200 m.",
       "We coordinate darshan slots, pooja bookings and local transport for our guests. Whether you're a solo pilgrim arriving by train, a family doing the Braj circuit, or a couple visiting for the first time, Guruvayur Dham gives you a clean, honest, premium base for your Banke Bihari pilgrimage - at straightforward Mathura pricing, not inflated Vrindavan tourist rates.",
     ],
     sections: [
@@ -85,14 +85,14 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Prem Mandir",
     title: "Hotels Near Prem Mandir Vrindavan - Guruvayur Dham Mathura 15 Min Away",
     metaDescription:
-      "Hotels near Prem Mandir Vrindavan. Guruvayur Dham Mathura - 16 premium AC rooms, 15 min drive to Prem Mandir, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
+      "Hotels near Prem Mandir Vrindavan. Guruvayur Dham Mathura - 15 premium AC rooms, 15 min drive to Prem Mandir, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
     eyebrow: "Hotels Near · Prem Mandir",
     intro: [
       "Prem Mandir in Vrindavan is one of the most beautiful temples in the Braj region - a stunning white marble structure built by Jagadguru Kripalu Maharaj, depicting scenes from Krishna's pastimes through intricate carvings and life-size dioramas. The evening light-and-sound show, with the temple illuminated in soft colours against the night sky, is a must-see. For pilgrims visiting Prem Mandir, the practical question is where to stay: Vrindavan hotels are basic and costly, while Mathura offers better-quality rooms at honest prices with quick access to Prem Mandir.",
-      "Guruvayur Dham is a 16-room premium stay in Mathura, located 2 minutes from Mathura Railway Station and adjacent to Mata Pathwari Mandir in Natwar Nagar. From here, Prem Mandir in Vrindavan is a 15-km, 25-minute drive - easy to time around the evening light show, and easy to return to for a relaxed dinner. Our rooms are air-conditioned with 24×7 hot water, attached bathrooms, free WiFi, and free parking.",
+      "Guruvayur Dham is a 15-room premium stay in Mathura, located 2 minutes from Mathura Railway Station and adjacent to Mata Pathwari Mandir in Natwar Nagar. From here, Prem Mandir in Vrindavan is a 15-km, 25-minute drive - easy to time around the evening light show, and easy to return to for a relaxed dinner. Our rooms are air-conditioned with 24×7 hot water, attached bathrooms, free WiFi, and free parking.",
       "We coordinate local transport, pooja bookings, and darshan assistance for Prem Mandir and other Vrindavan temples. Whether you're travelling solo, as a couple, or with family, Guruvayur Dham gives you a clean, premium, well-connected base for your Prem Mandir pilgrimage - at Mathura rates, not Vrindavan tourist rates.",
     ],
     sections: [
@@ -107,7 +107,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
         heading: "Staying in Mathura vs Vrindavan",
         body: [
           "Vrindavan has no railway station. The nearest railhead is Mathura Junction, just 2 minutes from Guruvayur Dham. If you're arriving by train from Delhi, Agra, Mumbai, or Varanasi, Mathura is the natural base. Vrindavan hotels are also smaller, older, and pricier - especially during festival seasons when rates surge 3-4x.",
-          "Mathura hotels offer larger rooms, more amenities, and more consistent quality. Guruvayur Dham gives you 16 premium rooms with daily housekeeping, 24×7 hot water, power backup, free parking, and pure-veg restaurant tie-ups within 200 m - plus easy walk-out access to Mata Pathwari Mandir (next door) and Krishna Janmabhoomi (1.5 km).",
+          "Mathura hotels offer larger rooms, more amenities, and more consistent quality. Guruvayur Dham gives you 15 premium rooms with daily housekeeping, 24×7 hot water, power backup, free parking, and pure-veg restaurant tie-ups within 200 m - plus easy walk-out access to Mata Pathwari Mandir (next door) and Krishna Janmabhoomi (1.5 km).",
         ],
       },
       {
@@ -137,14 +137,14 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Radha Rani Mandir",
     title: "Hotels Near Radha Rani Mandir Barsana - Stay at Guruvayur Dham Mathura",
     metaDescription:
-      "Hotels near Radha Rani Mandir Barsana. Guruvayur Dham Mathura - 16 premium AC rooms, 1-hour drive to Radha Rani Temple, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
+      "Hotels near Radha Rani Mandir Barsana. Guruvayur Dham Mathura - 15 premium AC rooms, 1-hour drive to Radha Rani Temple, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
     eyebrow: "Hotels Near · Radha Rani Mandir Barsana",
     intro: [
       "The Radha Rani Temple in Barsana - also known as the Ladli Lal Temple - is the only temple in India dedicated exclusively to Radha, the eternal consort of Lord Krishna. Perched atop Bhanugarh Hill, it marks the spot of Radha's birthplace. Pilgrims climb approximately 200 steps to reach the temple, where the deities of Radha and Krishna (Ladli Lal) are adorned with fresh flower garlands daily. The view from the top - rolling Braj countryside in every direction - is among the most spiritually charged in the entire region.",
-      "Barsana is 40 km from Mathura (1-hour drive). Hotels in Barsana itself are extremely basic - most pilgrims prefer to stay in Mathura and do a day-trip. Guruvayur Dham in Mathura is the ideal base: 16 premium AC rooms, 2 minutes from Mathura Railway Station, with reliable car-and-guide arrangements for the Barsana circuit. We coordinate the full day-trip - pickup, transport, temple visits, and return - at straightforward Mathura pricing.",
+      "Barsana is 40 km from Mathura (1-hour drive). Hotels in Barsana itself are extremely basic - most pilgrims prefer to stay in Mathura and do a day-trip. Guruvayur Dham in Mathura is the ideal base: 15 premium AC rooms, 2 minutes from Mathura Railway Station, with reliable car-and-guide arrangements for the Barsana circuit. We coordinate the full day-trip - pickup, transport, temple visits, and return - at straightforward Mathura pricing.",
       "Barsana is most famous for Lathmar Holi (typically 7-8 days before main Holi), when women playfully chase men with sticks (lathis) reenacting Krishna's teasing visit to Radha and the Gopis. If you're visiting for Lathmar Holi, book 60+ days in advance - Mathura sells out completely during this period.",
     ],
     sections: [
@@ -158,7 +158,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Why Guruvayur Dham is the Best Base for Barsana",
         body: [
-          "Barsana itself has limited accommodation - basic dharmshalas and guesthouses without AC or reliable hot water. For most pilgrims, the better choice is a clean, premium base in Mathura with day-trip transport to Barsana. Guruvayur Dham offers exactly this: 16 AC rooms with 24×7 hot water, free WiFi, free parking, and pure-veg restaurant tie-ups within 200 m.",
+          "Barsana itself has limited accommodation - basic dharmshalas and guesthouses without AC or reliable hot water. For most pilgrims, the better choice is a clean, premium base in Mathura with day-trip transport to Barsana. Guruvayur Dham offers exactly this: 15 AC rooms with 24×7 hot water, free WiFi, free parking, and pure-veg restaurant tie-ups within 200 m.",
           "We arrange the full Barsana day-trip: pickup from your room, drive to Barsana, climb assistance (doli booking for elderly), guided darshan at Radha Rani Temple, optional visit to Nandgaon (8 km) on the way back, and return to Mathura by afternoon. Total cost from Rs 1,200-1,500 per person including car and guide - half what Vrindavan-based tour operators charge.",
         ],
       },
@@ -189,14 +189,14 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Gowardhan Hill",
     title: "Hotels Near Gowardhan Hill Mathura - Stay at Guruvayur Dham for Parikrama",
     metaDescription:
-      "Hotels near Gowardhan Hill for parikrama. Guruvayur Dham Mathura - 16 premium AC rooms, 45-min drive to Gowardhan, parikrama guide arrangement. Rooms from Rs 1,500/night.",
+      "Hotels near Gowardhan Hill for parikrama. Guruvayur Dham Mathura - 15 premium AC rooms, 45-min drive to Gowardhan, parikrama guide arrangement. Rooms from Rs 1,500/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
     eyebrow: "Hotels Near · Gowardhan Hill",
     intro: [
       "Gowardhan Hill is the sacred hill that Lord Krishna lifted on his little finger to protect the villagers of Braj from the wrath of Indra, the rain god. Today, devotees perform the Gowardhan Parikrama - a 21-kilometre circumambulation of the hill - as one of the most spiritually charged pilgrimages in the Braj region. The route passes through Mansi Ganga (the sacred lake where the parikrama begins and ends), Daan Ghati Temple, Kusum Sarovar, Radha Kund, and Shyam Kund.",
-      "Gowardhan town is 25 km from Mathura (45-minute drive). Hotels in Gowardhan itself are basic - most pilgrims prefer to stay in Mathura and do the parikrama as a day-trip. Guruvayur Dham in Mathura is the ideal base: 16 premium AC rooms, 2 minutes from Mathura Railway Station, with car + guide arrangements for the parikrama. We coordinate the full day-trip - pickup, transport, parikrama guide, and return - at straightforward Mathura pricing.",
+      "Gowardhan town is 25 km from Mathura (45-minute drive). Hotels in Gowardhan itself are basic - most pilgrims prefer to stay in Mathura and do the parikrama as a day-trip. Guruvayur Dham in Mathura is the ideal base: 15 premium AC rooms, 2 minutes from Mathura Railway Station, with car + guide arrangements for the parikrama. We coordinate the full day-trip - pickup, transport, parikrama guide, and return - at straightforward Mathura pricing.",
       "The parikrama can be done on foot (5-7 hours), by car (1 hour), or by cycle rickshaw (2-3 hours). For elderly devotees, we arrange car parikrama with stops at all major temples. The most auspicious day for the parikrama is Govardhan Puja (the day after Diwali), when the entire hill is lit with lamps and millions of pilgrims gather.",
     ],
     sections: [
@@ -241,15 +241,15 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Janmashtami 2026 Booking",
     title: "Janmashtami 2026 Mathura Hotel Booking - Guruvayur Dham Rooms from Rs 1,500",
     metaDescription:
-      "Janmashtami 2026 Mathura hotel booking. Guruvayur Dham - 16 premium AC rooms, 2 min from Mathura Station, 1.5 km from Krishna Janmabhoomi. Book 60+ days ahead. Rooms from Rs 1,500.",
+      "Janmashtami 2026 Mathura hotel booking. Guruvayur Dham - 15 premium AC rooms, 2 min from Mathura Station, 1.5 km from Krishna Janmabhoomi. Book 60+ days ahead. Rooms from Rs 1,500.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
     eyebrow: "Janmashtami 2026 · 26-27 August 2026 · Mathura",
     intro: [
       "Janmashtami 2026 is expected to be celebrated on 26-27 August 2026, marking the divine birth of Lord Krishna at midnight in Mathura. The Krishna Janmabhoomi Temple - built on the exact site of Krishna's birth - hosts the grand midnight celebration, with Mangala Aarti at dawn, Abhishek (ceremonial bathing of the deity), Raslila performances throughout the day, and the climactic midnight aarti that draws over 2 million pilgrims to Mathura and Vrindavan.",
-      "Booking accommodation for Janmashtami is the single most important logistical decision for pilgrims. Mathura hotels sell out 60-90 days in advance, and prices surge 2-3x closer to the festival. Many pilgrims end up sleeping in temple corridors or paying exorbitant rates for substandard rooms. Guruvayur Dham - a 16-room premium stay in Mathura, 2 minutes from Mathura Station and 1.5 km from Krishna Janmabhoomi - offers clean, comfortable, well-located rooms at honest festival-season rates.",
-      "We coordinate Janmashtami darshan slots, midnight aarti queueing, Abhishek bookings, and local transport for our guests. Book at least 60 days in advance to secure your preferred room type at the best available rate. Rooms are limited to 16 - once full, we cannot accommodate further bookings regardless of price. Use the booking page on this site for instant confirmation, or WhatsApp +91-90908 20208 for Janmashtami-specific assistance.",
+      "Booking accommodation for Janmashtami is the single most important logistical decision for pilgrims. Mathura hotels sell out 60-90 days in advance, and prices surge 2-3x closer to the festival. Many pilgrims end up sleeping in temple corridors or paying exorbitant rates for substandard rooms. Guruvayur Dham - a 15-room premium stay in Mathura, 2 minutes from Mathura Station and 1.5 km from Krishna Janmabhoomi - offers clean, comfortable, well-located rooms at honest festival-season rates.",
+      "We coordinate Janmashtami darshan slots, midnight aarti queueing, Abhishek bookings, and local transport for our guests. Book at least 60 days in advance to secure your preferred room type at the best available rate. Rooms are limited to 15 - once full, we cannot accommodate further bookings regardless of price. Use the booking page on this site for instant confirmation, or WhatsApp +91-90908 20208 for Janmashtami-specific assistance.",
     ],
     sections: [
       {
@@ -262,7 +262,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Why Book Guruvayur Dham for Janmashtami 2026",
         body: [
-          "Three reasons: location, quality, and honesty. Location - 2 min from Mathura Station (easy in/out by train) and 1.5 km from Krishna Janmabhoomi (20-min walk or 5-min auto). Quality - 16 premium AC rooms with 24×7 hot water, attached bathrooms, daily housekeeping, power backup, free WiFi, free parking. Honesty - festival-season rates are published upfront on this site (no surprise surcharges at check-in).",
+          "Three reasons: location, quality, and honesty. Location - 2 min from Mathura Station (easy in/out by train) and 1.5 km from Krishna Janmabhoomi (20-min walk or 5-min auto). Quality - 15 premium AC rooms with 24×7 hot water, attached bathrooms, daily housekeeping, power backup, free WiFi, free parking. Honesty - festival-season rates are published upfront on this site (no surprise surcharges at check-in).",
           "We also coordinate Janmashtami-specific services for our guests: midnight aarti queue management, Abhishek bookings, darshan slot assistance, packed breakfast for early darshan, and local transport. Our team is on-call through the festival. Book 60+ days ahead to lock in the best rate.",
         ],
       },
@@ -276,12 +276,12 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     ],
     faqs: [
       { q: "When is Janmashtami 2026 in Mathura?", a: "Janmashtami 2026 is expected on 26-27 August 2026. The midnight celebration takes place at Krishna Janmabhoomi temple. Arrive by 25 August to settle in." },
-      { q: "How early should I book Janmashtami 2026 rooms?", a: "Book at least 60-90 days ahead. Guruvayur Dham has only 16 rooms - they fill up fast for Janmashtami. After full, no further bookings accepted regardless of price." },
+      { q: "How early should I book Janmashtami 2026 rooms?", a: "Book at least 60-90 days ahead. Guruvayur Dham has only 15 rooms - they fill up fast for Janmashtami. After full, no further bookings accepted regardless of price." },
       { q: "What are the Janmashtami 2026 room rates at Guruvayur Dham?", a: "Festival rates are published upfront on our booking page - typically Rs 3,000-7,000/night depending on room type (vs Rs 1,500-3,500 normal rate). No surprise surcharges at check-in." },
       { q: "Do you arrange Janmashtami darshan passes?", a: "Yes. We coordinate Krishna Janmabhoomi darshan passes, midnight aarti queueing, and Abhishek bookings at zero commission - you pay the official temple rate. WhatsApp +91-90908 20208 after booking your room." },
       { q: "What is the cancellation policy for Janmashtami bookings?", a: "Free cancellation up to 7 days before check-in. No refund within 7 days of check-in (your room is held back from other bookings). Refund processed in 5-7 business days." },
     ],
-    ctaHeadline: "Book Janmashtami 2026 Mathura Stay - 16 Rooms Only, Booking Now",
+    ctaHeadline: "Book Janmashtami 2026 Mathura Stay - 15 Rooms Only, Booking Now",
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -293,7 +293,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Holi 2026 Stay",
     title: "Holi 2026 Mathura Accommodation - Guruvayur Dham Premium Rooms",
     metaDescription:
-      "Holi 2026 Mathura accommodation. Guruvayur Dham - 16 premium AC rooms, 2 min from Mathura Station, 1.5 km from Krishna Janmabhoomi. Book 60+ days ahead. Rooms from Rs 3,000/night.",
+      "Holi 2026 Mathura accommodation. Guruvayur Dham - 15 premium AC rooms, 2 min from Mathura Station, 1.5 km from Krishna Janmabhoomi. Book 60+ days ahead. Rooms from Rs 3,000/night.",
     heroImage:
       "https://images.unsplash.com/photo-1583077783049-9c1e9e0f1a3e?w=1920&h=1080&fit=crop",
     jsonLdType: "Event",
@@ -301,7 +301,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     intro: [
       "Holi 2026 in Mathura is the world's most vibrant Holi celebration - the festival of colours observed in the very region where Lord Krishna played Holi with Radha and the Gopis. Mathura and the surrounding Braj region (Vrindavan, Barsana, Nandgaon, Gokul) host a week-long series of unique Holi traditions: Lathmar Holi in Barsana (where women chase men with sticks), Phoolon ki Holi in Vrindavan (Holi with flower petals), widow's Holi at Gopinath Temple, and the grand main Holi celebration on 14 March 2026 at Dwarkadhish Temple in Mathura.",
       "Holi 2026 main day is 14 March 2026 (Phalguna Purnima). Lathmar Holi in Barsana is expected around 24-25 February 2026. The full Braj Holi season runs from late February to mid-March 2026, drawing pilgrims and photographers from across the world. Booking accommodation is the most critical decision - Mathura sells out completely during this period, prices surge 3-4x, and many travellers end up without a room.",
-      "Guruvayur Dham - a 16-room premium stay in Mathura, 2 minutes from Mathura Station and 1.5 km from Krishna Janmabhoomi - offers clean, comfortable, well-located rooms at honest festival-season rates. Book at least 60 days in advance. Rooms are limited to 16 - once full, no further bookings are accepted regardless of price. Use the booking page for instant confirmation, or WhatsApp +91-90908 20208 for Holi-specific assistance and Lathmar Holi packages.",
+      "Guruvayur Dham - a 15-room premium stay in Mathura, 2 minutes from Mathura Station and 1.5 km from Krishna Janmabhoomi - offers clean, comfortable, well-located rooms at honest festival-season rates. Book at least 60 days in advance. Rooms are limited to 15 - once full, no further bookings are accepted regardless of price. Use the booking page for instant confirmation, or WhatsApp +91-90908 20208 for Holi-specific assistance and Lathmar Holi packages.",
     ],
     sections: [
       {
@@ -314,7 +314,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Why Stay at Guruvayur Dham for Holi 2026",
         body: [
-          "Holi is the single most crowded festival in Mathura - even more so than Janmashtami. Accommodation quality matters because you'll be coming back covered in colour, exhausted, and needing a hot shower. Guruvayur Dham offers: 16 premium AC rooms with 24×7 hot water (essential for post-Holi showers), attached bathrooms, daily housekeeping, power backup, free WiFi, free parking, and pure-veg restaurant tie-ups within 200 m.",
+          "Holi is the single most crowded festival in Mathura - even more so than Janmashtami. Accommodation quality matters because you'll be coming back covered in colour, exhausted, and needing a hot shower. Guruvayur Dham offers: 15 premium AC rooms with 24×7 hot water (essential for post-Holi showers), attached bathrooms, daily housekeeping, power backup, free WiFi, free parking, and pure-veg restaurant tie-ups within 200 m.",
           "Location advantage - 2 min walk from Mathura Station (easy in/out by train) and 1.5 km from Dwarkadhish Temple (the main Holi venue in Mathura). We coordinate Holi-specific services for our guests: Lathmar Holi day-trip packages, Phoolon ki Holi transport, festival-day darshan slots, and post-Holi laundry service.",
         ],
       },
@@ -322,18 +322,18 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
         heading: "Holi 2026 Booking & Rates",
         body: [
           "Festival rates for Holi 2026 (14 March) and the full Braj Holi season (24 February - 14 March 2026): typically Rs 3,000-7,000/night depending on room type, published upfront on our booking page (no surprise surcharges at check-in). All rooms are AC with attached bathrooms, 24×7 hot water, daily housekeeping, and free WiFi.",
-          "Book 60+ days ahead - 16 rooms only, no overbooking. For Holi-specific assistance (Lathmar Holi package, Phoolon ki Holi transport, festival-day darshan), WhatsApp +91-90908 20208 after booking your room. Cancellation: free up to 7 days before check-in; no refund within 7 days (room is held back from other bookings).",
+          "Book 60+ days ahead - 15 rooms only, no overbooking. For Holi-specific assistance (Lathmar Holi package, Phoolon ki Holi transport, festival-day darshan), WhatsApp +91-90908 20208 after booking your room. Cancellation: free up to 7 days before check-in; no refund within 7 days (room is held back from other bookings).",
         ],
       },
     ],
     faqs: [
       { q: "When is Holi 2026 in Mathura?", a: "Main Holi 2026 is on 14 March 2026 (Phalguna Purnima). Lathmar Holi in Barsana is 24-25 February 2026. Full Braj Holi season runs late February - mid March 2026." },
-      { q: "How early should I book Holi 2026 rooms in Mathura?", a: "Book 60+ days ahead. Guruvayur Dham has only 16 rooms - they sell out fast for Holi (Mathura's most crowded festival). After full, no further bookings accepted regardless of price." },
+      { q: "How early should I book Holi 2026 rooms in Mathura?", a: "Book 60+ days ahead. Guruvayur Dham has only 15 rooms - they sell out fast for Holi (Mathura's most crowded festival). After full, no further bookings accepted regardless of price." },
       { q: "What are the Holi 2026 rates at Guruvayur Dham?", a: "Festival rates are published upfront on our booking page - typically Rs 3,000-7,000/night depending on room type (vs Rs 1,500-3,500 normal rate). No surprise surcharges at check-in." },
       { q: "Do you arrange Lathmar Holi trips to Barsana?", a: "Yes. We arrange early-morning transport (5:30 AM pickup to beat the rush), bottled water, refreshments, and return to Mathura by 2-3 PM. Lathmar Holi package from Rs 1,500 per person including car." },
       { q: "What should I wear for Holi in Mathura?", a: "Wear white cotton clothes (they show colours best). Bring a change of clothes for return. Old sneakers or sandals. Sunglasses protect eyes. Apply coconut oil on skin/hair before - makes colour wash off easily. Guruvayur Dham provides post-Holi laundry service." },
     ],
-    ctaHeadline: "Book Holi 2026 Mathura Stay - 16 Rooms Only, Booking 60+ Days Ahead",
+    ctaHeadline: "Book Holi 2026 Mathura Stay - 15 Rooms Only, Booking 60+ Days Ahead",
   },
 ];
 

@@ -17,7 +17,7 @@ const scrollTo = (id: string) => {
 const HIGHLIGHTS = [
   "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
   "Modern pilgrim hospitality since 2020 · 10,000+ pilgrims served",
-  "16+ rooms across AC, non-AC, family, and dormitory categories",
+  "15+ rooms across AC, non-AC, family, and dormitory categories",
   "In-house pooja booking coordinator at zero commission",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
   "Tie-ups with pure-veg pure-veg restaurants for in-room meal delivery",
