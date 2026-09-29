@@ -13,11 +13,13 @@ import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
 import LiveActivityFeed from "@/components/site/LiveActivityFeed";
+import ReservationCalendar from "@/pages/admin/ReservationCalendar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const SECTIONS = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, route: "/admin" },
+  { key: "reservations", label: "Reservation Grid", icon: CalendarDays },
   { key: "bookings", label: "Bookings", icon: CalendarDays, route: "/admin/bookings" },
   { key: "crm", label: "CRM", icon: Users },
   { key: "housekeeping", label: "Housekeeping", icon: BedDouble },
@@ -98,6 +100,7 @@ export default function AdminHub() {
           {/* Section content */}
           <div className="card-luxe min-h-[400px] p-6">
             {active === "dashboard" && <DashboardSection stats={stats} />}
+            {active === "reservations" && <ReservationCalendar />}
             {active === "crm" && <CRMSection />}
             {active === "housekeeping" && <HousekeepingSection />}
             {active === "kitchen" && <KitchenSection />}

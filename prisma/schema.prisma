@@ -50,9 +50,10 @@ model Booking {
   // Invoice-specific guest fields (optional, collected at checkout for B2B guests)
   guestGSTIN      String?         // customer's GST number (for tax invoice)
   guestAddress    String?         // customer's billing address
-  arrivalTime     String?         // e.g. "08:32 pm" — check-in time (separate from check-in date)
-  departureTime   String?         // e.g. "09:30 am" — check-out time
-  paymentMethod   String?         // UPI | CASH | CARD | RAZORPAY — used on invoice
+  arrivalTime     String?         // e.g. "08:32 pm" - check-in time (separate from check-in date)
+  departureTime   String?         // e.g. "09:30 am" - check-out time
+  paymentMethod   String?         // UPI | CASH | CARD | RAZORPAY - used on invoice
+  roomNumber      String?         // specific room number (101-107, 201-208) for reservation grid
   checkIn         DateTime
   checkOut        DateTime
   nights          Int
