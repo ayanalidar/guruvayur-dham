@@ -9,12 +9,12 @@ import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, ImageReveal, MandalaDivider, MagneticButton, CountUp, OmWatermark, SectionHeader } from "@/components/site/visuals";
 
 const HIGHLIGHTS = [
-  "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
+  "Walking distance to Mata Pathwari Mandir · 3 km drive to Shri Krishna Janmabhoomi",
   "Modern pilgrim hospitality since 2020 · 10,000+ pilgrims served",
-  "15+ rooms across AC, non-AC, family, and dormitory categories",
-  "In-house pooja booking coordinator at zero commission",
+  "15+ AC rooms across Deluxe, Privilege Suite, and Family Comfort categories",
+  "In-house pooja booking coordinator at zero commission (Mangala Aarti, Abhishek, Rajbhog, Sandhya Aarti)",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
-  "Tie-ups with pure-veg pure-veg restaurants for in-room meal delivery",
+  "Tie-ups with pure-veg restaurants for in-room meal delivery",
 ];
 
 export default function AboutPage() {
@@ -23,7 +23,7 @@ export default function AboutPage() {
 
   const eyebrow = get("about.eyebrow", "About Guruvayur Dham");
   const title = get("about.title", "A Modern Pilgrim Home Since 2020");
-  const story = get("about.story", "Namaste and welcome to Mathura! I am Ram Meena, the proud owner and dedicated host of Hotel Guruvayur Dham. Born and raised with deep roots in the holy Braj region, my goal is to ensure every devotee, family, and traveler experiences warm hospitality, peace of mind, and absolute comfort during their spiritual pilgrimage.\n\nGuruvayur Dham is an inviting haven of comfort and warm hospitality located in the sacred city of Mathura. Situated in Dholi Pyau, within convenient proximity to Mathura Junction Railway Station, the hotel is an ideal destination for pilgrims, families, tourists, and business travelers. Designed with elegant wooden interiors, modern ambient lighting, and well-appointed rooms ranging from cozy double setups to spacious family suites, Guruvayur Dham ensures a peaceful and restful stay during your divine Braj Darshan journey.\n\nWhether you need personalized guidance for Mathura-Vrindavan temple darshan, quick local travel tips, or simply want to ensure your family's stay is comfortable and secure, my team and I are available round-the-clock to make your trip effortless and memorable. At Hotel Guruvayur Dham, we don't just offer rooms; we welcome you as part of our extended family.\n\nDIRECT CONTACT / WHATSAPP: +91 84455 55584\nLANGUAGES SPOKEN: Hindi, English");
+  const story = get("about.story", "Namaste and welcome to Mathura! I am Ram Meena, the proud owner and dedicated host of Hotel Guruvayur Dham. Born and raised with deep roots in the holy Braj region, my goal is to ensure every devotee, family, and traveler experiences warm hospitality, peace of mind, and absolute comfort during their spiritual pilgrimage.\n\nGuruvayur Dham is an inviting haven of comfort and warm hospitality located in the sacred city of Mathura. Situated in Dholi Pyau, within convenient proximity to Mathura Junction Railway Station, the hotel is an ideal destination for pilgrims, families, tourists, and business travelers. Designed with elegant wooden interiors, modern ambient lighting, and well-appointed AC rooms ranging from cozy double setups to spacious family suites, Guruvayur Dham ensures a peaceful and restful stay during your divine Braj Darshan journey.\n\nWhether you need personalized guidance for Mathura-Vrindavan-Gokul temple darshan, quick local travel tips, or simply want to ensure your family's stay is comfortable and secure, my team and I are available round-the-clock to make your trip effortless and memorable. At Hotel Guruvayur Dham, we don't just offer rooms; we welcome you as part of our extended family.\n\nDIRECT CONTACT / WHATSAPP: +91-90908 20208\nLANGUAGES SPOKEN: Hindi, English, Braj Bhasha, Bengali");
   const paragraphs = story.split(/\n\n+/).filter(Boolean);
 
   // Split title for gold foil
@@ -59,14 +59,14 @@ export default function AboutPage() {
               />
               <ImageReveal
                 src="/about/ram-meena.jpg"
-                alt="Pure-veg restaurant partner near Guruvayur Dham"
+                alt="Ram Meena, owner and host of Guruvayur Dham Mathura"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
             </div>
             <div className="grid grid-cols-2 gap-4 pt-6">
               <ImageReveal
                 src="/about/room-suite.jpg"
-                alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
+                alt="Privilege Suite with seating area at Guruvayur Dham Mathura"
                 className="aspect-square rounded-2xl border border-champagne/15 shadow-luxe"
               />
               <ImageReveal
@@ -129,9 +129,9 @@ export default function AboutPage() {
           />
           <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-6 sm:grid-cols-4">
             {[
-              { value: 25, suffix: "+", label: "Years of Service" },
-              { value: 52, suffix: "", label: "Rooms & Suites" },
-              { value: 50000, suffix: "+", label: "Pilgrims Served" },
+              { value: 5, suffix: "+", label: "Years of Service" },
+              { value: 15, suffix: "+", label: "AC Rooms & Suites" },
+              { value: 10000, suffix: "+", label: "Pilgrims Served" },
               { value: 4.8, suffix: " ★", label: "Google Rating", decimals: 1 },
             ].map((s, i) => (
               <motion.div
@@ -161,15 +161,16 @@ export default function AboutPage() {
               title={<>Devotion in Every <GoldFoilText>Detail</GoldFoilText></>}
             />
             <p className="mt-6 text-base leading-relaxed text-ivory/70">
-              To make every pilgrim's Guruvayur visit spiritually fulfilling, physically
+              To make every pilgrim's Mathura visit spiritually fulfilling, physically
               comfortable, and logistically effortless. Whether you're a solo traveller on
-              a quick darshan trip or a multi-generational family here for a child's Annaprashan
-              ceremony, you'll find a warm welcome, honest pricing, and the kind of personal
-              care that makes every pilgrim feel at home.
+              a quick darshan trip or a multi-generational family here for a child's Mundan
+              ceremony or Krishna Janmashtami celebration, you'll find a warm welcome,
+              honest pricing, and the kind of personal care that makes every pilgrim feel at
+              home.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { icon: MapPin, label: "Location", text: "2 min from temple gate" },
+                { icon: MapPin, label: "Location", text: "2 min from Mathura Junction" },
                 { icon: Heart, label: "Service", text: "Pilgrim-first, always" },
                 { icon: Award, label: "Quality", text: "22-point room checklist" },
               ].map((x, i) => (

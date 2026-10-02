@@ -1154,7 +1154,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Lakshmi Sharma",
     city: "Bengaluru",
     rating: 5,
-    text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked, and the staff kept a wheelchair ready for amma. They even booked our Archana pooja in advance. Felt like staying with relatives, not at a hotel.",
+    text: "Travelled with my 70-year-old mother and two kids. The Family Suite gave us all space, the elevator worked, and the staff kept a wheelchair ready for amma. They even booked our Mangala Aarti + Abhishek pooja in advance. Felt like staying with relatives, not at a hotel.",
     room: "Family Suite AC",
   },
   {
@@ -1168,7 +1168,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Sunita Sharma",
     city: "Kolkata",
     rating: 5,
-    text: "We did our daughter's Annaprashan here. The Guruvayur Dham team coordinated with the temple pandit, arranged the prasadam kit, and even booked a photographer. The whole ceremony felt sacred and stress-free. Forever grateful.",
+    text: "We did our daughter's Mundan ceremony here at the Mata Pathwari Mandir. The Guruvayur Dham team coordinated with the temple pandit, arranged the prasadam kit, and even booked a photographer. The whole ceremony felt sacred and stress-free. Forever grateful.",
     room: "Deluxe AC Room",
   },
   {

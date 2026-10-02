@@ -8,15 +8,15 @@ import { GoldFoilText, MandalaDivider } from "./visuals";
 import { useI18n } from "@/lib/i18n/context";
 
 const serviceLinks = [
-  { label: "AC Rooms", route: "/rooms" },
-  { label: "Non-AC Rooms", route: "/rooms" },
-  { label: "Family Suite", route: "/rooms" },
+  { label: "AC Deluxe Rooms", route: "/rooms" },
+  { label: "Privilege Suite", route: "/rooms" },
+  { label: "Family Comfort Rooms", route: "/rooms" },
   { label: "360° Virtual Tour", route: "/tour" },
   { label: "Write a Review", route: "/review" },
   { label: "Influencer Portal", route: "/influencer" },
-  { label: "prasadam Booking", route: "/pooja" },
-  { label: "Archana", route: "/pooja" },
-  { label: "Annaprashan Ceremony", route: "/pooja" },
+  { label: "Mangala Aarti Booking", route: "/pooja" },
+  { label: "Abhishek Pooja", route: "/pooja" },
+  { label: "Annadan (Food Donation)", route: "/pooja" },
 ];
 
 export default function Footer() {
@@ -108,9 +108,10 @@ export default function Footer() {
             </div>
           </div>
           <p className="mt-5 text-sm leading-relaxed text-ivory/60">
-            {tagline}. A boutique pilgrim home just 2 minutes from the temple's temple gate
-            gate. Cinematic dark-luxe rooms, honest pricing, and warm service for every
-            devotee who walks through our doors.
+            {tagline}. A boutique pilgrim home just 2 minutes from Mathura Junction
+            railway station and opposite Mata Pathwari Mandir. Cinematic dark-luxe AC
+            rooms, honest pricing, and warm service for every devotee who walks through
+            our doors.
           </p>
           <div className="mt-5 flex gap-2">
             {[

@@ -35,7 +35,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "hero.eyebrow": "Stay · Pooja · Blessing · Since 2020",
     "hero.headline": "Stay 2 Minutes from",
     "hero.headlineHighlight": "Shri Krishna Janmabhoomi",
-    "hero.subheadline": "Cinematic dark-luxe rooms, 24×7 hot water, family-friendly. Walk to temple gate for Mangala Aarti darshan. Book in 30 seconds - no booking fee, instant WhatsApp confirmation.",
+    "hero.subheadline": "Cinematic dark-luxe AC rooms, 24×7 hot water, family-friendly. Opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi, 2 min from Mathura Junction. Book in 30 seconds - no booking fee, instant WhatsApp confirmation.",
     "hero.bookNow": "Instant Book",
     "hero.viewRooms": "View Rooms",
     "hero.rating": "Google Rating",
@@ -48,16 +48,16 @@ export const translations: Record<Language, Record<string, string>> = {
     "whyChooseUs.subtitle": "We've hosted over 10,000 pilgrims since 2020. Every detail - from 24×7 hot water to free temple darshan guidance - is designed around what a pilgrim actually needs.",
     /* Rooms */
     "rooms.eyebrow": "Rooms & Suites",
-    "rooms.title": "Clean Rooms in Guruvayur - Walkable to Temple",
-    "rooms.subtitle": "From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from temple gate.",
+    "rooms.title": "Clean Rooms in Mathura - Near Mathura Junction",
+    "rooms.subtitle": "From ₹1,250/night Deluxe rooms to ₹2,699 Privilege Suites · every option is sanitised daily, comes with 24×7 hot water and free WiFi, and is a 2-minute walk from Mathura Junction railway station.",
     /* Pooja */
     "pooja.eyebrow": "Pooja & Offerings",
-    "pooja.title": "Guruvayur Pooja Booking - prasadam, Archana & More",
+    "pooja.title": "Mathura Pooja Booking - Mangala Aarti, Abhishek & More",
     "pooja.subtitle": "Book any temple pooja through Guruvayur Dham at the official temple rate - zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.",
     /* About */
     "about.eyebrow": "About Guruvayur Dham",
     "about.title": "A Family-Run Pilgrim Home Since 2020",
-    "about.story": "Guruvayur Dham began as a small four-room property in 2020, when our host Shri Krishna Sharma - himself a daily devotee at the temple - noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 5 years and modern hospitality, grown into a 15-room property that has welcomed over 10,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel - we are a pilgrim home. Every decision, from the 5 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Guruvayur visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Annaprashan ceremony, you'll find a warm welcome, honest pricing, and the kind of personal care that only a modern home can offer.",
+    "about.story": "Guruvayur Dham began as a small four-room property in 2020, when our host Ram Meena - himself a daily devotee at Mata Pathwari Mandir - noticed that pilgrims arriving from distant states had nowhere clean, affordable, and walking-distance to stay. What started as a single rented house has, over 5 years and modern hospitality, grown into a 15-room property that has welcomed over 10,000 pilgrims from across India and the diaspora.\n\nWe are not a hotel - we are a pilgrim home. Every decision, from the 5 AM reception shift during Mangala Aarti darshan to the complimentary chai service before temple visits, is made with the devotee in mind. Our pooja-booking coordinator works directly with the Mathura-Braj temple pandit's office to secure your slots, and our housekeeping team inspects every room against a 22-point checklist before check-in.\n\nOur mission is simple: to make every pilgrim's Mathura visit spiritually fulfilling, physically comfortable, and logistically effortless. Whether you're a solo traveller on a quick darshan trip or a multi-generational family here for a child's Mundan ceremony or Krishna Janmashtami celebration, you'll find a warm welcome, honest pricing, and the kind of personal care that only a modern home can offer.",
     /* Contact */
     "contact.eyebrow": "Get in Touch",
     "contact.title": "Book Your Stay or Ask Anything",
@@ -65,10 +65,10 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Events */
     "events.eyebrow": "Festivals & Events",
     "events.title": "Plan Your Visit Around Sacred Festivals",
-    "events.subtitle": "Guruvayur's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates.",
+    "events.subtitle": "Mathura-Vrindavan's festivals are spiritual experiences of a lifetime. Here are the major events for 2025-2026 · book rooms 60+ days in advance for festival dates.",
     /* Blog */
     "blog.eyebrow": "Travel Guide & Blog",
-    "blog.title": "Guruvayur Pilgrim Knowledge Hub",
+    "blog.title": "Mathura Pilgrim Knowledge Hub",
     "blog.subtitle": "Everything you need to know before your visit · darshan timings, dress code, travel routes, festival calendars, and booking tips.",
     /* Testimonials */
     "testimonials.eyebrow": "Guest Stories",
@@ -76,19 +76,19 @@ export const translations: Record<Language, Record<string, string>> = {
     "testimonials.subtitle": "4.8 ★ average rating across Google, Booking.com & MakeMyTrip from 120+ verified reviews.",
     /* FAQ */
     "faq.eyebrow": "Frequently Asked",
-    "faq.title": "Your Guruvayur Questions, Answered",
+    "faq.title": "Your Mathura Questions, Answered",
     "faq.subtitle": "We've compiled the most common questions our guests ask. Can't find your answer? WhatsApp us any time · we reply within minutes.",
     /* Gallery */
     "gallery.eyebrow": "Photo Gallery",
     "gallery.title": "Step Inside Guruvayur Dham",
-    "gallery.subtitle": "Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town · every photo tells the story of a pilgrim's day.",
+    "gallery.subtitle": "Browse our rooms, the temple, our facilities, and the surrounding Mathura town · every photo tells the story of a pilgrim's day.",
     /* Plan Your Darshan */
     "darshan.eyebrow": "Plan Your Darshan",
     "darshan.title": "Everything You Need for a Blessed Visit",
-    "darshan.subtitle": "From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs.",
+    "darshan.subtitle": "From darshan timings to festival calendars · we've put together the essential resources every Mathura pilgrim needs.",
     /* Footer */
     "footer.tagline": "Luxury Pilgrim Stay",
-    "footer.ctaHeadline": "Ready for Divine Comfort, 2 Minutes from the Temple?",
+    "footer.ctaHeadline": "Ready for Divine Comfort, 2 Minutes from Mathura Junction?",
     "footer.ctaSubtitle": "Book your room on WhatsApp in 30 seconds. Real-time availability, instant confirmation, dynamic pricing, and zero booking fee.",
     /* CTA + common */
     "cta.bookNow": "Book Now",

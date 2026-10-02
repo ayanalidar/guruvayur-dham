@@ -18,7 +18,7 @@ import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, TiltCard, MagneticButton, SectionHeader, MandalaDivider } from "@/components/site/visuals";
 import { BedDouble } from "lucide-react";
 
-const TYPE_FILTERS: (RoomType | "All")[] = ["All", "AC", "Non-AC", "Family", "Deluxe"];
+const TYPE_FILTERS: (RoomType | "All")[] = ["All", "AC", "Family", "Deluxe", "Suite"];
 const BUDGET_FILTERS = [
   { label: "Any", min: 0, max: Infinity },
   { label: "₹500-1500", min: 500, max: 1500 },

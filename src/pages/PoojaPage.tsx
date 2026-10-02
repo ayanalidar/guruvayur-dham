@@ -14,8 +14,8 @@ export default function PoojaPage() {
   const poojas = cmsPoojas.length > 0 ? cmsPoojas : POOJAS;
 
   const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
-  const title = get("pooja.title", "Guruvayur Pooja Booking · prasadam, Archana & More");
-  const subtitle = get("pooja.subtitle", "Book any temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.");
+  const title = get("pooja.title", "Mathura Pooja Booking · Mangala Aarti, Abhishek & More");
+  const subtitle = get("pooja.subtitle", "Book any Mathura-Braj temple pooja through Guruvayur Dham at the official temple rate · zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room.");
 
   // Split title for gold foil highlight
   const titleParts = title.split("·");
@@ -130,7 +130,7 @@ export default function PoojaPage() {
             <SectionHeader
               eyebrow="Custom Pooja Packages"
               title={<>Need a <GoldFoilText>Combined Package?</GoldFoilText></>}
-              subtitle="Travelling with family? We curate combined pooja packages (prasadam + Archana + Pushpanjali, etc.) at bundled rates. Message us your requirements."
+              subtitle="Travelling with family? We curate combined pooja packages (Mangala Aarti + Abhishek + Pushpanjali, etc.) at bundled rates. Message us your requirements."
             />
             <div className="mt-6 flex justify-center">
               <MagneticButton href={waLink("Namaskaram! I'd like to know about combined pooja packages at Guruvayur Dham.")}>

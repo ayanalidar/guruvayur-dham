@@ -269,9 +269,9 @@ ${data.message}`;
 
                   <div className="mt-6 rounded-xl border border-champagne/12 bg-ink/50 p-4">
                     <p className="flex items-center gap-2 text-sm font-semibold text-ivory">
-                      <BedDouble className="h-4 w-4 text-champagne" /> Rooms from ₹1,500/night
+                      <BedDouble className="h-4 w-4 text-champagne" /> Rooms from ₹1,250/night
                     </p>
-                    <p className="mt-1 text-xs text-ivory/60">AC, non-AC, family suites, dormitory · all 2 min from temple gate.</p>
+                    <p className="mt-1 text-xs text-ivory/60">Deluxe, Privilege Suite, Family Comfort · all AC · 2 min from Mathura Junction, opposite Mata Pathwari Mandir.</p>
                     <MagneticButton
                       href={waLink("Namaskaram! I'd like to know today's best available room rate at Guruvayur Dham.")}
                       className="mt-3 w-full"

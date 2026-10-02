@@ -376,7 +376,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
     slug: "palpayasam-booking",
     category: "pooja-guides",
     navLabel: "prasadam",
-    title: "prasadam Booking in Mathura - Sweet Rice Offering to Krishna",
+    title: "Prasadam Booking in Mathura - Sweet Rice Offering to Krishna",
     metaDescription: "Book prasadam offering at Mathura temples. Sweet rice pudding offered to Krishna. Significance, price, booking process. Zero commission pooja booking.",
     heroImage: "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -798,7 +798,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
       {
         heading: "Budget Hotel Options in Mathura",
         body: [
-          "Guruvayur Dham (Rs 700-3,500/night): Non-AC budget room (Rs 700), Standard AC (Rs 1,500), Deluxe AC (Rs 2,200), Family Suite (Rs 3,500). All rooms: 24x7 hot water, free WiFi, daily housekeeping, free parking, 24-hr front desk. Located opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi. Best value for money.",
+          "Guruvayur Dham (Rs 1,250-2,699/night): King Deluxe (Rs 1,250), Premium Double Bed (Rs 1,450), Family Comfort Triple (Rs 1,800), Family Suit/Quad Room (Rs 2,450), Privilege Suite (Rs 2,699). All rooms are fully air-conditioned with 24x7 hot water, free WiFi, daily housekeeping, free parking, 24-hr front desk. Located opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi. Best value for money.",
           "Typical Mathura budget hotels (Rs 500-1,500/night): Often lack AC, unreliable hot water, no WiFi, questionable cleanliness. Located near the railway station (noisy area). Limited or no parking. No 24-hour front desk.",
           "Tips for booking: Book directly (no booking fees), avoid festival dates for best rates, check for AC if visiting April-June, verify hot water availability (some hotels only have 6-10 AM), and confirm the location (avoid the noisy station area if you want peace).",
         ],

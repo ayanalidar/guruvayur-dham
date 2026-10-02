@@ -51,7 +51,7 @@ export default function PlanYourDarshan() {
   const title = get("darshan.title", "Everything You Need for a Blessed Visit");
   const subtitle = get(
     "darshan.subtitle",
-    "From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
+    "From darshan timings to festival calendars · we've put together the essential resources every Mathura pilgrim needs."
   );
 
   // Split title for gradient on second half

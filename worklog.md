@@ -1827,3 +1827,199 @@ Stage Summary:
     original Kerala→Mathura site migration. These would have been visible
     to users in the FAQ section.
   - Not committed. Not pushed.
+
+---
+Task ID: G4 (Cross-Page Data Consistency Audit - "By the Numbers" + Footer + room counts)
+Agent: main (continuation)
+Task: User-reported specific issues + cross-page consistency sweep:
+  - "By the Numbers" / "A Legacy of Devotion" section on About page is wrong
+  - Footer has mistakes
+  - Every page should have matching data (no multiple conflicting values)
+  - Find "16+ rooms" on home page and elsewhere, change to "15+ rooms"
+
+Work Log:
+
+=== MAJOR DATA INCONSISTENCIES FOUND ===
+
+1. AboutPage "By the Numbers" stats (line 132-135) — ALL WRONG:
+   - "25+ Years of Service" — but story text says "Since 2020" (= 5 years)
+   - "52 Rooms & Suites" — actual is 15
+   - "50,000+ Pilgrims Served" — story text says "10,000+ pilgrims served"
+   - "4.8 ★ Google Rating" — OK
+
+2. AboutPage HIGHLIGHTS list (line 11-18):
+   - "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate" — Janmabhoomi is 3 km away, not 200 m walk
+   - "15+ rooms across AC, non-AC, family, and dormitory categories" — wrong (no Non-AC, no dormitory; all rooms are AC)
+   - "Tie-ups with pure-veg pure-veg restaurants" — duplicate "pure-veg pure-veg" typo
+
+3. AboutPage story text (line 26):
+   - "DIRECT CONTACT / WHATSAPP: +91 84455 55584" — main WhatsApp is +91-90908 20208 per SITE config
+   - "LANGUAGES SPOKEN: Hindi, English" — earlier I updated the FAQ to say "English, Hindi, Braj Bhasha, Bengali"
+
+4. AboutPage image alt texts:
+   - ram-meena.jpg had alt="Pure-veg restaurant partner" (should be Ram Meena)
+   - room-suite.jpg had alt="Shri Krishna Janmabhoomi temple visible from rooftop" (should be suite)
+
+5. AboutPage mission text (line 164):
+   - "Guruvayur visit" — should be "Mathura visit"
+   - "Annaprashan ceremony" — Kerala ceremony; replaced with "Mundan ceremony or Krishna Janmashtami celebration"
+
+6. AboutPage mission cards (line 172):
+   - "2 min from temple gate" — Janmabhoomi is 3 km; replaced with "2 min from Mathura Junction"
+
+7. AboutSection.tsx (homepage About preview) — same issues as AboutPage:
+   - HIGHLIGHTS list identical wrong text
+   - ram-meena.jpg alt wrong
+   - room-suite.jpg alt wrong
+   - Mini stats had "200 m to temple" + "50k+ guests served" (should be 2 min to Mathura Junction + 10k+ guests)
+
+8. Footer.tsx:
+   - serviceLinks list had Kerala-style poojas: "Non-AC Rooms", "prasadam Booking" (lowercase), "Archana", "Annaprashan Ceremony"
+   - Brand text had typo: "temple's temple gate gate" (duplicated words)
+   - Brand text said "2 minutes from the temple's temple gate" — Janmabhoomi is 3 km away
+
+9. ContactPage.tsx (line 274):
+   - "AC, non-AC, family suites, dormitory · all 2 min from temple gate"
+   - Wrong on 3 counts: no Non-AC, no dormitory, Janmabhoomi is 3 km not 2 min walk
+   - Also "Rooms from ₹1,500/night" — actual lowest is ₹1,250
+
+10. Contact.tsx component (line 399):
+    - Same wrong text as ContactPage
+
+11. HomePage.tsx:
+    - Line 218: "15 Premium Rooms" → user wants "15+ Premium Rooms"
+    - Line 217: "From ₹1,500" → should be "From ₹1,250"
+    - Line 247-248: "4.8" + "120 reviews" hardcoded → made "Google Rating" label instead of count
+    - Line 280-281: MarqueeStrip had "prasadam", "Archana", "Annaprashan" → replaced with Mathura pooja names: "Mangala Aarti", "Abhishek", "Rajbhog Aarti", "Sandhya Aarti", "15+ AC Rooms"
+
+12. PoojaPage.tsx (line 17, 133):
+    - Title: "Guruvayur Pooja Booking · prasadam, Archana & More" → "Mathura Pooja Booking · Mangala Aarti, Abhishek & More"
+    - Subtitle: "(prasadam + Archana + Pushpanjali, etc.)" → "(Mangala Aarti + Abhishek + Pushpanjali, etc.)"
+
+13. PoojaSection.tsx (line 30): same wrong title fallback
+
+14. i18n translations.ts — multiple stale city references (Guruvayur city vs Mathura):
+    - hero.subheadline: "Walk to temple gate" → "Opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi"
+    - rooms.title: "Clean Rooms in Guruvayur - Walkable to Temple" → "Clean Rooms in Mathura - Near Mathura Junction"
+    - rooms.subtitle: prices ₹1,500-3,500 → ₹1,250-2,699
+    - pooja.title: same Kerala fix
+    - about.story: "Shri Krishna Sharma" → "Ram Meena"; "Guruvayur visit" → "Mathura visit"; "Annaprashan" → "Mundan ceremony or Krishna Janmashtami celebration"; added "Mathura-Braj" prefix to temple pandit reference
+    - events.subtitle: "Guruvayur's festivals" → "Mathura-Vrindavan's festivals"
+    - blog.title: "Guruvayur Pilgrim Knowledge Hub" → "Mathura Pilgrim Knowledge Hub"
+    - faq.title: "Your Guruvayur Questions" → "Your Mathura Questions"
+    - gallery.subtitle: "surrounding Guruvayur town" → "surrounding Mathura town"
+    - darshan.subtitle: "every Guruvayur pilgrim needs" → "every Mathura pilgrim needs"
+    - footer.ctaHeadline: "2 Minutes from the Temple?" → "2 Minutes from Mathura Junction?"
+
+15. PlanYourDarshan.tsx: "Guruvayur pilgrim" → "Mathura pilgrim"
+16. HomePage.tsx darshan section subtitle: same fix
+
+17. layout.tsx:
+    - Title: "2 Minutes from Shri Krishna Janmabhoomi" → "2 Minutes from Mathura Junction" (Janmabhoomi is 3 km)
+    - Description: "near Shri Krishna Janmabhoomi... Walk to temple gate in 2 minutes" → "opposite Mata Pathwari Mandir and 3 km from Shri Krishna Janmabhoomi... 2 minutes from Mathura Junction railway station"
+    - Keywords: removed "Guruvayur rooms/temple accommodation/luxury stay/boutique hotel/pooja booking/AC rooms/stay near Guruvayur temple/darshan timings" → replaced with Mathura equivalents + added "Mangala Aarti Mathura" + "Abhishek pooja Mathura"
+    - Removed stale "Archana Guruvayur" alternateName
+
+18. SEO pages phase2 line 801:
+    - "Guruvayur Dham (Rs 700-3,500/night): Non-AC budget room (Rs 700), Standard AC (Rs 1,500), Deluxe AC (Rs 2,200), Family Suite (Rs 3,500)"
+    - → "Guruvayur Dham (Rs 1,250-2,699/night): King Deluxe (Rs 1,250), Premium Double Bed (Rs 1,450), Family Comfort Triple (Rs 1,800), Family Suit/Quad Room (Rs 2,450), Privilege Suite (Rs 2,699). All rooms are fully air-conditioned..."
+    - Fixed capitalization: "prasadam Booking" → "Prasadam Booking" (line 379)
+
+19. SEO pages phase4 — bulk fix of entry-level price:
+    - 8 occurrences of "Rs 1,500/night" → "Rs 1,250/night" (the actual lowest King Deluxe price)
+
+20. Testimonials in site-data.ts and google-import/route.ts:
+    - "Archana pooja" → "Mangala Aarti + Abhishek pooja"
+    - "Annaprashan" ceremony → "Mundan ceremony at Mata Pathwari Mandir"
+
+21. Room filters (Rooms.tsx, RoomsPage.tsx, CMSPage.tsx):
+    - Removed "Non-AC" from TYPE_FILTERS arrays (no Non-AC rooms exist)
+    - Added "Suite" to TYPE_FILTERS (was missing — Privilege Suite is type "Suite")
+    - CMSPage room type dropdown: removed Non-AC, added Suite
+
+22. WhatsApp bots (whatsapp-bot + whatsapp/webhook):
+    - Room list was: "Deluxe Room: ₹1,500, Super Deluxe: ₹2,200, Superior Room: ₹2,800, GVD Suite: ₹3,500"
+    - Updated to: "King Deluxe: ₹1,250, Premium Double Bed: ₹1,450, Family Comfort Triple: ₹1,800, Family Suit/Quad Room: ₹2,450, Privilege Suite: ₹2,699"
+    - Distance text: "2 min walk to Shri Krishna Janmabhoomi" → "opposite Mata Pathwari Mandir, 3 km from Shri Krishna Janmabhoomi"
+
+23. AI chat system prompt (ai-chat/route.ts):
+    - Price range: "₹1,500-₹3,500/night" → "₹1,250-₹2,699/night"
+
+=== FIXES APPLIED ===
+
+  - src/pages/AboutPage.tsx — full rewrite of HIGHLIGHTS list, story text,
+    image alts, stats section (5+/15+/10k+/4.8), mission text + cards
+  - src/components/site/AboutSection.tsx — same HIGHLIGHTS list fix,
+    image alts fix, mini-stats fix (200 m to temple → 2 min to Mathura
+    Junction; 50k+ guests → 10k+ guests)
+  - src/components/site/Footer.tsx — serviceLinks rewritten with Mathura
+    pooja names; brand text "temple's temple gate gate" typo fixed +
+    corrected to "Mathura Junction"
+  - src/components/site/Contact.tsx — room list + price fix (₹1,500 →
+    ₹1,250)
+  - src/pages/ContactPage.tsx — same room list + price fix
+  - src/pages/HomePage.tsx:
+      * "15 Premium Rooms" → "15+ Premium Rooms"
+      * "From ₹1,500" → "From ₹1,250"
+      * "120 reviews" hardcoded → "Google Rating" label
+      * MarqueeStrip: Kerala pooja names → Mathura pooja names
+      * Darshan subtitle: "Guruvayur pilgrim" → "Mathura pilgrim"
+  - src/pages/PoojaPage.tsx — title + subtitle pooja names fixed
+  - src/components/site/PoojaSection.tsx — title fallback fixed
+  - src/components/site/PlanYourDarshan.tsx — subtitle "Guruvayur pilgrim"
+    → "Mathura pilgrim"
+  - src/lib/i18n/translations.ts — 11 strings updated to remove Kerala
+    city references and use Mathura equivalents; price range fixed;
+    about.story rewritten to fix owner name, mission, languages, ceremony
+    references
+  - src/lib/seo-pages-phase2.ts — line 801 room list + prices rewritten
+    with actual 5 room types and correct Mathura prices; line 379
+    capitalization fix
+  - src/lib/seo-pages-phase4.ts — 8 occurrences of "Rs 1,500/night" →
+    "Rs 1,250/night" (bulk sed)
+  - src/app/layout.tsx — title, description, keywords all rewritten to
+    remove Kerala city references; removed "Archana Guruvayur"
+    alternateName
+  - src/app/api/whatsapp-bot/route.ts — room list + prices + distance
+    text fixed
+  - src/app/api/whatsapp/webhook/route.ts — same fixes
+  - src/app/api/ai-chat/route.ts — price range fixed
+  - src/app/api/reviews/google-import/route.ts — 2 demo reviews updated
+    (Archana → Mangala Aarti + Abhishek; Annaprashan → Mundan ceremony)
+  - src/lib/site-data.ts — 2 TESTIMONIALS updated (same Kerala → Mathura
+    ceremony fix)
+  - src/pages/RoomsPage.tsx — TYPE_FILTERS: removed Non-AC, added Suite
+  - src/pages/CMSPage.tsx — room type dropdown: removed Non-AC, added Suite
+  - src/components/site/Rooms.tsx — TYPE_FILTERS: removed Non-AC, added Suite
+
+=== NEGATIVE FINDINGS (all clear) ===
+
+  - TypeScript: `npx tsc --noEmit` → 0 errors (exit 0)
+  - ESLint on all 19 modified files: 0 errors, 0 warnings
+  - Production build: `npx next build` → succeeds
+  - No duplicate room or temple entries introduced
+  - All navigation routes still resolve
+
+=== USER'S "16+ rooms" REQUEST ===
+
+  The grep for "16+" / "16 plus" / "16 Premium" returned NO matches —
+  the codebase was already using "15 Premium Rooms" (no plus). Per the
+  user's explicit request to use the "15+" format, I changed:
+    - HomePage.tsx:218: "15 Premium Rooms" → "15+ Premium Rooms"
+    - AboutPage stats: "15 AC Rooms & Suites" with suffix "+" (renders as "15+")
+    - AboutSection mini-stats: stayed as "10k+ guests" / "2 min" (no room count)
+    - MarqueeStrip: added "15+ AC Rooms" item
+  All room count references now consistently use "15+" format.
+
+Stage Summary:
+  - 19 files modified across the entire platform
+  - ~50 distinct data inconsistencies fixed
+  - The biggest single fix: the AboutPage stats section was showing
+    "25+ years / 52 rooms / 50,000 pilgrims" — all wrong. Now correctly
+    shows "5+ years / 15+ rooms / 10,000+ pilgrims" (matches the story
+    text + the ROOMS array length + the testimonials data).
+  - The Kerala → Mathura migration cleanup is now complete: 0 references
+    to "Guruvayur" as a city remain in the user-facing content. (Brand
+    name "Guruvayur Dham" is intentionally retained — that's the actual
+    hotel brand name.)
+  - Not committed. Not pushed.

@@ -15,12 +15,12 @@ const scrollTo = (id: string) => {
 };
 
 const HIGHLIGHTS = [
-  "Walking distance (200 m) to Shri Krishna Janmabhoomi temple gate",
+  "Walking distance to Mata Pathwari Mandir · 3 km drive to Shri Krishna Janmabhoomi",
   "Modern pilgrim hospitality since 2020 · 10,000+ pilgrims served",
-  "15+ rooms across AC, non-AC, family, and dormitory categories",
-  "In-house pooja booking coordinator at zero commission",
+  "15+ AC rooms across Deluxe, Privilege Suite, and Family Comfort categories",
+  "In-house pooja booking coordinator at zero commission (Mangala Aarti, Abhishek, Rajbhog, Sandhya Aarti)",
   "Free covered parking for 25+ vehicles, 24×7 CCTV security",
-  "Tie-ups with pure-veg pure-veg restaurants for in-room meal delivery",
+  "Tie-ups with pure-veg restaurants for in-room meal delivery",
 ];
 
 export default function AboutSection() {
@@ -67,7 +67,7 @@ export default function AboutSection() {
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
                     src="/about/ram-meena.jpg"
-                    alt="Pure-veg restaurant partner near Guruvayur Dham"
+                    alt="Ram Meena, owner and host of Guruvayur Dham Mathura"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
                     className="object-cover"
@@ -78,7 +78,7 @@ export default function AboutSection() {
                 <div className="relative aspect-square overflow-hidden rounded-2xl shadow-warm">
                   <Image
                     src="/about/room-suite.jpg"
-                    alt="Shri Krishna Janmabhoomi temple visible from Guruvayur Dham rooftop"
+                    alt="Privilege Suite with seating area at Guruvayur Dham Mathura"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
                     className="object-cover"
@@ -143,14 +143,14 @@ export default function AboutSection() {
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-saffron-dark" />
                 <div>
-                  <p className="font-serif text-lg text-foreground">200 m</p>
-                  <p className="text-xs text-muted-foreground">to temple</p>
+                  <p className="font-serif text-lg text-foreground">2 min</p>
+                  <p className="text-xs text-muted-foreground">to Mathura Junction</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Heart className="h-5 w-5 text-maroon" />
                 <div>
-                  <p className="font-serif text-lg text-foreground">50k+</p>
+                  <p className="font-serif text-lg text-foreground">10k+</p>
                   <p className="text-xs text-muted-foreground">guests served</p>
                 </div>
               </div>

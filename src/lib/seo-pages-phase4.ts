@@ -33,7 +33,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Banke Bihari",
     title: "Hotels Near Banke Bihari Temple Vrindavan - Stay at Guruvayur Dham Mathura",
     metaDescription:
-      "Hotels near Banke Bihari Temple Vrindavan. Guruvayur Dham Mathura - 15 premium rooms, 2 min from Mathura Station, 15 min drive to Banke Bihari. AC rooms from Rs 1,500/night.",
+      "Hotels near Banke Bihari Temple Vrindavan. Guruvayur Dham Mathura - 15 premium rooms, 2 min from Mathura Station, 15 min drive to Banke Bihari. AC rooms from Rs 1,250/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -61,7 +61,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Room Options at Guruvayur Dham",
         body: [
-          "We offer four room categories - Deluxe Room (Rs 1,500/night, king bed, 240 sq.ft), Super Deluxe Room (Rs 2,200/night, king + sofa bed, 320 sq.ft), Superior Room (Rs 2,800/night, two king beds, 400 sq.ft - ideal for families), and our signature GVD Suite (Rs 3,500/night, separate living room, 520 sq.ft, complimentary breakfast and welcome tea). All rooms are air-conditioned with attached bathrooms, 24×7 hot water, power backup, free WiFi, and free parking.",
+          "We offer four room categories - Deluxe Room (Rs 1,250/night, king bed, 240 sq.ft), Super Deluxe Room (Rs 2,200/night, king + sofa bed, 320 sq.ft), Superior Room (Rs 2,800/night, two king beds, 400 sq.ft - ideal for families), and our signature GVD Suite (Rs 3,500/night, separate living room, 520 sq.ft, complimentary breakfast and welcome tea). All rooms are air-conditioned with attached bathrooms, 24×7 hot water, power backup, free WiFi, and free parking.",
           "Book at least 30-60 days in advance during Janmashtami, Holi, Radhashtami, and Kartik Purnima - Mathura sells out completely. Use the booking page on this site for instant confirmation, or WhatsApp +91-90908 20208 for assistance with darshan slots, early check-in, and local transport.",
         ],
       },
@@ -85,7 +85,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Prem Mandir",
     title: "Hotels Near Prem Mandir Vrindavan - Guruvayur Dham Mathura 15 Min Away",
     metaDescription:
-      "Hotels near Prem Mandir Vrindavan. Guruvayur Dham Mathura - 15 premium AC rooms, 15 min drive to Prem Mandir, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
+      "Hotels near Prem Mandir Vrindavan. Guruvayur Dham Mathura - 15 premium AC rooms, 15 min drive to Prem Mandir, 2 min from Mathura Station. Rooms from Rs 1,250/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -113,7 +113,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Room Options & Booking",
         body: [
-          "We offer four room categories: Deluxe (Rs 1,500/night, king bed), Super Deluxe (Rs 2,200/night, king + sofa bed), Superior (Rs 2,800/night, two king beds - great for families), and GVD Suite (Rs 3,500/night, separate living room, complimentary breakfast). All rooms are AC with attached bathrooms, free WiFi, and free parking.",
+          "We offer four room categories: Deluxe (Rs 1,250/night, king bed), Super Deluxe (Rs 2,200/night, king + sofa bed), Superior (Rs 2,800/night, two king beds - great for families), and GVD Suite (Rs 3,500/night, separate living room, complimentary breakfast). All rooms are AC with attached bathrooms, free WiFi, and free parking.",
           "Book 30-60 days ahead during Janmashtami, Holi, and Kartik Purnima. Use the booking page on this site for instant confirmation, or WhatsApp +91-90908 20208 for assistance with Prem Mandir visit timing, Vrindavan transport, and combined Banke Bihari + Prem Mandir + ISKCON day-tour arrangements.",
         ],
       },
@@ -122,7 +122,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       { q: "How far is Guruvayur Dham from Prem Mandir Vrindavan?", a: "Guruvayur Dham in Mathura is 15 km (25-minute drive) from Prem Mandir in Vrindavan. Auto Rs 250-300, cab Rs 400-600. We can arrange reliable drivers." },
       { q: "What are Prem Mandir timings?", a: "Prem Mandir is open 8:30 AM - 8:30 PM (closed 12:00 PM - 4:00 PM for shrine cleaning). Evening light-and-sound show starts around 6:30 PM. Entry free. Photography allowed outside main shrine." },
       { q: "Can I cover Prem Mandir and Banke Bihari in one day?", a: "Yes. Morning Banke Bihari (8 AM darshan), afternoon ISKCON (1-4 PM), evening Prem Mandir (5:30 PM onwards for light show). Guruvayur Dham arranges this as a Vrindavan day-circuit." },
-      { q: "Where should I stay for Prem Mandir visit?", a: "Stay in Mathura, not Vrindavan. Vrindavan has no railway station - you'll arrive via Mathura Junction anyway. Guruvayur Dham is 2 min from Mathura Station with premium AC rooms from Rs 1,500/night." },
+      { q: "Where should I stay for Prem Mandir visit?", a: "Stay in Mathura, not Vrindavan. Vrindavan has no railway station - you'll arrive via Mathura Junction anyway. Guruvayur Dham is 2 min from Mathura Station with premium AC rooms from Rs 1,250/night." },
       { q: "Is photography allowed inside Prem Mandir?", a: "Photography is allowed in the outer complex and the gardens, but not inside the main shrine. The evening light show is best photographed from the main courtyard." },
     ],
     ctaHeadline: "Stay Near Prem Mandir - Guruvayur Dham Mathura, 25 Min Drive",
@@ -137,7 +137,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Radha Rani Mandir",
     title: "Hotels Near Radha Rani Mandir Barsana - Stay at Guruvayur Dham Mathura",
     metaDescription:
-      "Hotels near Radha Rani Mandir Barsana. Guruvayur Dham Mathura - 15 premium AC rooms, 1-hour drive to Radha Rani Temple, 2 min from Mathura Station. Rooms from Rs 1,500/night.",
+      "Hotels near Radha Rani Mandir Barsana. Guruvayur Dham Mathura - 15 premium AC rooms, 1-hour drive to Radha Rani Temple, 2 min from Mathura Station. Rooms from Rs 1,250/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -189,7 +189,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
     navLabel: "Near Gowardhan Hill",
     title: "Hotels Near Gowardhan Hill Mathura - Stay at Guruvayur Dham for Parikrama",
     metaDescription:
-      "Hotels near Gowardhan Hill for parikrama. Guruvayur Dham Mathura - 15 premium AC rooms, 45-min drive to Gowardhan, parikrama guide arrangement. Rooms from Rs 1,500/night.",
+      "Hotels near Gowardhan Hill for parikrama. Guruvayur Dham Mathura - 15 premium AC rooms, 45-min drive to Gowardhan, parikrama guide arrangement. Rooms from Rs 1,250/night.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -217,7 +217,7 @@ export const SEO_PAGES_PHASE4: SEOPage[] = [
       {
         heading: "Room Options at Guruvayur Dham",
         body: [
-          "We offer four room categories - Deluxe (Rs 1,500/night, king bed, 240 sq.ft), Super Deluxe (Rs 2,200/night, king + sofa bed, 320 sq.ft), Superior (Rs 2,800/night, two king beds, 400 sq.ft - ideal for families), and GVD Suite (Rs 3,500/night, separate living room, 520 sq.ft, complimentary breakfast). All rooms are air-conditioned with attached bathrooms, 24×7 hot water, power backup, free WiFi, and free parking.",
+          "We offer four room categories - Deluxe (Rs 1,250/night, king bed, 240 sq.ft), Super Deluxe (Rs 2,200/night, king + sofa bed, 320 sq.ft), Superior (Rs 2,800/night, two king beds, 400 sq.ft - ideal for families), and GVD Suite (Rs 3,500/night, separate living room, 520 sq.ft, complimentary breakfast). All rooms are air-conditioned with attached bathrooms, 24×7 hot water, power backup, free WiFi, and free parking.",
           "Book at least 30 days ahead for Govardhan Puja, Diwali, and Kartik Purnima. Use the booking page for instant confirmation, or WhatsApp +91-90908 20208 for combined parikrama + Mathura temple tour packages.",
         ],
       },

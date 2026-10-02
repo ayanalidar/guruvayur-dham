@@ -214,8 +214,8 @@ function Hero() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹1,500</p>
-                <p className="font-serif text-base text-ivory">15 Premium Rooms</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-champagne">From ₹1,250</p>
+                <p className="font-serif text-base text-ivory">15+ Premium Rooms</p>
               </div>
             </div>
 
@@ -245,7 +245,7 @@ function Hero() {
                 {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-gold text-gold" />)}
               </div>
               <p className="mt-1 font-serif text-2xl text-gold-foil">4.8</p>
-              <p className="text-[10px] text-ivory/60">120 reviews</p>
+              <p className="text-[10px] text-ivory/60">Google Rating</p>
             </div>
           </motion.div>
         </motion.div>
@@ -276,15 +276,15 @@ function MarqueeStrip() {
   return (
     <Marquee
       items={[
-        "prasadam",
-        "Archana",
-        "Annaprashan",
-        "Walk to temple gate",
+        "Mangala Aarti",
+        "Abhishek",
+        "Rajbhog Aarti",
+        "Sandhya Aarti",
         "4.8 ★ Google Rating",
         "24×7 Hot Water",
         "Free Parking",
         "Pooja Booking",
-        "Family Suites",
+        "15+ AC Rooms",
         "Since 2020",
       ]}
     />
@@ -474,7 +474,7 @@ function PlanDarshan() {
         <SectionHeader
           eyebrow={t("section.darshan")}
           title={<>Everything You Need for a <GoldFoilText>Blessed Visit</GoldFoilText></>}
-          subtitle="From darshan timings to festival calendars · we've put together the essential resources every Guruvayur pilgrim needs."
+          subtitle="From darshan timings to festival calendars · we've put together the essential resources every Mathura pilgrim needs."
         />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {DARSHAN_CARDS.map((card, i) => {

@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     reply = `Namaskaram! 🙏 Welcome to Guruvayur Dham. I can help you with:\n\n• Book a room\n• Check your booking\n• Pooja list & booking\n• Darshan timings\n• Festival dates\n• Check-in/out times\n• How to reach us\n\nWhat would you like to know?`;
   } else if (msg.match(/book|room|availability|reserve/)) {
     intent = "booking";
-    reply = `We'd love to host you! 🏨\n\nOur rooms (2 min walk to Shri Krishna Janmabhoomi):\n• Deluxe Room: ₹1,500/night\n• Super Deluxe: ₹2,200/night\n• Superior Room: ₹2,800/night\n• GVD Suite: ₹3,500/night\n\nTo check availability & book instantly:\n👉 https://guruvayurdham.co.in/#/rooms\n\nOr just tell me:\n• Check-in date\n• Check-out date\n• Number of guests\n\nAnd I'll check availability for you!`;
+    reply = `We'd love to host you! 🏨\n\nOur rooms (opposite Mata Pathwari Mandir, 3 km from Shri Krishna Janmabhoomi):\n• King Deluxe: ₹1,250/night\n• Premium Double Bed: ₹1,450/night\n• Family Comfort Triple: ₹1,800/night\n• Family Suit/Quad Room: ₹2,450/night\n• Privilege Suite: ₹2,699/night\n\nTo check availability & book instantly:\n👉 https://guruvayurdham.co.in/#/rooms\n\nOr just tell me:\n• Check-in date\n• Check-out date\n• Number of guests\n\nAnd I'll check availability for you!`;
   } else if (msg.match(/pooja|aarti|abhishek|bhog|offering/)) {
     intent = "pooja";
     reply = `Sacred offerings at Mathura temples (zero commission): 🙏\n\n• Pushpanjali · ₹21\n• Mangala Aarti · ₹51\n• Sandhya Aarti · ₹101\n• Rajbhog Aarti · ₹251\n• Abhishek · ₹1,100\n• Annadan · ₹2,100\n• Phool Bangla · ₹5,100\n\nBook online: https://guruvayurdham.co.in/#/pooja`;

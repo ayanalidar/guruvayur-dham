@@ -393,10 +393,10 @@ ${data.message}`;
                 <div className="mt-6 rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                   <p className="flex items-center gap-2 text-sm font-semibold text-white">
                     <BedDouble className="h-4 w-4 text-gold-light" />
-                    Rooms from ₹1,500/night
+                    Rooms from ₹1,250/night
                   </p>
                   <p className="mt-1 text-xs text-cream/80">
-                    AC, non-AC, family suites, dormitory · all 2 min from temple gate.
+                    Deluxe, Privilege Suite, Family Comfort · all AC · 2 min from Mathura Junction, opposite Mata Pathwari Mandir.
                   </p>
                   <a
                     href={waLink(

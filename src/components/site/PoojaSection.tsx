@@ -27,7 +27,7 @@ export default function PoojaSection() {
   const poojas = cmsPoojas.length > 0 ? cmsPoojas.map(mapPooja) : POOJAS;
 
   const eyebrow = get("pooja.eyebrow", "Pooja & Offerings");
-  const title = get("pooja.title", "Guruvayur Pooja Booking - prasadam, Archana & More");
+  const title = get("pooja.title", "Mathura Pooja Booking - Mangala Aarti, Abhishek & More");
   const subtitle = get(
     "pooja.subtitle",
     "Book any temple pooja through Guruvayur Dham at the official temple rate - zero commission, zero waiting in queue. Our team coordinates with the temple pandit on your behalf and ensures prasadam reaches your room."

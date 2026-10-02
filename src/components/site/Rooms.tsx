@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { getIcon } from "./icon-map";
 
-const TYPE_FILTERS: (RoomType | "All")[] = ["All", "AC", "Non-AC", "Family", "Deluxe"];
+const TYPE_FILTERS: (RoomType | "All")[] = ["All", "AC", "Family", "Deluxe", "Suite"];
 const BUDGET_FILTERS = [
   { label: "Any", min: 0, max: Infinity },
   { label: "₹500-1500", min: 500, max: 1500 },

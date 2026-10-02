@@ -250,9 +250,9 @@ function RoomsCMS() {
                   className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
                 >
                   <option value="AC">AC</option>
-                  <option value="Non-AC">Non-AC</option>
                   <option value="Family">Family</option>
                   <option value="Deluxe">Deluxe</option>
+                  <option value="Suite">Suite</option>
                 </select>
               </div>
               <div>
@@ -1434,7 +1434,7 @@ function PricingRulesCMS() {
   };
 
   const ruleTypes = ["WEEKEND", "FESTIVAL", "LAST_MINUTE", "EARLY_BIRD", "SEASONAL"];
-  const roomTypes = ["", "AC", "Non-AC", "Family", "Deluxe"];
+  const roomTypes = ["", "AC", "Family", "Deluxe", "Suite"];
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
