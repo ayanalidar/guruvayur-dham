@@ -65,7 +65,7 @@ const SECTIONS = [
       `• Pets are not allowed.`,
       `• Visitors are welcome in the reception area only (8:00 AM to 9:00 PM).`,
       `• The management reserves the right to refuse accommodation without assigning a reason.`,
-      `• Check-in: 12:00 PM | Check-out: 11:00 AM`,
+      `• Check-in: 11:30 AM | Check-out: 11:00 AM`,
     ],
   },
   {

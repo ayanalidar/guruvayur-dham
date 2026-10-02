@@ -11,10 +11,12 @@ import GuestReviewForm from "./GuestReviewForm";
 export default function ReviewsWidget() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
+  const [googleBiz, setGoogleBiz] = useState<any>(null);
   const [idx, setIdx] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const { lastEvent } = useRealtime(["review:new", "reviews:imported"]);
 
+  // Fetch published reviews + summary
   useEffect(() => {
     fetch("/api/reviews/public?limit=20", { cache: "no-store" })
       .then(r => r.json())
@@ -22,6 +24,14 @@ export default function ReviewsWidget() {
         setReviews(j.reviews || []);
         setStats(j.summary);
       });
+  }, []);
+
+  // Fetch LIVE Google Business Profile rating + reviews link (6h-cached server-side)
+  useEffect(() => {
+    fetch("/api/google-business", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => setGoogleBiz(j))
+      .catch(() => {}); // silent - widget falls back to SITE static values
   }, []);
 
   // Real-time: when a new review is added, refresh
@@ -35,11 +45,24 @@ export default function ReviewsWidget() {
           setStats(j.summary);
           if (lastEvent.event === "review:new") setIdx(0); // show newest first
         });
+      // Also refresh the Google Business Profile live rating (in case
+      // a new Google review bumped the count up since the last fetch)
+      fetch("/api/google-business", { cache: "no-store" })
+        .then(r => r.json())
+        .then(j => setGoogleBiz(j))
+        .catch(() => {});
     }
   }, [lastEvent]);
 
   const next = () => setIdx((i) => (i + 1) % Math.max(reviews.length, 1));
   const prev = () => setIdx((i) => (i - 1 + reviews.length) % Math.max(reviews.length, 1));
+
+  // Use LIVE Google rating + count if available; otherwise fall back to summary
+  // from local reviews DB (which is seeded from Google Places in production).
+  const liveRating = googleBiz?.rating ?? stats?.averageRating ?? 4.8;
+  const liveReviewCount =
+    googleBiz?.user_ratings_total ?? stats?.total ?? 120;
+  const googleProfileUrl = googleBiz?.url || "https://share.google/x0YWO22UQQiol8qYa";
 
   if (reviews.length === 0) {
     return (
@@ -66,12 +89,17 @@ export default function ReviewsWidget() {
       <div className="container-x">
         <SectionHeader
           eyebrow="Google Reviews"
-          title={<>Loved by <GoldFoilText>{stats?.total || 120}+ Pilgrims</GoldFoilText></>}
-          subtitle={`${stats?.averageRating || 4.8} ★ average rating on Google. Reviews update in real-time · when a guest posts a new review, it appears here instantly.`}
+          title={<>Loved by <GoldFoilText>{liveReviewCount}+ Pilgrims</GoldFoilText></>}
+          subtitle={`${liveRating} ★ average rating on Google. Reviews update in real-time · when a guest posts a new review, it appears here instantly.`}
         />
 
-        {/* Google rating badge */}
-        <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-4 rounded-2xl border border-champagne/15 bg-ink-card p-4">
+        {/* Google rating badge - LIVE Google Business Profile rating (clickable to Google Maps profile) */}
+        <a
+          href={googleProfileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mx-auto mt-6 flex max-w-md items-center justify-center gap-4 rounded-2xl border border-champagne/15 bg-ink-card p-4 transition-all hover:border-champagne/40 hover:bg-ink-card/80"
+        >
           <div className="flex items-center gap-2">
             <svg className="h-8 w-8" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -80,8 +108,8 @@ export default function ReviewsWidget() {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             <div>
-              <p className="text-xs text-ivory/50">Google Rating</p>
-              <p className="font-serif text-2xl text-gold-foil">{stats?.averageRating || 4.8}</p>
+              <p className="text-xs text-ivory/50">Google Rating (Live)</p>
+              <p className="font-serif text-2xl text-gold-foil">{liveRating}</p>
             </div>
           </div>
           <div className="h-12 w-px bg-champagne/15" />
@@ -91,9 +119,9 @@ export default function ReviewsWidget() {
                 <Star key={i} className="h-4 w-4 fill-gold text-gold" />
               ))}
             </div>
-            <p className="mt-1 text-xs text-ivory/50">{stats?.total || 120} reviews</p>
+            <p className="mt-1 text-xs text-ivory/50">{liveReviewCount} reviews · click to view on Google</p>
           </div>
-        </div>
+        </a>
 
         {/* Review carousel */}
         <motion.div
@@ -172,7 +200,7 @@ export default function ReviewsWidget() {
         {/* Link to Google + Write a Review CTA */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
           <a
-            href="https://share.google/x0YWO22UQQiol8qYa"
+            href={googleProfileUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs text-champagne hover:text-champagne-bright"

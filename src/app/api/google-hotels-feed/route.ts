@@ -99,7 +99,7 @@ ${imageUrls || `        <ImageURL>${xmlEscape(r.image || "")}</ImageURL>`}
     <Latitude>27.4924</Latitude>
     <Longitude>77.6900</Longitude>
     <TotalRooms>${SITE.totalRooms}</TotalRooms>
-    <CheckInTime>12:00</CheckInTime>
+    <CheckInTime>11:30</CheckInTime>
     <CheckOutTime>11:00</CheckOutTime>
     <StarRating>3</StarRating>
     <Description>${xmlEscape(`${SITE.name} is a ${SITE.totalRooms}-room premium pilgrim stay in Mathura. ${SITE.distanceToTemple}. Clean AC rooms, 24×7 hot water, free WiFi, free parking. Walk to Krishna Janmabhoomi, short drive to Vrindavan's Banke Bihari and Prem Mandir. Pooja booking assistance and local transport arranged at zero commission.`)}</Description>

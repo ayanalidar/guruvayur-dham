@@ -29,6 +29,11 @@ const CreateGuestBookingSchema = z.object({
   darshanSlot: DarshanSlotEnum.optional(),
   paymentMethod: PaymentMethodEnum.default("RAZORPAY"),
   paymentId: z.string().max(200).optional(),
+  // Multi-room grouping - set by the frontend when a customer books
+  // multiple room types in one reservation. All bookings of the same
+  // reservation share this parentReference so admin can group them.
+  parentReference: z.string().max(50).optional(),
+  isMultiRoom: z.boolean().optional(),
 });
 
 /**
@@ -65,6 +70,9 @@ export async function POST(req: NextRequest) {
     checkIn, checkOut, guests = 2, couponCode,
     darshanSlot, paymentMethod = "RAZORPAY",
     paymentId: clientPaymentId,
+    // Multi-room grouping (optional) - all bookings of the same reservation
+    // share this parent reference so the admin can group them in the grid.
+    parentReference, isMultiRoom = false,
   } = parsed.data;
 
   // SECURITY (Round 3 S4 fix): require + verify paymentId for RAZORPAY/CARD/UPI.
@@ -209,6 +217,11 @@ export async function POST(req: NextRequest) {
         darshanSlot: darshanSlot || null,
         paymentId: verifiedPaymentId, // real verified paymentId (was random fake)
         pricingBreakdown: pricing.breakdown.map(b => ({ date: "", base: b.basePrice, final: b.finalPrice, rules: b.appliedRules })),
+        // Multi-room grouping - all bookings of the same multi-room reservation
+        // share this parent reference so admin can group them in the grid.
+        parentReference: parentReference || null,
+        isMultiRoom,
+        roomCount: isMultiRoom ? 1 : 1, // each Booking row = 1 room unit
       }),
     },
   });
@@ -268,7 +281,7 @@ export async function POST(req: NextRequest) {
       type: "CHECK_IN",
       bookingRef: ref,
       guestName, guestPhone,
-      message: `Reminder: Your check-in at Guruvayur Dham is tomorrow at 12 PM. Reference: ${ref}. Room: ${room.name}. We look forward to welcoming you! 🙏`,
+      message: `Reminder: Your check-in at Guruvayur Dham is tomorrow at 11:30 AM. Reference: ${ref}. Room: ${room.name}. We look forward to welcoming you! 🙏`,
       scheduledFor: checkInReminder,
       channel: "WHATSAPP",
     },
@@ -494,7 +507,7 @@ Your booking at Guruvayur Dham is confirmed.
 Booking Reference: {{bookingRef}}
 Guest Name:        {{guestName}}
 Room:              {{roomName}}
-Check-in:          {{checkIn}} (12:00 PM)
+Check-in:          {{checkIn}} (11:30 AM)
 Check-out:         {{checkOut}} (11:00 AM)
 Nights:            {{nights}}
 Guests:            {{guests}}

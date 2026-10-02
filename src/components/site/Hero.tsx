@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
@@ -20,6 +21,25 @@ export default function Hero() {
   // Trust badges: prefer CMS, fall back to hardcoded TRUST_BADGES
   const cmsBadges = useCMSList<TrustBadgeItem>("trustBadges", []);
   const badges = cmsBadges.length > 0 ? cmsBadges.map(mapTrustBadge) : TRUST_BADGES;
+
+  // Live Google Business Profile rating (6h-cached server-side via
+  // /api/google-business). Falls back to SITE.rating (4.8) in demo mode.
+  const [googleRating, setGoogleRating] = useState<number>(SITE.rating);
+  const [googleReviewCount, setGoogleReviewCount] = useState<number>(SITE.reviewCount);
+  const [googleProfileUrl, setGoogleProfileUrl] = useState<string>(
+    SITE.googleBusinessProfileUrl,
+  );
+
+  useEffect(() => {
+    fetch("/api/google-business", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => {
+        if (typeof j.rating === "number") setGoogleRating(j.rating);
+        if (typeof j.user_ratings_total === "number") setGoogleReviewCount(j.user_ratings_total);
+        if (typeof j.url === "string") setGoogleProfileUrl(j.url);
+      })
+      .catch(() => {}); // silent - keep static fallback
+  }, []);
 
   const eyebrow = get("hero.eyebrow", "Stay · Pooja · Blessing · Since 2020");
   const headlinePre = get("hero.headline", "Where Your Stay");
@@ -141,12 +161,15 @@ export default function Hero() {
             })}
           </motion.div>
 
-          {/* Google rating chip */}
-          <motion.div
+          {/* Google rating chip - LIVE Google Business Profile rating (clickable) */}
+          <motion.a
+            href={googleProfileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-8 inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md"
+            className="mt-8 inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md transition-all hover:border-gold/40 hover:bg-white/15"
           >
             <div className="flex">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -154,11 +177,14 @@ export default function Hero() {
               ))}
             </div>
             <div className="text-sm text-cream">
-              <span className="font-bold text-white">{SITE.rating}</span>
+              <span className="font-bold text-white">{googleRating}</span>
               <span className="mx-1 text-cream/70">·</span>
-              <span>{SITE.reviewCount}+ Google reviews</span>
+              <span>{googleReviewCount}+ Google reviews</span>
             </div>
-          </motion.div>
+            <span className="hidden text-[10px] uppercase tracking-wider text-gold-light sm:inline">
+              View Profile
+            </span>
+          </motion.a>
         </div>
       </div>
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar, Users, Tag, CreditCard, Check, ChevronRight, ChevronLeft,
   Star, Sparkles, AlertCircle, Lock, ShieldCheck, Loader2,
+  Minus, Plus, X,
 } from "lucide-react";
-import { ROOMS, formatINR, waLink } from "@/lib/site-data";
+import { ROOMS, formatINR, waLink, type Room } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
 import { GoldFoilText, MagneticButton } from "@/components/site/visuals";
@@ -36,13 +37,23 @@ const PAYMENT_METHODS = [
   { value: "COD", label: "Pay at Hotel", icon: "🏨" },
 ];
 
+// Max guests per booking - increased from 6 to 8 per business rule
+const MAX_GUESTS = 8;
+
+type RoomSelection = { slug: string; quantity: number };
+
 export default function GuestBookingPage() {
   const { navigate } = useHashRoute();
   const [step, setStep] = useState(0);
-  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  // Multi-room selection state: array of {slug, quantity}
+  // (was: `selectedRoom: string` which only allowed one room per booking)
+  const [selectedRooms, setSelectedRooms] = useState<RoomSelection[]>([]);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
+  // Total guests is auto-suggested from sum(room.capacity × quantity)
+  // but the customer can still override it up to MAX_GUESTS=8.
+  const [guestOverride, setGuestOverride] = useState(false);
   const [guestName, setGuestName] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
@@ -56,8 +67,11 @@ export default function GuestBookingPage() {
   const [couponCode, setCouponCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("RAZORPAY");
   const [availability, setAvailability] = useState<Record<string, number>>({});
-  const [booking, setBooking] = useState<any>(null);
+  const [bookings, setBookings] = useState<any[]>([]); // multiple room bookings
   const [creating, setCreating] = useState(false);
+  // Snapshot of the rooms selected at submit time (used in Confirmation step
+  // because selectedRooms is wiped after submit)
+  const [bookedRoomsSnapshot, setBookedRoomsSnapshot] = useState<RoomSelection[]>([]);
 
   // Fetch live availability
   useEffect(() => {
@@ -70,24 +84,107 @@ export default function GuestBookingPage() {
       });
   }, []);
 
-  // Fetch pricing when room/dates change
-  const [pricing, setPricing] = useState<any>(null);
-  const [couponResult, setCouponResult] = useState<any>(null);
+  // ===== Multi-room helpers =====
+  const getRoomQuantity = (slug: string) =>
+    selectedRooms.find(s => s.slug === slug)?.quantity || 0;
+
+  const setRoomQuantity = (slug: string, qty: number) => {
+    setSelectedRooms(prev => {
+      const without = prev.filter(s => s.slug !== slug);
+      if (qty <= 0) return without;
+      return [...without, { slug, quantity: qty }];
+    });
+  };
+
+  // Live total guests = sum(room.capacity × quantity)
+  const computedGuests = useMemo(() => {
+    return selectedRooms.reduce((sum, s) => {
+      const room = ROOMS.find(r => r.slug === s.slug);
+      return sum + (room?.capacity || 0) * s.quantity;
+    }, 0);
+  }, [selectedRooms]);
+
+  // Sync guests state with computedGuests unless user is overriding
   useEffect(() => {
-    if (!selectedRoom || !checkIn || !checkOut) return;
+    if (!guestOverride && computedGuests > 0) {
+      setGuests(Math.min(computedGuests, MAX_GUESTS));
+    } else if (!guestOverride) {
+      // No rooms selected - default to 2
+      setGuests(2);
+    }
+  }, [computedGuests, guestOverride]);
+
+  const totalSelectedRooms = selectedRooms.reduce((n, s) => n + s.quantity, 0);
+  const hasSelection = totalSelectedRooms > 0;
+
+  // Fetch pricing for each selected room when rooms/dates change
+  const [pricingMap, setPricingMap] = useState<Record<string, any>>({});
+  const [couponResult, setCouponResult] = useState<any>(null);
+
+  useEffect(() => {
+    if (!hasSelection || !checkIn || !checkOut) {
+      setPricingMap({});
+      return;
+    }
     let active = true;
-    fetch(`/api/pricing?roomSlug=${selectedRoom}&checkIn=${checkIn}&checkOut=${checkOut}`)
-      .then(r => r.json())
-      .then(j => { if (active) { setPricing(j); setCouponResult(null); } });
+    Promise.all(
+      selectedRooms.map(async s => {
+        const r = await fetch(`/api/pricing?roomSlug=${s.slug}&checkIn=${checkIn}&checkOut=${checkOut}`);
+        const j = await r.json();
+        return [s.slug, j];
+      })
+    ).then(results => {
+      if (!active) return;
+      const map: Record<string, any> = {};
+      for (const [slug, j] of results as any) map[slug] = j;
+      setPricingMap(map);
+      setCouponResult(null);
+    });
     return () => { active = false; };
-  }, [selectedRoom, checkIn, checkOut]);
+  }, [selectedRooms, checkIn, checkOut, hasSelection]);
+
+  // Aggregate pricing across all selected rooms
+  const aggregatePricing = useMemo(() => {
+    if (!hasSelection) return null;
+    let baseTotal = 0;
+    let dynamicTotal = 0;
+    let earlyBirdDiscount = 0;
+    let earlyBirdActive = false;
+    let earlyBirdCampaign = "";
+    let nights = 0;
+    for (const s of selectedRooms) {
+      const p = pricingMap[s.slug];
+      if (!p) continue;
+      baseTotal += (p.baseTotal || 0) * s.quantity;
+      dynamicTotal += (p.dynamicTotal || 0) * s.quantity;
+      earlyBirdDiscount += (p.earlyBird?.discount || 0) * s.quantity;
+      if (p.earlyBird?.active) {
+        earlyBirdActive = true;
+        earlyBirdCampaign = p.earlyBird.campaignName;
+      }
+      nights = p.nights || 0;
+    }
+    const finalTotal = dynamicTotal - earlyBirdDiscount;
+    return {
+      baseTotal,
+      dynamicTotal,
+      earlyBird: {
+        active: earlyBirdActive,
+        discount: earlyBirdDiscount,
+        campaignName: earlyBirdCampaign,
+        discountPercent: earlyBirdActive && dynamicTotal > 0 ? Math.round((earlyBirdDiscount * 100) / dynamicTotal) : 0,
+      },
+      nights,
+      finalTotal,
+    };
+  }, [selectedRooms, pricingMap, hasSelection]);
 
   const validateCoupon = async () => {
-    if (!couponCode || !pricing) return;
+    if (!couponCode || !aggregatePricing) return;
     const r = await fetch("/api/pricing", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: couponCode, bookingAmount: pricing.finalTotal }),
+      body: JSON.stringify({ code: couponCode, bookingAmount: aggregatePricing.finalTotal }),
     });
     const j = await r.json();
     setCouponResult(j);
@@ -111,10 +208,13 @@ export default function GuestBookingPage() {
   const submit = async () => {
     setCreating(true);
 
+    // Calculate final amount across all rooms + coupon
+    const couponDiscount = couponResult?.valid ? couponResult.discount : 0;
+    const finalAmount = (aggregatePricing?.finalTotal || 0) - couponDiscount;
+
     // If Razorpay selected, open the checkout modal
-    if (paymentMethod === "RAZORPAY" && razorpayLoaded && pricing) {
+    if (paymentMethod === "RAZORPAY" && razorpayLoaded && aggregatePricing) {
       try {
-        const finalAmount = pricing.finalTotal - (couponResult?.discount || 0);
         // 1. Create order on server
         const orderRes = await fetch("/api/razorpay/create-order", {
           method: "POST",
@@ -122,7 +222,10 @@ export default function GuestBookingPage() {
           body: JSON.stringify({
             amount: finalAmount * 100, // convert to paise
             receipt: `GD-${Date.now()}`,
-            notes: { roomSlug: selectedRoom, guestName, checkIn, checkOut },
+            notes: {
+              rooms: selectedRooms.map(s => `${s.slug}x${s.quantity}`).join(","),
+              guestName, checkIn, checkOut,
+            },
           }),
         });
         const order = await orderRes.json();
@@ -135,7 +238,7 @@ export default function GuestBookingPage() {
         // Check if demo mode - skip Razorpay modal, go straight to booking
         if (order.demo) {
           toast.info("Demo mode: Payment simulated. Add Razorpay keys for real payments.");
-          await createBooking("pay_demo_" + Math.random().toString(36).slice(2, 14));
+          await createBookings("pay_demo_" + Math.random().toString(36).slice(2, 14));
           return;
         }
 
@@ -145,7 +248,7 @@ export default function GuestBookingPage() {
           amount: order.amount,
           currency: order.currency || "INR",
           name: "Guruvayur Dham",
-          description: `${ROOMS.find(r => r.slug === selectedRoom)?.name} · ${pricing.nights} night(s)`,
+          description: `${totalSelectedRooms} room(s) · ${aggregatePricing.nights} night(s)`,
           image: "/icon-192.png",
           order_id: order.orderId,
           prefill: {
@@ -171,8 +274,8 @@ export default function GuestBookingPage() {
               setCreating(false);
               return;
             }
-            // 4. Create the booking with verified payment
-            await createBooking(verify.paymentId);
+            // 4. Create all the bookings with the verified payment
+            await createBookings(verify.paymentId);
           },
           modal: {
             ondismiss: () => {
@@ -186,7 +289,7 @@ export default function GuestBookingPage() {
           setCreating(false);
         });
         rzp.open();
-      } catch (e) {
+      } catch {
         toast.error("Payment initialization failed");
         setCreating(false);
       }
@@ -194,42 +297,106 @@ export default function GuestBookingPage() {
     }
 
     // Non-Razorpay methods (UPI, CARD, COD) · direct booking
-    await createBooking();
+    await createBookings();
   };
 
-  const createBooking = async (paymentId?: string) => {
-    try {
-      const r = await fetch("/api/guest-booking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomSlug: selectedRoom,
-          guestName, guestPhone, guestEmail,
-          // Optional invoice fields (only sent if filled in)
-          guestGSTIN: guestGSTIN || undefined,
-          guestAddress: guestAddress || undefined,
-          arrivalTime: arrivalTime || undefined,
-          departureTime: departureTime || undefined,
-          checkIn, checkOut, guests,
-          couponCode: couponResult?.valid ? couponCode : undefined,
-          darshanSlot: darshanSlot || undefined,
-          paymentMethod,
-          paymentId,
-        }),
-      });
-      const j = await r.json();
-      if (j.error) {
-        toast.error(j.error);
-        if (j.error === "ROOM_SOLD_OUT") {
-          toast.info(j.message);
+  // ===== MULTI-ROOM BOOKING CREATION =====
+  // Loops through selectedRooms, creating one Booking per (room × quantity)
+  // under the same guest + parentReference for grouping in the admin.
+  const createBookings = async (paymentId?: string) => {
+    if (!aggregatePricing) {
+      toast.error("Pricing not yet calculated. Please wait a moment and try again.");
+      setCreating(false);
+      return;
+    }
+    // Snapshot rooms before submit so the Confirmation step can show them
+    // even after we wipe the selection state.
+    setBookedRoomsSnapshot([...selectedRooms]);
+
+    const parentRef = `GD-${Date.now().toString(36).toUpperCase()}`;
+    const couponDiscount = couponResult?.valid ? couponResult.discount : 0;
+    const couponCodeFinal = couponResult?.valid ? couponCode : undefined;
+    const totalFinalAmount = aggregatePricing.finalTotal - couponDiscount;
+
+    // Per-room proportion of coupon discount (proportional by room finalTotal)
+    const totalRoomFinal = aggregatePricing.finalTotal;
+
+    const newBookings: any[] = [];
+    let successCount = 0;
+    let firstError: string | null = null;
+
+    for (const sel of selectedRooms) {
+      const room = ROOMS.find(r => r.slug === sel.slug);
+      if (!room) continue;
+      const pricing = pricingMap[sel.slug];
+      if (!pricing) continue;
+
+      // Each unit of the room is a separate booking row (so each gets its
+      // own booking reference, availability decrement, channel sync, etc.)
+      for (let unit = 0; unit < sel.quantity; unit++) {
+        // Proportion of coupon for this unit
+        const unitRoomFinal = pricing.finalTotal;
+        const unitCouponDiscount =
+          couponDiscount > 0 && totalRoomFinal > 0
+            ? Math.round((couponDiscount * unitRoomFinal) / totalRoomFinal)
+            : 0;
+        const unitFinal = unitRoomFinal - unitCouponDiscount;
+
+        try {
+          const r = await fetch("/api/guest-booking", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              roomSlug: sel.slug,
+              guestName, guestPhone, guestEmail,
+              guestGSTIN: guestGSTIN || undefined,
+              guestAddress: guestAddress || undefined,
+              arrivalTime: arrivalTime || undefined,
+              departureTime: departureTime || undefined,
+              checkIn, checkOut,
+              guests: Math.min(guests, room.capacity),
+              couponCode: couponCodeFinal,
+              darshanSlot: darshanSlot || undefined,
+              paymentMethod,
+              paymentId,
+              parentReference: parentRef, // groups all bookings of same reservation
+              isMultiRoom: totalSelectedRooms > 1,
+            }),
+          });
+          const j = await r.json();
+          if (j.error) {
+            if (!firstError) firstError = j.message || j.error;
+            // If a room is sold out mid-loop, stop and report - remaining
+            // rooms in this reservation are not booked (caller can see
+            // the partial success in the confirmation step).
+            break;
+          } else {
+            newBookings.push(j);
+            successCount++;
+          }
+        } catch {
+          if (!firstError) firstError = "Network error - some rooms may not have been booked. Please contact us.";
+          break;
         }
-      } else {
-        setBooking(j);
-        setStep(3);
-        toast.success(`Booking confirmed! Reference: ${j.booking.reference}`);
       }
-    } catch {
-      toast.error("Booking failed. Please try again.");
+      if (firstError) break; // break out of outer loop too
+    }
+
+    setBookings(newBookings);
+
+    if (successCount === 0) {
+      toast.error(firstError || "Booking failed. Please try again.");
+    } else if (firstError) {
+      toast.warning(`Partially booked: ${successCount} of ${totalSelectedRooms} rooms confirmed. ${firstError}`);
+      setStep(3);
+    } else {
+      setStep(3);
+      toast.success(`All ${successCount} room booking(s) confirmed! Refs: ${newBookings.map(b => b.booking.reference).join(", ")}`);
+    }
+
+    // Clear selection after successful submit (keep snapshot for confirmation)
+    if (successCount > 0) {
+      setSelectedRooms([]);
     }
     setCreating(false);
   };
@@ -263,74 +430,183 @@ export default function GuestBookingPage() {
           </div>
 
           <div className="card-luxe p-6 sm:p-8">
-            {/* Step 1: Dates & Room */}
+            {/* Step 1: Dates & Multi-Room Selection */}
             {step === 0 && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <h2 className="font-serif text-2xl text-ivory">Pick Your Dates & Room</h2>
+                <h2 className="font-serif text-2xl text-ivory">Pick Dates & Select Rooms</h2>
+                <p className="mt-1 text-xs text-ivory/50">
+                  Book multiple rooms for your group · quantity steppers below each room · max {MAX_GUESTS} guests per booking.
+                </p>
+
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
                   <div>
                     <label className="text-[10px] uppercase tracking-wider text-ivory/50">Check-in</label>
                     <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                    <p className="mt-1 text-[10px] text-champagne/70">Check-in from 11:30 AM</p>
                   </div>
                   <div>
                     <label className="text-[10px] uppercase tracking-wider text-ivory/50">Check-out</label>
                     <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                    <p className="mt-1 text-[10px] text-champagne/70">Check-out by 11:00 AM</p>
                   </div>
                   <div>
-                    <label className="text-[10px] uppercase tracking-wider text-ivory/50">Guests</label>
-                    <select value={guests} onChange={(e) => setGuests(parseInt(e.target.value))} className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none">
-                      {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} guest{n>1?"s":""}</option>)}
+                    <label className="text-[10px] uppercase tracking-wider text-ivory/50 flex items-center justify-between">
+                      <span>Total Guests</span>
+                      {guestOverride && (
+                        <button
+                          type="button"
+                          onClick={() => setGuestOverride(false)}
+                          className="text-[9px] text-champagne underline"
+                        >
+                          Auto-calc from rooms
+                        </button>
+                      )}
+                    </label>
+                    <select
+                      value={guests}
+                      onChange={(e) => {
+                        setGuests(parseInt(e.target.value));
+                        setGuestOverride(true);
+                      }}
+                      className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
+                    >
+                      {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map(n => (
+                        <option key={n} value={n}>{n} guest{n > 1 ? "s" : ""}</option>
+                      ))}
                     </select>
+                    <p className="mt-1 text-[10px] text-ivory/40">
+                      {guestOverride
+                        ? "Manually set"
+                        : hasSelection
+                        ? `Auto from ${totalSelectedRooms} room(s) · max capacity ${computedGuests}`
+                        : "Select rooms below to auto-calc"}
+                    </p>
                   </div>
                 </div>
 
-                <h3 className="mt-8 font-serif text-lg text-ivory">Select Room</h3>
+                <h3 className="mt-8 font-serif text-lg text-ivory flex items-center gap-2">
+                  Select Rooms
+                  {totalSelectedRooms > 0 && (
+                    <span className="rounded-full border border-champagne/30 bg-champagne/10 px-2 py-0.5 text-[10px] font-semibold text-champagne">
+                      {totalSelectedRooms} selected
+                    </span>
+                  )}
+                </h3>
+                <p className="mt-1 text-xs text-ivory/50">
+                  Use the + / - buttons on each room to add multiple rooms · book 2 Deluxe rooms for a group of 4-6, or a Suite + Deluxe combo for the family.
+                </p>
+
+                {/* Multi-room selection grid - each card has its own quantity stepper */}
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {ROOMS.map((r) => {
                     const av = availability[r.slug];
                     const soldOut = av === 0;
-                    const selected = selectedRoom === r.slug;
+                    const qty = getRoomQuantity(r.slug);
+                    // Use gallery[0] if image is empty - more reliable for DB-backed rooms
+                    const displayImg = r.gallery?.[0] || r.image;
                     return (
-                      <button
+                      <div
                         key={r.slug}
-                        onClick={() => !soldOut && setSelectedRoom(r.slug)}
-                        disabled={soldOut}
                         className={cn(
-                          "flex items-center gap-3 rounded-xl border p-3 text-left transition-all",
-                          selected ? "border-champagne bg-champagne/10" : soldOut ? "border-red-500/20 opacity-50" : "border-champagne/10 hover:border-champagne/30"
+                          "flex flex-col rounded-xl border p-3 transition-all",
+                          qty > 0
+                            ? "border-champagne bg-champagne/10"
+                            : soldOut
+                            ? "border-red-500/20 opacity-50"
+                            : "border-champagne/10 hover:border-champagne/30"
                         )}
                       >
-                        <img src={r.image} alt={r.name} className="h-16 w-20 flex-shrink-0 rounded-lg object-cover photo-cinematic" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif text-sm text-ivory">{r.name}</p>
-                          <p className="text-xs text-ivory/50">{r.capacity} guests · {r.bedType}</p>
-                          <p className="text-sm font-semibold text-gold-foil">{formatINR(r.price)}<span className="text-xs text-ivory/40">/night</span></p>
+                        <div className="flex items-center gap-3">
+                          {/* Display image - use gallery[0] for accuracy */}
+                          <img
+                            src={displayImg}
+                            alt={`${r.name} at Guruvayur Dham · ${r.shortDesc}`}
+                            className="h-16 w-20 flex-shrink-0 rounded-lg object-cover photo-cinematic"
+                            loading="lazy"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-serif text-sm text-ivory">{r.name}</p>
+                            <p className="text-xs text-ivory/50">{r.capacity} guests · {r.bedType}</p>
+                            <p className="text-sm font-semibold text-gold-foil">
+                              {formatINR(r.price)}
+                              <span className="text-xs text-ivory/40">/night</span>
+                            </p>
+                          </div>
+                          {av !== undefined && (
+                            <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", soldOut ? "bg-red-500/15 text-red-300" : "bg-green-500/15 text-green-300")}>
+                              {soldOut ? "SOLD OUT" : `${av} left`}
+                            </span>
+                          )}
                         </div>
-                        {av !== undefined && (
-                          <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", soldOut ? "bg-red-500/15 text-red-300" : "bg-green-500/15 text-green-300")}>
-                            {soldOut ? "SOLD OUT" : `${av} left`}
-                          </span>
+                        {/* Quantity stepper - only show if not sold out */}
+                        {!soldOut && (
+                          <div className="mt-2 flex items-center justify-between border-t border-champagne/10 pt-2">
+                            <span className="text-[10px] uppercase tracking-wider text-ivory/50">
+                              Rooms of this type
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setRoomQuantity(r.slug, Math.max(0, qty - 1))}
+                                disabled={qty === 0}
+                                className="grid h-7 w-7 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/10 disabled:opacity-30"
+                              >
+                                <Minus className="h-3.5 w-3.5" />
+                              </button>
+                              <span className="w-6 text-center font-semibold text-ivory">{qty}</span>
+                              <button
+                                type="button"
+                                onClick={() => setRoomQuantity(r.slug, Math.min(qty + 1, Math.min(av || 1, 5)))}
+                                disabled={av !== undefined && qty >= av}
+                                className="grid h-7 w-7 place-items-center rounded-full border border-champagne/20 bg-champagne text-ink transition-colors hover:bg-champagne-bright disabled:opacity-30"
+                              >
+                                <Plus className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
                         )}
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
 
-                {/* Pricing preview */}
-                {pricing && (
+                {/* Aggregate pricing preview across all selected rooms */}
+                {aggregatePricing && (
                   <div className="mt-6 rounded-xl border border-champagne/15 bg-ink/50 p-4">
-                    <p className="font-serif text-lg text-ivory">Price Breakdown</p>
-                    <div className="mt-2 space-y-1 text-sm">
-                      <p className="flex justify-between text-ivory/70"><span>Base ({pricing.nights} nights)</span><span>₹{pricing.baseTotal.toLocaleString("en-IN")}</span></p>
-                      {pricing.dynamicTotal !== pricing.baseTotal && <p className="flex justify-between text-ivory/70"><span>Dynamic pricing adjustment</span><span className={pricing.dynamicTotal > pricing.baseTotal ? "text-red-300" : "text-green-300"}>{pricing.dynamicTotal > pricing.baseTotal ? "+" : ""}₹{(pricing.dynamicTotal - pricing.baseTotal).toLocaleString("en-IN")}</span></p>}
-                      {pricing.earlyBird.active && <p className="flex justify-between text-green-300"><span>Early Bird ({pricing.earlyBird.campaignName})</span><span>-₹{pricing.earlyBird.discount.toLocaleString("en-IN")}</span></p>}
-                      <p className="flex justify-between border-t border-champagne/10 pt-2 font-serif text-lg text-gold-foil"><span>Total</span><span>₹{pricing.finalTotal.toLocaleString("en-IN")}</span></p>
+                    <p className="font-serif text-lg text-ivory">Price Breakdown ({aggregatePricing.nights} night(s))</p>
+                    <div className="mt-2 space-y-2 text-sm">
+                      {/* Per-room line items */}
+                      {selectedRooms.map(s => {
+                        const r = ROOMS.find(room => room.slug === s.slug);
+                        const p = pricingMap[s.slug];
+                        if (!r || !p) return null;
+                        return (
+                          <p key={s.slug} className="flex justify-between text-ivory/70">
+                            <span>{r.name} × {s.quantity}</span>
+                            <span>₹{((p.dynamicTotal || p.baseTotal || 0) * s.quantity).toLocaleString("en-IN")}</span>
+                          </p>
+                        );
+                      })}
+                      {aggregatePricing.earlyBird.active && (
+                        <p className="flex justify-between text-green-300">
+                          <span>Early Bird ({aggregatePricing.earlyBird.campaignName})</span>
+                          <span>-₹{aggregatePricing.earlyBird.discount.toLocaleString("en-IN")}</span>
+                        </p>
+                      )}
+                      <p className="flex justify-between border-t border-champagne/10 pt-2 font-serif text-lg text-gold-foil">
+                        <span>Total</span>
+                        <span>₹{aggregatePricing.finalTotal.toLocaleString("en-IN")}</span>
+                      </p>
                     </div>
                   </div>
                 )}
 
                 <div className="mt-6 flex justify-end">
-                  <button onClick={() => setStep(1)} disabled={!selectedRoom || !checkIn || !checkOut} className="btn-luxe disabled:opacity-40">
+                  <button
+                    onClick={() => setStep(1)}
+                    disabled={!hasSelection || !checkIn || !checkOut}
+                    className="btn-luxe disabled:opacity-40"
+                  >
                     Continue <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -341,6 +617,26 @@ export default function GuestBookingPage() {
             {step === 1 && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                 <h2 className="font-serif text-2xl text-ivory">Guest Details</h2>
+                {/* Summary chip - shows what rooms were booked */}
+                <div className="mt-2 rounded-xl border border-champagne/15 bg-ink-card/50 p-3">
+                  <p className="text-[10px] uppercase tracking-wider text-champagne">Your Reservation</p>
+                  <div className="mt-1 space-y-0.5 text-xs text-ivory/80">
+                    {selectedRooms.map(s => {
+                      const r = ROOMS.find(room => room.slug === s.slug);
+                      if (!r) return null;
+                      return (
+                        <div key={s.slug} className="flex justify-between">
+                          <span>{r.name}</span>
+                          <span>× {s.quantity}</span>
+                        </div>
+                      );
+                    })}
+                    <div className="flex justify-between border-t border-champagne/10 pt-1 mt-1 text-champagne">
+                      <span>Total guests</span>
+                      <span>{guests}</span>
+                    </div>
+                  </div>
+                </div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Name *</label>
@@ -400,7 +696,7 @@ export default function GuestBookingPage() {
                         <input
                           value={arrivalTime}
                           onChange={(e) => setArrivalTime(e.target.value)}
-                          placeholder="08:32 pm"
+                          placeholder="11:30 am"
                           className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
                         />
                       </div>
@@ -409,7 +705,7 @@ export default function GuestBookingPage() {
                         <input
                           value={departureTime}
                           onChange={(e) => setDepartureTime(e.target.value)}
-                          placeholder="09:30 am"
+                          placeholder="11:00 am"
                           className="mt-1 w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none"
                         />
                       </div>
@@ -458,16 +754,16 @@ export default function GuestBookingPage() {
                 </div>
 
                 {/* Final total */}
-                {pricing && (
+                {aggregatePricing && (
                   <div className="mt-6 rounded-xl border border-champagne/15 bg-ink/50 p-4">
-                    <p className="font-serif text-lg text-ivory">Final Amount</p>
+                    <p className="font-serif text-lg text-ivory">Final Amount ({totalSelectedRooms} room(s) · {aggregatePricing.nights} night(s))</p>
                     <div className="mt-2 space-y-1 text-sm">
-                      <p className="flex justify-between text-ivory/70"><span>Dynamic total ({pricing.nights} nights)</span><span>₹{pricing.dynamicTotal.toLocaleString("en-IN")}</span></p>
-                      {pricing.earlyBird.active && <p className="flex justify-between text-green-300"><span>Early Bird (-{pricing.earlyBird.discountPercent}%)</span><span>-₹{pricing.earlyBird.discount.toLocaleString("en-IN")}</span></p>}
+                      <p className="flex justify-between text-ivory/70"><span>Dynamic total</span><span>₹{aggregatePricing.dynamicTotal.toLocaleString("en-IN")}</span></p>
+                      {aggregatePricing.earlyBird.active && <p className="flex justify-between text-green-300"><span>Early Bird (-{aggregatePricing.earlyBird.discountPercent}%)</span><span>-₹{aggregatePricing.earlyBird.discount.toLocaleString("en-IN")}</span></p>}
                       {couponResult?.valid && <p className="flex justify-between text-green-300"><span>Coupon ({couponCode})</span><span>-₹{couponResult.discount.toLocaleString("en-IN")}</span></p>}
                       <p className="flex justify-between border-t border-champagne/10 pt-2 font-serif text-2xl text-gold-foil">
                         <span>Pay Now</span>
-                        <span>₹{(pricing.finalTotal - (couponResult?.discount || 0)).toLocaleString("en-IN")}</span>
+                        <span>₹{(aggregatePricing.finalTotal - (couponResult?.discount || 0)).toLocaleString("en-IN")}</span>
                       </p>
                     </div>
                   </div>
@@ -496,35 +792,59 @@ export default function GuestBookingPage() {
               </motion.div>
             )}
 
-            {/* Step 4: Confirmation */}
-            {step === 3 && booking && (
+            {/* Step 4: Confirmation (multi-room) */}
+            {step === 3 && bookings.length > 0 && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
                 <div className="mx-auto grid h-20 w-20 place-items-center rounded-full border border-green-500/30 bg-green-500/15">
                   <Check className="h-10 w-10 text-green-300" />
                 </div>
-                <h2 className="mt-4 font-serif text-3xl text-ivory">Booking Confirmed!</h2>
+                <h2 className="mt-4 font-serif text-3xl text-ivory">
+                  {bookings.length > 1
+                    ? `${bookings.length} Bookings Confirmed!`
+                    : "Booking Confirmed!"}
+                </h2>
                 <p className="mt-1 text-sm text-ivory/60">A confirmation has been sent to your WhatsApp.</p>
 
                 <div className="mx-auto mt-6 max-w-md rounded-xl border border-champagne/15 bg-ink/50 p-5 text-left">
-                  <p className="text-xs uppercase tracking-wider text-ivory/50">Booking Reference</p>
-                  <p className="font-mono text-2xl text-gold-foil">{booking.booking.reference}</p>
-                  <div className="mt-3 space-y-1 text-sm text-ivory/70">
-                    <p className="flex justify-between"><span>Room</span><span className="text-ivory">{ROOMS.find(r => r.slug === selectedRoom)?.name}</span></p>
-                    <p className="flex justify-between"><span>Check-in</span><span className="text-ivory">{new Date(checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></p>
-                    <p className="flex justify-between"><span>Check-out</span><span className="text-ivory">{new Date(checkOut).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></p>
+                  <p className="text-xs uppercase tracking-wider text-ivory/50">Booking References</p>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {bookings.map((b, i) => (
+                      <span key={i} className="font-mono text-sm text-gold-foil bg-champagne/5 rounded px-2 py-1">
+                        {b.booking.reference}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-3 space-y-2 text-sm text-ivory/70">
+                    {/* List all booked rooms */}
+                    {bookedRoomsSnapshot.map((s, i) => {
+                      const r = ROOMS.find(room => room.slug === s.slug);
+                      if (!r) return null;
+                      return (
+                        <p key={i} className="flex justify-between">
+                          <span>{r.name}</span>
+                          <span className="text-ivory">× {s.quantity}</span>
+                        </p>
+                      );
+                    })}
+                    <p className="flex justify-between border-t border-champagne/10 pt-2"><span>Check-in</span><span className="text-ivory">{new Date(checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · 11:30 AM</span></p>
+                    <p className="flex justify-between"><span>Check-out</span><span className="text-ivory">{new Date(checkOut).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · 11:00 AM</span></p>
                     <p className="flex justify-between"><span>Guests</span><span className="text-ivory">{guests}</span></p>
-                    <p className="flex justify-between"><span>Amount Paid</span><span className="text-gold-foil">₹{booking.pricing.finalAmount.toLocaleString("en-IN")}</span></p>
+                    <p className="flex justify-between"><span>Amount Paid</span><span className="text-gold-foil">₹{bookings.reduce((sum, b) => sum + (b.pricing?.finalAmount || 0), 0).toLocaleString("en-IN")}</span></p>
                     <p className="flex justify-between"><span>Payment</span><span className="text-green-300">{paymentMethod} ✓</span></p>
                   </div>
-                  <div className="mt-3 rounded-lg bg-green-500/10 p-2 text-xs text-green-300">
-                    ✓ Synced to all {booking.syncResults.channelsSynced} channel partners (Booking.com, MakeMyTrip, Goibibo, Agoda)
-                  </div>
-                  {booking.reminders.darshan && <div className="mt-2 rounded-lg bg-champagne/10 p-2 text-xs text-champagne">🔔 Darshan reminder scheduled for your check-in day</div>}
+                  {bookings[0]?.syncResults && (
+                    <div className="mt-3 rounded-lg bg-green-500/10 p-2 text-xs text-green-300">
+                      ✓ Synced to all {bookings[0].syncResults.channelsSynced} channel partners (Booking.com, MakeMyTrip, Goibibo, Agoda)
+                    </div>
+                  )}
+                  {bookings[0]?.reminders?.darshan && (
+                    <div className="mt-2 rounded-lg bg-champagne/10 p-2 text-xs text-champagne">🔔 Darshan reminder scheduled for your check-in day</div>
+                  )}
                 </div>
 
                 <div className="mt-6 flex justify-center gap-3">
                   <MagneticButton onClick={() => navigate("/rooms")}>View Rooms</MagneticButton>
-                  <MagneticButton variant="ghost" href={waLink(`Namaskaram! I just booked ${booking.booking.reference}. I have a question.`)}>WhatsApp Us</MagneticButton>
+                  <MagneticButton variant="ghost" href={waLink(`Namaskaram! I just booked ${bookings.map(b => b.booking.reference).join(", ")}. I have a question.`)}>WhatsApp Us</MagneticButton>
                 </div>
               </motion.div>
             )}

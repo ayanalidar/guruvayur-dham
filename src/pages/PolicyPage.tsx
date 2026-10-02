@@ -97,7 +97,7 @@ const POLICIES: Record<string, { title: string; sections: { h: string; p: string
       {
         h: "1. Check-in & Check-out",
         p: [
-          "Standard check-in: 12:00 PM (noon)",
+          "Standard check-in: 11:30 AM",
           "Standard check-out: 11:00 AM",
           "Early check-in (from 8:00 AM): ₹200 additional charge, subject to availability.",
           "Late check-out (until 2:00 PM): ₹300 additional charge, subject to availability.",

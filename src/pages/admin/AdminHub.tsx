@@ -1962,7 +1962,7 @@ function TodaysMovementsCard() {
           id: b.id,
           name: b.guestName,
           room: b.room?.name || "-",
-          time: new Date(b.checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 12:00 PM",
+          time: new Date(b.checkIn).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " · 11:30 AM",
           ref: b.reference,
         }))}
         loading={loading}

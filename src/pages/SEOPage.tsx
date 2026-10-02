@@ -301,7 +301,7 @@ export default function SEOPage({ slug }: { slug: string }) {
                     </li>
                     <li className="flex items-start gap-2">
                       <Clock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-champagne/60" />
-                      <span>Check-in: 12 PM · Check-out: 11 AM</span>
+                      <span>Check-in: 11:30 AM · Check-out: 11:00 AM</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <Calendar className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-champagne/60" />

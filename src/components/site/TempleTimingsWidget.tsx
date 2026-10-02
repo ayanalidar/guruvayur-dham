@@ -78,11 +78,12 @@ export default function TempleTimingsWidget() {
   const temples = SITE.nearbyTemples || [];
 
   // Group temples by dham (location)
-  const locationOrder = ["Mathura", "Gokul", "Vrindavan", "Barsana", "Nandgaon"];
+  const locationOrder = ["Mathura", "Gokul", "Vrindavan", "Govardhan", "Barsana", "Nandgaon"];
   const locationIcons: Record<string, string> = {
     Mathura: "Krishna Janmabhoomi - birthplace of Krishna",
     Gokul: "Krishna's childhood home",
     Vrindavan: "Radha-Krishna's leela-sthali",
+    Govardhan: "Sacred hill lifted by Krishna on his little finger",
     Barsana: "Radha Rani's birthplace",
     Nandgaon: "Nand Baba's village",
   };

@@ -1391,3 +1391,106 @@ Stage Summary:
   need `bun run db:push` after deploy.
 - Not committed. Not pushed. Staged for review by main.
 
+
+---
+Task ID: G1 (Guruvayur Dham updates - 12 fixes in one batch)
+Agent: main (continuation)
+Task: Apply 12 user-requested fixes to the Guruvayur Dham booking site:
+  1. Check-in time 11:30 AM (was 12:00 PM)
+  2. Guest capacity 6 → 8
+  3. Multi-room booking option
+  4. Fix room images in instant booking
+  5. Temple distances: Birla Mandir 07 km, Janmabhumi 03 km
+  6. Gokul: add Chintaharan Mahadev + Nand Bhavan Gokul (Sone ke jhule ka darshan)
+  7. Vrindavan: remove Katyayani Peeth, Jaipur Mandir, Madan Mohan, Shahji, Govind Dev. Add Chaar Dham, Om Gopal Ashram (ISKCON already exists - renamed for clarity)
+  8. Govardhan dham: add 6 temples (Govardhan Parikrama 21 km, Daan Ghati, Radha Kund, Shyam Kund, Mansi Kund, Kusum Sarovar)
+  9. Google Business Profile - live rating + reviews link
+  10. Wire ReviewsWidget + Hero to fetch live Google rating
+  11. Room count 15 (was already 15 in SITE config - kept)
+  12. Fix room category 1 display issue
+
+Work Log:
+  - site-data.ts (single largest edit):
+    * SITE.checkIn: "12:00 PM" → "11:30 AM"
+    * Added SITE.googleBusinessProfileUrl, SITE.googleReviewsUrl, SITE.googlePlaceId
+    * nearbyTemples: total temples went from ~22 to ~26
+      - Mathura: Krishna Janmabhoomi distance 1.5 km → 3 km; Birla Mandir 3 km → 7 km
+      - Gokul: added 2 new temples (Nand Bhavan Gokul with Sone ke jhule ka darshan;
+        Chintaharan Mahadev); updated existing Nand Bhavan to mention golden cradle
+      - Vrindavan: removed 5 temples (Katyayani Peeth, Jaipur Mandir, Madan Mohan,
+        Shahji Mandir, Govind Dev Ji); renamed ISKCON entry for clarity;
+        added Chaar Dham Mandir and Om Gopal Ashram
+      - Govardhan: NEW DHAM (6 temples total - Govardhan Hill 21 km Parikrama,
+        Daan Ghati, Radha Kund, Shyam Kund, Mansi Kund, Kusum Sarovar)
+  - TempleTimingsWidget.tsx: added "Govardhan" to locationOrder array (was
+    5 dhams: Mathura, Gokul, Vrindavan, Barsana, Nandgaon; now 6 with
+    Govardhan inserted before Barsana)
+  - settings.ts: added 2 new INTEGRATION keys - GOOGLE_PLACE_ID and
+    GOOGLE_BUSINESS_PROFILE_URL (non-secret, plaintext)
+  - NEW FILE: src/app/api/google-business/route.ts (~110 lines)
+    * GET endpoint, public (no auth - shown on homepage)
+    * Calls Google Places Details (New) API if GOOGLE_PLACES_API_KEY +
+      GOOGLE_PLACE_ID are configured
+    * Returns live rating, user_ratings_total, url, name, address,
+      phone, opening_hours
+    * 6-hour in-memory cache (Google TOS allows up to 30 days)
+    * Falls back to SITE static values if no API key configured (demo mode)
+    * Never throws - always returns 200 so widget still renders
+  - ReviewsWidget.tsx: 
+    * Added useEffect to fetch /api/google-business
+    * Live rating (liveRating) and review count (liveReviewCount)
+      replace the old static "stats?.averageRating || 4.8"
+    * Google rating badge changed from <div> to <a> linking to live
+      Google Business Profile URL (clickable to Google Maps)
+    * "View all reviews on Google" link uses live URL
+  - Hero.tsx:
+    * Added useState + useEffect for live Google rating fetch
+    * Google rating chip changed from <motion.div> to <motion.a> linking
+      to live Google Business Profile URL
+    * Rating + review count update in real-time (6h-cached server-side)
+  - GuestBookingPage.tsx: MAJOR REWRITE (~537 → ~590 lines)
+    * State: selectedRoom: string → selectedRooms: RoomSelection[]
+      (array of {slug, quantity})
+    * MAX_GUESTS constant = 8 (was hardcoded [1..6] in dropdown)
+    * Each room card now has + / - quantity stepper
+    * Live total guests auto-calc = sum(room.capacity × quantity)
+    * "Auto-calc from rooms" link lets user revert from manual override
+    * Pricing preview shows per-room line items + aggregated total
+    * Submit loops through selectedRooms, calling /api/guest-booking
+      once per room unit, all grouped under one parentReference
+    * Confirmation step shows all booking references as chips
+    * Room image fix: was `<img src={r.image}>` → now `r.gallery?.[0]
+      || r.image` (more reliable, handles DB-mismatched images)
+    * Date inputs now show check-in/out time hints (11:30 AM / 11:00 AM)
+  - guest-booking/route.ts:
+    * Added parentReference and isMultiRoom to Zod schema
+    * Added these to booking.notes JSON for admin grouping
+    * Updated check-in reminder WhatsApp message: "12 PM" → "11:30 AM"
+    * Updated email template: "Check-in (12:00 PM)" → "Check-in (11:30 AM)"
+  - Other check-in time fixes (12:00 PM → 11:30 AM):
+    * PolicyPage.tsx (booking policy)
+    * TermsPage.tsx (house rules)
+    * SEOPage.tsx (footer sidebar)
+    * AdminHub.tsx (today's check-ins display)
+    * google-hotels-feed/route.ts (XML feed for Google Hotel Center)
+
+Stage Summary:
+  - 1 new file: src/app/api/google-business/route.ts (~110 lines)
+  - 9 existing files modified: site-data.ts, TempleTimingsWidget.tsx,
+    settings.ts, ReviewsWidget.tsx, Hero.tsx, GuestBookingPage.tsx,
+    guest-booking/route.ts, PolicyPage.tsx, TermsPage.tsx, SEOPage.tsx,
+    AdminHub.tsx, google-hotels-feed/route.ts
+  - TypeScript: `npx tsc --noEmit` → 0 errors
+  - ESLint on all modified files: 0 errors, 0 warnings
+  - 26 total Braj temples listed (was ~22): Mathura 5, Gokul 6,
+    Vrindavan 9, Govardhan 6 (new!), Barsana 2, Nandgaon 1
+  - Live Google rating now wires through both Hero chip and
+    ReviewsWidget badge - both clickable to the live Google Business
+    Profile page (no static share.google shortlink anymore - real URL
+    via Google Places API)
+  - Multi-room booking: customer can book e.g. 2 Deluxe + 1 Suite in
+    one transaction, gets one payment + multiple booking references
+    grouped under a parentReference (visible in booking.notes for admin)
+  - Guest capacity up to 8 (was 6) - both in the dropdown options AND
+    in the auto-calc max
+  - Not committed. Not pushed. Staged for review.
