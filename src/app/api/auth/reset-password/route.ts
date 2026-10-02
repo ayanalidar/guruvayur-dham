@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { hashPassword, createSession, setSessionCookie, detectHttps } from "@/lib/auth";
 
 /**
  * POST /api/auth/reset-password
@@ -66,6 +66,6 @@ export async function POST(req: NextRequest) {
     user: { id: reset.user.id, name: reset.user.name, email: reset.user.email, role: reset.user.role },
     message: "Password reset successfully! You are now logged in.",
   });
-  res.headers.set("Set-Cookie", setSessionCookie(session.token));
+  res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
   return res;
 }

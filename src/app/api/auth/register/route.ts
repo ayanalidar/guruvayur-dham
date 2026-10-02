@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { hashPassword, createSession, setSessionCookie, detectHttps } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 
 // Common password blocklist - these get tried first by attackers.
@@ -107,6 +107,6 @@ export async function POST(req: NextRequest) {
     session: { token: session.token, expiresAt: session.expiresAt },
     message: "Account created successfully!",
   });
-  res.headers.set("Set-Cookie", setSessionCookie(session.token));
+  res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
   return res;
 }

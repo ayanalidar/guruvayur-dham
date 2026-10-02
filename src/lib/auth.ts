@@ -96,15 +96,16 @@ export async function createSession(userId: string, role: string, daysValid = 7)
  * (falls back to unprefixed name in dev for backwards compat).
  */
 export async function getUserFromRequest(req: Request): Promise<{ user: any; role: string } | null> {
-  // Try cookie first. In production, the cookie is set with __Host- prefix
-  // (which forces Secure + Path=/ + no Domain). In dev, no prefix is used
-  // so we check both names.
+  // Read the session cookie. As of the cookie-fix (refresh-logs-out bug),
+  // we ALWAYS write the cookie with the unprefixed name `session_token`
+  // (see setSessionCookie). However, existing sessions created before
+  // the fix used `__Host-session_token` in production — we still read
+  // that name too so logged-in users don't get kicked out by the fix.
+  // After 7 days (cookie Max-Age) all old __Host- cookies expire
+  // naturally and we can drop this dual-read.
   const cookie = req.headers.get("cookie") || "";
-  const isProd = process.env.NODE_ENV === "production";
-  const cookieName = isProd ? "__Host-session_token" : "session_token";
-  const altCookieName = isProd ? "session_token" : "__Host-session_token";
-  const tokenMatch = cookie.match(new RegExp(`${cookieName}=([^;]+)`))
-    || cookie.match(new RegExp(`${altCookieName}=([^;]+)`));
+  const tokenMatch = cookie.match(/session_token=([^;]+)/)
+    || cookie.match(/__Host-session_token=([^;]+)/);
   const token = tokenMatch?.[1] || req.headers.get("authorization")?.replace("Bearer ", "");
 
   if (!token) return null;
@@ -221,29 +222,83 @@ export async function requireUser(req: NextRequest): Promise<{
 }
 
 /**
- * Set session cookie on a NextResponse.
+ * Detect if a request was made over HTTPS.
  *
- * SECURITY (Phase D H12 fix):
- * - Production: uses __Host- prefix (forces Secure + Path=/ + no Domain).
- *   This is the strictest cookie prefix - prevents subdomain-based cookie
- *   injection attacks.
- * - SameSite=Strict in production (was Lax) - closes 95% of CSRF vectors
- *   by not sending the cookie on cross-site navigations.
- * - Dev: no prefix, SameSite=Lax (so localhost testing works without HTTPS).
+ * Vercel (and most reverse proxies) terminate TLS at the edge and forward
+ * to the Node/Next.js runtime over plain HTTP. The original protocol is
+ * preserved in the `X-Forwarded-Proto` header — we MUST read this to know
+ * whether the actual client<->edge connection was HTTPS.
+ *
+ * This is the difference between `Secure` cookies being persisted by the
+ * browser (HTTPS) or silently dropped (HTTP). See the comment on
+ * `setSessionCookie` for the full bug write-up.
  */
-export function setSessionCookie(token: string): string {
-  const isProduction = process.env.NODE_ENV === "production";
-  const prefix = isProduction ? "__Host-" : "";
-  const sameSite = isProduction ? "Strict" : "Lax";
-  return `${prefix}session_token=${token}; Path=/; HttpOnly; ${isProduction ? "Secure; " : ""}SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}`;
+export function detectHttps(req: Request | NextRequest): boolean {
+  // Check the forwarded-proto header (Vercel, Cloudflare, AWS ALB, etc.)
+  const forwarded = req.headers.get("x-forwarded-proto");
+  if (forwarded === "https") return true;
+  if (forwarded === "http") return false;
+  // Fall back to the direct connection protocol (localhost dev / direct HTTPS)
+  if (req instanceof NextRequest) {
+    return req.nextUrl.protocol === "https:";
+  }
+  return false;
 }
 
-export function clearSessionCookie(): string {
-  const isProduction = process.env.NODE_ENV === "production";
-  const prefix = isProduction ? "__Host-" : "";
-  // Mirror the set cookie's prefix + SameSite, otherwise the browser treats
+/**
+ * Set session cookie on a NextResponse.
+ *
+ * COOKIE FIX (refresh-logs-out bug):
+ *
+ * ROOT CAUSE:
+ *   - Production was using `__Host-session_token` + `Secure` + `SameSite=Strict`.
+ *   - The `__Host-` prefix REQUIRES `Secure`, which REQUIRES HTTPS.
+ *   - On staging/preview environments that serve HTTP (no TLS), the browser
+ *     silently REJECTS the cookie. The login API returns success, but the
+ *     cookie is never saved. The very next request (refresh, click, fetch)
+ *     sends no cookie → /api/auth/session returns `authenticated: false` →
+ *     AdminGuard kicks the user back to "Admin Access Required".
+ *   - Even on real HTTPS, `SameSite=Strict` blocks the cookie from being
+ *     sent on top-level navigations originating from another origin
+ *     (e.g. user clicks an email link to /admin/hub → cookie NOT sent →
+ *     user appears logged out on first request → must refresh once).
+ *
+ * FIX:
+ *   1. Drop the `__Host-` prefix entirely. `HttpOnly + SameSite=Lax +
+ *      Secure` is already strong; the `__Host-` prefix is overkill and
+ *      its strict requirements cause more bugs than it prevents.
+ *   2. Set `Secure` ONLY when we know the request was HTTPS (via
+ *      `detectHttps()` reading `X-Forwarded-Proto`). This way HTTP
+ *      staging environments work, and production HTTPS still gets Secure.
+ *   3. Use `SameSite=Lax` everywhere (instead of Strict in prod). Lax
+ *      blocks CSRF on cross-origin POSTs (the dangerous vector) but
+ *      allows the cookie on top-level GET navigations from external
+ *      referrers. Strict broke email-link / Google-result / referrer
+ *      navigation back to the site.
+ *   4. Read-path already supports BOTH prefixed and unprefixed cookie
+ *      names (see getUserFromRequest), so existing sessions keep working.
+ *
+ * SECURITY TRADE-OFF ACCEPTED:
+ *   - Losing `__Host-` prefix: we lose protection against subdomain-based
+ *     cookie injection. Mitigated by `HttpOnly` + `SameSite=Lax` +
+ *     `Secure` (when HTTPS) + the fact that we run on a single domain.
+ *   - Lax vs Strict: Lax still blocks the CSRF POST vector. Top-level
+ *     GET navigations from external sources are read-only (dashboard
+ *     renders but no state change), so the residual risk is minimal.
+ */
+export function setSessionCookie(token: string, isHttps: boolean = false): string {
+  const secure = isHttps ? "Secure; " : "";
+  // SameSite=Lax everywhere — strict was breaking email-link / Google-result
+  // navigation to /admin/* (cookie not sent on first request).
+  const sameSite = "Lax";
+  return `session_token=${token}; Path=/; HttpOnly; ${secure}SameSite=${sameSite}; Max-Age=${7 * 24 * 60 * 60}`;
+}
+
+export function clearSessionCookie(isHttps: boolean = false): string {
+  // Mirror the set cookie's flags exactly, otherwise the browser treats
   // the clear as a different cookie and doesn't delete the original.
-  return `${prefix}session_token=; Path=/; HttpOnly; ${isProduction ? "Secure; " : ""}Max-Age=0`;
+  const secure = isHttps ? "Secure; " : "";
+  return `session_token=; Path=/; HttpOnly; ${secure}SameSite=Lax; Max-Age=0`;
 }
 
 /**

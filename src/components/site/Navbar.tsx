@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, CreditCard, ChevronDown, BookOpen, MapPin, Calendar, User } from "lucide-react";
+import { Menu, X, Phone, CreditCard, ChevronDown, BookOpen, MapPin, Calendar, User, LogOut, LayoutDashboard } from "lucide-react";
 import { NAV_ITEMS, SITE, waLink } from "@/lib/site-data";
 import { SEO_PAGES, getSEOPagesByCategory, ALL_SEO_PAGES } from "@/lib/seo-pages";
 import { useHashRoute, isRouteActive } from "@/lib/router";
 import { useContent } from "@/lib/use-cms";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const { path, navigate } = useHashRoute();
@@ -17,6 +18,30 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [guidesOpen, setGuidesOpen] = useState(false);
+  // Check session once on mount + when route changes - so the Navbar
+  // shows "Welcome, [name] · Logout" instead of always showing "Login"
+  // (which made logged-in users think they were logged out on home nav).
+  const [session, setSession] = useState<{ authenticated: boolean; user: any; role: string } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setSession(j); })
+      .catch(() => { if (active) setSession({ authenticated: false, user: null, role: "GUEST" }); });
+    return () => { active = false; };
+  }, [path]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setSession({ authenticated: false, user: null, role: "GUEST" });
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch {
+      toast.error("Logout failed");
+    }
+  };
 
   // Brand info from CMS (with hardcoded fallbacks)
   const brandName = get("site.name", "Guruvayur Dham");
@@ -200,14 +225,41 @@ export default function Navbar() {
 
         {/* Desktop CTAs */}
         <div className="hidden items-center gap-2 lg:flex">
-          <button
-            onClick={() => go("/login")}
-            className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"
-            aria-label="Login"
-            title="Login"
-          >
-            <User className="h-4 w-4" />
-          </button>
+          {/* Auth-aware: show "Welcome, [name] · Logout" if logged in,
+              otherwise show the Login icon button. This was the source
+              of the "click home → logged out" perception - the Navbar
+              always showed Login even when the user was authenticated. */}
+          {session?.authenticated ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => go(session.role === "GUEST" ? "/dashboard" : "/admin/hub")}
+                className="flex items-center gap-2 rounded-full border border-champagne/20 bg-champagne/5 px-3 py-2 text-xs font-semibold text-champagne transition-colors hover:bg-champagne/10"
+                title={session.role === "GUEST" ? "Go to dashboard" : "Go to admin hub"}
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                <span className="max-w-[120px] truncate">
+                  {session.user?.name?.split(" ")[0] || "Account"}
+                </span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="grid h-10 w-10 place-items-center rounded-full border border-red-500/30 text-red-300 transition-colors hover:bg-red-500/10"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => go("/login")}
+              className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:bg-champagne/5"
+              aria-label="Login"
+              title="Login"
+            >
+              <User className="h-4 w-4" />
+            </button>
+          )}
           <a
             href={`tel:${phoneRaw}`}
             className="grid h-10 w-10 place-items-center rounded-full border border-champagne/20 text-champagne transition-colors hover:border-champagne/50 hover:bg-champagne/5"
@@ -297,12 +349,29 @@ export default function Navbar() {
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => go("/login")}
-                  className="mt-2 block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
-                >
-                  <User className="mr-2 inline h-4 w-4" /> {t("nav.login") || "Login"}
-                </button>
+                {session?.authenticated ? (
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => go(session.role === "GUEST" ? "/dashboard" : "/admin/hub")}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-champagne/20 bg-champagne/5 px-4 py-3 text-sm font-semibold text-champagne"
+                    >
+                      <LayoutDashboard className="h-4 w-4" /> {session.user?.name?.split(" ")[0] || "Dashboard"}
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/30 px-4 py-3 text-sm font-semibold text-red-300 hover:bg-red-500/10"
+                    >
+                      <LogOut className="h-4 w-4" /> Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => go("/login")}
+                    className="mt-2 block w-full rounded-xl border border-champagne/15 px-4 py-3 text-left text-sm font-medium text-champagne/80 hover:bg-champagne/5"
+                  >
+                    <User className="mr-2 inline h-4 w-4" /> {t("nav.login") || "Login"}
+                  </button>
+                )}
               </li>
             </ul>
           </motion.div>

@@ -1494,3 +1494,167 @@ Stage Summary:
   - Guest capacity up to 8 (was 6) - both in the dropdown options AND
     in the auto-calc max
   - Not committed. Not pushed. Staged for review.
+
+---
+Task ID: G2 (Reservation Grid Status Indicators + Refresh/Logout Bug Fix)
+Agent: main (continuation)
+Task: Two user-reported fixes:
+  1. Reservation grid needs real-time status indicators (Vacant / On Hold /
+     Booked / In House / Checked Out) with direct symbols + action indicators
+  2. Bug: refreshing the page logs the user out, OR clicking Home after
+     staff login appears to log them out
+
+Work Log:
+
+=== FIX 1: Reservation Grid Status Indicators ===
+
+  - src/pages/admin/ReservationCalendar.tsx (heavily extended):
+    * Added 6 new lucide-react icon imports: Circle, CircleDot, CircleCheck,
+      CircleSlash, PauseCircle, CheckCircle2, Lock - used as direct status
+      symbols on each grid cell
+    * Rewrote STATUS_CONFIG from {label, border, bg} to a richer shape:
+        {label, shortLabel, border, bg, symbol, symbolColor, pulse?}
+      Each status now has a direct visual symbol:
+        - ON_HOLD:    PauseCircle (amber, pulses to signal "action needed")
+        - CONFIRMED:  CircleDot (champagne - "booked" indicator)
+        - CHECKED_IN: CheckCircle2 (green - "in-house" indicator)
+        - CHECKED_OUT: CircleSlash (gray - "departed" indicator)
+        - CANCELLED:  CircleSlash (red - "void" indicator)
+    * Added VACANT_SYMBOL = Circle (hollow green) + VACANT_COLOR - shown
+      on every empty grid cell with "VACANT" label
+    * Updated booked cell rendering:
+      - Status symbol now appears at TOP-RIGHT of every booked cell as
+        a small badge with the icon + short label (e.g. "OH" for On Hold,
+        "IH" for In House). On Hold status pulses to draw attention.
+      - Existing channel icon + guest name + channel label layout
+        preserved, just shifted left (pr-12) to make room for the badge.
+    * Updated mid-stay (continuation) cells: previously blank, now show
+      a colored left-border bar matching the booking's status color
+      (so staff can see at a glance which dates are occupied vs vacant,
+      even mid-booking)
+    * Updated VACANT cell rendering: previously just an empty bordered
+      box; now shows a hollow green circle icon + "VACANT" text label
+      on hover (and icon always visible). Green-on-green matches the
+      "available" semantic used elsewhere on the site.
+    * Added a new STATUS LEGEND section (between the grid and the existing
+      channel legend) - explains all 6 status symbols with the matching
+      icon, color, and label. On Hold gets a ⚠ warning marker.
+    * Updated booking detail modal: the plain-text "Status: [label]" row
+      was replaced with a colored status badge showing the same icon +
+      short label + full label, matching the grid's symbol (consistency).
+    * Added quick-action status transition buttons in the booking detail
+      modal (only shown when not in edit mode). Each button is gated by
+      the booking's current state:
+        - "Check In" button (only if status is ON_HOLD or CONFIRMED)
+        - "Check Out" button (only if status is CHECKED_IN)
+        - "Confirm" button (only if status is ON_HOLD)
+        - "Hold" button (only if status is CONFIRMED - to put on hold)
+        - "Cancel" button (always shown unless already cancelled)
+      Buttons call updateBookingStatus() which PATCHes the API and
+      refreshes the grid. Toast confirms the transition.
+    * Added new updateBookingStatus(bookingId, newStatus) helper that
+      optimistically updates the local selectedBooking state + reloads
+      the grid (no flicker).
+
+  - src/app/api/admin/reservations/route.ts (PATCH endpoint extended):
+    * UpdateSchema now accepts an optional `status` field, validated
+      via z.enum against the 6 known statuses (ON_HOLD, CONFIRMED,
+      CHECKED_IN, CHECKED_OUT, CANCELLED, PENDING). Prevents arbitrary
+      strings from being persisted to the Booking table.
+    * PATCH handler updated to write `data.status = status` when the
+      field is provided. The `select` clause already included `status`
+      so the response carries the new status back to the client.
+
+=== FIX 2: Refresh Logs Out Bug + Click-Home Logs Out Perception ===
+
+  ROOT CAUSE ANALYSIS:
+  The cookie was being set with `__Host-session_token` prefix + `Secure`
+  flag + `SameSite=Strict` in production. This combination caused two bugs:
+
+  Bug A (refresh logs out): On staging/preview environments that serve
+  HTTP (no TLS), the browser silently REJECTS cookies with the `Secure`
+  flag. The login API returns success, but the cookie is never saved.
+  The very next request (refresh, click, fetch) sends no cookie →
+  /api/auth/session returns `authenticated: false` → AdminGuard kicks
+  the user back to "Admin Access Required" screen.
+
+  Bug B (click home logs out perception): `SameSite=Strict` blocks the
+  cookie from being sent on top-level navigations originating from
+  another origin (e.g., email link → /admin/hub). The first request
+  shows "logged out", refresh fixes it. ALSO: the Navbar always showed
+  a "Login" button regardless of session state, so even when the cookie
+  was being sent correctly, logged-in users saw "Login" on every page
+  and thought they were logged out.
+
+  FIX (in src/lib/auth.ts):
+  - Dropped the `__Host-` cookie prefix entirely. `HttpOnly + SameSite=Lax
+    + Secure (when HTTPS)` is already strong; the `__Host-` prefix's
+    strict requirements cause more bugs than they prevent in mixed
+    HTTP/HTTPS environments.
+  - Added new `detectHttps(req)` helper that reads the `X-Forwarded-Proto`
+    header (set by Vercel, Cloudflare, AWS ALB, etc.) to know if the
+    actual client<->edge connection was HTTPS. Falls back to
+    `req.nextUrl.protocol` for direct connections.
+  - Changed `setSessionCookie(token, isHttps)` to set `Secure` ONLY when
+    `isHttps` is true. Cookie is always persisted now (browser accepts
+    it on both HTTP staging and HTTPS production).
+  - Changed `SameSite=Strict` → `SameSite=Lax` everywhere. Lax still
+    blocks CSRF on cross-origin POSTs (the dangerous vector) but allows
+    the cookie on top-level GET navigations from external referrers
+    (email links, Google search results, referrer-based navigation).
+  - Updated `clearSessionCookie(isHttps)` to mirror the set cookie's
+    flags exactly (otherwise the browser treats the clear as a different
+    cookie and doesn't delete the original).
+  - Updated `getUserFromRequest` read path to match BOTH the new
+    unprefixed `session_token` AND the legacy `__Host-session_token`
+    names - existing logged-in users (with old __Host- cookies) keep
+    working. Old cookies expire naturally after 7 days (Max-Age).
+
+  CALLED-SITE UPDATES (pass isHttps to setSessionCookie/clearSessionCookie):
+  - src/app/api/auth/login/route.ts: 5 call sites updated (PIN, staff
+    email, staff-2fa, guest email, guest OTP). All now pass
+    `detectHttps(req)` as the second arg.
+  - src/app/api/auth/register/route.ts: 1 call site updated.
+  - src/app/api/auth/reset-password/route.ts: 1 call site updated.
+  - src/app/api/auth/logout/route.ts: rewritten to read both cookie
+    names (session_token + __Host-session_token) and pass detectHttps.
+
+  FIX B (Navbar auth-awareness):
+  - src/components/site/Navbar.tsx: added useEffect that fetches
+    /api/auth/session on mount + whenever the route changes (path
+    dependency). Stores the result in `session` state.
+  - Desktop CTAs section now branches:
+      - If session.authenticated: show a "Welcome, [firstName]" button
+        (links to /admin/hub for staff or /dashboard for guest) + a
+        red "Logout" icon button.
+      - Else: show the original "Login" icon button.
+  - Mobile menu's login section also branches the same way.
+  - Added `handleLogout` async function that calls /api/auth/logout,
+    clears the local session state, shows a success toast, and
+    navigates to "/" (home).
+  - Added lucide-react imports: LogOut, LayoutDashboard.
+
+Stage Summary:
+  - 6 files modified:
+      src/lib/auth.ts (cookie fix + detectHttps helper)
+      src/app/api/auth/login/route.ts (5 callers updated)
+      src/app/api/auth/register/route.ts (1 caller updated)
+      src/app/api/auth/reset-password/route.ts (1 caller updated)
+      src/app/api/auth/logout/route.ts (rewritten)
+      src/components/site/Navbar.tsx (auth-aware UI)
+      src/pages/admin/ReservationCalendar.tsx (status indicators + actions)
+      src/app/api/admin/reservations/route.ts (status field on PATCH)
+  - TypeScript: `npx tsc --noEmit` → 0 errors
+  - ESLint on all files I created/modified (except the pre-existing
+    ReservationCalendar.tsx set-state-in-effect warnings at lines
+    152/157/164 — those were there before my changes; I added new code
+    above them, pushing their line numbers down from 72/77/84): 0 errors
+  - Cookie name change is backwards-compatible: read path checks both
+    `session_token` and `__Host-session_token`, so existing logged-in
+    users (with old __Host- cookies) won't be kicked out by the fix.
+  - Reservation grid now shows 6 distinct status symbols (VACANT,
+    ON_HOLD, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED) at a
+    glance. On Hold pulses to draw attention. Quick-action buttons
+    in the booking modal let staff transition between statuses without
+    leaving the calendar.
+  - Not committed. Not pushed. Staged for review.

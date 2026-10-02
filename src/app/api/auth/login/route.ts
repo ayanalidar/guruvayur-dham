@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { hashPassword, verifyPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { hashPassword, verifyPassword, createSession, setSessionCookie, detectHttps } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limiter";
 import crypto from "crypto";
 import { generateTOTP } from "@/app/api/auth/2fa/route";
@@ -72,7 +72,10 @@ export async function POST(req: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
-    res.headers.set("Set-Cookie", setSessionCookie(session.token));
+    // Pass HTTPS flag so the cookie's `Secure` flag is set correctly (HTTPS
+    // prod gets Secure, HTTP staging/dev doesn't — fixes refresh-logs-out
+    // bug where browser silently rejected Secure cookies on HTTP).
+    res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
     return res;
   }
 
@@ -132,7 +135,7 @@ export async function POST(req: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
-    res.headers.set("Set-Cookie", setSessionCookie(session.token));
+    res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
     return res;
   }
 
@@ -193,7 +196,7 @@ export async function POST(req: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: staff.role, mustChangePassword: staff.mustChangePassword },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
-    res.headers.set("Set-Cookie", setSessionCookie(session.token));
+    res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
     return res;
   }
 
@@ -219,7 +222,7 @@ export async function POST(req: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: "GUEST", phone: user.phone },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
-    res.headers.set("Set-Cookie", setSessionCookie(session.token));
+    res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
     return res;
   }
 
@@ -278,7 +281,7 @@ export async function POST(req: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: "GUEST", phone: user.phone },
       session: { token: session.token, expiresAt: session.expiresAt },
     });
-    res.headers.set("Set-Cookie", setSessionCookie(session.token));
+    res.headers.set("Set-Cookie", setSessionCookie(session.token, detectHttps(req)));
     return res;
   }
 

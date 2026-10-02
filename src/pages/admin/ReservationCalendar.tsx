@@ -6,6 +6,9 @@ import {
   ChevronLeft, ChevronRight, LogIn, LogOut, BedDouble,
   Users, RefreshCw, User, Globe, Phone, Home, Footprints,
   Save, Settings, X, Plus, Trash2, Pencil,
+  // Status indicator icons - direct symbols shown on each grid cell
+  Circle, CircleDot, CircleCheck, CircleSlash, PauseCircle,
+  CheckCircle2, Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -20,12 +23,89 @@ const CHANNEL_CONFIG: Record<string, { icon: any; label: string; color: string; 
   AGODA:        { icon: Globe,      label: "Agoda",      color: "#5394f1", bg: "bg-sky-500/20",     text: "text-sky-300" },
 };
 
-const STATUS_CONFIG: Record<string, { label: string; border: string; bg: string }> = {
-  CONFIRMED:   { label: "Confirmed",   border: "border-champagne/40",  bg: "bg-champagne/15" },
-  CHECKED_IN:  { label: "In House",     border: "border-green-500/40", bg: "bg-green-500/15" },
-  CHECKED_OUT: { label: "Checked Out",  border: "border-ivory/20",    bg: "bg-ivory/5" },
-  CANCELLED:   { label: "Cancelled",    border: "border-red-500/40",  bg: "bg-red-500/10 line-through" },
+/**
+ * STATUS INDICATOR CONFIG - real-time visual status symbols on the grid.
+ *
+ * Each status gets:
+ *   - symbol: a direct icon shown at top-right of every cell (so staff can
+ *     scan the grid and see status at a glance without opening the booking
+ *     detail modal)
+ *   - symbolColor: the icon color (matches the cell border for consistency)
+ *   - border + bg: the cell background + border colors
+ *   - pulse: whether the symbol pulses (for "On Hold" status - to draw
+ *     attention to held rooms that need confirmation within the hold window)
+ *   - shortLabel: a 1-2 letter badge shown next to the symbol (e.g. "IH"
+ *     for In House, "OH" for On Hold) - useful at a glance
+ *
+ * The status flow on the grid is:
+ *   VACANT  →  ON_HOLD  →  CONFIRMED  →  CHECKED_IN  →  CHECKED_OUT
+ *                (held)     (booked)    (in-house)    (departed)
+ *                                                  ↘ CANCELLED (any step)
+ *
+ * Real-time status updates:
+ *   - Booking created via /api/guest-booking → CONFIRMED (or ON_HOLD if
+ *     payment pending / Razorpay order created but not captured yet)
+ *   - Frontdesk clicks "Check-in" in booking detail → CHECKED_IN
+ *   - Auto at checkOut date → CHECKED_OUT
+ *   - Cancelled via PATCH /api/bookings/:id → CANCELLED (cell shows line-through)
+ */
+const STATUS_CONFIG: Record<string, {
+  label: string;
+  shortLabel: string;
+  border: string;
+  bg: string;
+  symbol: any;
+  symbolColor: string;
+  pulse?: boolean;
+}> = {
+  // Held / locked but not yet confirmed (e.g., pending payment, pending channel sync)
+  ON_HOLD: {
+    label: "On Hold",
+    shortLabel: "OH",
+    border: "border-amber-500/50",
+    bg: "bg-amber-500/15",
+    symbol: PauseCircle,
+    symbolColor: "text-amber-400",
+    pulse: true, // pulse to signal "action needed" - confirm or release
+  },
+  CONFIRMED: {
+    label: "Booked",
+    shortLabel: "BK",
+    border: "border-champagne/40",
+    bg: "bg-champagne/15",
+    symbol: CircleDot,
+    symbolColor: "text-champagne",
+  },
+  // Guest has arrived - in-house status
+  CHECKED_IN: {
+    label: "In House",
+    shortLabel: "IH",
+    border: "border-green-500/40",
+    bg: "bg-green-500/15",
+    symbol: CheckCircle2,
+    symbolColor: "text-green-400",
+  },
+  CHECKED_OUT: {
+    label: "Checked Out",
+    shortLabel: "CO",
+    border: "border-ivory/20",
+    bg: "bg-ivory/5",
+    symbol: CircleSlash,
+    symbolColor: "text-ivory/40",
+  },
+  CANCELLED: {
+    label: "Cancelled",
+    shortLabel: "XX",
+    border: "border-red-500/40",
+    bg: "bg-red-500/10 line-through",
+    symbol: CircleSlash,
+    symbolColor: "text-red-400",
+  },
 };
+
+// VACANT (available) cell indicator - shown on every empty grid cell
+const VACANT_SYMBOL = Circle;
+const VACANT_COLOR = "text-green-500/40";
 
 type CalendarRoom = { number: string; floor: number; type: string; typeName: string };
 type CalendarDate = { date: string; dayName: string; dayNum: number; isToday: boolean };
@@ -108,6 +188,37 @@ export default function ReservationCalendar() {
         setSelectedBooking(null);
       } else {
         toast.error(j.error || "Failed to update");
+      }
+    } catch { toast.error("Network error"); }
+    setSaving(false);
+  };
+
+  /**
+   * Update the status of a booking via the PATCH /api/admin/reservations
+   * endpoint (status field). Used by the quick-action buttons in the
+   * booking detail modal - staff can transition a booking between
+   * ON_HOLD → CONFIRMED → CHECKED_IN → CHECKED_OUT without leaving
+   * the calendar. The grid refreshes immediately after to reflect the
+   * new status symbol on every cell of the booking's date range.
+   */
+  const updateBookingStatus = async (bookingId: string, newStatus: string) => {
+    setSaving(true);
+    try {
+      const r = await fetch("/api/admin/reservations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, status: newStatus }),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        const statusCfg = STATUS_CONFIG[newStatus];
+        toast.success(`Booking marked as ${statusCfg?.label || newStatus} - grid refreshed`);
+        // Update the local selectedBooking state so the modal reflects the
+        // new status immediately (no flicker - load() also fetches fresh data)
+        setSelectedBooking(prev => prev ? { ...prev, status: newStatus } : null);
+        load();
+      } else {
+        toast.error(j.error || "Failed to update status");
       }
     } catch { toast.error("Network error"); }
     setSaving(false);
@@ -293,6 +404,7 @@ export default function ReservationCalendar() {
                       const channel = CHANNEL_CONFIG[booking.source] || CHANNEL_CONFIG.DIRECT;
                       const status = STATUS_CONFIG[booking.status] || STATUS_CONFIG.CONFIRMED;
                       const ChannelIcon = channel.icon;
+                      const StatusSymbol = status.symbol;
 
                       return (
                         <div
@@ -308,8 +420,21 @@ export default function ReservationCalendar() {
                               status.bg
                             )}
                           >
+                            {/* Status symbol - top-right of every booked cell */}
+                            <span
+                              className={cn(
+                                "absolute right-1 top-1 flex items-center gap-0.5 rounded bg-ink/60 px-1 py-0.5 backdrop-blur-sm",
+                                status.pulse && "animate-pulse"
+                              )}
+                              title={`${status.label}${status.pulse ? " · action needed" : ""}`}
+                            >
+                              <StatusSymbol className={cn("h-3 w-3", status.symbolColor)} />
+                              <span className={cn("text-[8px] font-bold uppercase", status.symbolColor)}>
+                                {status.shortLabel}
+                              </span>
+                            </span>
                             {/* Channel partner icon */}
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 pr-12">
                               <span className={cn("grid h-4 w-4 place-items-center rounded", channel.bg)}>
                                 <ChannelIcon className="h-2.5 w-2.5" style={{ color: channel.color }} />
                               </span>
@@ -322,12 +447,27 @@ export default function ReservationCalendar() {
                       );
                     }
 
-                    // Empty cell or continuation of a booking (leave blank)
+                    // Continuation of a booking (mid-stay) - show a dimmed
+                    // status bar matching the booking's status color
                     if (booking && !isStart) {
-                      return <div key={d.date} className="min-w-[80px] flex-1 border-r border-champagne/5" />;
+                      const status = STATUS_CONFIG[booking.status] || STATUS_CONFIG.CONFIRMED;
+                      return (
+                        <div
+                          key={d.date}
+                          className={cn(
+                            "min-w-[80px] flex-1 border-r border-champagne/5 p-1",
+                            d.isToday && "bg-champagne/[0.03]"
+                          )}
+                        >
+                          <div className={cn("h-full min-h-[36px] rounded border-l-2", status.border, status.bg)} />
+                        </div>
+                      );
                     }
 
-                    // Empty (available) cell
+                    // Empty (VACANT) cell - show a clear "VACANT" indicator
+                    // with a bed icon and green hollow circle, so staff can
+                    // scan the grid and instantly tell which rooms/dates are
+                    // available vs booked.
                     return (
                       <div
                         key={d.date}
@@ -336,7 +476,12 @@ export default function ReservationCalendar() {
                           d.isToday && "bg-champagne/[0.03]"
                         )}
                       >
-                        <div className="h-full min-h-[36px] rounded border border-dashed border-champagne/10 hover:border-champagne/30 hover:bg-champagne/5" />
+                        <div className="group flex h-full min-h-[36px] flex-col items-center justify-center rounded border border-dashed border-champagne/10 hover:border-green-500/40 hover:bg-green-500/5">
+                          <VACANT_SYMBOL className={cn("h-3 w-3", VACANT_COLOR)} />
+                          <span className="mt-0.5 text-[8px] font-semibold uppercase text-green-500/40 group-hover:text-green-400">
+                            Vacant
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
@@ -345,6 +490,33 @@ export default function ReservationCalendar() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Status legend - explains all the symbols on the grid */}
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-champagne/15 bg-ink-card p-3">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-ivory/40">Status:</p>
+        {/* VACANT - empty cell */}
+        <div className="flex items-center gap-1.5">
+          <span className="grid h-5 w-5 place-items-center rounded border border-dashed border-green-500/30 bg-green-500/5">
+            <VACANT_SYMBOL className={cn("h-3 w-3", VACANT_COLOR)} />
+          </span>
+          <span className="text-[10px] text-ivory/60">Vacant</span>
+        </div>
+        {/* All other statuses from STATUS_CONFIG */}
+        {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
+          const Symbol = cfg.symbol;
+          return (
+            <div key={key} className="flex items-center gap-1.5">
+              <span className={cn("grid h-5 w-5 place-items-center rounded border", cfg.border, cfg.bg, cfg.pulse && "animate-pulse")}>
+                <Symbol className={cn("h-3 w-3", cfg.symbolColor)} />
+              </span>
+              <span className="text-[10px] text-ivory/60">
+                {cfg.label}
+                {cfg.pulse && <span className="ml-1 text-amber-400">⚠</span>}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Channel legend */}
@@ -419,8 +591,84 @@ export default function ReservationCalendar() {
               <DetailRow icon={Users} label="Nights" value={String(selectedBooking.nights)} />
               <DetailRow icon={Home} label="Source" value={CHANNEL_CONFIG[selectedBooking.source]?.label || selectedBooking.source} />
               <DetailRow icon={BedDouble} label="Amount" value={`Rs. ${selectedBooking.amount.toLocaleString("en-IN")}`} />
-              <DetailRow icon={User} label="Status" value={STATUS_CONFIG[selectedBooking.status]?.label || selectedBooking.status} />
+              {/* Status row - shows the same symbol used on the grid for consistency */}
+              <div className="flex items-center gap-2">
+                {(() => {
+                  const status = STATUS_CONFIG[selectedBooking.status] || STATUS_CONFIG.CONFIRMED;
+                  const Symbol = status.symbol;
+                  return (
+                    <>
+                      <User className="h-4 w-4 text-champagne/60" />
+                      <span className="text-[10px] uppercase tracking-wider text-ivory/40">Status:</span>
+                      <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase", status.border, status.bg, status.pulse && "animate-pulse")}>
+                        <Symbol className={cn("h-3 w-3", status.symbolColor)} />
+                        <span className={status.symbolColor}>{status.label}</span>
+                        {status.shortLabel && (
+                          <span className="ml-1 text-[8px] opacity-60">({status.shortLabel})</span>
+                        )}
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
+
+            {/* Quick status-action buttons - let staff move a booking
+                between statuses directly from the modal without having
+                to open a separate "edit booking" page. Each button is
+                only shown if the booking is in a state that can
+                transition to that status (e.g. a CHECKED_IN booking
+                can be moved to CHECKED_OUT, but not back to ON_HOLD). */}
+            {!editMode && (
+              <div className="mt-4 grid grid-cols-2 gap-2 border-t border-champagne/10 pt-3 sm:grid-cols-4">
+                {selectedBooking.status !== "CHECKED_IN" && selectedBooking.status !== "CHECKED_OUT" && (
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, "CHECKED_IN")}
+                    disabled={saving}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-green-500/30 bg-green-500/10 px-2 py-1.5 text-[10px] font-semibold text-green-300 hover:bg-green-500/20 disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="h-3 w-3" /> Check In
+                  </button>
+                )}
+                {selectedBooking.status === "CHECKED_IN" && (
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, "CHECKED_OUT")}
+                    disabled={saving}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ivory/30 bg-ivory/5 px-2 py-1.5 text-[10px] font-semibold text-ivory/80 hover:bg-ivory/10 disabled:opacity-50"
+                  >
+                    <CircleSlash className="h-3 w-3" /> Check Out
+                  </button>
+                )}
+                {selectedBooking.status === "ON_HOLD" && (
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, "CONFIRMED")}
+                    disabled={saving}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-champagne/30 bg-champagne/10 px-2 py-1.5 text-[10px] font-semibold text-champagne hover:bg-champagne/20 disabled:opacity-50"
+                  >
+                    <CircleDot className="h-3 w-3" /> Confirm
+                  </button>
+                )}
+                {selectedBooking.status !== "CANCELLED" && (
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, "CANCELLED")}
+                    disabled={saving}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-1.5 text-[10px] font-semibold text-red-300 hover:bg-red-500/20 disabled:opacity-50"
+                  >
+                    <X className="h-3 w-3" /> Cancel
+                  </button>
+                )}
+                {/* Put on Hold - only available from CONFIRMED state */}
+                {selectedBooking.status === "CONFIRMED" && (
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, "ON_HOLD")}
+                    disabled={saving}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-[10px] font-semibold text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"
+                  >
+                    <PauseCircle className="h-3 w-3" /> Hold
+                  </button>
+                )}
+              </div>
+            )}
 
             {editMode && (
               <div className="mt-4 flex justify-end gap-2">

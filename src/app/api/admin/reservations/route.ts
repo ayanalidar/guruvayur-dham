@@ -95,8 +95,12 @@ export async function GET(req: NextRequest) {
 /**
  * PATCH /api/admin/reservations
  *
- * Update a booking's room number and/or guest name.
- * Body: { bookingId, roomNumber?, guestName? }
+ * Update a booking's room number, guest name, and/or status.
+ * Body: { bookingId, roomNumber?, guestName?, status? }
+ *
+ * The status field is new - it lets the frontdesk transition a booking
+ * between ON_HOLD → CONFIRMED → CHECKED_IN → CHECKED_OUT (or CANCELLED)
+ * directly from the reservation grid's quick-action buttons.
  *
  * Auth: any staff role.
  */
@@ -104,6 +108,16 @@ const UpdateSchema = z.object({
   bookingId: z.string().min(1),
   roomNumber: z.string().max(10).optional(),
   guestName: z.string().max(200).optional(),
+  // Allow status transitions - validated against the known status list
+  // to prevent arbitrary strings from being persisted to the Booking table.
+  status: z.enum([
+    "ON_HOLD",
+    "CONFIRMED",
+    "CHECKED_IN",
+    "CHECKED_OUT",
+    "CANCELLED",
+    "PENDING", // legacy status from COD bookings
+  ]).optional(),
 });
 
 export async function PATCH(req: NextRequest) {
@@ -115,12 +129,13 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { bookingId, roomNumber, guestName } = parsed.data;
+  const { bookingId, roomNumber, guestName, status } = parsed.data;
 
   try {
     const data: any = {};
     if (roomNumber !== undefined) data.roomNumber = roomNumber || null;
     if (guestName !== undefined) data.guestName = guestName;
+    if (status !== undefined) data.status = status;
 
     const updated = await db.booking.update({
       where: { id: bookingId },
