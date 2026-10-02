@@ -1434,84 +1434,184 @@ export interface FestEvent {
 
 export const EVENTS: FestEvent[] = [
   {
-    name: "Janmashtami at Shri Krishna Janmabhoomi",
+    name: "Shri Krishna Janmashtami",
     date: "Aug 26, 2026",
     dateISO: "2026-08-26",
     description:
-      "Krishna Janmabhoomi Mandir Sansthan hosts the midnight 108-medicine abhishek from Kamdhenu Gomukh at the exact moment of Krishna's birth. The garbha-griha stone (where Krishna appeared) receives Panchamrit Mahabhishek. At Nand Bhavan (Chaurasi Khambha, Gokul), Bal Laddu Gopal palna seva is performed at midnight. Banke Bihari Temple (Vrindavan) holds the ONLY Mangala Aarti of the year (every other day, Bihari Ji 'rests' from ras-leela). Book accommodation 60+ days in advance.",
-    highlight: "Midnight 108-medicine abhishek at Krishna Janmabhoomi · Palna seva at Nand Bhavan · Banke Bihari's only Mangala Aarti",
-    image:
-      "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+      "Midnight celebration of Lord Krishna's birth at Krishna Janmabhoomi. Panchamrit Mahabhishek at the garbha-griha stone. Nand Bhavan (Gokul) hosts Bal Laddu Gopal palna seva at midnight. Banke Bihari holds the ONLY Mangala Aarti of the year. Book 60+ days in advance.",
+    highlight: "Midnight abhishek at Krishna Janmabhoomi + Palna seva at Nand Bhavan + Banke Bihari's only Mangala Aarti",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
   },
   {
-    name: "Lathmar Holi at Radha Rani Mandir (Barsana)",
+    name: "Nandotsav (Day After Janmashtami)",
+    date: "Aug 27, 2026",
+    dateISO: "2026-08-27",
+    description:
+      "Celebration at Gokul (Dev Bhumi) marking Nand Baba's joy at Krishna's birth. Special celebrations at Nand Bhavan (Chaurasi Khambha) with Bal Gopal palna seva, distribution of sweets, and community festivities.",
+    highlight: "Gokul celebrations at Nand Bhavan + Bal Gopal palna seva + sweet distribution",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Braj Ki Holi",
     date: "Mar 14, 2026",
     dateISO: "2026-03-14",
     description:
-      "Barsana's world-famous Lathmar Holi at Shri Radha Rani Mandir (birthplace of Radha Rani) - men from Nandgaon playfully beaten by women of Barsana with sticks. Dwarkadhish Temple (Mathura) hosts the grand Holi procession with abeer-gulal seva (Krishna in 'Rajadhiraj' form). Banke Bihari Temple (Vrindavan) holds special Phoolon ki Holi (Holi with flowers). Radha Raman Temple hosts Gaur Purnima celebration (white attire + special Mahabhishek). Book 60+ days in advance.",
-    highlight: "Lathmar Holi at Radha Rani Mandir (Barsana) · Abeer-gulal at Dwarkadhish · Phoolon ki Holi at Banke Bihari · Gaur Purnima at Radha Raman",
-    image:
-      "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
+      "The grand Holi celebration across Mathura, Vrindavan, and the Sapta Dev temples. Colorful processions, abeer-gulal at Dwarkadhish Temple, and festive atmosphere across all Braj. The largest Holi celebration in India.",
+    highlight: "Grand Holi across Mathura + Vrindavan + Sapta Dev temples",
+    image: "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
   },
   {
-    name: "Savan Swing Festival at Dwarkadhish",
-    date: "Jul 4 - Aug 31, 2026",
-    dateISO: "2026-07-04",
+    name: "Lathmar Holi at Barsana",
+    date: "Mar 11, 2026",
+    dateISO: "2026-03-11",
     description:
-      "The Hindu month of Savan (Jul-Aug) brings swings (hindole) to Dwarkadhish Temple, where Krishna in Rajadhiraj form swings on gold-silver hindole. Sharad Purnima (Oct 7) sees Krishna dressed in white attire (shwet dhaval vastra) for the moonlight darshan. Bhuteshwar Mahadev hosts Rudra-path + Maha-aarti every Savan Monday - the most powerful day for Shiva worship.",
-    highlight: "Gold-silver hindole (swings) at Dwarkadhish · Sharad Purnima white attire · Savan Monday Rudra-path at Bhuteshwar Mahadev",
-    image:
-      "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+      "World-famous Lathmar Holi at Barsana - men from Nandgaon playfully beaten by women of Barsana with sticks. At Shri Radha Rani Mandir (birthplace of Radha Rani). Book 60+ days in advance.",
+    highlight: "Lathmar Holi at Radha Rani Mandir, Barsana",
+    image: "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
   },
   {
-    name: "Kartik Purnima at Vishram Ghat",
-    date: "Nov 5, 2026",
-    dateISO: "2026-11-05",
+    name: "Lathmar Holi at Nandgaon",
+    date: "Mar 12, 2026",
+    dateISO: "2026-03-12",
     description:
-      "The full moon of Kartik month - holiest day for Yamuna poojan. Devotees take sacred dip at Vishram Ghat (where Krishna rested after killing Kansa), followed by deep-daan (108 floating diyas). Yamuna Maharani Mandir hosts Yamuna Aarti at sunset. Thakurani Ghat (Gokul) - Vallabhacharya's first Baithak Ji - has special Pushtimarg seva. Beginning of the 25-pradakshina Braj parikrama.",
-    highlight: "Sacred Yamuna dip at Vishram Ghat · 108 floating diyas deep-daan · Yamuna Aarti · Begin Braj Parikrama",
-    image:
-      "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+      "The return Lathmar Holi at Nandgaon - women from Barsana visit Nandgaon and the roles reverse. At Shri Nand Baba Temple, Nandgaon.",
+    highlight: "Return Lathmar Holi at Nand Baba Temple, Nandgaon",
+    image: "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
   },
   {
-    name: "Gowardhan Puja + Annakoot",
-    date: "Oct 22, 2026",
-    dateISO: "2026-10-22",
+    name: "Phoolon Wali Holi (Flower Holi)",
+    date: "Mar 14, 2026",
+    dateISO: "2026-03-14",
     description:
-      "The day after Diwali - celebrates Krishna lifting Gowardhan Hill. Pilgrims do 21-km parikrama of Gowardhan Hill (22 km from Mathura). Mathura mandirs (especially Dwarkadhish) prepare Annakoot - mountain of 108+ food items offered to Krishna in Rajadhiraj form. Banke Bihari has special chappan bhog (56-bhog thali) and Banke Bihari is decorated in special 'Giridhar-dharan' leela attire.",
-    highlight: "Gowardhan parikrama (21 km) · Annakoot at Dwarkadhish · Chappan Bhog at Banke Bihari",
-    image:
-      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&h=600&fit=crop",
+      "Special Holi with flowers at Banke Bihari Temple, Vrindavan. Devotees are showered with tons of fresh flower petals instead of colors. A visually stunning and spiritually uplifting experience unique to Banke Bihari.",
+    highlight: "Flower Holi at Banke Bihari Temple, Vrindavan",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
   },
   {
-    name: "Diwali at Vishram Ghat + Dwarkadhish",
-    date: "Oct 21, 2026",
-    dateISO: "2026-10-21",
+    name: "Brajmar Holi at Gokul",
+    date: "Mar 13, 2026",
+    dateISO: "2026-03-13",
     description:
-      "Mathura celebrates Diwali as Krishna's homecoming. Yamuna ghats (especially Vishram Ghat) host spectacular deep-daan ceremonies with thousands of floating diyas. Dwarkadhish Temple holds grand Sandhya Aarti with Krishna in special shringar. Krishna Janmabhoomi stays open for night darshan. Bhuteshwar Mahadev hosts Maha-aarti with hundreds of diyas.",
-    highlight: "Vishram Ghat deep-daan · Dwarkadhish Sandhya Aarti · Bhuteshwar Maha-aarti · Krishna Janmabhoomi night darshan",
-    image:
-      "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
+      "Gokul's special Holi celebration with colors, music, and dance at Raman Reti and Nand Bhavan. Celebrates Krishna's childhood pranks.",
+    highlight: "Gokul Holi at Raman Reti + Nand Bhavan",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
   },
   {
-    name: "Radhashtami at Radha Rani Mandir (Barsana)",
+    name: "Huranga at Baldev (Dauji Temple)",
+    date: "Mar 13, 2026",
+    dateISO: "2026-03-13",
+    description:
+      "Unique Holi celebration at Dauji Temple, Baldev (Balaram's town). The Huranga is a playful fight where men and women throw colors at each other in a covered courtyard. A rare and energetic tradition specific to Baldev.",
+    highlight: "Huranga at Dauji Temple, Baldev",
+    image: "https://images.unsplash.com/photo-1583075499-8e9a69bb0c1a?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Radhashtami",
     date: "Sep 10, 2026",
     dateISO: "2026-09-10",
     description:
-      "Appearance day of Radha Rani at Shri Radha Rani Mandir, Barsana (45 km from Mathura). Grand Mahabhishek + procession. Shri Radha Raman Temple (Vrindavan) celebrates with special Dughd-Mishri Mahabhishek - the only day when the kitchen fire (500-year unbroken) prepares special bhog thali for Radha's appearance. Banke Bihari has special shringar with Ladli Lal form.",
-    highlight: "Grand Mahabhishek at Radha Rani Mandir (Barsana) · Dughd-Mishri Mahabhishek at Radha Raman · Ladli Lal shringar at Banke Bihari",
-    image:
-      "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+      "Appearance day of Radha Rani at Shri Radha Rani Mandir, Barsana. Grand Mahabhishek + procession. Radha Raman Temple (Vrindavan) celebrates with Dughd-Mishri Mahabhishek. Banke Bihari has special Ladli Lal shringar.",
+    highlight: "Mahabhishek at Radha Rani Mandir (Barsana) + Dughd-Mishri at Radha Raman + Ladli Lal shringar at Banke Bihari",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
   },
   {
-    name: "Magh Purnima at Raman Reti (Gokul)",
-    date: "Feb 4, 2027",
-    dateISO: "2027-02-04",
+    name: "Vasant Panchami",
+    date: "Feb 1, 2026",
+    dateISO: "2026-02-01",
     description:
-      "Magh Purnima is the most auspicious day for raj-snan (rolling in sacred dust) at Shri Raman Reti, Gokul - where Krishna played with friends + cows. Special Gau-seva + deer-feeding. Nand Bhavan (Chaurasi Khambha) has special Bal Gopal palna seva. Brahmand Ghat has sacred clay worship. End the day with Yamuna Aarti at Thakurani Ghat.",
-    highlight: "Raj-snan at Raman Reti · Gau-seva + deer-feeding · Palna seva at Nand Bhavan · Yamuna Aarti at Thakurani Ghat",
-    image:
-      "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+      "Start of spring season. Special celebrations at Vrindavan temples with yellow attire, Saraswati poojan, and the beginning of Holi season preparations.",
+    highlight: "Spring festival at Vrindavan temples + yellow attire + Saraswati poojan",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Hariyali Teej",
+    date: "Aug 7, 2026",
+    dateISO: "2026-08-07",
+    description:
+      "Monsoon festival celebrating the green season. Special celebrations at Vrindavan temples with swings (jhula), green attire, and mehndi traditions.",
+    highlight: "Monsoon swings festival at Vrindavan temples + green attire + mehndi",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Jhulan Utsav (Swing Festival)",
+    date: "Jul 20 - Aug 19, 2026",
+    dateISO: "2026-07-20",
+    description:
+      "Month-long swing festival at Vrindavan temples during Shravan. Krishna and Radha placed on beautifully decorated swings at Banke Bihari, Radha Raman, and other temples.",
+    highlight: "Month-long swing festival at Vrindavan temples during Shravan",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Raslila Mahotsav",
+    date: "Jul - Nov, 2026",
+    dateISO: "2026-07-20",
+    description:
+      "Seasonal Raslila performances across Vrindavan and Mathura during the Shravan-Kartik period. Traditional folk theatre depicting Krishna's ras-leela with the gopis.",
+    highlight: "Traditional Raslila performances across Vrindavan + Mathura",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Sharad Purnima",
+    date: "Oct 7, 2026",
+    dateISO: "2026-10-07",
+    description:
+      "Full moon night celebrating Krishna's Ras Utsav. Special moonlight darshan at Vrindavan temples. Dwarkadhish dressed in white attire (shwet dhaval vastra). Kheer prepared and left under moonlight as prasadam.",
+    highlight: "Moonlight Ras Utsav at Vrindavan + white attire at Dwarkadhish + kheer prasadam",
+    image: "https://images.unsplash.com/photo-1572883454114-64346b8e5f6d?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Krishna Chhath Mela",
+    date: "Nov 7, 2026",
+    dateISO: "2026-11-07",
+    description:
+      "Special Chhath Puja celebrations at Mathura's Yamuna ghats. Devotees offer arghya to the Sun God at sunrise and sunset. Unique to Mathura with Krishna-specific rituals alongside traditional Chhath practices.",
+    highlight: "Chhath Puja at Mathura Yamuna ghats + sunrise/sunset arghya",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Govardhan Puja / Annakoot",
+    date: "Oct 22, 2026",
+    dateISO: "2026-10-22",
+    description:
+      "Day after Diwali - Krishna lifted Govardhan Hill. 21-km parikrama of Govardhan Hill. Annakoot (mountain of food) at Dwarkadhish Temple. Banke Bihari has Chappan Bhog (56-bhog thali).",
+    highlight: "Govardhan parikrama (21 km) + Annakoot at Dwarkadhish + Chappan Bhog at Banke Bihari",
+    image: "https://images.unsplash.com/photo-1601050690536-2b9a86c2f6fd?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Annakut Mahotsav at Vrindavan",
+    date: "Oct 22, 2026",
+    dateISO: "2026-10-22",
+    description:
+      "Separate Annakut celebration at Vrindavan temples. Hundreds of food items arranged in mountain formation at Govind Dev Ji, Radha Vallabh, and other Vrindavan temples.",
+    highlight: "Annakut at Govind Dev Ji + Radha Vallabh + Vrindavan temples",
+    image: "https://images.unsplash.com/photo-1601050690536-2b9a86c2f6fd?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Yam Dwitiya / Bhai Dooj",
+    date: "Oct 23, 2026",
+    dateISO: "2026-10-23",
+    description:
+      "Day when Yamuna invited her brother Yama for a meal at Vishram Ghat, Mathura. Brothers and sisters bathe at Vishram Ghat and perform tilak rituals. Special aarti at Vishram Ghat.",
+    highlight: "Bhai Dooj at Vishram Ghat, Mathura + tilak rituals + Yamuna aarti",
+    image: "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Kartik Purnima / Dev Diwali",
+    date: "Nov 5, 2026",
+    dateISO: "2026-11-05",
+    description:
+      "Full moon of Kartik - holiest day for Yamuna poojan. Sacred dip at Vishram Ghat + 108 floating diyas deep-daan. Yamuna Aarti at sunset. Thakurani Ghat (Gokul) has special Pushtimarg seva. Beginning of 25-pradakshina Braj parikrama.",
+    highlight: "Yamuna dip at Vishram Ghat + 108 diyas deep-daan + Begin Braj Parikrama",
+    image: "https://images.unsplash.com/photo-1604607678-2c1f0d6f3d8b?w=800&h=600&fit=crop",
+  },
+  {
+    name: "Akshay Dwitiya",
+    date: "May 8, 2026",
+    dateISO: "2026-05-08",
+    description:
+      "Auspicious day in Mathura and Vrindavan marking the start of the Chaturmas period (4 holy months). Special door-opening ceremonies at temples. Begin Parikrama season.",
+    highlight: "Chaturmas start + temple door ceremonies at Mathura + Vrindavan",
+    image: "https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&h=600&fit=crop",
   },
 ];
 
