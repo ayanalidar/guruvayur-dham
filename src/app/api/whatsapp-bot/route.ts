@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     reply = `Major Mathura Festivals: 🎉\n\n• Janmashtami (Aug/Sept): Krishna's birthday · biggest festival\n• Holi (March): Lathmar Holi in Barsana, Phoolon ki Holi in Vrindavan\n• Diwali (Oct/Nov): Festival of lights\n• Radhashtami (Aug/Sept): Radha's appearance day\n• Kartik Purnima (Nov): Full moon celebration\n\nBook rooms 60+ days in advance! https://guruvayurdham.co.in/#/events`;
   } else if (msg.match(/check.?in|check.?out|time/)) {
     intent = "checkin";
-    reply = `Check-in & Check-out: ⏰\n\n• Check-in: 12:00 PM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n• Half-day extension (6 PM): ₹600\n\nFree pickup from Mathura railway station for 2+ night stays!`;
+      reply = `Check-in & Check-out: ⏰\n\n• Check-in: 11:30 AM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n• Half-day extension (6 PM): ₹600\n\nFree pickup from Mathura railway station for 2+ night stays!`;
   } else if (msg.match(/reach|how|direction|airport|train|bus/)) {
     intent = "directions";
     reply = `How to Reach Us: 🚗\n\n• Address: Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, UP 281001\n• Phone: +91-90908 20208\n• Nearest airport: Agra (60 km) / Delhi (150 km)\n• Mathura railway station: 3 km\n• Vrindavan: 15 km\n\nFree parking for 25+ vehicles. WhatsApp +91-90908 20208 for pickup!`;

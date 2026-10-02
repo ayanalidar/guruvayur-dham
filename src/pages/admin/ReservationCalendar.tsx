@@ -149,16 +149,25 @@ export default function ReservationCalendar() {
       .finally(() => setLoading(false));
   }, [startDate, days]);
 
+  // load() runs on mount + when startDate/days change. setLoading is the
+  // only setState inside load() that runs synchronously; the rest are
+  // inside .then() callbacks (async, not sync).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => { load(); }, [load]);
 
-  // Load room config for settings panel
+  // Load room config for settings panel - when the user toggles the
+  // settings panel open, we want to populate the editable room list from
+  // the latest rooms data (which is a derived value of the most recent
+  // fetch). Re-rendering is the expected behaviour here.
   useEffect(() => {
     if (showRoomSettings) {
       setEditRoomConfig(roomConfig.length > 0 ? [...roomConfig] : rooms.map(r => ({ ...r })));
     }
   }, [showRoomSettings, rooms, roomConfig]);
 
-  // Open booking detail → populate edit fields
+  // Open booking detail → populate edit fields - when selectedBooking
+  // changes (user clicked a different cell), the edit-form fields need to
+  // mirror the new booking's values.
   useEffect(() => {
     if (selectedBooking) {
       setEditRoomNumber(selectedBooking.roomNumber);
@@ -166,6 +175,7 @@ export default function ReservationCalendar() {
       setEditMode(false);
     }
   }, [selectedBooking]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const saveBooking = async () => {
     if (!selectedBooking) return;

@@ -37,12 +37,13 @@ Always be respectful, warm, and concise. Use "Namaskaram" or "Radhe Radhe" as gr
 KNOWLEDGE BASE:
 - Location: Opposite. Mata Pathwari Mandir, Natwar Nagar, Dholi Pyau, Mathura, Uttar Pradesh 281001
 - Phone: +91-90908 20208
-- Rooms: 52 total - AC, Non-AC, Family Suite, Dormitory
-- Price range: ₹1,500 to ₹3,500 per night
-- Check-in: 12:00 PM, Check-out: 11:00 AM
+- Rooms: 15 total - Deluxe (Family Suit/Quad Room, King Deluxe, Premium Double Bed), Privilege Suite, Family Comfort Triple
+- Price range: ₹1,250 to ₹2,699 per night
+- Check-in: 11:30 AM, Check-out: 11:00 AM
 - 24×7 hot water, free WiFi, free parking
-- Rating: 4.8 stars (120+ reviews)
+- Rating: 4.8 stars (live Google Business Profile rating)
 - Modern pilgrim hospitality since 2020
+- Max 8 guests per booking; multi-room booking available
 
 MATHURA TEMPLE TIMINGS:
 - Krishna Janmabhoomi: 5:00 AM - 12:00 PM, 4:00 PM - 9:30 PM

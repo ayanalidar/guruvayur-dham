@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { GoldFoilText, SectionHeader } from "@/components/site/visuals";
+import { SITE } from "@/lib/site-data";
 import { useRealtime } from "@/lib/use-realtime";
 import { cn } from "@/lib/utils";
 import GuestReviewForm from "./GuestReviewForm";
@@ -62,7 +63,11 @@ export default function ReviewsWidget() {
   const liveRating = googleBiz?.rating ?? stats?.averageRating ?? 4.8;
   const liveReviewCount =
     googleBiz?.user_ratings_total ?? stats?.total ?? 120;
-  const googleProfileUrl = googleBiz?.url || "https://share.google/x0YWO22UQQiol8qYa";
+  // Google Business Profile URL: prefer live value from /api/google-business
+  // (which itself falls back to SITE.googleBusinessProfileUrl when no API key
+  // is configured). This way admin can update the Google Maps URL via
+  // /admin/settings → INTEGRATION → GOOGLE_BUSINESS_PROFILE_URL.
+  const googleProfileUrl = googleBiz?.url || SITE.googleBusinessProfileUrl;
 
   if (reviews.length === 0) {
     return (

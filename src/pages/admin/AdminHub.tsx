@@ -922,7 +922,7 @@ function ReviewsSection() {
       const r = await fetch("/api/reviews/google-import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shareUrl: "https://share.google/x0YWO22UQQiol8qYa" }),
+        body: JSON.stringify({ shareUrl: "" }),
       });
       const j = await r.json();
       toast.success(j.message || `Imported ${j.imported} reviews`);

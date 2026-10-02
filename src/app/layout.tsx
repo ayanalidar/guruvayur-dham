@@ -134,7 +134,7 @@ export default function RootLayout({
     email: "bookings@guruvayurdham.co.in",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=800&fit=crop",
-    priceRange: "₹1500 - ₹3500",
+    priceRange: "₹1250 - ₹2699",
     starRating: { "@type": "Rating", ratingValue: "4.8", reviewCount: "120" },
     address: {
       "@type": "PostalAddress",
@@ -152,7 +152,7 @@ export default function RootLayout({
       { "@type": "LocationFeatureSpecification", name: "AC Rooms", value: true },
       { "@type": "LocationFeatureSpecification", name: "Family Rooms", value: true },
     ],
-    checkinTime: "12:00",
+    checkinTime: "11:30",
     checkoutTime: "11:00",
   };
 

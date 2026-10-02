@@ -535,7 +535,7 @@ export const WHY_CHOOSE_US = [
   {
     icon: "MapPin",
     title: "Walk to Krishna Janmabhoomi",
-    text: "Only 1.5 km from Shri Krishna Janmabhoomi and 2 km from Dwarkadhish Temple. Explore Mathura's sacred sites on foot, or take a short auto to Vrindavan (15 km) for Banke Bihari and Prem Mandir darshan.",
+    text: "Only 3 km from Shri Krishna Janmabhoomi and 2 km from Dwarkadhish Temple. Explore Mathura's sacred sites on foot, or take a short auto to Vrindavan (15 km) for Banke Bihari and Prem Mandir darshan.",
   },
   {
     icon: "BedDouble",
@@ -1365,7 +1365,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
     tab: "Temples",
     src: "/temples/krishna-janmabhoomi.jpg",
     alt: "Shri Krishna Janmabhoomi temple - birthplace of Lord Krishna",
-    caption: "Shri Krishna Janmabhoomi · Mathura · birthplace of Krishna · 1.5 km from GVD",
+    caption: "Shri Krishna Janmabhoomi · Mathura · birthplace of Krishna · 3 km from GVD",
     span: "tall",
   },
   {
@@ -1487,7 +1487,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
   {
     tab: "Surroundings",
     src: "https://images.unsplash.com/photo-1572883454114-1cf0031ede2a?w=800&h=600&fit=crop",
-    alt: "Street market near Guruvayur temple",
+    alt: "Street market near Krishna Janmabhoomi temple, Mathura",
     caption: "temple gate bazaar · souvenirs and prasadam",
     span: "wide",
   },
@@ -1785,14 +1785,14 @@ export const BLOG_POSTS: BlogPost[] = [
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&h=500&fit=crop",
     content: [
       "The Braj region around Mathura is dense with sacred sites connected to Lord Krishna's life. From his birthplace to his childhood playgrounds, every village and hill has a story. After your darshan at Krishna Janmabhoomi, consider spending extra days exploring these sacred destinations - all within an hour's drive from Guruvayur Dham.",
-      "1. Shri Krishna Janmabhoomi (1.5 km, 5 min): The birthplace of Lord Krishna, built over the prison cell where Devaki and Vasudeva were imprisoned. The main temple has a marble stone marking the exact spot of Krishna's birth. Open 5 AM-12 PM, 4-9:30 PM. Free entry. Photography prohibited inside. This is the most important temple in Mathura - start your pilgrimage here.",
+      "1. Shri Krishna Janmabhoomi (3 km, 15 min): The birthplace of Lord Krishna, built over the prison cell where Devaki and Vasudeva were imprisoned. The main temple has a marble stone marking the exact spot of Krishna's birth. Open 5 AM-12 PM, 4-9:30 PM. Free entry. Photography prohibited inside. This is the most important temple in Mathura - start your pilgrimage here.",
       "2. Dwarkadhish Temple (2 km, 7 min): A grand 17th-century temple dedicated to Lord Krishna as the King of Dwarka. Known for its intricate Rajasthani architecture and the famous Holi procession that starts from here. Open 6:30-10:30 AM, 4-7 PM. Free entry. The Sandhya Aarti at 6:30 PM is especially beautiful.",
       "3. Banke Bihari Temple, Vrindavan (15 km, 30 min): The most famous Krishna temple in Vrindavan, known for its unique darshan style where the curtain is pulled open and closed every few minutes (the Lord is said to get shy if stared at too long). Open 7:45 AM-12 PM, 5:30-9:30 PM. No photography. Visit early morning for the shortest queue.",
       "4. Prem Mandir, Vrindavan (15 km, 30 min): A stunning white marble temple built in 2012, dedicated to Radha-Krishna. Beautifully illuminated at night with LED lights. Open 8:30 AM-8:30 PM. Free entry. The evening light-and-sound show at 7:30 PM is a must-see. Most accessible temple for elderly pilgrims - no stairs, wide walkways.",
       "5. Radha Rani Mandir, Barsana (45 km, 1.5 hours): The birthplace of Radha Rani, perched on a hilltop. This is where the famous Lathmar Holi takes place every March. Open 6 AM-9 PM. Free entry. The climb to the top involves 200+ steps - an auto can take you up for ₹50. The view from the top is spectacular.",
       "6. Raman Reti, Gokul (10 km, 20 min): The sacred sand where baby Krishna is said to have played. Pilgrims rub the sand on their bodies as a blessing. Open 6 AM-8 PM. Free entry. A peaceful spot for meditation, away from the crowds. The nearby Gokulnath Temple is also worth visiting.",
       "7. Gowardhan Hill (22 km, 45 min): The hill Krishna lifted to protect villagers from Indra's wrath. Pilgrims perform parikrama (circumambulation) - a 21 km walk around the hill that takes 4-5 hours. Mansi Ganga Kund at the base is a holy bathing spot. Visit during Gowardhan Puja (day after Diwali) for the Annakoot celebration.",
-      "8. Vishram Ghat, Mathura (1.5 km, 5 min): The most important ghat on the Yamuna river in Mathura, where Krishna is said to have rested after killing his uncle Kamsa. The evening aarti at sunset is beautiful - hundreds of floating diyas on the Yamuna. Free. Best visited at sunrise or sunset.",
+      "8. Vishram Ghat, Mathura (2.2 km, 15 min): The most important ghat on the Yamuna river in Mathura, where Krishna is said to have rested after killing his uncle Kamsa. The evening aarti at sunset is beautiful - hundreds of floating diyas on the Yamuna. Free. Best visited at sunrise or sunset.",
       "9. Nandgaon (50 km, 1.5 hours): The village where Krishna spent his childhood with foster parents Nanda and Yashoda. The Nand Bhavan temple on the hilltop offers panoramic views. Visit during Holi season for the Nandgaon vs Barsana Lathmar Holi exchange.",
       "10. Kesi Ghat, Vrindavan (15 km, 30 min): Where Krishna is said to have killed the demon Kesi. The evening Yamuna Aarti here is one of the most beautiful in Braj. Free. Pair with Banke Bihari and Prem Mandir for a full-day Vrindavan circuit.",
     ],
@@ -1813,13 +1813,13 @@ export const BLOG_POSTS: BlogPost[] = [
       "2. Book 60+ days ahead for Janmashtami and Holi. These two festivals see 10× the normal pilgrim crowd. All reputable properties within 2 km of Krishna Janmabhoomi are sold out 2 months in advance. Last-minute bookings on these dates either pay 3× the normal rate or land you far from the temples.",
       "3. Always confirm AC actually works. Many budget listings advertise 'AC room' but the AC is either broken or switched off at night. Ask explicitly: 'Is the AC 24×7? Does it have a remote in the room?' At Guruvayur Dham, every AC room has a working remote and 24×7 cooling.",
       "4. Ask about 24×7 hot water. Standard in good hotels, but many budget lodges run the geyser only from 5 AM to 9 AM. If you want a shower after the noon darshan or before evening aarti, you need 24-hour hot water. Confirm before booking.",
-      "5. Check the check-in/check-out times. Standard is 12 PM check-in, 11 AM check-out. Some properties push 24-hour check-out which can ruin your schedule. Guruvayur Dham offers flexible early check-in for ₹200 extra when the room is ready.",
+      "5. Check the check-in/check-out times. Standard is 11:30 AM check-in, 11 AM check-out. Some properties push 24-hour check-out which can ruin your schedule. Guruvayur Dham offers flexible early check-in for ₹200 extra when the room is ready.",
       "6. Don't pay 100% advance. Reputable properties take 10-25% as booking advance via UPI and the balance on arrival. Anyone demanding full payment via personal UPI is a red flag.",
       "7. Verify room photos are recent. Ask the property to send a fresh WhatsApp photo of the exact room. At Guruvayur Dham, every room has a unique number and live photos are on our website.",
       "8. Confirm parking if driving. On-street parking near temples is impossible during festival days. Ask: 'Do you have on-premise parking? Is it covered?' Guruvayur Dham has free parking for 25+ vehicles.",
       "9. Ask about Vrindavan transport. Mathura to Vrindavan is 15 km - you'll need auto-rickshaws or taxis daily. A hotel that can arrange trusted drivers saves time and money. Guruvayur Dham arranges transport on request.",
       "10. Book poojas in advance. Major poojas at Krishna Janmabhoomi have waiting lists during festival season. Your accommodation should help you book these - Guruvayur Dham's reception does this free for all guests.",
-      "11. Check for proximity to multiple temples. Krishna Janmabhoomi (1.5 km), Dwarkadhish (2 km), and Vishram Ghat (1.5 km) are all walkable from Guruvayur Dham. For Vrindavan temples, you'll need transport - stay in Mathura and do day trips.",
+      "11. Check for proximity to multiple temples. Krishna Janmabhoomi (3 km), Dwarkadhish (2 km), and Vishram Ghat (2.2 km) are all short drives from Guruvayur Dham. For Vrindavan temples, you'll need transport - stay in Mathura and do day trips.",
       "12. Save the WhatsApp number. WhatsApp is the fastest way to reach the front desk. Save +91 84455 55584 for direct WhatsApp booking and 24×7 support - average response time under 5 minutes.",
     ],
   },
@@ -1895,11 +1895,11 @@ export const FAQS = [
   },
   {
     q: "What are the check-in and check-out times?",
-    a: "Standard check-in is 12:00 PM and check-out is 11:00 AM. Early check-in (from 8 AM) is available for ₹200 extra if the room is ready. Late check-out till 2 PM is ₹300; half-day extension till 6 PM is ₹600.",
+    a: "Standard check-in is 11:30 AM and check-out is 11:00 AM. Early check-in (from 8 AM) is available for ₹200 extra if the room is ready. Late check-out till 2 PM is ₹300; half-day extension till 6 PM is ₹600.",
   },
   {
     q: "Do you offer free pickup from the railway station or bus stand?",
-    a: "Yes, complimentary pickup from Guruvayur Railway Station (1 km) is included for guests staying 2 or more nights. Just WhatsApp us your train details 2 hours before arrival. Pickup from Thrissur Junction (29 km) is ₹600.",
+    a: "Yes, complimentary pickup from Mathura Junction Railway Station (2 km) is included for guests staying 2 or more nights. Just WhatsApp us your train details 2 hours before arrival. Pickup from Agra Cantt (60 km) is ₹600.",
   },
   {
     q: "Is parking free? Do you have space for buses?",
@@ -1907,19 +1907,19 @@ export const FAQS = [
   },
   {
     q: "Can I book a pooja through you? Which poojas are available?",
-    a: "Absolutely · we book all major Guruvayur temple poojas on behalf of our guests at the official temple rate, with no commission. Popular options include prasadam (₹50), Archana (₹100), Pushpanjali (₹75), Archana (₹1,500), Annaprashan (₹800), and Bhagavatha Sapthaham (₹5,000). Browse the Pooja section above and click 'Book This Pooja' on WhatsApp.",
+    a: "Absolutely · we book all major Mathura temple poojas on behalf of our guests at the official temple rate, with no commission. Popular options include Mangala Aarti (₹51), Pushpanjali (₹21), Sandhya Aarti (₹101), Rajbhog Aarti (₹251), Abhishek (₹1,100), and Annadan (₹2,100). Browse the Pooja section above and click 'Book This Pooja' on WhatsApp.",
   },
   {
     q: "What is the dress code for the temple?",
-    a: "Men must wear a mundu/dhoti and remove their upper garment before entering the sanctum. Women must wear a saree or salwar kameez with dupatta. We keep spare mundus and sarees at reception (refundable ₹100 deposit) for guests who arrive unprepared. Children under 10 have a relaxed dress code.",
+    a: "Modest clothing is required at all Mathura-Braj temples. Men should wear trousers or dhoti and a shirt (no shorts or sleeveless tops). Women should wear saree, salwar kameez, or a long dress with a dupatta to cover the head inside the sanctum. Always remove footwear before entering the temple complex. We keep spare stoles and socks at reception (refundable ₹100 deposit) for guests who arrive unprepared. Krishna Janmabhoomi also restricts leather items and electronics inside the inner sanctum.",
   },
   {
     q: "Do you serve food at the property?",
-    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg pure-veg restaurants within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary chai and chai are served at reception every morning from 6 to 8 AM.",
+    a: "We don't have an in-house restaurant, but we have tie-ups with three pure-veg restaurants within 200 m · order from your room and they deliver in 20 minutes, or walk over for a sit-down meal. Complimentary chai and biscuits are served at reception every morning from 6 to 8 AM.",
   },
   {
     q: "Are pets allowed?",
-    a: "Unfortunately, no. The temple vicinity is a pet-free zone by municipal regulation, and our own insurance does not cover pets on the premises. We can recommend a trusted pet boarding facility in Thrissur (29 km) if you're travelling with a pet.",
+    a: "Unfortunately, no. The temple vicinity is a pet-free zone by municipal regulation, and our own insurance does not cover pets on the premises. We can recommend a trusted pet boarding facility in Agra (60 km) if you're travelling with a pet.",
   },
   {
     q: "Do you have a lift? My mother has knee issues.",
@@ -1935,7 +1935,7 @@ export const FAQS = [
   },
   {
     q: "Do you accept international guests and foreign currency?",
-    a: "Yes, we welcome guests of all nationalities. We accept payment in INR via UPI, cards (Visa/Mastercard/RuPay), and cash. For foreign currency, we direct you to the licensed forex counter next door. Our staff speaks English, Hindi, Malayalam, and Tamil.",
+    a: "Yes, we welcome guests of all nationalities. We accept payment in INR via UPI, cards (Visa/Mastercard/RuPay), and cash. For foreign currency, we direct you to the licensed forex counter at Mathura Junction. Our staff speaks English, Hindi, Braj Bhasha, and Bengali.",
   },
   {
     q: "Can I store my luggage after check-out?",

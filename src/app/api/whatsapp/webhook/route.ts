@@ -221,7 +221,7 @@ async function processMessage(phone: string, message: string): Promise<string> {
   }
 
   if (msg.match(/check.?in|check.?out|time/)) {
-    return `Check-in & Check-out: ⏰\n\n• Check-in: 12:00 PM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n\nFree pickup from Mathura railway station for 2+ night stays!`;
+    return `Check-in & Check-out: ⏰\n\n• Check-in: 11:30 AM\n• Check-out: 11:00 AM\n• Early check-in (8 AM): ₹200 extra\n• Late check-out (2 PM): ₹300\n\nFree pickup from Mathura railway station for 2+ night stays!`;
   }
 
   // F12 fix: directions intent (was missing from webhook)

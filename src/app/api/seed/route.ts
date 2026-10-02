@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     { key: "contact.whatsapp", value: "919090820208", category: "contact", label: "WhatsApp" },
     { key: "contact.email", value: "bookings@guruvayurdham.co.in", category: "contact", label: "Contact Email" },
     { key: "contact.shortAddress", value: "Mali Para, Dholi Pyau, Mathura 281001", category: "contact", label: "Short Address" },
-    { key: "contact.checkIn", value: "12:00 PM", category: "contact", label: "Check-in" },
+    { key: "contact.checkIn", value: "11:30 AM", category: "contact", label: "Check-in" },
     { key: "contact.checkOut", value: "11:00 AM", category: "contact", label: "Check-out" },
     // Homepage stats strip - WhyChooseUs section
     { key: "homepage.stats.rooms", value: "15", category: "homepage", label: "Homepage Stat · Rooms" },
