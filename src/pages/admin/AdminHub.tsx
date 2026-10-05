@@ -7,7 +7,7 @@ import {
   Users, Utensils, Flame, Tag, TrendingUp, Building2, Image, BookOpen,
   Wrench, Receipt, Download, Bell, Bot, CloudSun, MapPin, Star, ShoppingCart,
   RefreshCw, Check, X, Plus, Phone, Mail, ExternalLink, AlertCircle,
-  ShieldCheck, Lock, SlidersHorizontal,
+  ShieldCheck, Lock, SlidersHorizontal, Sparkles,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -157,6 +157,7 @@ function DashboardSection({ stats }: any) {
       <RevenueOverviewCard totalRooms={stats?.totalRooms ?? 15} />
       <TodaysMovementsCard />
       <BookingFunnelCard />
+      <PopupPerformanceCard />
 
       {/* Live Activity Feed · real-time WebSocket */}
       <div className="mt-6">
@@ -2101,6 +2102,125 @@ function BookingFunnelCard() {
             </p>
           </div>
         </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * 4. PopupPerformanceCard - shows per-popup conversion metrics (shown →
+ *    CTA clicked → dismiss rate) for the Festival + Welcome popups.
+ *
+ *    Data source: /api/analytics?days=30 → response.popups[]
+ *    (each row: { popupType, shown, dismissed, ctaClicked, ctaRate,
+ *     dismissRate })
+ *
+ *    Helps admin decide:
+ *    - Which popups to keep enabled (high ctaRate)
+ *    - Which popups to disable (high dismissRate + low ctaRate)
+ *    - Whether copy changes are working (compare ctaRate before/after)
+ *
+ *    Hidden if no popup events in the last 30 days (the popups are either
+ *    disabled or new — admin doesn't need an empty card cluttering the
+ *    dashboard until the popups have data).
+ */
+function PopupPerformanceCard() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/analytics?days=30", { cache: "no-store" })
+      .then(r => r.json())
+      .then(j => { if (active) setData(j); })
+      .catch(() => {})
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const popups: any[] = data?.popups || [];
+
+  // Don't render the card at all if no popup events exist (avoids clutter)
+  if (!loading && popups.length === 0) return null;
+
+  return (
+    <div className="card-luxe p-5">
+      <div className="flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-champagne" />
+        <p className="text-[10px] font-bold uppercase tracking-wider text-champagne">
+          Popup Performance · Last 30 days
+        </p>
+      </div>
+      <p className="mt-1 text-xs text-ivory/50">
+        Conversion tracking for Festival Countdown + First-Visit Welcome popups.
+        Toggle popups in <code className="text-champagne">/admin/system</code>.
+      </p>
+
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading popup metrics…
+        </div>
+      ) : (
+        <div className="mt-4 space-y-3">
+          {popups.map((p, i) => (
+            <div
+              key={i}
+              className="rounded-lg border border-champagne/10 bg-ink/50 p-3"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider",
+                      p.popupType === "festival"
+                        ? "bg-champagne/20 text-champagne"
+                        : "bg-blue-500/20 text-blue-300",
+                    )}
+                  >
+                    {p.popupType}
+                  </span>
+                  <p className="text-sm font-semibold text-ivory">
+                    {p.shown.toLocaleString("en-IN")} shown
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="text-green-300">
+                    <span className="font-bold">{p.ctaClicked.toLocaleString("en-IN")}</span> CTA clicks
+                  </span>
+                  <span className="text-ivory/40">
+                    <span className="font-bold">{p.dismissed.toLocaleString("en-IN")}</span> dismissed
+                  </span>
+                </div>
+              </div>
+              {/* CTA rate bar */}
+              <div className="mt-2">
+                <div className="flex items-center justify-between text-[10px] text-ivory/50">
+                  <span>CTA Click Rate</span>
+                  <span className={cn(
+                    "font-bold",
+                    p.ctaRate >= 10 ? "text-green-300" : p.ctaRate >= 3 ? "text-amber-300" : "text-red-300",
+                  )}>
+                    {p.ctaRate}%
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-ink">
+                  <div
+                    className={cn(
+                      "h-full rounded-full",
+                      p.ctaRate >= 10 ? "bg-green-500" : p.ctaRate >= 3 ? "bg-amber-500" : "bg-red-500",
+                    )}
+                    style={{ width: `${Math.min(100, p.ctaRate * 5)}%` }}
+                  />
+                </div>
+                {p.dismissRate > 70 && (
+                  <p className="mt-1 text-[10px] text-amber-300">
+                    ⚠ High dismiss rate ({p.dismissRate}%) — consider rewriting copy or disabling
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

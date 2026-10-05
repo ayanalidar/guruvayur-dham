@@ -50,6 +50,7 @@ import AdminHub from "@/pages/admin/AdminHub";
 import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
 import MaintenancePage from "@/pages/MaintenancePage";
 import FestivalBanner from "@/components/site/FestivalBanner";
+import PopupCoordinator from "@/components/site/popups/PopupCoordinator";
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -175,6 +176,9 @@ export default function Home() {
       {!isLoginPage && <WhatsAppChat />}
       <PWAEnhancements />
       <CookieConsent />
+      {/* Popups: Festival Countdown + First-Visit Welcome.
+          Coordinator handles priority + suppresses on admin/login/book routes. */}
+      <PopupCoordinator />
     </>
   );
 }

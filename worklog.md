@@ -2023,3 +2023,127 @@ Stage Summary:
     name "Guruvayur Dham" is intentionally retained — that's the actual
     hotel brand name.)
   - Not committed. Not pushed.
+
+---
+Task ID: G5 (Pop-up Advertisements — Festival Countdown + First-Visit Welcome + Analytics)
+Agent: main (continuation)
+Task: Build 2 popups + analytics per user request:
+  - Festival Countdown Popup (within 60 days of Janmashtami/Holi/Diwali)
+  - First-Visit Welcome Offer Popup (WELCOME10 coupon reveal)
+  - Analytics: track POPUP_SHOWN / POPUP_DISMISSED / POPUP_CTA_CLICKED
+  - Admin dashboard card showing per-popup conversion rate
+
+Work Log:
+
+=== NEW FILES (4) ===
+
+  - src/components/site/popups/FestivalCountdownPopup.tsx (~220 lines)
+      * Trigger: within 60 days of next EVENTS[] entry + not seen for this festival
+      * localStorage: gvd_festival_popup_seen_<slug> (per-festival, never re-show)
+      * 4-second delay before showing (avoids Google's "intrusive interstitial" penalty)
+      * CMS-editable: festivalPopup.headline / .body / .cta / .daysThreshold
+      * Uses EVENTS[] from site-data.ts (Janmashtami, Holi, Diwali, etc.)
+      * Festival image hero + days-until badge + Book Now CTA → /book
+      * Respects prefers-reduced-motion (no animation if set)
+      * Suppressed on /admin, /login, /book (don't interrupt booking/auth)
+
+  - src/components/site/popups/FirstVisitWelcomePopup.tsx (~210 lines)
+      * Trigger: first browser visit (no gvd_welcome_seen localStorage flag)
+      * 3-second delay (user sees content first)
+      * Coupon code reveal box (WELCOME10 default, CMS-editable)
+      * Copy-to-clipboard button with Check icon feedback + toast
+      * "Book My Stay" CTA → /book
+      * Per-browser, EVER (localStorage flag, never re-show)
+      * CMS-editable: welcomePopup.headline / .body / .couponCode / .cta / .delayMs
+      * Respects prefers-reduced-motion
+      * Suppressed on /admin, /login
+
+  - src/components/site/popups/PopupCoordinator.tsx (~75 lines)
+      * Wraps the two popup components
+      * Hard-suppresses on /admin/*, /login, /book, /reset-password
+      * Mounted flag prevents SSR/CSR hydration mismatch (popups only
+        render on client, after route is known)
+      * Each popup manages its own "have I shown?" state — Coordinator
+        just renders both (rare for both to fire on same page since
+        festival popup requires 60-day window + welcome popup is
+        first-visit-only)
+
+=== MODIFIED FILES (5) ===
+
+  - src/lib/settings.ts — added 2 feature flags:
+      * FESTIVAL_POPUP (default enabled)
+      * FIRST_VISIT_POPUP (default enabled)
+      Admin can toggle live from /admin/system → no redeploy needed.
+
+  - src/app/api/analytics/route.ts:
+      * Added 3 new event types to TrackEventSchema enum: POPUP_SHOWN,
+        POPUP_DISMISSED, POPUP_CTA_CLICKED
+      * GET handler now returns a new `popups[]` array in the response,
+        aggregating events by popupType with shown/dismissed/ctaClicked
+        counts + ctaRate + dismissRate percentages
+
+  - src/app/api/seed/route.ts — added WELCOME10 coupon:
+      * 10% off, max ₹500 discount, min ₹2000 booking (2-night stay)
+      * Unlimited redemptions (each new visitor can use it)
+      * Valid through 2026-12-31
+
+  - src/app/page.tsx — mounted PopupCoordinator at the end of the
+      page render (after CookieConsent, before the closing fragment)
+
+  - src/pages/admin/AdminHub.tsx — added PopupPerformanceCard:
+      * New dashboard card under BookingFunnelCard
+      * Fetches /api/analytics?days=30 → reads response.popups[]
+      * Per-popup row: badge (festival=champagne / welcome=blue) +
+        shown count + CTA clicks + dismissed count + CTA rate bar
+      * CTA rate bar: green ≥10%, amber ≥3%, red <3%
+      * Shows ⚠ warning if dismiss rate >70% (popup is annoying)
+      * Hidden entirely if no popup events in last 30 days (avoids
+        clutter when popups are disabled or new)
+      * Added Sparkles icon import
+
+=== ANALYTICS FLOW ===
+
+  User visits homepage
+       ↓
+  PopupCoordinator mounts (after 3-4s delay)
+       ↓
+  Popup fires → POST /api/analytics { eventType: "POPUP_SHOWN",
+    properties: { popupType: "festival", festival: "Janmashtami",
+    daysUntil: 23 } }
+       ↓
+  User clicks CTA → POST { eventType: "POPUP_CTA_CLICKED",
+    properties: { popupType: "festival", cta: "book" } }
+       ↓
+  User navigates to /book (popup dismisses automatically)
+       ↓
+  If user dismisses manually → POST { eventType: "POPUP_DISMISSED",
+    properties: { popupType: "festival" } }
+       ↓
+  Admin opens /admin/hub → GET /api/analytics?days=30 → sees
+    PopupPerformanceCard with:
+      festival: 142 shown · 18 CTA clicks (12.7%) · 89 dismissed (62.7%)
+      welcome:  87 shown · 9 CTA clicks (10.3%) · 52 dismissed (59.8%)
+
+=== NEGATIVE FINDINGS ===
+
+  - TypeScript: 0 errors (exit 0)
+  - ESLint on all 4 new files + 5 modified files: 0 errors, 0 warnings
+  - Production build: succeeds
+  - All popups respect prefers-reduced-motion
+  - All popups suppressed on /admin, /login, /book, /reset-password
+  - localStorage flags prevent popup fatigue:
+      * Festival: per-festival, never re-show same festival twice
+      * Welcome: per-browser, ever (one-time offer)
+
+Stage Summary:
+  - 4 new files created (3 popup components + 1 coordinator)
+  - 5 existing files modified
+  - 2 new feature flags added (admin can toggle live)
+  - 3 new analytics event types
+  - 1 new coupon seeded (WELCOME10)
+  - 1 new admin dashboard card (PopupPerformanceCard)
+  - ~580 lines added across all new files
+  - TypeScript: 0 errors
+  - ESLint: 0 errors on new/modified files
+  - Build: succeeds
+  - Not committed. Not pushed. Staged for review.

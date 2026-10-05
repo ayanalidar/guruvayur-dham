@@ -323,6 +323,8 @@ export const DEFAULT_FEATURE_FLAGS = [
   { key: "OTP_LOGIN", label: "OTP Login", description: "Allow phone OTP login", enabled: true },
   { key: "MAINTENANCE_MODE", label: "Maintenance Mode", description: "Show holding page to guests (admin still works)", enabled: false },
   { key: "FESTIVAL_BANNER", label: "Festival Countdown Banner", description: "Show 'X days until [festival]' banner on homepage", enabled: true },
+  { key: "FESTIVAL_POPUP", label: "Festival Countdown Popup", description: "Show modal popup within 60 days of major festival (Janmashtami/Holi/Diwali)", enabled: true },
+  { key: "FIRST_VISIT_POPUP", label: "First-Visit Welcome Popup", description: "Show welcome offer popup on first browser visit (WELCOME10 coupon)", enabled: true },
   { key: "TEMPLE_TIMINGS_WIDGET", label: "Temple Timings Widget", description: "Show live temple darshan timings on homepage", enabled: true },
   { key: "SEO_PAGES", label: "SEO Landing Pages", description: "Show 35+ SEO landing pages", enabled: true },
 ];

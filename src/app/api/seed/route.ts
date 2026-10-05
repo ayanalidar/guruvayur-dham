@@ -201,6 +201,10 @@ export async function POST(req: NextRequest) {
     const coupons = [
       { code: "EARLYBIRD10", description: "10% off 30+ days ahead", type: "PERCENTAGE", value: 10, maxDiscount: 500, minBooking: 1000, usageLimit: 100, validFrom: new Date("2026-01-01"), validTo: new Date("2026-12-31") },
       { code: "RETURN15", description: "15% off returning guests", type: "PERCENTAGE", value: 15, maxDiscount: 700, minBooking: 1000, usageLimit: 0, validFrom: new Date("2026-01-01"), validTo: new Date("2026-12-31") },
+      // WELCOME10 - revealed by the FirstVisitWelcomePopup on the user's
+      // first browser visit. 10% off 2+ night stays, capped at ₹500.
+      // usageLimit: 0 = unlimited redemptions (each new visitor can use it).
+      { code: "WELCOME10", description: "10% off first 2+ night stay (revealed via welcome popup)", type: "PERCENTAGE", value: 10, maxDiscount: 500, minBooking: 2000, usageLimit: 0, validFrom: new Date("2026-01-01"), validTo: new Date("2026-12-31") },
     ];
     for (const c of coupons) {
       await db.coupon.upsert({ where: { code: c.code }, create: c as any, update: {} });

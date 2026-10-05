@@ -16,6 +16,10 @@ const TrackEventSchema = z.object({
     "PAGE_VIEW", "BOOKING_STARTED", "BOOKING_COMPLETED",
     "ROOM_VIEW", "POOJA_VIEW", "CTA_CLICK", "SEARCH",
     "SCROLL_DEPTH", "SESSION_START", "SESSION_END",
+    // Popup analytics - tracked by PopupCoordinator + individual popup
+    // components. Used by the AdminHub "Popup Performance" card to
+    // show conversion rate per popup type.
+    "POPUP_SHOWN", "POPUP_DISMISSED", "POPUP_CTA_CLICKED",
   ]).or(z.string().max(50)), // allow custom events but cap length
   page: z.string().max(500).optional(),
   properties: z.record(z.string(), z.any()).optional(),
@@ -162,6 +166,44 @@ export async function GET(req: NextRequest) {
       sentimentScore, // -100 to 100
       rating: "positive" as const,
     },
+    // ===== POPUP PERFORMANCE =====
+    // Aggregates POPUP_SHOWN / POPUP_DISMISSED / POPUP_CTA_CLICKED events
+    // by popupType (festival | welcome) so the AdminHub card can show
+    // per-popup conversion rate (shown → CTA clicked). The festival slug
+    // is also included so admin can see which festivals drove bookings.
+    popups: await (async () => {
+      const popupEvents = await db.analyticsEvent.findMany({
+        where: {
+          createdAt: { gte: startDate },
+          eventType: { in: ["POPUP_SHOWN", "POPUP_DISMISSED", "POPUP_CTA_CLICKED"] },
+        },
+        select: { eventType: true, properties: true, createdAt: true },
+      });
+      // Group by popupType (from properties.popupType)
+      const byType: Record<string, { shown: number; dismissed: number; ctaClicked: number }> = {};
+      for (const e of popupEvents) {
+        const props = (e.properties as any) || {};
+        const popupType = props.popupType || "unknown";
+        if (!byType[popupType]) byType[popupType] = { shown: 0, dismissed: 0, ctaClicked: 0 };
+        if (e.eventType === "POPUP_SHOWN") byType[popupType].shown++;
+        else if (e.eventType === "POPUP_DISMISSED") byType[popupType].dismissed++;
+        else if (e.eventType === "POPUP_CTA_CLICKED") byType[popupType].ctaClicked++;
+      }
+      return Object.entries(byType).map(([type, counts]) => ({
+        popupType: type,
+        ...counts,
+        // CTA click rate = clicked / shown (i.e. of the people who saw
+        // the popup, what % clicked the CTA button)
+        ctaRate: counts.shown > 0
+          ? Math.round((counts.ctaClicked / counts.shown) * 100 * 100) / 100
+          : 0,
+        // Dismiss rate = dismissed / shown (high dismiss rate = popup is
+        // annoying or irrelevant — admin should rewrite copy or disable)
+        dismissRate: counts.shown > 0
+          ? Math.round((counts.dismissed / counts.shown) * 100 * 100) / 100
+          : 0,
+      }));
+    })(),
     summary: {
       totalRevenue: bookings.reduce((s, b) => s + b.amount, 0),
       totalBookings: bookings.length,
