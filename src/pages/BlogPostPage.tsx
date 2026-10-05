@@ -180,8 +180,8 @@ export default function BlogPostPage({ slug }: { slug: string }) {
           </div>
 
           <div className="mt-12 rounded-3xl border border-champagne/15 bg-ink-card p-8 text-center">
-            <p className="font-serif text-2xl text-ivory">Ready to plan your Guruvayur visit?</p>
-            <p className="mt-2 text-sm text-ivory/60">Book your luxury stay with us · 2 minutes from temple gate.</p>
+            <p className="font-serif text-2xl text-ivory">Ready to plan your Mathura pilgrimage?</p>
+            <p className="mt-2 text-sm text-ivory/60">Book your luxury stay with us · 2 minutes from Mathura Junction railway station.</p>
             <div className="mt-5 flex justify-center">
               <MagneticButton href="#/book">
                 Book Now

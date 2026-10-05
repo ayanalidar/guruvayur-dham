@@ -399,7 +399,7 @@ function RoomPreviews() {
             align="left"
             eyebrow={t("section.rooms")}
             title={<>Cinematic Dark-Luxe <GoldFoilText>Rooms</GoldFoilText></>}
-            subtitle="From ₹1,500/night Deluxe rooms to ₹3,500 family suites · every option is sanitised daily and a 2-minute walk from temple gate."
+            subtitle="From ₹1,250/night King Deluxe to ₹2,699 Privilege Suite · every option is sanitised daily and a 2-minute walk from Mathura Junction railway station."
             className="!mx-0"
           />
           <MagneticButton variant="ghost" onClick={() => navigate("/rooms")}>

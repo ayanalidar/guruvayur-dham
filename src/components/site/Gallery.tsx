@@ -64,7 +64,7 @@ export default function Gallery() {
   const title = get("gallery.title", "Step Inside Guruvayur Dham");
   const subtitle = get(
     "gallery.subtitle",
-    "Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town · every photo tells the story of a pilgrim's day."
+    "Browse our rooms, the temple, our facilities, and the surrounding Mathura town · every photo tells the story of a pilgrim's day."
   );
 
   // Split title for gradient on second half

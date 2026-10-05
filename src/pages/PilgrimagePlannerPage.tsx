@@ -57,7 +57,7 @@ const FALLBACK_DAY1 = JSON.stringify([
     temple: "Shri Krishna Janmabhoomi",
     slot: "Morning",
     time: "5:00 AM - 12:00 PM, 4:00 - 9:00 PM",
-    travelFromGD: "1.5 km · ~10-15 min drive",
+    travelFromGD: "3 km · ~15-20 min drive",
     note: "Reach before 6 AM for the most peaceful darshan. On Janmashtami, the midnight 108-medicine abhishek from Kamdhenu Gomukh is once-in-a-lifetime. Panchamrit Mahabhishek at the garbha-griha stone (where Krishna appeared). Prasadam: Makhan-Mishri, Panjeeri.",
   },
   {
@@ -151,7 +151,7 @@ const FALLBACK_DAY1_STUB: ItineraryStop = {
   temple: "Shri Krishna Janmabhoomi",
   slot: "Morning",
   time: "5:00 AM - 12:00 PM, 4:00 - 9:00 PM",
-  travelFromGD: "1.5 km · 5 min drive",
+  travelFromGD: "3 km · ~15-20 min drive",
   note: "Most peaceful at 5 AM Mangala Aarti.",
 };
 const FALLBACK_DAY2_STUB: ItineraryStop = {

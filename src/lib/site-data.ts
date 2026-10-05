@@ -1161,8 +1161,8 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Rajesh Sharma",
     city: "Mumbai",
     rating: 5,
-    text: "Booked the Deluxe room for a quick darshan trip. Honestly didn't expect much for ₹1,500, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
-    room: "Deluxe Room",
+    text: "Booked the King Deluxe room for a quick darshan trip. Honestly didn't expect much for ₹1,250, but the room was clean, hot water ran 24×7, and the location is unbeatable. Free chai at 6 AM before darshan was a sweet surprise. Outstanding value.",
+    room: "King Deluxe Room",
   },
   {
     name: "Sunita Sharma",
@@ -1891,7 +1891,7 @@ export const BLOG_POSTS: BlogPost[] = [
 export const FAQS = [
   {
     q: "How far is Guruvayur Dham from Shri Krishna Janmabhoomi?",
-    a: "We are exactly 2 minutes (a 2-minute walk) from the temple's temple gate. You can see the temple from our rooftop terrace, and the walk is on a flat, well-lit road · safe even at 3 AM for Mangala Aarti darshan.",
+    a: "We are exactly 2 minutes (a 2-minute walk) from Mathura Junction railway station, and opposite Mata Pathwari Mandir. Krishna Janmabhoomi is a 3 km drive (15-20 min by auto). The walk is on a flat, well-lit road · safe even at 3 AM for Mangala Aarti darshan.",
   },
   {
     q: "What are the check-in and check-out times?",

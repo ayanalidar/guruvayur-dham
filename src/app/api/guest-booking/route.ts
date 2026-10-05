@@ -522,12 +522,12 @@ Where to reach us:
 
 Getting here:
   - 2 minutes walk from Mathura Railway Station.
-  - 1.5 km from Shri Krishna Janmabhoomi.
+  - 3 km from Shri Krishna Janmabhoomi.
   - Free pickup from Mathura station for stays of 2+ nights - just WhatsApp us your train details.
 
 Darshan assistance:
   - Walk to Mata Pathwari Mandir (next door, 2 min).
-  - Krishna Janmabhoomi (1.5 km), Dwarkadhish Temple (2 km).
+  - Krishna Janmabhoomi (3 km), Dwarkadhish Temple (2 km).
   - Vrindavan (Banke Bihari, Prem Mandir) is 15 km - 25 min by auto.
   - We coordinate pooja bookings, darshan slots and local transport at zero commission.
 

@@ -55,9 +55,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: siteUrl,
     siteName: "Guruvayur Dham",
-    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Shri Krishna Janmabhoomi",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Mathura Junction",
     description:
-      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to temple gate in 2 minutes.",
+      "Boutique dark-luxe AC rooms, 24×7 hot water, on-site Mathura pooja booking. Opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi, 2 min from Mathura Junction railway station.",
     images: [
       {
         url: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
@@ -69,9 +69,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Shri Krishna Janmabhoomi",
+    title: "Guruvayur Dham · Luxury Pilgrim Stay Near Mathura Junction",
     description:
-      "Boutique dark-luxe rooms, 24×7 hot water, on-site pooja booking. Walk to temple gate in 2 minutes.",
+      "Boutique dark-luxe AC rooms, 24×7 hot water, on-site Mathura pooja booking. Opposite Mata Pathwari Mandir, 3 km from Krishna Janmabhoomi, 2 min from Mathura Junction railway station.",
     images: [
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1200&h=630&fit=crop",
     ],

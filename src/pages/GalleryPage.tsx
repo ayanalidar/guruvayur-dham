@@ -74,7 +74,7 @@ export default function GalleryPage() {
 
   const eyebrow = get("gallery.eyebrow", "Photo Gallery");
   const title = get("gallery.title", "Step Inside Guruvayur Dham");
-  const subtitle = get("gallery.subtitle", "Browse our rooms, the temple, our facilities, and the surrounding Guruvayur town · every photo tells the story of a pilgrim's day.");
+  const subtitle = get("gallery.subtitle", "Browse our rooms, the temple, our facilities, and the surrounding Mathura town · every photo tells the story of a pilgrim's day.");
 
   return (
     <div className="animate-page-reveal">

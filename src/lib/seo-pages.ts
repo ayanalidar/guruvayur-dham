@@ -69,7 +69,7 @@ export const SEO_PAGES: SEOPage[] = [
       {
         heading: "Where to Stay for Janmashtami",
         body: [
-          "During Janmashtami, Mathura sees an influx of over 2 million pilgrims. Hotels near Krishna Janmabhoomi and the main temple areas book out weeks in advance. Guruvayur Dham offers a strategic location in Natwar Nagar, Dholi Pyau - close enough to walk to major temples yet away from the overwhelming crowds. Our rooms range from budget-friendly non-AC options at ₹1,500/night to deluxe AC rooms and family suites, accommodating solo pilgrims, couples, and large family groups.",
+          "During Janmashtami, Mathura sees an influx of over 2 million pilgrims. Hotels near Krishna Janmabhoomi and the main temple areas book out weeks in advance. Guruvayur Dham offers a strategic location in Natwar Nagar, Dholi Pyau - close enough to walk to major temples yet away from the overwhelming crowds. Our rooms range from budget-friendly non-AC options at ₹1,250/night to deluxe AC rooms and family suites, accommodating solo pilgrims, couples, and large family groups.",
           "We strongly advise against arriving without a confirmed booking during Janmashtami. Many pilgrims end up sleeping in temple corridors or paying exorbitant rates for substandard accommodation. Book your room at Guruvayur Dham at least 60 days in advance to guarantee a clean, safe, and comfortable stay during this peak festival period.",
         ],
       },
@@ -403,7 +403,7 @@ export const SEO_PAGES: SEOPage[] = [
       {
         heading: "Why Stay in Mathura Instead of Vrindavan?",
         body: [
-          "Better value: Mathura hotels are 30-40% cheaper than equivalent Vrindavan properties. A deluxe AC room that costs ₹2,200/night at Guruvayur Dham would cost ₹3,500+ in Vrindavan during peak season.",
+          "Better value: Mathura hotels are 30-40% cheaper than equivalent Vrindavan properties. A deluxe AC room that costs ₹1,450/night at Guruvayur Dham would cost ₹3,500+ in Vrindavan during peak season.",
           "Better amenities: Mathura has more modern infrastructure - hospitals, pharmacies, ATMs, restaurants, and shopping. Vrindavan's temple-area guesthouses often lack basic amenities like reliable WiFi and 24-hour hot water.",
           "Better connectivity: Mathura Junction railway station (3 km from Guruvayur Dham) has direct trains from Delhi, Agra, Mumbai, and Varanasi. Vrindavan's nearest station (Vrindavan Road) has limited train connectivity.",
           "Multi-temple access: Staying in Mathura gives you easy access to Krishna Janmabhoomi, Dwarkadhish Temple, and Vishram Ghat - all within 5 km. Vrindavan is 15 km away, and Gokul/Barsana are also accessible by road.",
@@ -429,7 +429,7 @@ export const SEO_PAGES: SEOPage[] = [
       },
       {
         q: "Are there AC rooms available near Banke Bihari Temple?",
-        a: "AC rooms in Vrindavan's temple area are rare and expensive. Guruvayur Dham in Mathura (15 min away) offers clean AC rooms starting at ₹1,500/night with 24×7 hot water, free WiFi, and free parking. Book early for festival season availability.",
+        a: "AC rooms in Vrindavan's temple area are rare and expensive. Guruvayur Dham in Mathura (15 min away) offers clean AC rooms starting at ₹1,250/night with 24×7 hot water, free WiFi, and free parking. Book early for festival season availability.",
       },
     ],
     ctaHeadline: "Book Your Stay Near Banke Bihari Temple - Clean Rooms, Great Rates",
@@ -449,7 +449,7 @@ export const SEO_PAGES: SEOPage[] = [
     intro: [
       "The Krishna Janmabhoomi Temple in Mathura marks the exact birthplace of Lord Krishna - one of the most sacred sites in Hinduism. Millions of devotees visit each year to pay homage at the prison cell where Devaki gave birth to Krishna over 5,000 years ago. Finding a clean, comfortable hotel near the temple is essential for pilgrims who want to attend early morning aartis and multiple darshans throughout the day.",
       "Guruvayur Dham is located just 10 minutes' drive from Krishna Janmabhoomi, in Natwar Nagar near Mata Pathwari Mandir. This strategic location allows you to easily attend the temple's morning Mangala Aarti (5:00 AM) and return for the evening Sandhya Aarti without any logistical stress. Unlike the crowded hotels in the immediate temple vicinity, our neighborhood is quiet and residential - perfect for restful sleep between temple visits.",
-      "Our pilgrim home offers rooms for every budget: Deluxe rooms at ₹1,500/night, standard AC rooms at ₹1,500/night, deluxe AC rooms at ₹2,200/night, and family suites at ₹3,500/night. All rooms include 24×7 hot water, free WiFi, daily housekeeping, and complimentary chai. Our front desk is available 24 hours to assist with temple visit planning, pooja bookings, and local transportation.",
+      "Our pilgrim home offers rooms for every budget: Deluxe rooms at ₹1,250/night, standard AC rooms at ₹1,250/night, deluxe AC rooms at ₹1,450/night, and family suites at ₹2,699/night. All rooms include 24×7 hot water, free WiFi, daily housekeeping, and complimentary chai. Our front desk is available 24 hours to assist with temple visit planning, pooja bookings, and local transportation.",
     ],
     sections: [
       {
@@ -508,7 +508,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Near Dwarkadhish",
     title: "Hotels Near Dwarkadhish Temple Mathura - Stay 8 Minutes Away",
     metaDescription:
-      "Best hotels near Dwarkadhish Temple Mathura. Guruvayur Dham - 8 min away. AC rooms from ₹1,500/night, 24×7 hot water, free parking. Book direct.",
+      "Best hotels near Dwarkadhish Temple Mathura. Guruvayur Dham - 8 min away. AC rooms from ₹1,250/night, 24×7 hot water, free parking. Book direct.",
     heroImage:
       "https://images.unsplash.com/photo-1623691884827-ec241a91efed?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -573,7 +573,7 @@ export const SEO_PAGES: SEOPage[] = [
     navLabel: "Near Mata Pathwari",
     title: "Hotels Near Mata Pathwari Mandir Mathura - Stay Right Next Door",
     metaDescription:
-      "Stay at Guruvayur Dham - directly opposite Mata Pathwari Mandir, Mathura. Clean AC rooms from ₹1,500/night. 24×7 hot water, free parking, on-site pooja booking.",
+      "Stay at Guruvayur Dham - directly opposite Mata Pathwari Mandir, Mathura. Clean AC rooms from ₹1,250/night. 24×7 hot water, free parking, on-site pooja booking.",
     heroImage:
       "https://images.unsplash.com/photo-1604608672516-f1b9b1d37076?w=1920&h=1080&fit=crop",
     jsonLdType: "TouristAttraction",
@@ -581,7 +581,7 @@ export const SEO_PAGES: SEOPage[] = [
     intro: [
       "Mata Pathwari Mandir is a revered local temple in Natwar Nagar, Mathura, dedicated to the Divine Mother. While less internationally known than Krishna Janmabhoomi or Dwarkadhish, this temple holds deep significance for local devotees and is known for fulfilling the prayers of those seeking blessings for health, prosperity, and family well-being. The temple's intimate, community-focused atmosphere offers a more personal spiritual experience compared to the larger, more crowded temples.",
       "Guruvayur Dham is located directly opposite Mata Pathwari Mandir - quite literally across the road. This means you can step out of your room and be at the temple entrance in under a minute. The temple's morning aarti (5:30 AM) and evening aarti (7:00 PM) are beautiful, community-centered ceremonies that you can attend without any travel time or logistics. Many of our guests appreciate being able to participate in the temple's daily rhythms without disrupting their rest.",
-      "Staying next to Mata Pathwari Mandir also places you in a quiet, residential neighborhood away from the tourist crowds. The area has local markets, pure-veg restaurants, and easy access to auto-rickshaws for visiting the more famous temples. Guruvayur Dham offers clean, comfortable rooms with all modern amenities - AC, 24×7 hot water, free WiFi, daily housekeeping - at premium rooms starting at ₹1,500/night.",
+      "Staying next to Mata Pathwari Mandir also places you in a quiet, residential neighborhood away from the tourist crowds. The area has local markets, pure-veg restaurants, and easy access to auto-rickshaws for visiting the more famous temples. Guruvayur Dham offers clean, comfortable rooms with all modern amenities - AC, 24×7 hot water, free WiFi, daily housekeeping - at premium rooms starting at ₹1,250/night.",
     ],
     sections: [
       {
@@ -603,10 +603,10 @@ export const SEO_PAGES: SEOPage[] = [
       {
         heading: "Room Options at Guruvayur Dham",
         body: [
-          "Deluxe Room (₹1,500/night): Double bed, ceiling fan, attached bathroom with hot water, WiFi. Ideal for budget pilgrims and backpackers.",
-          "Standard AC Room (₹1,500/night): Queen bed, AC, attached bathroom, TV, WiFi. Most popular option for couples and solo pilgrims.",
-          "Deluxe AC Room (₹2,200/night): King bed, premium linen, mini-fridge, study desk, AC, TV, WiFi. Perfect for those wanting extra comfort.",
-          "Family Suite AC (₹3,500/night): 2 bedrooms, living area, AC, accommodates up to 5 guests. Ideal for families and groups.",
+          "Deluxe Room (₹1,250/night): Double bed, ceiling fan, attached bathroom with hot water, WiFi. Ideal for budget pilgrims and backpackers.",
+          "Standard AC Room (₹1,250/night): Queen bed, AC, attached bathroom, TV, WiFi. Most popular option for couples and solo pilgrims.",
+          "Deluxe AC Room (₹1,450/night): King bed, premium linen, mini-fridge, study desk, AC, TV, WiFi. Perfect for those wanting extra comfort.",
+          "Family Suite AC (₹2,699/night): 2 bedrooms, living area, AC, accommodates up to 5 guests. Ideal for families and groups.",
           "All rooms include daily housekeeping, 24×7 hot water, free WiFi, complimentary morning chai, and free parking. Book directly for the best rates - no booking fees.",
         ],
       },
