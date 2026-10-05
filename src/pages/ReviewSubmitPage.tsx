@@ -213,7 +213,7 @@ export default function ReviewSubmitPage() {
           <div className="mt-6 rounded-2xl border border-champagne/15 bg-ink-card p-5 text-center">
             <p className="text-sm text-ivory/70">
               <Star className="mr-1 inline h-4 w-4 fill-gold text-gold" />
-              <strong className="text-ivory">4.8 ★</strong> from 120+ Google reviews. Your review helps fellow pilgrims discover Guruvayur Dham.
+              <strong className="text-ivory">4.8 ★</strong> average Google rating. Your review helps fellow pilgrims discover Guruvayur Dham.
             </p>
           </div>
         </div>

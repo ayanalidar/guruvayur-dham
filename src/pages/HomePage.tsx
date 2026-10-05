@@ -307,7 +307,7 @@ function WhyChooseUs() {
     {
       value: Number(get("homepage.stats.rooms", "15")),
       suffix: "+",
-      label: "AC & non-AC rooms",
+      label: "AC rooms",
       decimals: 0,
     },
     {

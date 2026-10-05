@@ -73,7 +73,7 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Testimonials */
     "testimonials.eyebrow": "Guest Stories",
     "testimonials.title": "Loved by 10,000+ Pilgrims",
-    "testimonials.subtitle": "4.8 ★ average rating across Google, Booking.com & MakeMyTrip from 120+ verified reviews.",
+    "testimonials.subtitle": "4.8 ★ average Google rating · see what our 10,000+ pilgrims say about their stay.",
     /* FAQ */
     "faq.eyebrow": "Frequently Asked",
     "faq.title": "Your Mathura Questions, Answered",
@@ -202,7 +202,7 @@ export const translations: Record<Language, Record<string, string>> = {
     /* Testimonials */
     "testimonials.eyebrow": "अतिथि कथाएं",
     "testimonials.title": "10,000+ तीर्थयात्रियों द्वारा पसंद किया गया",
-    "testimonials.subtitle": "गूगल, बुकिंग.कॉम और मेकमायट्रिप पर 4.8 ★ औसत रेटिंग, 120+ समीक्षाएं।",
+    "testimonials.subtitle": "गूगल पर 4.8 ★ औसत रेटिंग · हमारे 10,000+ तीर्थयात्री क्या कहते हैं देखें।",
     /* FAQ */
     "faq.eyebrow": "सामान्य प्रश्न",
     "faq.title": "आपके प्रश्न, हमारे उत्तर",
@@ -355,7 +355,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "blog.subtitle": "दर्शन वेळा, पोशाख, प्रवास मार्ग, उत्सव कैलेंडर, बुकिंग टिप्स.",
     "testimonials.eyebrow": "अतिथी कथा",
     "testimonials.title": "10,000+ भाविकांनी पसंत केलेले",
-    "testimonials.subtitle": "गूगल, बुकिंग.कॉम आणि मेकमायट्रिपवर 4.8 ★ सरासरी रेटिंग, 120+ पुनरावलोकने.",
+    "testimonials.subtitle": "गूगलवर 4.8 ★ सरासरी रेटिंग · आमच्या 10,000+ तीर्थयात्री काय म्हणतात पहा.",
     "faq.eyebrow": "वारंवार विचारले जाणारे प्रश्न",
     "faq.title": "तुमचे प्रश्न, आमची उत्तरे",
     "faq.subtitle": "आम्ही अतिथींचे सर्वात सामान्य प्रश्न एकत्र केले आहेत. उत्तर सापडले नाही? व्हॉट्सअॅप करा.",
@@ -470,7 +470,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "blog.subtitle": "દર્શન સમય, પોશાખ, પ્રવાસ માર્ગ, ઉત્સવ કેલેન્ડર, બુકિંગ ટિપ્સ.",
     "testimonials.eyebrow": "મહેમાન કથાઓ",
     "testimonials.title": "10,000+ ભક્તો દ્વારા પસંદ કરાયેલ",
-    "testimonials.subtitle": "ગૂગલ, બુકિંગ.કોમ અને મેકમાયટ્રિપ પર 4.8 ★ સરેરાશ રેટિંગ, 120+ સમીક્ષાઓ.",
+    "testimonials.subtitle": "ગૂગલ પર 4.8 ★ સરેરાશ રેટિંગ · અમારા 10,000+ યાત્રીઓ શું કહે છે તે જુઓ.",
     "faq.eyebrow": "વારંવાર પૂછાતા પ્રશ્નો",
     "faq.title": "તમારા પ્રશ્નો, અમારા જવાબો",
     "faq.subtitle": "અમે મહેમાનોના સૌથી સામાન્ય પ્રશ્નો એકત્ર કર્યા છે. જવાબ મળ્યો નહીં? વોટ્સએપ કરો.",
@@ -585,7 +585,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "blog.subtitle": "ദർശന സമയം, വേഷം, യാത്രാ മാർഗം, ഉത്സവ കലണ്ടർ, ബുക്കിംഗ് ടിപ്സ്.",
     "testimonials.eyebrow": "അതിഥി കഥകൾ",
     "testimonials.title": "10,000+ ഭക്തർ തിരഞ്ഞെടുത്തത്",
-    "testimonials.subtitle": "ഗൂഗിൾ, ബുക്കിംഗ്.കോം, മേക്മൈട്രിപ്പിൽ 4.8 ★ ശരാശരി റേറ്റിംഗ്, 120+ അവലോകനങ്ങൾ.",
+    "testimonials.subtitle": "ഗൂഗിളിൽ 4.8 ★ ശരാശരി റേറ്റിംഗ് · ഞങ്ങളുടെ 10,000+ തീർത്ഥാടകർ പറയുന്നത് കാണുക.",
     "faq.eyebrow": "പതിവായ ചോദ്യങ്ങൾ",
     "faq.title": "നിങ്ങളുടെ ചോദ്യങ്ങൾ, ഞങ്ങളുടെ ഉത്തരങ്ങൾ",
     "faq.subtitle": "അതിഥികളുടെ ഏറ്റവും സാധാരണമായ ചോദ്യങ്ങൾ ഞങ്ങൾ ശേഖരിച്ചിട്ടുണ്ട്. ഉത്തരം കിട്ടിയില്ലേ? വാട്സ്ആപ്പ് ചെയ്യുക.",

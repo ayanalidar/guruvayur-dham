@@ -84,8 +84,8 @@ export default function WhyChooseUs() {
           className="mt-16 grid grid-cols-2 gap-4 rounded-3xl bg-gradient-maroon p-8 text-cream sm:grid-cols-4 lg:p-10"
         >
           {[
-            { value: "200 m", label: "to temple gate" },
-            { value: "52", label: "AC & non-AC rooms" },
+            { value: "2 min", label: "to Mathura Junction" },
+            { value: "15+", label: "AC rooms" },
             { value: "10,000+", label: "happy pilgrims" },
             { value: "4.8 ★", label: "Google rating" },
           ].map((s, i) => (
