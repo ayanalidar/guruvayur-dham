@@ -20,6 +20,12 @@ import { requireStaff } from "@/lib/auth";
  *   This focused endpoint bumps ONLY the 4 homepage.stats.* values
  *   to their canonical values, leaving all other CMS content alone.
  *
+ * OPTIONAL BODY: { rooms?: string, years?: string, guests?: string,
+ *   rating?: string }
+ *   If a field is provided in the body, it overrides the canonical
+ *   default. e.g. POST { rooms: "20" } sets homepage.stats.rooms="20"
+ *   without touching the other 3.
+ *
  * AUTH: staff-only (any role).
  *
  * USAGE FROM ADMIN HUB:
@@ -37,11 +43,31 @@ export async function POST(req: NextRequest) {
   const { error } = await requireStaff(req);
   if (error) return error;
 
+  // Allow admin to override any of the canonical values via the request
+  // body. e.g. POST { rooms: "20" } sets just that one without touching
+  // the others.
+  let overrides: Record<string, string> = {};
+  try {
+    const body = await req.json();
+    if (body && typeof body === "object") {
+      if (typeof body.rooms === "string") overrides["homepage.stats.rooms"] = body.rooms;
+      if (typeof body.years === "string") overrides["homepage.stats.years"] = body.years;
+      if (typeof body.guests === "string") overrides["homepage.stats.guests"] = body.guests;
+      if (typeof body.rating === "string") overrides["homepage.stats.rating"] = body.rating;
+    }
+  } catch {
+    // Body is optional - if no JSON body, just use canonical defaults
+  }
+
+  const finalStats = CANONICAL_STATS.map(s =>
+    overrides[s.key] ? { ...s, value: overrides[s.key] } : s
+  );
+
   let updated = 0;
   let created = 0;
   const changes: any[] = [];
 
-  for (const stat of CANONICAL_STATS) {
+  for (const stat of finalStats) {
     const existing = await db.contentBlock.findUnique({ where: { key: stat.key } });
     if (existing) {
       // Only update if value differs (avoid spurious writes)
@@ -73,8 +99,8 @@ export async function POST(req: NextRequest) {
     updated,
     created,
     changes,
-    canonicalValues: CANONICAL_STATS,
-    message: `Refreshed homepage stats · ${updated} updated, ${created} created. The 4 stat cards (rooms/years/guests/rating) now show 15+/5+/10000+/4.8★.`,
+    finalValues: finalStats,
+    message: `Refreshed homepage stats · ${updated} updated, ${created} created. The 4 stat cards now show ${finalStats[0].value}+/${finalStats[1].value}+/${finalStats[2].value}+/${finalStats[3].value}★.`,
   });
 }
 
