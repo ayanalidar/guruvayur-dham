@@ -64,6 +64,11 @@ const CATEGORIES = [
   { key: "site", label: "Site Settings" },
   { key: "hero", label: "Hero Section" },
   { key: "whyChooseUs", label: "Why Choose Us" },
+  // Homepage stats category — contains the 4 stat cards shown on the
+  // homepage: homepage.stats.rooms / .years / .guests / .rating.
+  // Without this category tab, admin can't see/edit these blocks via
+  // /admin/content (they were hidden by the category filter at line ~116).
+  { key: "homepage", label: "Homepage Stats" },
   { key: "rooms", label: "Rooms Section" },
   { key: "pooja", label: "Pooja Section" },
   { key: "about", label: "About Section" },
@@ -77,6 +82,10 @@ const CATEGORIES = [
   { key: "login", label: "Login Page" },
   { key: "reviews", label: "Reviews Funnel" },
   { key: "footer", label: "Footer" },
+  // Invoice category — contains invoice header/bank/GSTIN/terms blocks
+  // used by the invoice PDF generator. Admin can edit hotel name, GSTIN,
+  // bank details, terms etc. without redeploying.
+  { key: "invoice", label: "Invoice / Tax" },
 ];
 
 export default function AdminContent() {
