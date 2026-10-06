@@ -55,7 +55,7 @@ export const SEO_PAGES: SEOPage[] = [
     eyebrow: "Festival Guide · August 2026",
     intro: [
       "Janmashtami in Mathura is the most sacred celebration of Lord Krishna's birth, observed with unparalleled devotion in the very city where he was born. Each year, millions of pilgrims from across India and the world gather in Mathura to witness the midnight celebrations at Krishna Janmabhoomi - the exact site of Krishna's birth. The festival typically falls in August or September, based on the Hindu lunar calendar, and the entire Braj region transforms into a vibrant tapestry of devotion, music, and celebration.",
-      "Guruvayur Dham, located in Natwar Nagar near Mata Pathwari Mandir, offers the ideal base for your Janmashtami pilgrimage. At just a few minutes' walk from key temple sites, our pilgrim home provides clean AC and non-AC rooms, 24×7 hot water, and on-site pooja booking assistance. We understand the unique needs of devotees during this peak festival season - from early morning darshan timings to midnight aarti coordination - and our team is dedicated to making your spiritual journey seamless and fulfilling.",
+      "Guruvayur Dham, located in Mali Para near Mata Pathwari Mandir, offers the ideal base for your Janmashtami pilgrimage. At just a few minutes' walk from key temple sites, our pilgrim home provides clean AC rooms, 24×7 hot water, and on-site pooja booking assistance. We understand the unique needs of devotees during this peak festival season - from early morning darshan timings to midnight aarti coordination - and our team is dedicated to making your spiritual journey seamless and fulfilling.",
       "Booking your stay well in advance is crucial for Janmashtami. Rooms in Mathura sell out 60-90 days before the festival, and prices surge significantly during this period. We recommend booking at least 2 months ahead to secure your preferred room type at the best available rate. Our team can also coordinate darshan passes, pooja bookings, and local transportation to ensure you experience the full splendor of Krishna's birthday celebration without any logistical stress.",
     ],
     sections: [
@@ -69,7 +69,7 @@ export const SEO_PAGES: SEOPage[] = [
       {
         heading: "Where to Stay for Janmashtami",
         body: [
-          "During Janmashtami, Mathura sees an influx of over 2 million pilgrims. Hotels near Krishna Janmabhoomi and the main temple areas book out weeks in advance. Guruvayur Dham offers a strategic location in Natwar Nagar, Dholi Pyau - close enough to walk to major temples yet away from the overwhelming crowds. Our rooms range from budget-friendly non-AC options at ₹1,250/night to deluxe AC rooms and family suites, accommodating solo pilgrims, couples, and large family groups.",
+          "During Janmashtami, Mathura sees an influx of over 2 million pilgrims. Hotels near Krishna Janmabhoomi and the main temple areas book out weeks in advance. Guruvayur Dham offers a strategic location in Mali Para, Dholi Pyau - close enough to walk to major temples yet away from the overwhelming crowds. Our rooms range from all-AC rooms from ₹1,250/night (King Deluxe) up to ₹2,699/night (Privilege Suite), accommodating solo pilgrims, couples, and large family groups.",
           "We strongly advise against arriving without a confirmed booking during Janmashtami. Many pilgrims end up sleeping in temple corridors or paying exorbitant rates for substandard accommodation. Book your room at Guruvayur Dham at least 60 days in advance to guarantee a clean, safe, and comfortable stay during this peak festival period.",
         ],
       },
@@ -121,7 +121,7 @@ export const SEO_PAGES: SEOPage[] = [
     intro: [
       "Holi in Mathura and the Braj region is unlike any other Holi celebration in the world. This is the land where Lord Krishna himself played Holi with Radha and the Gopis, and the tradition continues with unmatched fervor centuries later. The celebrations span over a week, starting from Barsana (Radha's village) and moving through Nandgaon, Vrindavan, and finally Mathura - each location offering a unique and deeply spiritual version of the festival of colors.",
       "The most famous celebration is Lathmar Holi in Barsana, where women playfully beat men with sticks (lathis) as the men try to protect themselves with shields. This reenacts the legend of Krishna visiting Radha's village and being chased away by the women. A few days later, the Phoolon ki Holi (Flower Holi) at the Banke Bihari Temple in Vrindavan is a breathtakingly beautiful celebration where devotees are showered with flower petals instead of colored powder.",
-      "Guruvayur Dham in Mathura serves as your perfect base for the Braj Holi circuit. Located in Natwar Nagar near Mata Pathwari Mandir, we're just 15 km from Vrindavan and 40 km from Barsana. Our team can arrange guided day trips to each Holi celebration site, coordinate transportation, and ensure you return to a clean, comfortable room each evening after the festivities.",
+      "Guruvayur Dham in Mathura serves as your perfect base for the Braj Holi circuit. Located in Mali Para near Mata Pathwari Mandir, we're just 15 km from Vrindavan and 45 km from Barsana. Our team can arrange guided day trips to each Holi celebration site, coordinate transportation, and ensure you return to a clean, comfortable room each evening after the festivities.",
     ],
     sections: [
       {
@@ -382,7 +382,7 @@ export const SEO_PAGES: SEOPage[] = [
     eyebrow: "Hotels Near Banke Bihari Temple",
     intro: [
       "The Banke Bihari Temple in Vrindavan is one of the most revered Krishna temples in India, attracting over 10 million devotees annually. Finding a clean, comfortable hotel near the temple can be challenging - Vrindavan's hotel infrastructure is limited, and rooms during peak season and festivals sell out weeks in advance. Many pilgrims end up in overpriced, poorly maintained guesthouses with no AC, unreliable hot water, and unsafe surroundings.",
-      "Guruvayur Dham in Mathura offers a superior alternative: a well-maintained pilgrim home just 15 minutes' drive from Banke Bihari Temple. Located in Natwar Nagar near Mata Pathwari Mandir, our property provides clean AC and non-AC rooms with 24×7 hot water, free WiFi, complimentary breakfast, and secure parking - amenities that are rare in Vrindavan's temple-area guesthouses. Our rooms are professionally cleaned daily, and our 24-hour front desk ensures you always have support.",
+      "Guruvayur Dham in Mathura offers a superior alternative: a well-maintained pilgrim home just 15 minutes' drive from Banke Bihari Temple. Located in Mali Para near Mata Pathwari Mandir, our property provides clean AC rooms with 24×7 hot water, free WiFi, complimentary breakfast, and secure parking - amenities that are rare in Vrindavan's temple-area guesthouses. Our rooms are professionally cleaned daily, and our 24-hour front desk ensures you always have support.",
       "Staying in Mathura rather than Vrindavan offers several advantages: better infrastructure (hospitals, ATMs, restaurants), lower room rates, easier access to Mathura Junction railway station (3 km), and proximity to other key pilgrimage sites like Krishna Janmabhoomi and Dwarkadhish Temple. Guruvayur Dham can arrange day trips to Vrindavan with a local driver, including visits to Banke Bihari, ISKCON, Prem Mandir, and other temples.",
     ],
     sections: [
@@ -448,7 +448,7 @@ export const SEO_PAGES: SEOPage[] = [
     eyebrow: "Hotels Near Krishna Janmabhoomi",
     intro: [
       "The Krishna Janmabhoomi Temple in Mathura marks the exact birthplace of Lord Krishna - one of the most sacred sites in Hinduism. Millions of devotees visit each year to pay homage at the prison cell where Devaki gave birth to Krishna over 5,000 years ago. Finding a clean, comfortable hotel near the temple is essential for pilgrims who want to attend early morning aartis and multiple darshans throughout the day.",
-      "Guruvayur Dham is located just 10 minutes' drive from Krishna Janmabhoomi, in Natwar Nagar near Mata Pathwari Mandir. This strategic location allows you to easily attend the temple's morning Mangala Aarti (5:00 AM) and return for the evening Sandhya Aarti without any logistical stress. Unlike the crowded hotels in the immediate temple vicinity, our neighborhood is quiet and residential - perfect for restful sleep between temple visits.",
+      "Guruvayur Dham is located just 10 minutes' drive from Krishna Janmabhoomi, in Mali Para near Mata Pathwari Mandir. This strategic location allows you to easily attend the temple's morning Mangala Aarti (5:00 AM) and return for the evening Sandhya Aarti without any logistical stress. Unlike the crowded hotels in the immediate temple vicinity, our neighborhood is quiet and residential - perfect for restful sleep between temple visits.",
       "Our pilgrim home offers rooms for every budget: Deluxe rooms at ₹1,250/night, standard AC rooms at ₹1,250/night, deluxe AC rooms at ₹1,450/night, and family suites at ₹2,699/night. All rooms include 24×7 hot water, free WiFi, daily housekeeping, and complimentary chai. Our front desk is available 24 hours to assist with temple visit planning, pooja bookings, and local transportation.",
     ],
     sections: [
@@ -515,7 +515,7 @@ export const SEO_PAGES: SEOPage[] = [
     eyebrow: "Hotels Near Dwarkadhish Temple",
     intro: [
       "The Dwarkadhish Temple in Mathura is one of the most magnificent and historically significant Krishna temples in India. Built in 1814 by Seth Gokul Das Parikh, the temple showcases stunning Rajasthani architecture with intricate carvings, ornate pillars, and a towering shikhara. Dedicated to Krishna in his form as the 'King of Dwarka,' the temple is especially famous for its grand Holi celebrations and daily aartis that draw hundreds of devotees.",
-      "Guruvayur Dham is located just 8 minutes' drive from the Dwarkadhish Temple, making it the ideal accommodation for pilgrims who want to attend the temple's morning Mangala Aarti and evening Sandhya Aarti without staying in the crowded and noisy temple-area hotels. Our quiet residential neighborhood in Natwar Nagar provides a peaceful retreat between temple visits, with clean rooms, 24×7 hot water, and home-cooked vegetarian meals available on request.",
+      "Guruvayur Dham is located just 8 minutes' drive from the Dwarkadhish Temple, making it the ideal accommodation for pilgrims who want to attend the temple's morning Mangala Aarti and evening Sandhya Aarti without staying in the crowded and noisy temple-area hotels. Our quiet residential neighborhood in Mali Para provides a peaceful retreat between temple visits, with clean rooms, 24×7 hot water, and home-cooked vegetarian meals available on request.",
       "Unlike the guesthouses immediately surrounding the temple (which can be noisy, cramped, and lack basic amenities), Guruvayur Dham offers a professional hotel experience at pilgrim-friendly prices. Our rooms are sanitized daily, our staff speaks Hindi and English, and our 24-hour front desk can assist with temple visit planning, pooja bookings, and local transportation. We also offer free covered parking for 25+ vehicles - a rare amenity in the temple area.",
     ],
     sections: [
@@ -579,7 +579,7 @@ export const SEO_PAGES: SEOPage[] = [
     jsonLdType: "TouristAttraction",
     eyebrow: "Hotels Near Mata Pathwari Mandir",
     intro: [
-      "Mata Pathwari Mandir is a revered local temple in Natwar Nagar, Mathura, dedicated to the Divine Mother. While less internationally known than Krishna Janmabhoomi or Dwarkadhish, this temple holds deep significance for local devotees and is known for fulfilling the prayers of those seeking blessings for health, prosperity, and family well-being. The temple's intimate, community-focused atmosphere offers a more personal spiritual experience compared to the larger, more crowded temples.",
+      "Mata Pathwari Mandir is a revered local temple in Mali Para, Mathura, dedicated to the Divine Mother. While less internationally known than Krishna Janmabhoomi or Dwarkadhish, this temple holds deep significance for local devotees and is known for fulfilling the prayers of those seeking blessings for health, prosperity, and family well-being. The temple's intimate, community-focused atmosphere offers a more personal spiritual experience compared to the larger, more crowded temples.",
       "Guruvayur Dham is located directly opposite Mata Pathwari Mandir - quite literally across the road. This means you can step out of your room and be at the temple entrance in under a minute. The temple's morning aarti (5:30 AM) and evening aarti (7:00 PM) are beautiful, community-centered ceremonies that you can attend without any travel time or logistics. Many of our guests appreciate being able to participate in the temple's daily rhythms without disrupting their rest.",
       "Staying next to Mata Pathwari Mandir also places you in a quiet, residential neighborhood away from the tourist crowds. The area has local markets, pure-veg restaurants, and easy access to auto-rickshaws for visiting the more famous temples. Guruvayur Dham offers clean, comfortable rooms with all modern amenities - AC, 24×7 hot water, free WiFi, daily housekeeping - at premium rooms starting at ₹1,250/night.",
     ],
@@ -587,7 +587,7 @@ export const SEO_PAGES: SEOPage[] = [
       {
         heading: "About Mata Pathwari Mandir",
         body: [
-          "Mata Pathwari Mandir is a locally cherished temple that has served the Natwar Nagar community for decades. The temple's presiding deity is the Divine Mother in her benevolent form, and devotees visit throughout the day to offer prayers, light diyas, and seek blessings. The temple is especially popular among local families for ceremonies like mundan (head-shaving ceremony for children), griha pravesh (housewelling), and navratra celebrations.",
+          "Mata Pathwari Mandir is a locally cherished temple that has served the Mali Para community for decades. The temple's presiding deity is the Divine Mother in her benevolent form, and devotees visit throughout the day to offer prayers, light diyas, and seek blessings. The temple is especially popular among local families for ceremonies like mundan (head-shaving ceremony for children), griha pravesh (housewelling), and navratra celebrations.",
           "The temple is open daily from 5:00 AM to 9:00 PM. The morning Mangala Aarti at 5:30 AM and the evening Sandhya Aarti at 7:00 PM are the most auspicious times to visit. During Navratri (twice a year, in spring and autumn), the temple hosts special celebrations with kirtan, bhog, and extended darshan hours. The temple also hosts a free community kitchen (bhandara) on specific festival days.",
         ],
       },
@@ -595,7 +595,7 @@ export const SEO_PAGES: SEOPage[] = [
         heading: "Advantages of Staying Near Mata Pathwari Mandir",
         body: [
           "Zero travel time: The temple is across the road from Guruvayur Dham. You can attend aarti in your room clothes and be back in 2 minutes. This is especially valuable for elderly pilgrims and families with young children.",
-          "Quiet neighborhood: Unlike the crowded areas around Krishna Janmabhoomi or Dwarkadhish, Natwar Nagar is a peaceful residential area. You'll get restful sleep without the noise of traffic, loudspeakers, or late-night crowds.",
+          "Quiet neighborhood: Unlike the crowded areas around Krishna Janmabhoomi or Dwarkadhish, Mali Para is a peaceful residential area. You'll get restful sleep without the noise of traffic, loudspeakers, or late-night crowds.",
           "Local amenities: The area has pure-veg restaurants, grocery stores, pharmacies, and ATMs within walking distance. The local markets offer authentic Mathura peda, textiles, and religious items at fair (non-tourist) prices.",
           "Easy access to major temples: Krishna Janmabhoomi (3 km), Dwarkadhish Temple (2.5 km), and Vishram Ghat (2 km) are all within a 10-minute auto-rickshaw ride. Vrindavan is 15 km away.",
         ],
@@ -604,8 +604,8 @@ export const SEO_PAGES: SEOPage[] = [
         heading: "Room Options at Guruvayur Dham",
         body: [
           "Deluxe Room (₹1,250/night): Double bed, ceiling fan, attached bathroom with hot water, WiFi. Ideal for budget pilgrims and backpackers.",
-          "Standard AC Room (₹1,250/night): Queen bed, AC, attached bathroom, TV, WiFi. Most popular option for couples and solo pilgrims.",
-          "Deluxe AC Room (₹1,450/night): King bed, premium linen, mini-fridge, study desk, AC, TV, WiFi. Perfect for those wanting extra comfort.",
+          "King Deluxe Room (₹1,250/night): Queen bed, AC, attached bathroom, TV, WiFi. Most popular option for couples and solo pilgrims.",
+          "Premium Double Bed Room (₹1,450/night): King bed, premium linen, mini-fridge, study desk, AC, TV, WiFi. Perfect for those wanting extra comfort.",
           "Family Suite AC (₹2,699/night): 2 bedrooms, living area, AC, accommodates up to 5 guests. Ideal for families and groups.",
           "All rooms include daily housekeeping, 24×7 hot water, free WiFi, complimentary morning chai, and free parking. Book directly for the best rates - no booking fees.",
         ],
@@ -622,7 +622,7 @@ export const SEO_PAGES: SEOPage[] = [
       },
       {
         q: "Is the area around Mata Pathwari Mandir safe?",
-        a: "Yes, Natwar Nagar is a quiet, residential neighborhood - much safer and more peaceful than the crowded areas around the main temples. The area has good street lighting, local shops, and is walkable at all hours.",
+        a: "Yes, Mali Para is a quiet, residential neighborhood - much safer and more peaceful than the crowded areas around the main temples. The area has good street lighting, local shops, and is walkable at all hours.",
       },
       {
         q: "Can I walk to Krishna Janmabhoomi from Guruvayur Dham?",
@@ -856,7 +856,7 @@ export const SEO_PAGES: SEOPage[] = [
     intro: [
       "Mathura, the birthplace of Lord Krishna, is home to dozens of sacred temples, each with its own unique history, significance, and darshan schedule. For pilgrims visiting Mathura for the first time, navigating the various temples, their timings, and their specific requirements can be overwhelming. This comprehensive guide covers all major temples in Mathura with their 2026 darshan timings, entry requirements, and visiting tips.",
       "Whether you're planning a one-day temple tour or an extended pilgrimage, this guide will help you optimize your itinerary. We've organized the temples by proximity and significance, so you can visit them efficiently without backtracking. Most temples in Mathura are within a 5 km radius of the city center, making it possible to visit 4-5 temples in a single day.",
-      "Guruvayur Dham, located in Natwar Nagar near Mata Pathwari Mandir, serves as the perfect base for your Mathura temple tour. Our central location puts you within 10 minutes of all major temples, and our team can arrange guided temple tours with knowledgeable local guides who can explain the history and significance of each site.",
+      "Guruvayur Dham, located in Mali Para near Mata Pathwari Mandir, serves as the perfect base for your Mathura temple tour. Our central location puts you within 10 minutes of all major temples, and our team can arrange guided temple tours with knowledgeable local guides who can explain the history and significance of each site.",
     ],
     sections: [
       {

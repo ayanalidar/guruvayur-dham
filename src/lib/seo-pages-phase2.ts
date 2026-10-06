@@ -27,7 +27,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
     intro: [
       "Mathura is one of the most well-connected pilgrimage cities in North India, located on the Delhi-Agra highway (NH-19) and on the main Delhi-Mumbai railway line. Whether you're coming from Delhi, Agra, Mumbai, or even the far south, reaching Mathura is straightforward with multiple transport options. This guide covers every way to reach Mathura, including trains, flights, buses, and self-driving, with current timings, costs, and tips for pilgrims.",
       "The city is approximately 150 km from Delhi, 60 km from Agra, and 15 km from Vrindavan. The nearest airport is Agra (60 km), but most pilgrims fly into Delhi and take a train or drive down. Mathura Junction railway station is a major stop on the Delhi-Mumbai route, with over 50 daily trains stopping here.",
-      "Guruvayur Dham is located in Natwar Nagar, Dholi Pyau, just 3 km from Mathura Junction railway station. We offer free pickup from the station for guests staying 2+ nights. For those driving, free covered parking for 25+ vehicles is available on-site.",
+      "Guruvayur Dham is located in Mali Para, Dholi Pyau, just 3 km from Mathura Junction railway station. We offer free pickup from the station for guests staying 2+ nights. For those driving, free covered parking for 25+ vehicles is available on-site.",
     ],
     sections: [
       {
@@ -53,7 +53,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
           "From Agra (60 km, 1 hr via NH-19): The Agra-Mathura highway is a 4-lane road, generally in good condition. Drive through the historic city of Agra, past the Taj Mahal, and continue north. No toll. Traffic can be heavy near Agra city.",
           "From Vrindavan (15 km, 25 min): A short drive on the Mathura-Vrindavan road. Auto-rickshaws cost Rs 200-300, taxis Rs 400-600. The road is busy but well-maintained.",
           "From Jaipur (250 km, 4-5 hrs via NH-21): Drive through Bharatpur and Fetahpur Sikri. The road is scenic but narrow in places. Start early morning to avoid afternoon heat.",
-          "Guruvayur Dham offers free covered parking for 25+ vehicles. Our location in Natwar Nagar is easily accessible from all major roads entering Mathura.",
+          "Guruvayur Dham offers free covered parking for 25+ vehicles. Our location in Mali Para is easily accessible from all major roads entering Mathura.",
         ],
       },
     ],
@@ -215,8 +215,8 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
           "Krishna Janmabhoomi Temple: 3 km, 10 min. Auto: Rs 50-70. Taxi: Rs 100-150. Cycle-rickshaw: Rs 40-50 (slow but authentic experience through old city lanes).",
           "Dwarkadhish Temple: 2.5 km, 8 min. Auto: Rs 50-60. Taxi: Rs 100. Walking: 25 min through the market.",
           "Vishram Ghat: 2 km, 8 min. Auto: Rs 50. Walking: 20 min. Best visited at sunrise or sunset for Yamuna Aarti.",
-          "Geeta Mandir: 3.5 km, 12 min. Auto: Rs 60-80. Less visited, peaceful.",
-          "Guruvayur Dham (Natwar Nagar): 3 km, 10 min. Auto: Rs 60-80. Free pickup for 2+ night stays!",
+          "Birla Mandir (Geeta Mandir): 7 km, 12 min. Auto: Rs 60-80. Less visited, peaceful.",
+          "Guruvayur Dham (Mali Para): 3 km, 10 min. Auto: Rs 60-80. Free pickup for 2+ night stays!",
           "Vrindavan (Banke Bihari): 15 km, 25 min. Auto: Rs 200-300. Taxi: Rs 400-600.",
         ],
       },
@@ -527,13 +527,13 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
     eyebrow: "Itinerary Guide",
     intro: [
       "Two days is the ideal duration for a Mathura-Vrindavan pilgrimage. It gives you enough time to visit all major temples, attend the early morning Mangala Aarti, experience the evening Sandhya Aarti, and take a day trip to Vrindavan - all without rushing. This itinerary is designed for pilgrims who want a spiritual, unhurried experience.",
-      "Guruvayur Dham is the perfect base for this itinerary. Our central location in Natwar Nagar puts you 10 minutes from Krishna Janmabhoomi, 8 minutes from Dwarkadhish Temple, and 15 minutes from Vrindavan. We can arrange all transportation, pooja bookings, and guided temple tours.",
+      "Guruvayur Dham is the perfect base for this itinerary. Our central location in Mali Para puts you 10 minutes from Krishna Janmabhoomi, 8 minutes from Dwarkadhish Temple, and 15 minutes from Vrindavan. We can arrange all transportation, pooja bookings, and guided temple tours.",
     ],
     sections: [
       {
         heading: "Day 1: Mathura Temples (Arrival Day)",
         body: [
-          "5:30 AM: Arrive at Mathura Junction. Take auto to Guruvayur Dham (Rs 60-80, 10 min). Fresh up and have chai. 6:30 AM: Walk/auto to Krishna Janmabhoomi for Mangala Aarti (temple opens 5:30 AM in winter, 5:00 AM in summer). The 6:30 AM darshan is peaceful and uncrowded. 8:30 AM: Walk to Dwarkadhish Temple (2.5 km, 25 min) for Shringar Darshan (deity in elaborate dress). 9:30 AM: Breakfast at Guruvayur Dham. 10:30 AM: Visit Vishram Ghat (Yamuna riverside). 11:30 AM: Geeta Mandir (peaceful, less crowded). 12:00 PM: Lunch and rest at Guruvayur Dham. 4:00 PM: Visit local markets for Mathura peda and souvenirs. 6:30 PM: Dwarkadhish Temple for Sandhya Aarti (sunset). 7:30 PM: Dinner at Guruvayur Dham.",
+          "5:30 AM: Arrive at Mathura Junction. Take auto to Guruvayur Dham (Rs 60-80, 10 min). Fresh up and have chai. 6:30 AM: Walk/auto to Krishna Janmabhoomi for Mangala Aarti (temple opens 5:30 AM in winter, 5:00 AM in summer). The 6:30 AM darshan is peaceful and uncrowded. 8:30 AM: Walk to Dwarkadhish Temple (2.5 km, 25 min) for Shringar Darshan (deity in elaborate dress). 9:30 AM: Breakfast at Guruvayur Dham. 10:30 AM: Visit Vishram Ghat (Yamuna riverside). 11:30 AM: Birla Mandir (Geeta Mandir) (peaceful, less crowded). 12:00 PM: Lunch and rest at Guruvayur Dham. 4:00 PM: Visit local markets for Mathura peda and souvenirs. 6:30 PM: Dwarkadhish Temple for Sandhya Aarti (sunset). 7:30 PM: Dinner at Guruvayur Dham.",
         ],
       },
       {
@@ -633,7 +633,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
       {
         heading: "Half-Day Temple Tour (4 hours, starting 5:30 AM)",
         body: [
-          "5:30 AM: Krishna Janmabhoomi (Mangala Aarti - most peaceful). 7:00 AM: Walk to Dwarkadhish (2.5 km, 25 min). 8:30 AM: Dwarkadhish Shringar Darshan. 9:30 AM: Auto to Vishram Ghat (2 km, Rs 50). 10:00 AM: Vishram Ghat (Yamuna riverside). 10:30 AM: Auto to Geeta Mandir (3 km, Rs 60). 11:00 AM: Geeta Mandir (peaceful, uncrowded). 11:30 AM: Return to Guruvayur Dham. Total cost: Rs 200 (autos) + Rs 20 (shoe stands) = Rs 220.",
+          "5:30 AM: Krishna Janmabhoomi (Mangala Aarti - most peaceful). 7:00 AM: Walk to Dwarkadhish (2.5 km, 25 min). 8:30 AM: Dwarkadhish Shringar Darshan. 9:30 AM: Auto to Vishram Ghat (2 km, Rs 50). 10:00 AM: Vishram Ghat (Yamuna riverside). 10:30 AM: Auto to Birla Mandir (7 km, Rs 80). 11:00 AM: Geeta Mandir (peaceful, uncrowded). 11:30 AM: Return to Guruvayur Dham. Total cost: Rs 200 (autos) + Rs 20 (shoe stands) = Rs 220.",
         ],
       },
     ],
@@ -733,7 +733,7 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
         heading: "Top 10 Temples Ranked",
         body: [
           "1. Krishna Janmabhoomi (Mathura) - Krishna's birthplace. Most sacred. 5 AM-12 PM, 4-9:30 PM. Free entry. 2. Banke Bihari (Vrindavan) - Most famous Krishna temple. Unique curtain tradition. 7:45 AM-12 PM, 5:30-9:30 PM. 3. Dwarkadhish Temple (Mathura) - Magnificent architecture, Shringar Darshan. 6:30-10:30 AM, 4-7 PM. 4. ISKCON Temple (Vrindavan) - Krishna Balaram Mandir. Clean, international. 7:30 AM-12:30 PM, 4:30-8:30 PM. 5. Prem Mandir (Vrindavan) - Stunning white marble, light show. 5:30 AM-12 PM, 4:30-8:30 PM.",
-          "6. Vishram Ghat (Mathura) - Sacred Yamuna bathing ghat. Yamuna Aarti at sunset. Open 24 hrs. 7. Radha Rani Temple (Barsana) - Radha's birthplace. 40 km from Mathura. 8. Nanda Bhavan (Gokul) - Krishna's childhood home. 15 km from Mathura. 9. Geeta Mandir (Mathura) - Bhagavad Gita inscribed on walls. Peaceful. 6 AM-12 PM, 4-9 PM. 10. Mata Pathwari Mandir (Mathura) - Local temple, community-focused. Opposite Guruvayur Dham. 5 AM-9 PM.",
+          "6. Vishram Ghat (Mathura) - Sacred Yamuna bathing ghat. Yamuna Aarti at sunset. Open 24 hrs. 7. Radha Rani Temple (Barsana) - Radha's birthplace. 40 km from Mathura. 8. Nanda Bhavan (Gokul) - Krishna's childhood home. 15 km from Mathura. 9. Birla Mandir (Geeta Mandir) - Bhagavad Gita inscribed on walls. 6 AM-12 PM, 4-8 PM. 10. Mata Pathwari Mandir (Mathura) - Local temple, community-focused. Opposite Guruvayur Dham. 5 AM-9 PM.",
         ],
       },
     ],
@@ -806,8 +806,8 @@ export const SEO_PAGES_PHASE2: SEOPage[] = [
     ],
     faqs: [
       { q: "What is the cheapest hotel in Mathura?", a: "Guruvayur Dham offers King Deluxe rooms at Rs 1,250/night - the cheapest clean, safe, fully-AC option in Mathura. Includes 24x7 hot water, free WiFi, and daily housekeeping. Book directly for best rates." },
-      { q: "Are there AC budget hotels in Mathura under Rs 2,000?", a: "Yes, Guruvayur Dham offers Standard AC rooms at Rs 1,250/night with queen bed, AC, TV, attached bathroom, 24x7 hot water, and free WiFi. Best value AC room in Mathura." },
-      { q: "Where should I stay in Mathura for temple visits?", a: "Stay near Mata Pathwari Mandir (Natwar Nagar area) - central, quiet, and 10 min from all major temples. Guruvayur Dham is located here. Avoid the railway station area (noisy, crowded)." },
+      { q: "Are there AC budget hotels in Mathura under Rs 2,000?", a: "Yes, Guruvayur Dham offers King Deluxe rooms at Rs 1,250/night with queen bed, AC, TV, attached bathroom, 24x7 hot water, and free WiFi. Best value AC room in Mathura." },
+      { q: "Where should I stay in Mathura for temple visits?", a: "Stay near Mata Pathwari Mandir (Mali Para area) - central, quiet, and 10 min from all major temples. Guruvayur Dham is located here. Avoid the railway station area (noisy, crowded)." },
       { q: "Do Mathura budget hotels have hot water?", a: "Most budget hotels have limited hot water (6-10 AM only). Guruvayur Dham provides 24x7 hot water in all rooms. Always confirm hot water availability before booking." },
       { q: "How much do Mathura hotels cost during festivals?", a: "During Janmashtami and Holi, prices surge 2-3x. A Rs 1,250 room can cost Rs 3,500-4,500. Book 60+ days in advance at Guruvayur Dham to lock in lower rates with flexible cancellation." },
     ],
