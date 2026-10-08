@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
   today.setHours(0, 0, 0, 0);
   const forecast: Array<{ date: string; occupancy: number; booked: number; total: number }> = [];
   const totalUnits = await db.room.aggregate({ _sum: { totalUnits: true } });
-  const totalUnitsNum = totalUnits._sum.totalUnits || 52;
+  const totalUnitsNum = totalUnits._sum.totalUnits || 15;
 
   for (let i = 0; i < 14; i++) {
     const date = new Date(today);

@@ -64,7 +64,20 @@ export async function POST(req: NextRequest) {
   });
 
   // 2. Seed rooms
-  const unitCounts: Record<string, number> = { "deluxe-room": 4, "super-deluxe-room": 5, "superior-room": 5, "gvd-suite": 2 };
+  // Total = 4+4+3+2+2 = 15 rooms (matches SITE.totalRooms + all marketing copy)
+  // Distribution rationale:
+  //   - King Deluxe (entry-level, most popular): 4 units
+  //   - Premium Double Bed (family choice): 4 units
+  //   - Family Comfort Triple (small families): 3 units
+  //   - Family Suit/Quad (groups of 6-8): 2 units (higher-priced, fewer)
+  //   - Privilege Suite (premium/signature): 2 units (highest-priced, fewest)
+  const unitCounts: Record<string, number> = {
+    "super-deluxe-room": 4,            // King Deluxe
+    "superior-room": 4,                // Premium Double Bed
+    "family-comfort-triple-room": 3,   // Family Comfort Triple
+    "deluxe-room": 2,                  // Family Suit / Quad Room
+    "gvd-suite": 2,                    // Privilege Suite
+  };
   await step("Seed rooms", async () => {
     for (const r of ROOMS) {
       await db.room.upsert({

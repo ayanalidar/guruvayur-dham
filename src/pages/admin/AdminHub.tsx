@@ -159,6 +159,7 @@ function DashboardSection({ stats }: any) {
       <BookingFunnelCard />
       <PopupPerformanceCard />
       <SeoOverrideCleanupCard />
+      <RoomUnitsRefreshCard />
 
       {/* Live Activity Feed · real-time WebSocket */}
       <div className="mt-6">
@@ -2351,6 +2352,133 @@ function SeoOverrideCleanupCard() {
               <><Trash2 className="h-3.5 w-3.5" /> Clear All Overrides ({overrides.length})</>
             )}
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * 6. RoomUnitsRefreshCard - shows the current totalUnits per room in the
+ *    DB vs the canonical distribution (sum = 15). Lets admin fix the
+ *    "20 total units" → "15 total units" mismatch with one click.
+ *
+ *    The original seed (commit 7de9d0d, Sep 23) had unitCounts that
+ *    summed to 20 (4+5+5+2+4 with family-comfort-triple-room defaulting
+ *    to 4). This made the admin dashboard show "TOTAL ROOMS: 5 | 20
+ *    total units" — inconsistent with SITE.totalRooms = 15 and all
+ *    marketing copy saying "15+ Premium Rooms".
+ *
+ *    This card shows the mismatch and lets admin fix it.
+ */
+function RoomUnitsRefreshCard() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    fetch("/api/admin/refresh-rooms", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => setData(j))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => { load(); }, [load]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const refresh = async () => {
+    if (!confirm(`Update all room totalUnits to canonical values? Total will change from ${data?.currentTotalUnits} to ${data?.canonicalTotalUnits} units. This ONLY touches the totalUnits column — no other room data is affected.`)) return;
+    setRefreshing(true);
+    try {
+      const r = await fetch("/api/admin/refresh-rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        toast.success(j.message || `Updated ${j.updated} rooms · total = ${j.totalUnits} units`);
+        load();
+      } else {
+        toast.error(j.error || "Failed to refresh");
+      }
+    } catch {
+      toast.error("Network error");
+    }
+    setRefreshing(false);
+  };
+
+  const needsRefresh = data?.needsRefresh;
+  const currentTotal = data?.currentTotalUnits ?? 0;
+  const canonicalTotal = data?.canonicalTotalUnits ?? 15;
+
+  return (
+    <div className="card-luxe p-5">
+      <div className="flex items-center gap-2">
+        <BedDouble className="h-4 w-4 text-champagne" />
+        <p className="text-[10px] font-bold uppercase tracking-wider text-champagne">
+          Room Units (totalUnits)
+        </p>
+      </div>
+      <p className="mt-1 text-xs text-ivory/50">
+        Per-room-type inventory count. Sum should equal SITE.totalRooms (15).
+        Mismatches make the dashboard show wrong "total units".
+      </p>
+
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading room data…
+        </div>
+      ) : (
+        <div className="mt-4 space-y-2">
+          {/* Summary line */}
+          <div className={cn(
+            "rounded-lg border p-3 text-center",
+            needsRefresh ? "border-amber-500/20 bg-amber-500/5" : "border-green-500/20 bg-green-500/5"
+          )}>
+            <p className={cn("font-serif text-2xl", needsRefresh ? "text-amber-300" : "text-green-300")}>
+              {currentTotal} <span className="text-ivory/40">/</span> {canonicalTotal}
+            </p>
+            <p className="text-[10px] text-ivory/50">
+              {needsRefresh
+                ? `Current total is ${currentTotal} — should be ${canonicalTotal}. Click below to fix.`
+                : "Current total matches canonical (15). No action needed."}
+            </p>
+          </div>
+
+          {/* Per-room breakdown */}
+          {data?.current && (
+            <div className="rounded-lg border border-champagne/10 bg-ink/50 p-2">
+              {data.current.map((r: any, i: number) => (
+                <div key={i} className="flex items-center justify-between border-b border-champagne/5 py-1 text-[10px] last:border-0">
+                  <span className="text-ivory/70 truncate">{r.name}</span>
+                  <span className="ml-2 flex-shrink-0">
+                    <span className={cn("font-bold", r.needsUpdate ? "text-amber-300" : "text-ivory/60")}>{r.totalUnits}</span>
+                    {r.canonical !== null && r.needsUpdate && (
+                      <span className="text-ivory/40"> → {r.canonical}</span>
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {needsRefresh && (
+            <button
+              onClick={refresh}
+              disabled={refreshing}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
+            >
+              {refreshing ? (
+                <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Updating…</>
+              ) : (
+                <><RefreshCw className="h-3.5 w-3.5" /> Fix totalUnits (sum {currentTotal} → {canonicalTotal})</>
+              )}
+            </button>
+          )}
         </div>
       )}
     </div>
