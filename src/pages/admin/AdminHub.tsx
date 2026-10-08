@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, CalendarDays, FileText, BedDouble, Radio, Settings,
   Users, Utensils, Flame, Tag, TrendingUp, Building2, Image, BookOpen,
   Wrench, Receipt, Download, Bell, Bot, CloudSun, MapPin, Star, ShoppingCart,
   RefreshCw, Check, X, Plus, Phone, Mail, ExternalLink, AlertCircle,
-  ShieldCheck, Lock, SlidersHorizontal, Sparkles,
+  ShieldCheck, Lock, SlidersHorizontal, Sparkles, Trash2,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import PageHeader from "@/components/site/PageHeader";
@@ -158,6 +158,7 @@ function DashboardSection({ stats }: any) {
       <TodaysMovementsCard />
       <BookingFunnelCard />
       <PopupPerformanceCard />
+      <SeoOverrideCleanupCard />
 
       {/* Live Activity Feed · real-time WebSocket */}
       <div className="mt-6">
@@ -2220,6 +2221,136 @@ function PopupPerformanceCard() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * 5. SeoOverrideCleanupCard - shows how many seo.* content blocks in
+ *    the CMS DB are OVERRIDING the static config in src/lib/seo-pages*.ts.
+ *
+ *    When admin has previously customized an SEO landing page via
+ *    /admin/content, that customization lives in the DB and takes
+ *    precedence over the source code — EVEN AFTER a code deploy that
+ *    fixes stale data (e.g. "Natwar Nagar" → "Mali Para", "AC and
+ *    non-AC" → "AC rooms", old prices → new prices).
+ *
+ *    This card lets admin:
+ *      1. See how many overrides exist
+ *      2. Clear ALL of them with one click (so static config wins)
+ *
+ *    Clearing is reversible — admin can re-customize later via
+ *    /admin/content if they want to override specific pages again.
+ */
+function SeoOverrideCleanupCard() {
+  const [overrides, setOverrides] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    fetch("/api/admin/refresh-seo", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { setOverrides(j?.overrides || []); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  // load() calls setLoading(true) synchronously on mount; this is the
+  // standard fetch-on-mount pattern. Not a bug, just ESLint being
+  // conservative about setState-in-effect.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => { load(); }, [load]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const clearAll = async () => {
+    if (!confirm(`Clear all ${overrides.length} SEO overrides? This will make all SEO landing pages use the latest static config from the code deploy. You can re-customize later via /admin/content.`)) return;
+    setClearing(true);
+    try {
+      const r = await fetch("/api/admin/refresh-seo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        toast.success(j.message || `Cleared ${j.deleted} SEO overrides`);
+        load();
+      } else {
+        toast.error(j.error || "Failed to clear");
+      }
+    } catch {
+      toast.error("Network error");
+    }
+    setClearing(false);
+  };
+
+  return (
+    <div className="card-luxe p-5">
+      <div className="flex items-center gap-2">
+        <FileText className="h-4 w-4 text-champagne" />
+        <p className="text-[10px] font-bold uppercase tracking-wider text-champagne">
+          SEO Landing Page Overrides
+        </p>
+      </div>
+      <p className="mt-1 text-xs text-ivory/50">
+        CMS DB overrides take precedence over static config in src/lib/seo-pages*.ts.
+        If code fixes (e.g. Natwar Nagar → Mali Para, stale prices, non-AC refs) aren't
+        showing on the live site, an old DB override is blocking them.
+      </p>
+
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
+          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Loading SEO overrides…
+        </div>
+      ) : overrides.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-green-500/20 bg-green-500/5 p-3 text-center">
+          <Check className="mx-auto h-5 w-5 text-green-300" />
+          <p className="mt-1 text-xs text-green-300">No DB overrides · static config is in effect</p>
+          <p className="mt-1 text-[10px] text-ivory/40">All SEO landing pages reflect the latest code deploy.</p>
+        </div>
+      ) : (
+        <div className="mt-4 space-y-2">
+          <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+            <p className="text-sm font-semibold text-amber-300">
+              {overrides.length} SEO page{overrides.length !== 1 ? "s" : ""} with DB override
+            </p>
+            <p className="mt-1 text-[10px] text-ivory/50">
+              These DB blocks override the static config. Latest code fixes (prices, distances,
+              AC-only, Mali Para) are NOT visible on these pages until cleared.
+            </p>
+          </div>
+
+          {/* List of overrides (first 5) */}
+          <div className="max-h-32 overflow-y-auto rounded-lg border border-champagne/10 bg-ink/50 p-2">
+            {overrides.slice(0, 5).map((o, i) => (
+              <div key={i} className="flex items-center justify-between border-b border-champagne/5 py-1 text-[10px] last:border-0">
+                <span className="font-mono text-ivory/70 truncate">{o.key}</span>
+                <span className="text-ivory/40 ml-2 flex-shrink-0">
+                  {new Date(o.updatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                </span>
+              </div>
+            ))}
+            {overrides.length > 5 && (
+              <p className="pt-1 text-center text-[10px] text-ivory/40">
+                +{overrides.length - 5} more…
+              </p>
+            )}
+          </div>
+
+          <button
+            onClick={clearAll}
+            disabled={clearing}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-300 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
+          >
+            {clearing ? (
+              <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Clearing…</>
+            ) : (
+              <><Trash2 className="h-3.5 w-3.5" /> Clear All Overrides ({overrides.length})</>
+            )}
+          </button>
         </div>
       )}
     </div>
