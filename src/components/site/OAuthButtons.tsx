@@ -5,22 +5,19 @@ import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 
 /**
- * OAuthButtons — shows "Continue with Google" / "Continue with Facebook"
- * buttons. Only renders if at least one OAuth provider is configured.
+ * OAuthButtons — "Continue with Google" / "Continue with Facebook" buttons.
+ * Only renders if at least one OAuth provider is configured (checked via
+ * /api/oauth-status).
  *
- * CRITICAL FIX (this commit):
- *   Previously used window.location.assign("/api/auth/signin/google") which
- *   is a GET request. NextAuth's signin endpoint REQUIRES a POST with a
- *   CSRF token — a GET request returns 400 and redirects to /login?error=google.
+ * Uses signIn() from next-auth/react with redirect:true (default) which
+ * does a full-page form POST to /api/auth/signin/:provider with CSRF
+ * token. NextAuth redirects to Google's consent screen, then back to
+ * /dashboard after success.
  *
- *   Now uses signIn() from next-auth/react which:
- *     1. Fetches the CSRF token from /api/auth/csrf
- *     2. Creates a hidden form with csrfToken + callbackUrl + providerId
- *     3. POSTs to /api/auth/signin/:provider (correct method + CSRF)
- *     4. NextAuth redirects to Google's consent screen
- *     5. After consent, Google redirects back to /api/auth/callback/google
- *     6. NextAuth exchanges the code, creates the user, sets the session
- *     7. User is redirected to /dashboard (via callbackUrl)
+ * Previous bug: used window.location.assign (GET request) which NextAuth
+ * rejects with 400 (needs POST + CSRF). Then used redirect:false which
+ * does a fetch() instead of form submit — also unreliable for OAuth state
+ * cookie. Fixed to use redirect:true (default) = full-page form POST.
  */
 export default function OAuthButtons() {
   const [status, setStatus] = useState<any>(null);
@@ -41,30 +38,11 @@ export default function OAuthButtons() {
       return;
     }
     setLoading("google");
+    // signIn() with redirect:true (default) does a full-page form POST.
+    // The browser navigates away — the Promise never resolves on success.
+    // On error, it throws and we catch it below.
     try {
-      // signIn() from next-auth/react handles:
-      // - CSRF token fetch
-      // - POST to /api/auth/signin/google
-      // - Redirect to Google consent screen
-      // - Redirect back to callbackUrl after success
-      //
-      // On error, it returns a URL string (redirect to error page)
-      // or throws. On success, it redirects the browser (never resolves).
-      const result = await signIn("google", {
-        callbackUrl: "/dashboard",
-        redirect: false,  // don't auto-redirect — we handle it below
-      });
-
-      if (result?.error) {
-        toast.error(`Google sign-in failed: ${result.error}`);
-        setLoading(null);
-      } else if (result?.url) {
-        // Full-page redirect (not client-side router) so the session
-        // cookie from the OAuth callback is properly set by the browser.
-        window.location.href = result.url;
-      } else {
-        window.location.href = "/dashboard";
-      }
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch (e: any) {
       toast.error(`Google sign-in failed: ${e?.message || "Unknown error"}`);
       setLoading(null);
@@ -78,18 +56,7 @@ export default function OAuthButtons() {
     }
     setLoading("facebook");
     try {
-      const result = await signIn("facebook", {
-        callbackUrl: "/dashboard",
-        redirect: false,
-      });
-      if (result?.error) {
-        toast.error(`Facebook sign-in failed: ${result.error}`);
-        setLoading(null);
-      } else if (result?.url) {
-        window.location.href = result.url;
-      } else {
-        window.location.href = "/dashboard";
-      }
+      await signIn("facebook", { callbackUrl: "/dashboard" });
     } catch (e: any) {
       toast.error(`Facebook sign-in failed: ${e?.message || "Unknown error"}`);
       setLoading(null);
