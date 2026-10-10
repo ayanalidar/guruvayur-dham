@@ -133,7 +133,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/#/login",
+    // Clean URL format (the site migrated from hash routing #/login to
+    // /login). Using the old hash format would cause the router to do a
+    // hash→clean-URL migration step that loses the ?error= query param.
+    signIn: "/login",
   },
 };
 

@@ -53,12 +53,50 @@ export default function LoginPage() {
 
 
   useEffect(() => {
+    // Check for OAuth error in the URL query string (NextAuth redirects
+    // back here with ?error=google / ?error=Configuration / etc. when
+    // the OAuth flow fails). Show a toast so the user knows what happened.
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const oauthError = params.get("error");
+      if (oauthError) {
+        const errorMessages: Record<string, string> = {
+          google: "Google sign-in failed. Check that the redirect URI is set to https://www.guruvayurdham.co.in/api/auth/callback/google in Google Cloud Console.",
+          facebook: "Facebook sign-in failed. Check Facebook app configuration.",
+          Configuration: "Auth configuration error. Make sure NEXTAUTH_SECRET + GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET are set as Vercel env vars.",
+          OAuthSignin: "Could not start OAuth flow. Check GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET env vars.",
+          OAuthCallback: "OAuth callback failed. Most likely the redirect URI doesn't match Google Cloud Console settings.",
+          OAuthCreateAccount: "Could not create user account after Google sign-in.",
+          AccessDenied: "Access denied. You may not have permission.",
+        };
+        toast.error(errorMessages[oauthError] || `Sign-in error: ${oauthError}`);
+        // Clean the error from the URL so it doesn't show on refresh
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+
+      // Check if NextAuth returned an appSessionToken (from the OAuth
+      // bridge in oauth.ts). If so, set the session cookie and redirect
+      // to the dashboard.
+      const sessionToken = params.get("sessionToken");
+      if (sessionToken) {
+        document.cookie = `session_token=${sessionToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax${window.location.protocol === "https:" ? "; secure" : ""}`;
+        window.history.replaceState(null, "", window.location.pathname);
+        navigate("/dashboard");
+        return;
+      }
+    }
+
     fetch("/api/auth/session", { cache: "no-store" })
       .then(r => r.json())
       .then(j => {
         if (j.authenticated) {
           if (j.role === "GUEST") navigate("/dashboard");
           else navigate("/admin/hub");
+        } else if (j.appSessionToken) {
+          // NextAuth session returned an app session token — set the cookie
+          // so the app's own auth (getUserFromRequest) recognizes the user.
+          document.cookie = `session_token=${j.appSessionToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax${window.location.protocol === "https:" ? "; secure" : ""}`;
+          navigate(j.role === "GUEST" ? "/dashboard" : "/admin/hub");
         }
       });
   }, [navigate]);
