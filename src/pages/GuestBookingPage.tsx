@@ -82,6 +82,30 @@ export default function GuestBookingPage() {
         for (const a of j.availability || []) map[a.roomSlug] = a.days?.[0]?.available ?? 0;
         setAvailability(map);
       });
+
+    // Check for Google Hotels redirect params — when user clicks "Book
+    // Now" on Google Hotels, they arrive at /book?source=google-hotels
+    // &room=deluxe-room. Pre-select that room so they don't have to
+    // scroll through the list to find it.
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get("source");
+    const roomSlug = params.get("room");
+    if (source === "google-hotels" && roomSlug) {
+      // Pre-select 1 unit of the specified room
+      setSelectedRooms([{ slug: roomSlug, quantity: 1 }]);
+      // Track the Google Hotels source via analytics
+      fetch("/api/analytics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventType: "PAGE_VIEW",
+          page: "/book",
+          properties: { source: "google-hotels", roomSlug },
+        }),
+      }).catch(() => {});
+      // Clean the URL params (don't keep source/room in the address bar)
+      window.history.replaceState(null, "", "/book");
+    }
   }, []);
 
   // ===== Multi-room helpers =====

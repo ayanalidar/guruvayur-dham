@@ -1,4 +1,11 @@
+# Guruvayur Dham — robots.txt
+# https://www.guruvayurdham.co.in
+
+# All major crawlers allowed full access to public content
 User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
@@ -10,5 +17,52 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# All other bots — allow public content
 User-agent: *
 Allow: /
+
+# Admin pages — never index (staff-only, no SEO value, prevents
+# accidental indexing of dashboard URLs that might leak data)
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /cms
+Disallow: /cms/
+Disallow: /settings
+Disallow: /settings/
+Disallow: /reset-password
+Disallow: /login
+Disallow: /dashboard
+Disallow: /kitchen
+Disallow: /kitchen/
+Disallow: /kitchen/*
+
+# API routes — not for indexing
+Disallow: /api/
+
+# Sitemap location — Google + Bing + other engines use this to
+# discover all indexable URLs on the site. Updated dynamically at
+# /sitemap.xml (includes static routes + 40+ SEO landing pages +
+# blog posts).
+Sitemap: https://www.guruvayurdham.co.in/sitemap.xml
