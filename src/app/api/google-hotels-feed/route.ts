@@ -79,6 +79,8 @@ ${imageUrls || `        <ImageURL>${xmlEscape(r.image || "")}</ImageURL>`}
           <Price currency="INR">${price}</Price>
           ${originalPrice && originalPrice !== price ? `<OriginalPrice currency="INR">${originalPrice}</OriginalPrice>` : ""}
           <Basis>Per night</Basis>
+          <BookingURL>https://${xmlEscape(SITE.domain)}/book?source=google-hotels&room=${xmlEscape(r.slug)}</BookingURL>
+          <CancellationPolicy>Free cancellation up to 7 days before check-in.</CancellationPolicy>
         </Rate>
       </Rates>
     </RoomType>`;
@@ -119,6 +121,12 @@ ${imageUrls || `        <ImageURL>${xmlEscape(r.image || "")}</ImageURL>`}
     <PhotoURL>
       <ImageURL>https://${xmlEscape(SITE.domain)}/guruyavur.png</ImageURL>
     </PhotoURL>
+    <BookingURL>https://${xmlEscape(SITE.domain)}/book?source=google-hotels</BookingURL>
+    <DisplayBadges>
+      <DisplayBadge>Direct booking available</DisplayBadge>
+      <DisplayBadge>Instant confirmation</DisplayBadge>
+      <DisplayBadge>No booking fee</DisplayBadge>
+    </DisplayBadges>
   </Property>
   <RoomTypes>
 ${roomTypeXml}
