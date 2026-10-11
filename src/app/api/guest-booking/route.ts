@@ -147,11 +147,26 @@ export async function POST(req: NextRequest) {
   const nights = Math.round((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24));
 
   // ===== 1. CHECK AVAILABILITY =====
+  // BUG FIX: Previously, if no availability row existed for a date,
+  // the code treated it as "sold out" (av = null → !av → true).
+  // But no row means the room was never booked for that date — it
+  // should be FULLY AVAILABLE (available = room.totalUnits).
+  // Now: if no row exists, treat as fully available and create one.
   for (let i = 0; i < nights; i++) {
     const d = new Date(ci);
     d.setDate(d.getDate() + i);
-    const av = await db.availability.findUnique({ where: { roomId_date: { roomId: room.id, date: d } } });
-    if (!av || av.available <= 0) {
+    let av = await db.availability.findUnique({ where: { roomId_date: { roomId: room.id, date: d } } });
+    if (!av) {
+      // No availability row for this date — create one with full capacity
+      av = await db.availability.create({
+        data: {
+          roomId: room.id,
+          date: d,
+          available: room.totalUnits,
+        },
+      });
+    }
+    if (av.available <= 0) {
       // Auto-join waitlist
       const wl = await db.waitingList.create({
         data: {

@@ -19,10 +19,14 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
   endDate.setDate(endDate.getDate() + days);
 
   const where: any = { date: { gte: today, lt: endDate } };
+  let filterRooms;
   if (slug) {
     const room = await db.room.findUnique({ where: { slug } });
     if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
     where.roomId = room.id;
+    filterRooms = [room];
+  } else {
+    filterRooms = await db.room.findMany({ where: { active: true } });
   }
 
   const availability = await db.availability.findMany({
@@ -31,8 +35,21 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
     orderBy: { date: "asc" },
   });
 
-  // Group by room
+  // Group by room — include ALL active rooms (even if no availability
+  // rows exist for them, which means they're fully available)
   const byRoom: Record<string, any> = {};
+
+  // First, initialize all rooms with default "fully available" status
+  for (const r of filterRooms) {
+    byRoom[r.slug] = {
+      roomSlug: r.slug,
+      roomName: r.name,
+      totalUnits: r.totalUnits,
+      days: [],
+    };
+  }
+
+  // Then, overlay actual availability data where it exists
   for (const a of availability) {
     const key = a.room.slug;
     if (!byRoom[key]) {
@@ -48,6 +65,19 @@ export const GET = withErrorHandler(async (req: NextRequest) => {
       available: a.available,
       isAvailable: a.available > 0,
     });
+  }
+
+  // For rooms with no availability rows, add a "fully available" day entry
+  // so the frontend shows them as bookable (not "SOLD OUT")
+  for (const slug of Object.keys(byRoom)) {
+    const room = byRoom[slug];
+    if (room.days.length === 0) {
+      room.days.push({
+        date: today.toISOString().slice(0, 10),
+        available: room.totalUnits,
+        isAvailable: true,
+      });
+    }
   }
 
   return NextResponse.json({
