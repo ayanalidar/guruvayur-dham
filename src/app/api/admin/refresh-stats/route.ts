@@ -37,6 +37,9 @@ const CANONICAL_STATS = [
   { key: "homepage.stats.years", value: "5", label: "Homepage Stat · Years of Service" },
   { key: "homepage.stats.guests", value: "10000", label: "Homepage Stat · Happy Guests" },
   { key: "homepage.stats.rating", value: "4.8", label: "Homepage Stat · Google Rating" },
+  // Also fix stale contact values (the original seed had 12:00 PM check-in)
+  { key: "contact.checkIn", value: "11:30 AM", label: "Check-in Time" },
+  { key: "contact.checkOut", value: "11:00 AM", label: "Check-out Time" },
 ];
 
 export async function POST(req: NextRequest) {
