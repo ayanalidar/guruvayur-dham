@@ -297,6 +297,13 @@ export const DEFAULT_SETTINGS = [
   { key: "GOOGLE_PLACES_API_KEY", label: "Google Places API Key (reviews)", category: "INTEGRATION", isSecret: true },
   { key: "GOOGLE_PLACE_ID", label: "Google Business Profile Place ID (for live rating + reviews)", category: "INTEGRATION", isSecret: false },
   { key: "GOOGLE_BUSINESS_PROFILE_URL", label: "Google Business Profile URL (public reviews link)", category: "INTEGRATION", isSecret: false },
+  // iCal feeds — OTA export URLs that our system imports to see their bookings
+  { key: "ICAL_BOOKING_COM_URL", label: "Booking.com iCal Export URL (from Extranet → Calendar → Export)", category: "INTEGRATION", isSecret: false },
+  { key: "ICAL_AGODA_URL", label: "Agoda iCal Export URL (from Extranet → Calendar → Export)", category: "INTEGRATION", isSecret: false },
+  { key: "ICAL_AIRBNB_URL", label: "Airbnb iCal Export URL (from Listings → Calendar → Export)", category: "INTEGRATION", isSecret: false },
+  { key: "ICAL_EXPEDIA_URL", label: "Expedia iCal Export URL (from Extranet → Calendar → Export)", category: "INTEGRATION", isSecret: false },
+  // iCal sync master switch
+  { key: "ICAL_SYNC_ENABLED", label: "Enable iCal Auto-Sync (cron polls OTA feeds every 10 min)", category: "INTEGRATION", isSecret: false },
   { key: "UPSTASH_REDIS_REST_URL", label: "Upstash Redis REST URL", category: "INTEGRATION", isSecret: true },
   { key: "UPSTASH_REDIS_REST_TOKEN", label: "Upstash Redis REST Token", category: "INTEGRATION", isSecret: true },
   { key: "BLOB_READ_WRITE_TOKEN", label: "Vercel Blob Token (image uploads)", category: "INTEGRATION", isSecret: true },

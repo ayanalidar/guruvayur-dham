@@ -5,5 +5,10 @@
       "destination": "/"
     }
   ],
-  "crons": []
+  "crons": [
+    {
+      "path": "/api/ical/import",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }
