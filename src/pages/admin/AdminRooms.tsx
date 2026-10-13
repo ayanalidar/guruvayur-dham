@@ -49,6 +49,9 @@ export default function AdminRooms() {
     if (!d) return;
     const data: any = { price: parseInt(d.price) || 0, totalUnits: parseInt(d.totalUnits) || 1, name: d.name, shortDesc: d.shortDesc };
     if (d.originalPrice) data.originalPrice = parseInt(d.originalPrice);
+    // Convert textarea newline text to JSON arrays for gallery + amenities
+    if (d.gallery !== undefined) data.gallery = JSON.stringify(d.gallery.split("\n").map((s: string) => s.trim()).filter(Boolean));
+    if (d.amenities !== undefined) data.amenities = JSON.stringify(d.amenities.split("\n").map((s: string) => s.trim()).filter(Boolean));
     try {
       await updateRoom(id, data);
       toast.success("Room updated. Changes are live on the website.");
@@ -122,6 +125,27 @@ export default function AdminRooms() {
                         <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Short Description (shown on room cards)</Label>
                         <Input value={d.shortDesc || ""} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, shortDesc: e.target.value } })} />
                       </div>
+
+                      {/* Full Description */}
+                      <div className="space-y-1 mb-4">
+                        <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Description (room detail page)</Label>
+                        <textarea value={d.description || ""} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, description: e.target.value } })} rows={3} placeholder="Detailed room description..." className="w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
+                      </div>
+
+                      {/* Gallery Images */}
+                      <div className="space-y-1 mb-4">
+                        <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Gallery Images (one URL per line)</Label>
+                        <textarea value={(Array.isArray(room.gallery) ? room.gallery.join("\n") : room.gallery || "").toString()} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, gallery: e.target.value } })} rows={4} placeholder={"/rooms/room-1.jpg\n/rooms/room-2.jpg"} className="w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-xs text-ivory focus:border-champagne/40 focus:outline-none" />
+                        <p className="text-[10px] text-ivory/40">Each line = one image URL. Shown on room detail page thumbnail strip.</p>
+                      </div>
+
+                      {/* Amenities */}
+                      <div className="space-y-1 mb-4">
+                        <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Amenities (one per line)</Label>
+                        <textarea value={(Array.isArray(room.amenities) ? room.amenities.join("\n") : room.amenities || "").toString()} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, amenities: e.target.value } })} rows={5} placeholder={"King-Size Bed\nFully Air-Conditioned\nFree High-Speed Wi-Fi"} className="w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-xs text-ivory focus:border-champagne/40 focus:outline-none" />
+                        <p className="text-[10px] text-ivory/40">Each line = one amenity. Shown on room cards + detail page.</p>
+                      </div>
+
                       <div className="flex flex-wrap gap-4 pt-2 text-xs text-ivory/50">
                         <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {room.capacity} guests</span>
                         <span className="inline-flex items-center gap-1"><IndianRupee className="h-3 w-3" /> {room.rates?.length || 0} rate plans</span>

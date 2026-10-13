@@ -46,6 +46,10 @@ import AdminBookings from "@/pages/admin/AdminBookings";
 import AdminContent from "@/pages/admin/AdminContent";
 import AdminRooms from "@/pages/admin/AdminRooms";
 import AdminChannels from "@/pages/admin/AdminChannels";
+import AdminCoupons from "@/pages/admin/AdminCoupons";
+import AdminPoojas from "@/pages/admin/AdminPoojas";
+import AdminFAQs from "@/pages/admin/AdminFAQs";
+import AdminEvents from "@/pages/admin/AdminEvents";
 import AdminHub from "@/pages/admin/AdminHub";
 import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
 import MaintenancePage from "@/pages/MaintenancePage";
@@ -153,6 +157,10 @@ export default function Home() {
     if (path === "/admin/content") return <AdminGuard roles={["MANAGER"]} ><AdminContent /></AdminGuard>;
     if (path === "/admin/rooms") return <AdminGuard><AdminRooms /></AdminGuard>;
     if (path === "/admin/channels") return <AdminGuard><AdminChannels /></AdminGuard>;
+    if (path === "/admin/coupons") return <AdminGuard><AdminCoupons /></AdminGuard>;
+    if (path === "/admin/poojas") return <AdminGuard><AdminPoojas /></AdminGuard>;
+    if (path === "/admin/faqs") return <AdminGuard><AdminFAQs /></AdminGuard>;
+    if (path === "/admin/events") return <AdminGuard><AdminEvents /></AdminGuard>;
     return <NotFound />;
   };
 
