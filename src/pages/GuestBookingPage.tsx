@@ -555,6 +555,10 @@ export default function GuestBookingPage() {
                               {formatINR(r.price)}
                               <span className="text-xs text-ivory/40">/night</span>
                             </p>
+                            {/* OTA Commission Savings Display */}
+                            <p className="mt-0.5 text-[10px] font-semibold text-green-400">
+                              Save {formatINR(Math.round(r.price * 0.18))}/night vs Booking.com/MMT (no 18% commission)
+                            </p>
                           </div>
                           {av !== undefined && (
                             <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", soldOut ? "bg-red-500/15 text-red-300" : "bg-green-500/15 text-green-300")}>

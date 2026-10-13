@@ -33,6 +33,7 @@ const SECTIONS = [
   { key: "poojas-admin", label: "Poojas", icon: Flame, route: "/admin/poojas" },
   { key: "faqs", label: "FAQs", icon: FileText, route: "/admin/faqs" },
   { key: "events-admin", label: "Events", icon: CalendarDays, route: "/admin/events" },
+  { key: "checkin-register", label: "Check-in Register", icon: FileText, route: "/admin/checkin-register" },
   { key: "channels", label: "Channels", icon: Radio, route: "/admin/channels" },
   { key: "blog", label: "Blog CMS", icon: BookOpen },
   { key: "gallery", label: "Gallery CMS", icon: Image },

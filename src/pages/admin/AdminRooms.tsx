@@ -288,7 +288,6 @@ export default function AdminRooms() {
                       </div>
 
                       {/* Full Description */}
-<<<<<<< HEAD
                       <div className="space-y-1 mb-4">
                         <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Description (room detail page)</Label>
                         <textarea value={d.description || ""} onChange={(e) => setDrafts({ ...drafts, [room.id]: { ...d, description: e.target.value } })} rows={3} placeholder="Detailed room description..." className="w-full rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:border-champagne/40 focus:outline-none" />
@@ -308,21 +307,8 @@ export default function AdminRooms() {
                         <p className="text-[10px] text-ivory/40">Each line = one amenity. Shown on room cards + detail page.</p>
                       </div>
 
-                      <div className="flex flex-wrap gap-4 pt-2 text-xs text-ivory/50">
-=======
-                      <div className="mb-4 space-y-1">
-                        <Label className="text-[10px] uppercase tracking-wider text-ivory/50">Full Description (shown on room detail page)</Label>
-                        <Textarea
-                          value={d.description || ""}
-                          onChange={(e) => updateDraft(room.id, "description", e.target.value)}
-                          rows={4}
-                          placeholder="Detailed room description..."
-                        />
-                      </div>
-
                       {/* Stats footer */}
                       <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-ivory/50">
->>>>>>> a967384b06014e0055a770f5984ca9e30b8181fc
                         <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {room.capacity} guests</span>
                         <span className="inline-flex items-center gap-1"><IndianRupee className="h-3 w-3" /> {room.rates?.length || 0} rate plans</span>
                         <span className="inline-flex items-center gap-1"><Check className="h-3 w-3 text-green-400" /> {room.active ? "Active" : "Inactive"}</span>

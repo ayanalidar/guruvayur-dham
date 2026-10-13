@@ -9,6 +9,10 @@
     {
       "path": "/api/ical/import",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/reviews/checkout-funnel",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

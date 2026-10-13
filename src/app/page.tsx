@@ -50,6 +50,7 @@ import AdminCoupons from "@/pages/admin/AdminCoupons";
 import AdminPoojas from "@/pages/admin/AdminPoojas";
 import AdminFAQs from "@/pages/admin/AdminFAQs";
 import AdminEvents from "@/pages/admin/AdminEvents";
+import AdminCheckinRegister from "@/pages/admin/AdminCheckinRegister";
 import AdminHub from "@/pages/admin/AdminHub";
 import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
 import MaintenancePage from "@/pages/MaintenancePage";
@@ -161,6 +162,7 @@ export default function Home() {
     if (path === "/admin/poojas") return <AdminGuard><AdminPoojas /></AdminGuard>;
     if (path === "/admin/faqs") return <AdminGuard><AdminFAQs /></AdminGuard>;
     if (path === "/admin/events") return <AdminGuard><AdminEvents /></AdminGuard>;
+    if (path === "/admin/checkin-register") return <AdminGuard><AdminCheckinRegister /></AdminGuard>;
     return <NotFound />;
   };
 
