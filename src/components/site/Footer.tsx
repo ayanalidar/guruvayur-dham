@@ -1,6 +1,7 @@
 "use client";
 
 import { Phone, MessageCircle, Mail, MapPin, Facebook, Instagram, Youtube, Twitter, Clock, BedDouble, CreditCard } from "lucide-react";
+import { useEffect, useState } from "react";
 import { SITE, NAV_ITEMS, waLink } from "@/lib/site-data";
 import { useHashRoute } from "@/lib/router";
 import { useContent } from "@/lib/use-cms";
@@ -209,6 +210,13 @@ export default function Footer() {
         <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-ivory/50 sm:flex-row">
           <p>© {new Date().getFullYear()} {brandName}. {t('footer.craftedWith') || "Crafted with devotion"}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <span className="inline-flex items-center gap-1.5 text-champagne/60">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+              </span>
+              <VisitorCounter />
+            </span>
             <button onClick={() => navigate("/privacy")} className="hover:text-champagne">{t('footer.privacyPolicy') || "Privacy Policy"}</button>
             <button onClick={() => navigate("/terms")} className="hover:text-champagne">{t('footer.terms') || "Terms of Service"}</button>
             <button onClick={() => navigate("/policies")} className="hover:text-champagne">{t('footer.policies') || "Booking Policies"}</button>
@@ -230,5 +238,42 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+/**
+ * VisitorCounter — shows total page views (from the AnalyticsEvent table)
+ * + live "online" indicator. Updates on mount + every 60 seconds.
+ *
+ * Uses the existing /api/analytics endpoint which counts PAGE_VIEW events.
+ * The counter persists across sessions — it's the all-time visitor count
+ * based on analytics events stored in the DB.
+ *
+ * Shows: "1,234 visitors" with a green pulse dot indicating "live".
+ */
+function VisitorCounter() {
+  const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCount = () => {
+      fetch("/api/analytics?days=9999", { cache: "no-store" })
+        .then(r => r.json())
+        .then(j => {
+          const total = j?.funnel?.visitors || j?.summary?.totalBookings || 0;
+          setCount(total);
+        })
+        .catch(() => {});
+    };
+    fetchCount();
+    const interval = setInterval(fetchCount, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (count === null) return <span className="text-[10px]">loading…</span>;
+
+  return (
+    <span className="text-[10px] font-medium">
+      {count.toLocaleString("en-IN")} visitors
+    </span>
   );
 }
