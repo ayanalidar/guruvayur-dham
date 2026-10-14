@@ -372,7 +372,7 @@ export default function GuestBookingPage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               roomSlug: sel.slug,
-              guestName, guestPhone, guestEmail,
+              guestName, guestPhone, guestEmail: guestEmail || undefined,
               guestGSTIN: guestGSTIN || undefined,
               guestAddress: guestAddress || undefined,
               arrivalTime: arrivalTime || undefined,
