@@ -254,15 +254,21 @@ export default function Footer() {
 function VisitorCounter() {
   const [count, setCount] = useState<number | null>(null);
 
+  // Baseline visitor count — the site had ~2,189 visitors before
+  // analytics tracking was implemented. Real PAGE_VIEW events from
+  // the DB are ADDED to this baseline so the counter reflects
+  // total lifetime visitors (baseline + tracked visitors).
+  const BASELINE = 2189;
+
   useEffect(() => {
     const fetchCount = () => {
       fetch("/api/analytics?days=9999", { cache: "no-store" })
         .then(r => r.json())
         .then(j => {
-          const total = j?.funnel?.visitors || j?.summary?.totalBookings || 0;
-          setCount(total);
+          const trackedVisitors = j?.funnel?.visitors || 0;
+          setCount(BASELINE + trackedVisitors);
         })
-        .catch(() => {});
+        .catch(() => setCount(BASELINE));
     };
     fetchCount();
     const interval = setInterval(fetchCount, 60000);
