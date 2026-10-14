@@ -279,12 +279,11 @@ export const DEFAULT_SETTINGS = [
   { key: "WHATSAPP_PHONE_NUMBER_ID", label: "WhatsApp Phone Number ID", category: "INTEGRATION", isSecret: true },
   { key: "WHATSAPP_ACCESS_TOKEN", label: "WhatsApp Access Token", category: "INTEGRATION", isSecret: true },
   { key: "WHATSAPP_APP_SECRET", label: "WhatsApp App Secret (webhook signature)", category: "INTEGRATION", isSecret: true },
-  { key: "SMTP_HOST", label: "SMTP Host", category: "INTEGRATION", isSecret: false },
-  { key: "SMTP_PORT", label: "SMTP Port", category: "INTEGRATION", isSecret: false },
-  { key: "SMTP_USER", label: "SMTP User", category: "INTEGRATION", isSecret: true },
-  { key: "SMTP_PASS", label: "SMTP Password", category: "INTEGRATION", isSecret: true },
-  { key: "FROM_EMAIL", label: "From Email Address", category: "INTEGRATION", isSecret: false },
-  // Hostinger Mail API (preferred over SMTP - 1 token + mailbox ID vs 5 SMTP vars)
+  // SMTP settings REMOVED — Hostinger Mail API replaces them entirely.
+  // Only 2 keys needed: HOSTINGER_MAIL_TOKEN + HOSTINGER_MAILBOX_ID.
+  // (SMTP fallback still exists in email.ts code for backward compat, but
+  // these settings are no longer shown in the admin UI to avoid confusion.)
+  // Hostinger Mail API (preferred — replaces SMTP entirely)
   { key: "HOSTINGER_MAIL_TOKEN", label: "Hostinger Mail API Token", category: "INTEGRATION", isSecret: true },
   { key: "HOSTINGER_MAILBOX_ID", label: "Hostinger Mailbox Resource ID", category: "INTEGRATION", isSecret: false },
   { key: "HOSTINGER_MAIL_DISPLAY_NAME", label: "Hostinger Mail Display Name", category: "INTEGRATION", isSecret: false },
@@ -314,7 +313,8 @@ export const DEFAULT_SETTINGS = [
   { key: "GOOGLE_CLIENT_SECRET", label: "Google OAuth Client Secret", category: "INTEGRATION", isSecret: true },
   { key: "FACEBOOK_CLIENT_ID", label: "Facebook OAuth Client ID", category: "INTEGRATION", isSecret: true },
   { key: "FACEBOOK_CLIENT_SECRET", label: "Facebook OAuth Client Secret", category: "INTEGRATION", isSecret: true },
-  { key: "CRON_SECRET", label: "Cron Secret (review funnel protection)", category: "SECRET", isSecret: true },
+  { key: "CRON_SECRET", label: "Cron Secret (review funnel + iCal cron auth)", category: "SECRET", isSecret: true },
+  { key: "WEBHOOK_SECRET", label: "Email Webhook Secret (for /webhook/ram auth)", category: "SECRET", isSecret: true },
 ];
 
 export const DEFAULT_FEATURE_FLAGS = [
