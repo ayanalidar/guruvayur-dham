@@ -31,6 +31,20 @@ import { withRetry } from "@/lib/retry";
  *   - ?hours=2   - override the hours-after-checkout window (default: 2)
  */
 
+/**
+ * GET /api/reviews/checkout-funnel
+ * Same as POST — for external cron services (cron-job.org) that send GET.
+ * Also accepts ?key=CRON_SECRET for auth (cron-job.org doesn't send headers).
+ */
+export async function GET(req: NextRequest) {
+  // Add ?key= to authorization header for the POST handler
+  const queryKey = req.nextUrl.searchParams.get("key") || "";
+  if (queryKey && !req.headers.get("authorization")) {
+    req.headers.set("authorization", `Bearer ${queryKey}`);
+  }
+  return POST(req);
+}
+
 export async function POST(req: NextRequest) {
   // CRON_SECRET check - fail-closed (if secret is unset, refuse all requests).
   // This prevents unauthorized triggering of WhatsApp review messages.

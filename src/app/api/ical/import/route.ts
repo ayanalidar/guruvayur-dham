@@ -50,11 +50,31 @@ const OTA_CONFIG: Array<{
   { settingKey: "ICAL_EXPEDIA_URL", source: "WALKIN", label: "Expedia" }, // Expedia maps to WALKIN
 ];
 
+/**
+ * GET /api/ical/import
+ * Same as POST but for external cron services (cron-job.org) that send GET.
+ * Calls the import logic with no body (use canonical defaults).
+ */
+export async function GET(req: NextRequest) {
+  // Reuse the POST logic by calling it with an empty body
+  return POST(new NextRequest(req.url, {
+    method: "POST",
+    headers: req.headers,
+    body: JSON.stringify({}),
+  }));
+}
+
 export async function POST(req: NextRequest) {
-  // Auth: either staff OR cron secret
-  const cronSecret = req.headers.get("x-cron-secret");
+  // Auth: either staff OR cron secret (multiple methods for compat)
   const expectedCronSecret = process.env.CRON_SECRET;
-  const isCron = cronSecret && expectedCronSecret && cronSecret === expectedCronSecret;
+  const headerSecret = req.headers.get("x-cron-secret") || "";
+  const bearerToken = (req.headers.get("authorization") || "").replace("Bearer ", "");
+  const queryKey = req.nextUrl.searchParams.get("key") || "";
+  const isCron = expectedCronSecret && (
+    headerSecret === expectedCronSecret ||
+    bearerToken === expectedCronSecret ||
+    queryKey === expectedCronSecret
+  );
 
   if (!isCron) {
     const { error } = await requireStaff(req);
