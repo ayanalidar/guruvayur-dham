@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
   const endDate = new Date(startDate); endDate.setDate(endDate.getDate() + days);
 
   try {
-    const bookings = await db.booking.findMany({
+    const bookings = await db.booking.findMany({ take: 100,
       where: { AND: [{ checkIn: { lt: endDate } }, { checkOut: { gt: startDate } }, { status: { not: "CANCELLED" } }] },
       include: { room: true },
       orderBy: { checkIn: "asc" },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+// framer-motion removed for admin performance — admin pages don't need animations
 import {
   LayoutDashboard, CalendarDays, FileText, BedDouble, Radio, Settings,
   Users, Utensils, Flame, Tag, TrendingUp, Building2, Image, BookOpen,
@@ -1027,7 +1027,7 @@ function ReviewsSection() {
 
       {/* Add review form */}
       {showAdd && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-6 overflow-hidden">
+        <div className="mt-6 overflow-hidden">
           <div className="card-luxe p-5">
             <h3 className="font-serif text-lg text-ivory">Add New Review</h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -1063,7 +1063,7 @@ function ReviewsSection() {
               <button onClick={() => setShowAdd(false)} className="btn-ghost-luxe">Cancel</button>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Pending reviews (guest-submitted, awaiting moderation) */}
@@ -1238,7 +1238,7 @@ function AnalyticsSection() {
                 <span className="text-ivory">{s.value} <span className="text-xs text-ivory/40">({s.pct}%)</span></span>
               </div>
               <div className="mt-1 h-3 overflow-hidden rounded-full bg-ink">
-                <motion.div initial={{ width: 0 }} animate={{ width: `${s.pct}%` }} transition={{ duration: 0.8 }} className={cn("h-full rounded-full bg-gradient-to-r", s.color)} />
+                <div className={cn("h-full rounded-full bg-gradient-to-r", s.color)} style={{ width: `${s.pct}%` }} />
               </div>
             </div>
           ))}

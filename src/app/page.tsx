@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useHashRoute } from "@/lib/router";
 import { useAnalytics } from "@/lib/use-analytics";
 import { useWebVitals } from "@/lib/use-web-vitals";
@@ -14,48 +13,52 @@ import AdminGuard from "@/components/site/AdminGuard";
 import PWAEnhancements from "@/components/site/PWAEnhancements";
 import CookieConsent from "@/components/site/CookieConsent";
 import { PageLoader } from "@/components/site/visuals";
-
-import HomePage from "@/pages/HomePage";
-import RoomsPage from "@/pages/RoomsPage";
-import RoomDetailPage from "@/pages/RoomDetailPage";
-import PoojaPage from "@/pages/PoojaPage";
-import AboutPage from "@/pages/AboutPage";
-import GalleryPage from "@/pages/GalleryPage";
-import EventsPage from "@/pages/EventsPage";
-import BlogPage from "@/pages/BlogPage";
-import BlogPostPage from "@/pages/BlogPostPage";
-import FAQPage from "@/pages/FAQPage";
-import ContactPage from "@/pages/ContactPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import TermsPage from "@/pages/TermsPage";
-import GuestBookingPage from "@/pages/GuestBookingPage";
-import KitchenOrderPage from "@/pages/KitchenOrderPage";
-import VirtualTourPage from "@/pages/VirtualTourPage";
-import PilgrimagePlannerPage from "@/pages/PilgrimagePlannerPage";
-import LoginPage from "@/pages/LoginPage";
-import DashboardPage from "@/pages/DashboardPage";
-import ReviewSubmitPage from "@/pages/ReviewSubmitPage";
-import InfluencerPortalPage from "@/pages/InfluencerPortalPage";
-import PolicyPage from "@/pages/PolicyPage";
-import SettingsPage from "@/pages/SettingsPage";
-import CMSPage from "@/pages/CMSPage";
-import SEOPage from "@/pages/SEOPage";
-import { SEO_PAGE_SLUGS } from "@/lib/seo-pages";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminBookings from "@/pages/admin/AdminBookings";
-import AdminContent from "@/pages/admin/AdminContent";
-import AdminRooms from "@/pages/admin/AdminRooms";
-import AdminChannels from "@/pages/admin/AdminChannels";
-import AdminCoupons from "@/pages/admin/AdminCoupons";
-import AdminPoojas from "@/pages/admin/AdminPoojas";
-import AdminFAQs from "@/pages/admin/AdminFAQs";
-import AdminEvents from "@/pages/admin/AdminEvents";
-import AdminCheckinRegister from "@/pages/admin/AdminCheckinRegister";
-import AdminHub from "@/pages/admin/AdminHub";
-import AdminSystemSettings from "@/pages/admin/AdminSystemSettings";
-import MaintenancePage from "@/pages/MaintenancePage";
 import FestivalBanner from "@/components/site/FestivalBanner";
 import PopupCoordinator from "@/components/site/popups/PopupCoordinator";
+import { SEO_PAGE_SLUGS } from "@/lib/seo-pages";
+
+// === LAZY LOAD ALL PAGES ===
+// Each page is loaded on-demand when the user navigates to it.
+// This splits the JS bundle into per-page chunks instead of loading
+// all 38 pages upfront (which was causing massive lag on first load).
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const RoomsPage = lazy(() => import("@/pages/RoomsPage"));
+const RoomDetailPage = lazy(() => import("@/pages/RoomDetailPage"));
+const PoojaPage = lazy(() => import("@/pages/PoojaPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const GalleryPage = lazy(() => import("@/pages/GalleryPage"));
+const EventsPage = lazy(() => import("@/pages/EventsPage"));
+const BlogPage = lazy(() => import("@/pages/BlogPage"));
+const BlogPostPage = lazy(() => import("@/pages/BlogPostPage"));
+const FAQPage = lazy(() => import("@/pages/FAQPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
+const GuestBookingPage = lazy(() => import("@/pages/GuestBookingPage"));
+const KitchenOrderPage = lazy(() => import("@/pages/KitchenOrderPage"));
+const VirtualTourPage = lazy(() => import("@/pages/VirtualTourPage"));
+const PilgrimagePlannerPage = lazy(() => import("@/pages/PilgrimagePlannerPage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const ReviewSubmitPage = lazy(() => import("@/pages/ReviewSubmitPage"));
+const InfluencerPortalPage = lazy(() => import("@/pages/InfluencerPortalPage"));
+const PolicyPage = lazy(() => import("@/pages/PolicyPage"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const CMSPage = lazy(() => import("@/pages/CMSPage"));
+const SEOPage = lazy(() => import("@/pages/SEOPage"));
+const MaintenancePage = lazy(() => import("@/pages/MaintenancePage"));
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const AdminBookings = lazy(() => import("@/pages/admin/AdminBookings"));
+const AdminContent = lazy(() => import("@/pages/admin/AdminContent"));
+const AdminRooms = lazy(() => import("@/pages/admin/AdminRooms"));
+const AdminChannels = lazy(() => import("@/pages/admin/AdminChannels"));
+const AdminCoupons = lazy(() => import("@/pages/admin/AdminCoupons"));
+const AdminPoojas = lazy(() => import("@/pages/admin/AdminPoojas"));
+const AdminFAQs = lazy(() => import("@/pages/admin/AdminFAQs"));
+const AdminEvents = lazy(() => import("@/pages/admin/AdminEvents"));
+const AdminCheckinRegister = lazy(() => import("@/pages/admin/AdminCheckinRegister"));
+const AdminHub = lazy(() => import("@/pages/admin/AdminHub"));
+const AdminSystemSettings = lazy(() => import("@/pages/admin/AdminSystemSettings"));
 
 function NotFound() {
   const { navigate } = useHashRoute();
@@ -80,37 +83,24 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
-  // Check maintenance mode on mount + every 60 seconds.
-  // SAFETY: any fetch error OR malformed response keeps the site online.
-  // The MAINTENANCE_MODE flag is ONLY honored when the API explicitly returns
-  // { enabled: true } from a reachable DB. Default state is `false`.
   useEffect(() => {
     const checkMaintenance = () => {
       fetch("/api/maintenance/mode", { cache: "no-store" })
         .then(r => r.ok ? r.json() : null)
         .then(j => {
-          // Only set to true if the API explicitly says so.
-          // Missing field / null response / network error → stays false.
           if (j && j.enabled === true) setMaintenanceMode(true);
           else setMaintenanceMode(false);
         })
-        .catch(() => {
-          // Network/DB failure - keep the site online.
-          setMaintenanceMode(false);
-        });
+        .catch(() => setMaintenanceMode(false));
     };
     checkMaintenance();
     const interval = setInterval(checkMaintenance, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Route matching
   const renderPage = () => {
-    // Maintenance mode: show holding page for guests, but allow admin
     const isAdminRoute = path.startsWith("/admin") || path === "/login" || path === "/reset-password" || path === "/cms" || path === "/settings";
-    if (maintenanceMode && !isAdminRoute) {
-      return <MaintenancePage />;
-    }
+    if (maintenanceMode && !isAdminRoute) return <MaintenancePage />;
     if (path === "/" || path === "") return <HomePage />;
     if (path === "/rooms") return <RoomsPage />;
     if (path.startsWith("/rooms/")) {
@@ -138,19 +128,15 @@ export default function Home() {
     if (path === "/review") return <ReviewSubmitPage />;
     if (path === "/influencer") return <InfluencerPortalPage />;
     if (path === "/policies") return <PolicyPage />;
-    // SEO landing pages (festivals, hotels-near, darshan-timings)
-    // Router returns paths with a leading slash (e.g. "/janmashtami"),
-    // but SEO_PAGE_SLUGS has no slash (e.g. "janmashtami"), so strip it.
     if (SEO_PAGE_SLUGS.includes(path.replace(/^\//, ""))) return <SEOPage slug={path.replace(/^\//, "")} />;
     if (path === "/settings") return <AdminGuard><SettingsPage /></AdminGuard>;
     if (path === "/cms") return <AdminGuard><CMSPage /></AdminGuard>;
-    if (path === "/reset-password") return <LoginPage />; // handled via query param
+    if (path === "/reset-password") return <LoginPage />;
     if (path.startsWith("/kitchen/")) {
       const room = path.replace("/kitchen/", "");
       return <KitchenOrderPage roomNumber={room} />;
     }
     if (path === "/kitchen") return <KitchenOrderPage />;
-    // Admin routes · protected by AdminGuard
     if (path === "/admin") return <AdminGuard><AdminDashboard /></AdminGuard>;
     if (path === "/admin/hub") return <AdminGuard><AdminHub /></AdminGuard>;
     if (path === "/admin/system") return <AdminGuard><AdminSystemSettings /></AdminGuard>;
@@ -166,29 +152,24 @@ export default function Home() {
     return <NotFound />;
   };
 
-  // Hide navbar/footer on login page (full-screen split layout)
   const isLoginPage = path === "/login";
   const isResetPage = path === "/reset-password";
 
   return (
     <>
-      <AnimatePresence>{loading && <PageLoader onDone={() => setLoading(false)} />}</AnimatePresence>
-
-      {!isLoginPage && !isResetPage && <FestivalBanner />}
-      {!isLoginPage && <Navbar />}
-      <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>
-        <AnimatePresence mode="wait">
-          <div key={path}>{renderPage()}</div>
-        </AnimatePresence>
-      </main>
-      {!isLoginPage && <Footer />}
-      {!isLoginPage && <FloatingActions />}
-      {!isLoginPage && <WhatsAppChat />}
-      <PWAEnhancements />
-      <CookieConsent />
-      {/* Popups: Festival Countdown + First-Visit Welcome.
-          Coordinator handles priority + suppresses on admin/login/book routes. */}
-      <PopupCoordinator />
+      <Suspense fallback={<PageLoader onDone={() => setLoading(false)} />}>
+        {!isLoginPage && !isResetPage && <FestivalBanner />}
+        {!isLoginPage && <Navbar />}
+        <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>
+          {renderPage()}
+        </main>
+        {!isLoginPage && <Footer />}
+        {!isLoginPage && <FloatingActions />}
+        {!isLoginPage && <WhatsAppChat />}
+        <PWAEnhancements />
+        <CookieConsent />
+        <PopupCoordinator />
+      </Suspense>
     </>
   );
 }
