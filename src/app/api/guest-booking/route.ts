@@ -650,11 +650,20 @@ async function sendBookingConfirmationEmail(
   _bookingRef: string,
   bookingId?: string,
 ): Promise<void> {
-  if (!to) return;
+  // Hotel notification addresses — every booking confirmation is BCC'd
+  // to both so the hotel always receives a copy, even if the guest
+  // didn't provide an email (in that case, the email goes ONLY to
+  // the hotel addresses).
+  const HOTEL_EMAILS = [
+    "bookings@guruvayurdham.co.in",
+    "guruvayurdham@gmail.com",
+  ];
+
+  // If guest has no email, send ONLY to hotel addresses
+  const recipients = to ? [to] : [];
+  const bccRecipients = to ? HOTEL_EMAILS : HOTEL_EMAILS;
 
   // ── Generate the invoice PDF to attach (if we have a bookingId) ────
-  // Wrap in try/catch - if PDF generation fails for any reason, the email
-  // still sends without the attachment (better than no email at all).
   let pdfAttachment: { filename: string; contentType: string; content: string } | null = null;
   let invoiceNumber = "";
   if (bookingId) {
@@ -668,20 +677,16 @@ async function sendBookingConfirmationEmail(
           contentType: "application/pdf",
           content: pdfBuffer.toString("base64"),
         };
-        // Cache the PDF in the Invoice row so subsequent downloads are instant.
-        // Fire-and-forget - don't block the email send on this.
         db.invoice.update({
           where: { bookingId },
           data: { pdfBase64: pdfBuffer.toString("base64") },
         }).catch(() => {});
       }
     } catch (e: any) {
-      console.error("Invoice PDF generation failed - email will send without attachment:", e?.message || e);
+      console.error("Invoice PDF generation failed:", e?.message || e);
     }
   }
 
-  // Build the HTML body - also include a "Download Invoice" link as backup
-  // (in case the recipient can't open attachments on their device).
   const downloadLink = bookingId
     ? `https://www.guruvayurdham.co.in/api/invoice/pdf?bookingId=${bookingId}`
     : "";
@@ -691,22 +696,36 @@ ${downloadLink ? `<br><br><a href="${downloadLink}" style="display:inline-block;
 
   // ── Path 1: Hostinger Mail API (preferred) ──────────────────────────
   if (await isHostingerMailConfigured()) {
+    // Send to guest (if email provided) with BCC to hotel
+    if (recipients.length > 0) {
+      try {
+        const result = await sendEmailViaHostinger({
+          to: recipients,
+          bcc: bccRecipients,
+          subject,
+          text: body + (downloadLink ? `\n\nDownload invoice: ${downloadLink}` : ""),
+          html: htmlBody,
+          ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
+        } as any);
+        if (result.ok) return;
+      } catch (e: any) {
+        console.error("Hostinger Mail send to guest failed:", e?.message);
+      }
+    }
+
+    // Always send a separate copy to hotel (in case BCC was filtered)
     try {
-      const result = await sendEmailViaHostinger({
-        to,
-        subject,
+      await sendEmailViaHostinger({
+        to: HOTEL_EMAILS,
+        subject: to ? `[BOOKING COPY] ${subject}` : subject,
         text: body + (downloadLink ? `\n\nDownload invoice: ${downloadLink}` : ""),
         html: htmlBody,
-        // Pass attachments as a custom field - sendEmailViaHostinger will
-        // include them in the V1SendRequest body.
         ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
       } as any);
-      if (result.ok) return;
-      console.error("Hostinger Mail send failed:", result.message);
     } catch (e: any) {
-      console.error("Hostinger Mail send error:", e?.message);
+      console.error("Hostinger Mail send to hotel failed:", e?.message);
     }
-    // Fall through to SMTP if Hostinger failed
+    return;
   }
 
   // ── Path 2: SMTP via nodemailer (fallback) ──────────────────────────

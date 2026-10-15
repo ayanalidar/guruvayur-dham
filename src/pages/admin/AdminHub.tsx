@@ -18,8 +18,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const SECTIONS = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, route: "/admin" },
-  { key: "reservations", label: "Reservation Grid", icon: CalendarDays, route: "/admin/hub" },
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { key: "reservations", label: "Reservation Grid", icon: CalendarDays },
   { key: "bookings", label: "Bookings", icon: CalendarDays, route: "/admin/bookings" },
   { key: "content", label: "Content (CMS)", icon: FileText, route: "/admin/content" },
   { key: "rooms", label: "Rooms", icon: BedDouble, route: "/admin/rooms" },
