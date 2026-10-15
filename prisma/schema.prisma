@@ -869,3 +869,45 @@ model WebhookDelivery {
   @@index([source, createdAt])
   @@index([status, createdAt])
 }
+
+/* ============ MEDIA LIBRARY (Vercel Blob uploads) ============ */
+// Tracks every image uploaded via /api/upload so admins can:
+//   - Browse the media library (/admin/media — to be built)
+//   - See which content blocks / rooms / blog posts reference each file
+//   - Clean up orphaned files (uploaded but no longer referenced)
+//   - See storage usage (sum of bytes) for budget monitoring
+// The blob URL is the canonical reference — ContentBlock.value, Room.image,
+// BlogPost.image, etc. store the URL string. Deleting an Upload row does
+// NOT delete the file from Vercel Blob (use /api/media/[id] DELETE for that).
+model Upload {
+  id              String   @id @default(cuid())
+  // The full public Vercel Blob URL — what gets stored in ContentBlock /
+  // Room / BlogPost / etc. This is what the browser actually loads.
+  url             String   @unique
+  // Original filename the user picked (e.g. "hero-room.jpg") — for display
+  // in the media library UI. The actual Blob pathname is prefixed with a
+  // timestamp + cuid to avoid collisions.
+  filename        String
+  // Blob pathname as stored in Vercel Blob (e.g. "rooms/2026-10/abc123.jpg")
+  // — needed for DELETE operations via @vercel/blob del().
+  pathname        String
+  mimeType        String   // image/jpeg | image/png | image/webp | image/gif
+  size            Int      // bytes
+  width           Int?     // pixels — populated if sharp probe succeeds
+  height          Int?     // pixels
+  // Where in the admin UI was this uploaded from? helps the media library
+  // group files: ContentBlock / Room / BlogPost / Pooja / Gallery / Misc
+  uploadedFrom    String   @default("misc")
+  // Which staff member uploaded it? null for system uploads (e.g. backups)
+  uploadedById    String?
+  uploadedByName  String?
+  // Soft reference count — incremented when a content block / room / etc.
+  // references this URL, decremented when dereferenced. If 0 for 30+ days,
+  // the file is a candidate for cleanup. Best-effort — not transactional.
+  refCount        Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([uploadedFrom, createdAt])
+  @@index([refCount, createdAt])
+}

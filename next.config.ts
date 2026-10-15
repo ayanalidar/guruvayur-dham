@@ -16,11 +16,17 @@ const nextConfig: NextConfig = {
     // Phase D L5: removed wildcard *.vercel-storage.com patterns — they
     // allowed anyone to host a malicious image on Vercel Blob and have our
     // Next/Image optimizer fetch & process it (SSRF + sharp CVE surface).
-    // If you need Vercel Blob image optimization, add your specific blob
-    // account hostname here.
+    // Now we explicitly allowlist ONLY the Vercel Blob public hostname
+    // (where our own /api/upload route stores files) plus the two CDN
+    // hostnames we already trusted.
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "z.ai" },
+      // Vercel Blob — public URLs look like:
+      //   https://<store-id>.public.blob.vercel-storage.com/<filename>
+      // Allowing *.public.blob.vercel-storage.com is safe because only
+      // accounts with our BLOB_READ_WRITE_TOKEN can write to OUR store.
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
