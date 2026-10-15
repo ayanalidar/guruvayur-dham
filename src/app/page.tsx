@@ -50,6 +50,7 @@ const MaintenancePage = lazy(() => import("@/pages/MaintenancePage"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const AdminBookings = lazy(() => import("@/pages/admin/AdminBookings"));
 const AdminContent = lazy(() => import("@/pages/admin/AdminContent"));
+const AdminMedia = lazy(() => import("@/pages/admin/AdminMedia"));
 const AdminRooms = lazy(() => import("@/pages/admin/AdminRooms"));
 const AdminChannels = lazy(() => import("@/pages/admin/AdminChannels"));
 const AdminCoupons = lazy(() => import("@/pages/admin/AdminCoupons"));
@@ -142,6 +143,7 @@ export default function Home() {
     if (path === "/admin/system") return <AdminGuard><AdminSystemSettings /></AdminGuard>;
     if (path === "/admin/bookings") return <AdminGuard><AdminBookings /></AdminGuard>;
     if (path === "/admin/content") return <AdminGuard roles={["MANAGER"]} ><AdminContent /></AdminGuard>;
+    if (path === "/admin/media") return <AdminGuard roles={["MANAGER"]} ><AdminMedia /></AdminGuard>;
     if (path === "/admin/rooms") return <AdminGuard><AdminRooms /></AdminGuard>;
     if (path === "/admin/channels") return <AdminGuard><AdminChannels /></AdminGuard>;
     if (path === "/admin/coupons") return <AdminGuard><AdminCoupons /></AdminGuard>;

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, CalendarDays, FileText, BedDouble, Radio,
   TrendingUp, Users, IndianRupee, Activity, RefreshCw, ArrowLeft,
-  Settings,
+  Settings, Image as ImageIcon,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import { fetchStats } from "@/lib/api-client";
@@ -61,6 +61,7 @@ export default function AdminDashboard() {
           <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
             <AdminNavCard icon={CalendarDays} label="All Bookings" desc="View & manage" onClick={() => navigate("/admin/bookings")} />
             <AdminNavCard icon={FileText} label="Edit Content" desc="All site text" onClick={() => navigate("/admin/content")} />
+            <AdminNavCard icon={ImageIcon} label="Media Library" desc="Browse & manage images" onClick={() => navigate("/admin/media")} />
             <AdminNavCard icon={Settings} label="CMS / Images" desc="Upload photos, edit rooms" onClick={() => navigate("/cms")} />
             <AdminNavCard icon={BedDouble} label="Manage Rooms" desc="Prices & availability" onClick={() => navigate("/admin/rooms")} />
             <AdminNavCard icon={Radio} label="Channels" desc="Sync & webhooks" onClick={() => navigate("/admin/channels")} />

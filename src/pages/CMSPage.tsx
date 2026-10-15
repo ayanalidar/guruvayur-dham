@@ -82,7 +82,7 @@ export default function CMSPage() {
 }
 
 /* ============ IMAGE UPLOADER COMPONENT ============ */
-function ImageUploader({ onUpload, label }: { onUpload: (url: string) => void; label: string }) {
+function ImageUploader({ onUpload, label, bucket = "misc" }: { onUpload: (url: string) => void; label: string; bucket?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -91,6 +91,8 @@ function ImageUploader({ onUpload, label }: { onUpload: (url: string) => void; l
     try {
       const formData = new FormData();
       formData.append("file", file);
+      // Pass bucket so the upload is categorized correctly in the Media Library
+      formData.append("bucket", bucket);
       const r = await fetch("/api/upload", { method: "POST", body: formData });
       const j = await r.json();
       if (j.error) {
@@ -340,7 +342,7 @@ function RoomsCMS() {
                     className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
                     placeholder="Upload or paste image URL"
                   />
-                  <ImageUploader label="Upload" onUpload={(url) => setNewRoom({ ...newRoom, image: url })} />
+                  <ImageUploader label="Upload" bucket="rooms" onUpload={(url) => setNewRoom({ ...newRoom, image: url })} />
                 </div>
                 {newRoom.image && !newRoom.image.startsWith("data:") && (
                   <img src={newRoom.image} alt="Preview" className="mt-2 h-20 w-32 rounded-lg object-cover" />
@@ -364,7 +366,7 @@ function RoomsCMS() {
                 <img src={editing === room.id ? editImage : room.image} alt={room.name} className="h-full w-full object-cover photo-cinematic" />
                 {editing === room.id && (
                   <div className="absolute inset-0 grid place-items-center bg-ink/70">
-                    <ImageUploader label="Upload New Image" onUpload={(url) => setEditImage(url)} />
+                    <ImageUploader label="Upload New Image" bucket="rooms" onUpload={(url) => setEditImage(url)} />
                   </div>
                 )}
               </div>
@@ -378,7 +380,7 @@ function RoomsCMS() {
                   </div>
                   {editing === room.id ? (
                     <div className="flex gap-2">
-                      <ImageUploader label="Change Image" onUpload={(url) => setEditImage(url)} />
+                      <ImageUploader label="Change Image" bucket="rooms" onUpload={(url) => setEditImage(url)} />
                       <button onClick={() => saveImage(room.id)} className="rounded-full bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-300 hover:bg-green-500/25">
                         <Save className="h-3.5 w-3.5" /> Save
                       </button>
@@ -507,7 +509,7 @@ function PoojaCMS() {
               <textarea value={newPooja.significance} onChange={(e) => setNewPooja({ ...newPooja, significance: e.target.value })} placeholder="Significance" rows={2} className="sm:col-span-2 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none resize-none" />
               <div className="sm:col-span-2 flex items-center gap-3">
                 <img src={newPooja.image} alt="Preview" className="h-16 w-24 rounded-lg object-cover" />
-                <ImageUploader label="Upload Pooja Image" onUpload={(url) => setNewPooja({ ...newPooja, image: url })} />
+                <ImageUploader label="Upload Pooja Image" bucket="poojas" onUpload={(url) => setNewPooja({ ...newPooja, image: url })} />
               </div>
             </div>
             <div className="mt-4 flex gap-2">
@@ -546,7 +548,7 @@ function PoojaCMS() {
               <EditableField label="Prasadam" value={p.prasadam} onSave={(v) => updateField(p.id, "prasadam", v)} />
             </div>
             <div className="mt-2 flex items-center gap-2">
-              <ImageUploader label="Change Image" onUpload={(url) => updateField(p.id, "image", url)} />
+              <ImageUploader label="Change Image" bucket="poojas" onUpload={(url) => updateField(p.id, "image", url)} />
               <span className="text-[10px] text-ivory/30">{p.image.slice(-30)}</span>
             </div>
           </div>
@@ -591,7 +593,7 @@ function GalleryCMS() {
           <h2 className="font-serif text-2xl text-ivory">Gallery Photos</h2>
           <p className="mt-1 text-sm text-ivory/60">Upload real photos of your property. They appear in the gallery instantly.</p>
         </div>
-        <ImageUploader label="Upload Photo" onUpload={addImage} />
+        <ImageUploader label="Upload Photo" bucket="gallery" onUpload={addImage} />
       </div>
 
       {/* Tab selector */}
@@ -1045,7 +1047,7 @@ function BlogCMS() {
                     className="flex-1 rounded-lg border border-champagne/15 bg-ink px-3 py-2 text-sm text-ivory focus:outline-none"
                     placeholder="https://..."
                   />
-                  <ImageUploader label="Upload" onUpload={(url) => setNewPost({ ...newPost, image: url })} />
+                  <ImageUploader label="Upload" bucket="blog" onUpload={(url) => setNewPost({ ...newPost, image: url })} />
                 </div>
               </div>
               <div className="sm:col-span-2">
@@ -1109,7 +1111,7 @@ function BlogCMS() {
                   </div>
                 </div>
                 <div className="mt-2">
-                  <ImageUploader label="Change Image" onUpload={(url) => updateField(post.id, "image", url)} />
+                  <ImageUploader label="Change Image" bucket="blog" onUpload={(url) => updateField(post.id, "image", url)} />
                 </div>
               </div>
               <button

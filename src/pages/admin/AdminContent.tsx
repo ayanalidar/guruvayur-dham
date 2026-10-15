@@ -30,6 +30,9 @@ function ContentImageUploader({ onUpload }: { onUpload: (url: string) => void })
     try {
       const formData = new FormData();
       formData.append("file", file);
+      // Pass bucket=content so the upload is categorized as a ContentBlock
+      // image in the Media Library (instead of default "misc").
+      formData.append("bucket", "content");
       const r = await fetch("/api/upload", { method: "POST", body: formData });
       const j = await r.json();
       if (j.error) {
