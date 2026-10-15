@@ -4,6 +4,17 @@ import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/api-safe";
 
+// CRITICAL: opt out of Next.js's static route caching.
+// In Next.js 15 App Router, GET route handlers can be statically cached
+// at build time if they don't explicitly opt out. Without these flags,
+// /api/content could be served as a frozen snapshot from build time —
+// admin edits would never reach the public site until the next deploy.
+// `dynamic = "force-dynamic"` + `revalidate = 0` together guarantee the
+// handler runs on every request and the response is never cached.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const ContentUpdateSchema = z.object({
   key: z.string().min(1).max(200),
   value: z.string(),

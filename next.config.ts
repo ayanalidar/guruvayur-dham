@@ -83,6 +83,37 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // SPA catch-all rewrite — works on BOTH Vercel and Docker/VPS (Caddy).
+  //
+  // The site is a single-page app: there is only one `app/page.tsx` at the
+  // root. Clean URLs like /rooms, /pooja, /blog/my-post, /janmashtami must
+  // all serve the same SPA shell so the client-side router can read
+  // window.location.pathname and render the right page.
+  //
+  // Without this rewrite, every clean URL except `/` returns 404 on
+  // Docker/Caddy (vercel.json rewrites ONLY apply on Vercel deployments).
+  // That's why Google was only indexing 2 pages — every other sitemap URL
+  // returned 404 to Googlebot.
+  //
+  // The negative lookahead excludes:
+  //   - /api/*              (API routes — must NOT be rewritten)
+  //   - /_next/*            (Next.js static assets)
+  //   - /_vercel/*          (Vercel internals)
+  //   - /favicon.ico, /robots.txt, /sitemap.xml, /manifest.json
+  //   - Static image files at the root (logo-*.png, guruyavur*.png, icon-*.png,
+  //     apple-touch-icon.png, favicon-*.png)
+  //   - /rooms/*.{jpg,jpeg,png,webp,gif,svg,avif} (room IMAGE FILES in /public/rooms/)
+  //     — but NOT /rooms/<slug> page routes (the SPA handles those)
+  //   - /webhook/*         (inbound webhooks)
+  async rewrites() {
+    return [
+      {
+        source:
+          "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/).*)",
+        destination: "/",
+      },
+    ];
+  },
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },

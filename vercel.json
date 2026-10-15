@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|logo-.*\\.png|guruyavur\\.png|rooms/.*|manifest\\.webmanifest|sw\\.js|workbox-.*\\.js|google.*\\.html|webhook/.*).*)",
+      "source": "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/).*)",
       "destination": "/"
     }
   ],

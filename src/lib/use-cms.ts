@@ -159,17 +159,24 @@ async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
  * Invalidate caches - call after admin saves content so the next read is fresh.
  * Also called automatically by the TTL expiry (0 = always stale).
  *
- * SIDE EFFECT: notifies every mounted useContent()/useCMSList() hook to
- * refetch fresh data from /api/content (or /api/cms). This is what makes
- * admin edits (e.g. contact.checkIn time) appear on the live public site
- * without requiring a page navigation.
+ * SIDE EFFECTS:
+ *   1. Clears the in-memory cache + per-type list caches.
+ *   2. Cancels any in-flight fetch promise (so the next fetchContentMap(true)
+ *      starts a FRESH fetch instead of returning the stale in-flight one,
+ *      which would have been started BEFORE the admin save).
+ *   3. Notifies every mounted useContent()/useCMSList() hook to refetch
+ *      fresh data from /api/content (or /api/cms). This is what makes
+ *      admin edits (e.g. contact.checkIn time) appear on the live public
+ *      site without requiring a page navigation.
  */
 export function invalidateCMSCache() {
   contentCache = null;
   contentCacheAt = 0;
+  contentPromise = null; // cancel any in-flight fetch - next call starts fresh
   for (const k of Object.keys(cmsListCache)) {
     delete cmsListCache[k];
     delete cmsListCacheAt[k];
+    delete cmsListPromises[k];
   }
   notifyCMSInvalidated();
 }
@@ -238,6 +245,20 @@ if (typeof window !== "undefined") {
 /* ---------- Hooks ---------- */
 
 /**
+ * Polling interval for cross-device sync.
+ *
+ * Even with the in-process emitter (same-tab), localStorage storage event
+ * (cross-tab same-browser), and visibilitychange (tab refocus), there's no
+ * way to push updates from admin-on-one-device to public-on-another-device
+ * without a WebSocket. As a safety net, we poll /api/content every 60s.
+ *
+ * Cost: 1 GET request per minute per mounted hook. With ~5 useContent()
+ * consumers per page (Navbar, Hero, Footer, etc.) this dedupes to 1 actual
+ * HTTP request per minute (via contentPromise de-duplication).
+ */
+const CMS_POLL_INTERVAL_MS = 60_000;
+
+/**
  * useContent() - load all key/value content blocks.
  * Returns `{ map, get, loading }`. `get(key, fallback)` returns the block
  * value or the fallback if missing.
@@ -246,6 +267,10 @@ if (typeof window !== "undefined") {
  * a content block (in this tab or another), the hook refetches fresh data
  * from /api/content and the UI re-renders with the new value instantly.
  * No page navigation needed.
+ *
+ * CROSS-DEVICE: also polls every 60s as a safety net for the case where
+ * the admin edits on one device and a guest is viewing on another device
+ * (no WebSocket push available).
  */
 export function useContent() {
   const { lang, t } = useI18n();
@@ -267,9 +292,12 @@ export function useContent() {
     //   - cross-tab storage event (admin saves in another tab)
     //   - visibilitychange (user returns to this tab)
     const unsub = onCMSInvalidate(() => refetch(true));
+    // Cross-device polling fallback - admin on desktop, guest on mobile.
+    const poll = setInterval(() => refetch(true), CMS_POLL_INTERVAL_MS);
     return () => {
       active = false;
       unsub();
+      clearInterval(poll);
     };
   }, []);
 
@@ -306,6 +334,8 @@ export function useContent() {
  *
  * REACTIVITY: subscribes to onCMSInvalidate() so admin edits to lists
  * (e.g. adding a new FAQ, publishing a blog post) appear instantly.
+ *
+ * CROSS-DEVICE: polls every 60s as a safety net (same rationale as useContent).
  */
 export function useCMSList<T = any>(type: string, fallback: T[]): T[] {
   const [list, setList] = useState<T[]>(cmsListCache[type] as T[] || fallback);
@@ -322,9 +352,11 @@ export function useCMSList<T = any>(type: string, fallback: T[]): T[] {
     };
     refetch();
     const unsub = onCMSInvalidate(() => refetch(true));
+    const poll = setInterval(() => refetch(true), CMS_POLL_INTERVAL_MS);
     return () => {
       active = false;
       unsub();
+      clearInterval(poll);
     };
   }, [type]);
 

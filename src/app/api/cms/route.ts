@@ -3,6 +3,14 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
+// CRITICAL: opt out of Next.js's static route caching.
+// See /api/content/route.ts for the full rationale - without these flags,
+// GET /api/cms could be frozen at build time and admin edits to events /
+// testimonials / FAQs / blog posts would never reach the public site.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const CmsTypeEnum = z.enum([
   "features",
   "events",

@@ -2176,3 +2176,77 @@ Stage Summary:
 - Cross-tab propagation: storage event → invalidate → emitter → refetch (instant, same browser, different tab).
 - Cross-device propagation: still requires the public user to navigate within the SPA (TTL=0 forces a fresh fetch on every mount) — true push would require re-enabling the Socket.io realtime service. For admin edits made from the same browser session as the public viewer (the common case during admin self-testing), the change is now instant.
 - Not committed. Not pushed.
+
+---
+Task ID: INSTANT-UPDATES-FIX-2 + SITEMAP-FIX
+Agent: main (super-z)
+Task: User reported that admin-edited checkin time STILL doesn't reflect on the frontend (previous fix insufficient), AND Google is only indexing 2 pages (need sitemap update).
+
+Work Log:
+- ROOT CAUSE #1 (CMS instant updates still broken):
+  (a) `invalidateCMSCache()` cleared `contentCache` but NOT `contentPromise`. If a fetch was in-flight when invalidate ran, the next `fetchContentMap(true)` returned the stale in-flight promise instead of starting a fresh fetch. Patched: now also nulls `contentPromise` + all `cmsListPromises`.
+  (b) `/api/content` and `/api/cms` GET routes had NO `export const dynamic = "force-dynamic"` / `revalidate = 0` / `fetchCache = "force-no-store"` — in Next.js 15 App Router these can be statically cached at build time, meaning admin edits made AFTER a deploy never reach the public site until the NEXT deploy. Patched: added all three opt-out flags to both routes.
+  (c) No cross-device path existed — admin on desktop, public user on mobile phone had no way to see the change without manual refresh. Added 60s polling fallback in `useContent()` and `useCMSList()` (one deduped HTTP request per minute via contentPromise).
+
+- ROOT CAUSE #2 (Google indexing only 2 pages):
+  (a) `next.config.ts` had NO `rewrites()` function — the SPA catch-all rewrite only existed in `vercel.json`, which ONLY works on Vercel deployments. The actual production deployment is Docker/Caddy (per `Caddyfile` + `docker-compose.yml`), so EVERY clean URL except `/` returned 404 to Googlebot. The sitemap was listing 60+ URLs that all 404'd.
+  (b) `vercel.json`'s negative-lookahead pattern `rooms/.*` was too greedy — it excluded BOTH static image files like `/rooms/super-deluxe-room-3.jpg` (intended) AND page routes like `/rooms/deluxe-ac-room` (NOT intended — these should rewrite to `/` so the SPA can render RoomDetailPage).
+  (c) Sitemap was missing `/rooms/<slug>` detail pages entirely, missing several static routes (/tour, /planner, /privacy, /terms, /policies), and had a 1-hour cache TTL (too long when content changes).
+  (d) Sitemap didn't have `export const revalidate = 0` — Next.js could freeze it at build time, hiding newly added rooms/blog posts from Google for days.
+
+- FIXES APPLIED:
+  1. `src/lib/use-cms.ts`:
+     * `invalidateCMSCache()` now also clears `contentPromise` and every `cmsListPromises[k]` — guarantees next fetch starts fresh.
+     * Added `CMS_POLL_INTERVAL_MS = 60_000` constant + `setInterval` polling fallback in `useContent()` and `useCMSList()` — cross-device safety net (admin edits on desktop → guest on mobile sees change within 60s without manual refresh).
+
+  2. `src/app/api/content/route.ts`:
+     * Added `export const dynamic = "force-dynamic"`, `export const revalidate = 0`, `export const fetchCache = "force-no-store"` — triple opt-out from Next.js static caching. GET now runs on every request.
+
+  3. `src/app/api/cms/route.ts`:
+     * Same triple opt-out flags as above. Prevents events/testimonials/FAQs/blog posts list from being frozen at build time.
+
+  4. `next.config.ts`:
+     * Added `async rewrites()` function returning a single catch-all rule: any path NOT matching the exclusion list rewrites to `/` (the SPA shell). Works on BOTH Vercel and Docker/Caddy (vercel.json rewrites ONLY apply on Vercel).
+     * Exclusion list (negative lookahead) tightened to:
+       - API routes, _next/, _vercel/, favicon.ico, robots.txt, sitemap.xml, manifest.json, manifest.webmanifest, sw.js, workbox-*.js, google*.html
+       - Static root images: logo-*.png, guruyavur*.png, icon-*.png, apple-touch-icon.png, favicon-*.png
+       - Room IMAGE FILES only: `rooms/.*\.(?:jpg|jpeg|png|webp|gif|svg|avif)` — page routes like /rooms/deluxe-ac-room are NO LONGER excluded (so they rewrite to / and the SPA renders RoomDetailPage)
+       - temples/*, about/* (static image dirs in /public/)
+       - webhook/* (inbound webhooks must hit the API route directly)
+
+  5. `vercel.json`:
+     * Synced the catch-all rewrite pattern with `next.config.ts` — same exclusion list, same `rooms/.*\.(?:jpg|jpeg|png|webp|gif|svg|avif)` (was `rooms/.*` which broke /rooms/<slug> page routes).
+
+  6. `src/app/sitemap.xml/route.ts` (rewrote):
+     * Added `export const dynamic = "force-dynamic"` + `export const revalidate = 0` — sitemap is always fresh.
+     * Added room detail pages: fetches active rooms from DB, includes `/rooms/<slug>` with lastmod = room.updatedAt. Newly added rooms now appear in the sitemap automatically.
+     * Added 5 missing static routes: /tour, /planner, /privacy, /terms, /policies.
+     * Lowered cache TTL from 1 hour to 5 minutes — newly added rooms/blog posts show up in Google's next crawl faster.
+     * Total sitemap URL count: 14 static + ~6 room detail + 50 SEO landing + N blog post = ~70+ URLs (vs 9 static + 50 SEO + N blog before).
+
+- VERIFICATION:
+  * `npx tsc --noEmit` → 0 errors.
+  * `npx eslint` on all 5 modified files → 0 errors.
+  * Validated the catch-all regex against 13 test URLs — all 9 expected rewrites and all 4 expected direct-serves behave correctly.
+  * `npx next build` → ✓ Compiled successfully in 6.3s, ✓ 143/143 static pages generated. 3 size warnings (pre-existing, not related to this change).
+
+Stage Summary:
+- Files modified (6):
+    src/lib/use-cms.ts
+    src/app/api/content/route.ts
+    src/app/api/cms/route.ts
+    next.config.ts
+    vercel.json
+    src/app/sitemap.xml/route.ts (rewrote)
+- For Issue #1 (CMS instant updates): three independent layers all fixed:
+  (a) the in-memory cache now truly cancels in-flight promises,
+  (b) the API routes can no longer be statically cached by Next.js,
+  (c) cross-device polling ensures admin-on-desktop → guest-on-mobile propagation within 60s.
+- For Issue #2 (Google indexing): the catch-all rewrite now works on Docker/Caddy (not just Vercel), so /rooms, /pooja, /about, /blog/foo, /rooms/<slug>, /<seo-slug> all return the SPA HTML shell (HTTP 200) instead of 404. Sitemap now lists ~70+ URLs including room detail pages. After deploy + Googlebot re-crawl, all indexable pages should appear in Google Search Console.
+- NEXT STEPS FOR THE USER:
+  1. Rebuild + redeploy: `docker compose build app && docker compose up -d app` (or whatever your deploy script is).
+  2. Verify the SPA shell is served for clean URLs: `curl -I https://www.guruvayurdham.co.in/rooms` should return HTTP 200 (was 404 before).
+  3. Verify the sitemap: `curl https://www.guruvayurdham.co.in/sitemap.xml` should now list /rooms/<slug> entries.
+  4. Re-submit the sitemap in Google Search Console (Coverage → Sitemaps → Resubmit). Google will re-crawl within a few days.
+  5. For the CMS test: edit contact.checkIn in /admin/content → save → switch tabs / refresh the public site → the new value should appear within seconds (same-tab via emitter, cross-tab via storage event, cross-device within 60s via polling).
+- Not committed. Not pushed.
