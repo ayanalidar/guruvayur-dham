@@ -109,7 +109,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source:
-          "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/).*)",
+          "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|sitemap.xsl|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/).*)",
         destination: "/",
       },
     ];
