@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { calculateRoomPrice, validateCoupon, markCouponUsed, checkEarlyBirdCampaign, type CouponResult } from "@/lib/pricing";
 import { generateRef } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limiter";
 import { getSetting } from "@/lib/settings";
 import { withRetry } from "@/lib/retry";
 import { sendEmailViaHostinger, isHostingerMailConfigured } from "@/lib/email";
@@ -57,6 +58,15 @@ const CreateGuestBookingSchema = z.object({
  * }
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: max 5 booking attempts per minute per IP (prevents spam)
+  const rl = await rateLimit(req, { window: 60, max: 5, key: "guest-booking" });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many booking attempts. Please try again in a minute." },
+      { status: 429 }
+    );
+  }
+
   const parsed = CreateGuestBookingSchema.safeParse(await req.json());
   if (!parsed.success) {
     return NextResponse.json(
