@@ -12,7 +12,7 @@
  *      Slight perf cost (~30ms per navigation) but guarantees fresh data.
  *
  *   2. visibilitychange listener - when user switches back to the tab,
- *      the cache is invalidated so the next read fetches fresh data.
+ *      the cache is refetched so the latest DB content is shown.
  *      Solves the "open in new tab" scenario where admin saves in tab 1
  *      and the user comes back to tab 2.
  *
@@ -20,8 +20,15 @@
  *      to localStorage which fires a 'storage' event in OTHER tabs of
  *      the same browser. Those tabs invalidate their cache instantly.
  *
- *   4. invalidateCMSCache() - still called after admin saves in the SAME
- *      tab, for instant feedback to the admin.
+ *   4. invalidateCMSCache() - called after admin saves in the SAME tab,
+ *      for instant feedback to the admin.
+ *
+ *   5. CMS_EVENT emitter - whenever invalidateCMSCache() runs (whether from
+ *      same-tab save, cross-tab storage event, or visibilitychange), every
+ *      mounted useContent()/useCMSList() hook is notified and refetches
+ *      fresh data. This is what makes admin-saved changes (e.g.
+ *      contact.checkIn time) appear on the public site WITHOUT requiring
+ *      a page navigation.
  *
  * I18N INTEGRATION
  * ----------------
@@ -71,6 +78,39 @@ function isListStale(type: string): boolean {
   return Date.now() - ts > CMS_CACHE_TTL_MS;
 }
 
+/* ---------- CMS invalidation event emitter ---------- */
+//
+// Whenever invalidateCMSCache() is called (from any source:
+// same-tab admin save, cross-tab 'storage' event, visibilitychange,
+// manual refresh button), we notify every mounted useContent() and
+// useCMSList() hook so they refetch fresh data from /api/content.
+//
+// Without this, invalidating the cache wouldn't actually trigger React
+// to re-render with the new values - the mounted hooks would still
+// show stale state until the user navigated to a new page.
+//
+type CMSListener = () => void;
+const cmsListeners = new Set<CMSListener>();
+
+/** Subscribe to CMS invalidation events. Returns an unsubscribe function. */
+export function onCMSInvalidate(fn: CMSListener): () => void {
+  cmsListeners.add(fn);
+  return () => {
+    cmsListeners.delete(fn);
+  };
+}
+
+/** Notify all mounted hooks that the cache was invalidated. */
+function notifyCMSInvalidated() {
+  for (const fn of cmsListeners) {
+    try {
+      fn();
+    } catch {
+      // ignore listener errors - one bad subscriber shouldn't break others
+    }
+  }
+}
+
 async function fetchContentMap(force = false): Promise<ContentMap> {
   if (contentCache && !force && !isContentStale()) return contentCache;
   if (contentPromise) return contentPromise;
@@ -118,6 +158,11 @@ async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
 /**
  * Invalidate caches - call after admin saves content so the next read is fresh.
  * Also called automatically by the TTL expiry (0 = always stale).
+ *
+ * SIDE EFFECT: notifies every mounted useContent()/useCMSList() hook to
+ * refetch fresh data from /api/content (or /api/cms). This is what makes
+ * admin edits (e.g. contact.checkIn time) appear on the live public site
+ * without requiring a page navigation.
  */
 export function invalidateCMSCache() {
   contentCache = null;
@@ -126,6 +171,7 @@ export function invalidateCMSCache() {
     delete cmsListCache[k];
     delete cmsListCacheAt[k];
   }
+  notifyCMSInvalidated();
 }
 
 /**
@@ -162,8 +208,8 @@ export async function refreshCMSData() {
 // this tab receives a 'storage' event. We invalidate our cache so the
 // next read fetches fresh data.
 //
-// This is what makes admin saves propagate to OTHER open tabs of the
-// same browser - without it, only the admin's tab sees the update.
+// The emitter (notifyCMSInvalidated) then tells every mounted hook to
+// refetch - so the change appears in React state without a navigation.
 //
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
@@ -176,10 +222,16 @@ if (typeof window !== "undefined") {
   // invalidate the cache so the next read fetches fresh data.
   // This catches the scenario where admin saves in tab 1, user comes back
   // to tab 2 - they should see fresh data without waiting.
+  //
+  // Throttled to 1 refetch per 2s to avoid hammering the API if the user
+  // rapidly switches tabs.
+  let lastVisibilityRefetch = 0;
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      invalidateCMSCache();
-    }
+    if (document.visibilityState !== "visible") return;
+    const now = Date.now();
+    if (now - lastVisibilityRefetch < 2000) return;
+    lastVisibilityRefetch = now;
+    invalidateCMSCache();
   });
 }
 
@@ -189,6 +241,11 @@ if (typeof window !== "undefined") {
  * useContent() - load all key/value content blocks.
  * Returns `{ map, get, loading }`. `get(key, fallback)` returns the block
  * value or the fallback if missing.
+ *
+ * REACTIVITY: subscribes to onCMSInvalidate() so that when the admin saves
+ * a content block (in this tab or another), the hook refetches fresh data
+ * from /api/content and the UI re-renders with the new value instantly.
+ * No page navigation needed.
  */
 export function useContent() {
   const { lang, t } = useI18n();
@@ -197,13 +254,22 @@ export function useContent() {
 
   useEffect(() => {
     let active = true;
-    fetchContentMap().then((m) => {
-      if (!active) return;
-      setMap(m);
-      setLoading(false);
-    });
+    const refetch = (force = false) => {
+      fetchContentMap(force).then((m) => {
+        if (!active) return;
+        setMap(m);
+        setLoading(false);
+      });
+    };
+    refetch();
+    // Subscribe to invalidation events - fires on:
+    //   - same-tab admin save (broadcastCMSUpdate → invalidateCMSCache)
+    //   - cross-tab storage event (admin saves in another tab)
+    //   - visibilitychange (user returns to this tab)
+    const unsub = onCMSInvalidate(() => refetch(true));
     return () => {
       active = false;
+      unsub();
     };
   }, []);
 
@@ -237,20 +303,28 @@ export function useContent() {
  * useCMSList<T>(type, fallback) - load a structured CMS list (events,
  * testimonials, faqs, features, trustBadges, poojas, carousel, blogPosts).
  * Falls back to the provided array if the CMS has no data or is unreachable.
+ *
+ * REACTIVITY: subscribes to onCMSInvalidate() so admin edits to lists
+ * (e.g. adding a new FAQ, publishing a blog post) appear instantly.
  */
 export function useCMSList<T = any>(type: string, fallback: T[]): T[] {
   const [list, setList] = useState<T[]>(cmsListCache[type] as T[] || fallback);
 
   useEffect(() => {
     let active = true;
-    fetchCMSList<T>(type).then((data) => {
-      if (!active) return;
-      if (data && data.length > 0) {
-        setList(data);
-      }
-    });
+    const refetch = (force = false) => {
+      fetchCMSList<T>(type, force).then((data) => {
+        if (!active) return;
+        if (data && data.length > 0) {
+          setList(data);
+        }
+      });
+    };
+    refetch();
+    const unsub = onCMSInvalidate(() => refetch(true));
     return () => {
       active = false;
+      unsub();
     };
   }, [type]);
 

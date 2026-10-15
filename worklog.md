@@ -2147,3 +2147,32 @@ Stage Summary:
   - ESLint: 0 errors on new/modified files
   - Build: succeeds
   - Not committed. Not pushed. Staged for review.
+
+---
+Task ID: INSTANT-UPDATES-FIX
+Agent: main (super-z)
+Task: User reported that admin-edited checkin time (and other CMS content blocks) do not reflect on the public frontend in real time, despite earlier "instant updates" promises.
+
+Work Log:
+- Root cause: `src/lib/use-cms.ts` had cache invalidation hooks (`broadcastCMSUpdate`, `invalidateCMSCache`, cross-tab `storage` event, `visibilitychange`), but they only CLEARED the in-memory cache. No signal was sent to mounted React components to refetch — `useContent()` and `useCMSList()` had `useEffect(() => {fetch().then(setState)}, [])` with empty deps, so they only fetched on mount. After an admin save, cache was nulled, but mounted Footer / Contact / Hero / etc. still showed stale React state until the user navigated to a new page (which re-mounted the hook and triggered a fresh fetch).
+- Realtime push was also unavailable: `src/lib/use-realtime.ts` is currently a no-op stub (no Socket.io server deployed on Vercel), so the only path was the pull mechanism — which was broken as described above.
+- Fix applied to `src/lib/use-cms.ts`:
+  1. Added an in-process event emitter — `cmsListeners: Set<() => void>` + `onCMSInvalidate(fn)` subscription API + internal `notifyCMSInvalidated()` notifier.
+  2. Modified `invalidateCMSCache()` to call `notifyCMSInvalidated()` AFTER clearing the cache. So every invalidation source (same-tab save, cross-tab storage event, visibilitychange, manual refresh button) now fires the emitter.
+  3. Rewrote `useContent()` to subscribe to `onCMSInvalidate()` in its useEffect, calling `fetchContentMap(true)` (force fresh) on every invalidation event and `setMap(m)` with the new data. Unsubscribes on cleanup.
+  4. Rewrote `useCMSList()` the same way — subscribes to `onCMSInvalidate()` and refetches the typed list when any invalidation fires.
+  5. Throttled the `visibilitychange` handler to 1 refetch per 2s to prevent API hammering if the user rapidly Alt-Tabs.
+- Verified all admin save paths already go through `broadcastCMSUpdate()` (which calls `invalidateCMSCache()` which now triggers the emitter):
+  - `AdminContent.tsx:143` (line 143 — the contact.checkIn / contact.checkOut / hero.headline etc. editor)
+  - `CMSPage.tsx:154, 177, 458, 569, 631, 739` (Blog / Rooms / Gallery / Events / Testimonials / FAQs editors)
+  - `GalleryPage.tsx:7`
+  No changes needed in any of those — they already call the right invalidation function.
+- TypeScript: `npx tsc --noEmit` → 0 errors.
+- ESLint on the modified file: 0 errors.
+
+Stage Summary:
+- Fixed: `src/lib/use-cms.ts` (one file, ~30 lines added + ~10 lines refactored).
+- Effect: When the admin saves a content block in `/admin/content` (e.g. changes `contact.checkIn` from "11:30 AM" to "12:00 PM"), every mounted public-side component using `useContent()` — Footer, Hero, Contact section, Navbar, About, WhyChooseUs, EventsSection, Testimonials, FAQ, etc. — instantly refetches fresh data from `/api/content` and re-renders with the new value. Same applies to `useCMSList()` for structured lists (events, testimonials, FAQs, blog posts, gallery, etc.). No page navigation, refresh, or "wait a few minutes" required.
+- Cross-tab propagation: storage event → invalidate → emitter → refetch (instant, same browser, different tab).
+- Cross-device propagation: still requires the public user to navigate within the SPA (TTL=0 forces a fresh fetch on every mount) — true push would require re-enabling the Socket.io realtime service. For admin edits made from the same browser session as the public viewer (the common case during admin self-testing), the change is now instant.
+- Not committed. Not pushed.
