@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
 import { ChevronRight, Star, ArrowUpRight, MapPin, Sparkles, Quote, Phone, Route, Clock, CalendarDays, Wand2, CheckCircle2 } from "lucide-react";
 import {
@@ -31,7 +31,8 @@ import {
 import TempleTimingsWidget from "@/components/site/TempleTimingsWidget";
 import ReviewsWidget from "@/components/site/ReviewsWidget";
 import { useI18n } from "@/lib/i18n/context";
-import { useContent } from "@/lib/use-cms";
+import { useContent, useCMSList, onCMSInvalidate, type Pooja as CMSPooja } from "@/lib/use-cms";
+import { fetchRooms } from "@/lib/api-client";
 
 export default function HomePage() {
   const { navigate } = useHashRoute();
@@ -389,7 +390,33 @@ function WhyChooseUs() {
 function RoomPreviews() {
   const { t } = useI18n();
   const { navigate } = useHashRoute();
-  const featured = ROOMS.slice(0, 4);
+  // Same pattern as PoojaPreview: fetch rooms from /api/rooms with hardcoded
+  // ROOMS as fallback. Subscribe to onCMSInvalidate so admin edits to room
+  // images / prices / descriptions reflect on the homepage without a refresh.
+  const [cmsRooms, setCmsRooms] = useState<typeof ROOMS>([]);
+  useEffect(() => {
+    let active = true;
+    const refetch = () => {
+      fetchRooms()
+        .then((data) => {
+          if (!active) return;
+          if (Array.isArray(data) && data.length > 0) {
+            // RoomData has the same fields as ROOMS items plus extras (rates,
+            // totalUnits, etc.) — the JSX only uses id/slug/name/price/image/
+            // type/capacity/shortDesc/badge which all exist on both shapes.
+            setCmsRooms(data as unknown as typeof ROOMS);
+          }
+        })
+        .catch(() => {});
+    };
+    refetch();
+    const unsub = onCMSInvalidate(refetch);
+    return () => {
+      active = false;
+      unsub();
+    };
+  }, []);
+  const featured = (cmsRooms.length > 0 ? cmsRooms : ROOMS).slice(0, 4);
 
   return (
     <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
@@ -701,7 +728,13 @@ function PlannerCard() {
 function PoojaPreview() {
   const { t } = useI18n();
   const { navigate } = useHashRoute();
-  const featured = POOJAS.slice(0, 3);
+  // Fetch poojas from the CMS (with hardcoded POOJAS as fallback for cold
+  // starts / DB outages / before useEffect completes). This is what makes
+  // admin edits to pooja images reflect on the homepage — previously this
+  // component used POOJAS.slice(0, 3) directly, completely ignoring the
+  // CMS, so admin-saved image URLs never reached the homepage.
+  const cmsPoojas = useCMSList<CMSPooja>("poojas", []);
+  const featured = (cmsPoojas.length > 0 ? cmsPoojas : POOJAS).slice(0, 3);
 
   return (
     <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
