@@ -18,7 +18,6 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 Disallow: /*/admin
-Disallow: /book
 Disallow: /kitchen
 Disallow: /login
 Disallow: /dashboard
@@ -29,7 +28,6 @@ User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /api/
-Disallow: /book
 Disallow: /kitchen
 Disallow: /login
 
@@ -43,7 +41,6 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
-Disallow: /book
 Disallow: /kitchen
 Disallow: /login
 Disallow: /dashboard

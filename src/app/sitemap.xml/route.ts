@@ -52,6 +52,11 @@ export async function GET() {
     ["/contact", "0.7", "monthly"],
     ["/tour", "0.6", "monthly"],
     ["/planner", "0.7", "monthly"],
+    // /book — the booking flow page. Indexed because it's set as the
+    // Google Business Profile "website" URL. Has descriptive content
+    // (room list, pricing, etc.) so it has SEO value beyond just being
+    // a form. High priority since it's the conversion entry point.
+    ["/book", "0.9", "weekly"],
     ["/privacy", "0.3", "yearly"],
     ["/terms", "0.3", "yearly"],
     ["/policies", "0.3", "monthly"],
