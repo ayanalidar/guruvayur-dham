@@ -60,16 +60,24 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""}`,
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // CRITICAL: checkout.razorpay.com must be in script-src for the
+              // Razorpay Checkout SDK to load. Without it, the SDK is blocked
+              // by CSP and online payment is completely broken.
+              `script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.razorpay.com${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""}`,
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://checkout.razorpay.com",
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: https: blob:",
+              // connect-src includes api.razorpay.com (for payment API calls)
+              // and *.public.blob.vercel-storage.com (for Blob image fetches
+              // via next/image optimizer)
               process.env.REALTIME_ALLOWED_ORIGIN
-                ? `connect-src 'self' https://graph.facebook.com https://api.razorpay.com ${process.env.REALTIME_ALLOWED_ORIGIN} wss://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host} ws://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host}`
-                : "connect-src 'self' https://graph.facebook.com https://api.razorpay.com",
+                ? `connect-src 'self' https://graph.facebook.com https://api.razorpay.com https://*.public.blob.vercel-storage.com ${process.env.REALTIME_ALLOWED_ORIGIN} wss://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host} ws://${new URL(process.env.REALTIME_ALLOWED_ORIGIN).host}`
+                : "connect-src 'self' https://graph.facebook.com https://api.razorpay.com https://*.public.blob.vercel-storage.com",
+              // frame-src allows the Razorpay checkout modal (it opens in an iframe)
+              "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
+              "form-action 'self' https://checkout.razorpay.com https://api.razorpay.com",
               "object-src 'none'",
             ].join("; "),
           },
@@ -89,33 +97,53 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // SPA catch-all rewrite — works on BOTH Vercel and Docker/VPS (Caddy).
+  // SPA routing is now handled by Next.js App Router natively — no rewrite
+  // needed. The routing hierarchy is:
+  //   1. Static routes (src/app/book/page.tsx, src/app/rooms/page.tsx, etc.)
+  //      — each has unique SEO metadata (title, description, canonical)
+  //   2. Dynamic route (src/app/[slug]/page.tsx) — handles SEO landing pages
+  //      like /janmashtami, /hotels-near-krishna-janmabhoomi (50+ slugs)
+  //   3. Catch-all rewrite (below) — handles everything else (multi-segment
+  //      paths like /rooms/deluxe-ac-room, /blog/my-post, /admin/*) by
+  //      serving the SPA shell, which then renders the right page client-side
   //
-  // The site is a single-page app: there is only one `app/page.tsx` at the
-  // root. Clean URLs like /rooms, /pooja, /blog/my-post, /janmashtami must
-  // all serve the same SPA shell so the client-side router can read
-  // window.location.pathname and render the right page.
+  // Previously, the rewrite caught ALL non-excluded paths (including
+  // single-segment paths like /janmashtami), which prevented the dynamic
+  // route from matching. This is why Google saw byte-identical HTML for all
+  // 73 URLs — they all hit the SPA shell via the rewrite, with the same
+  // homepage title + description + no canonical.
   //
-  // Without this rewrite, every clean URL except `/` returns 404 on
-  // Docker/Caddy (vercel.json rewrites ONLY apply on Vercel deployments).
-  // That's why Google was only indexing 2 pages — every other sitemap URL
-  // returned 404 to Googlebot.
-  //
-  // The negative lookahead excludes:
-  //   - /api/*              (API routes — must NOT be rewritten)
-  //   - /_next/*            (Next.js static assets)
-  //   - /_vercel/*          (Vercel internals)
-  //   - /favicon.ico, /robots.txt, /sitemap.xml, /manifest.json
-  //   - Static image files at the root (logo-*.png, guruyavur*.png, icon-*.png,
-  //     apple-touch-icon.png, favicon-*.png)
-  //   - /rooms/*.{jpg,jpeg,png,webp,gif,svg,avif} (room IMAGE FILES in /public/rooms/)
-  //     — but NOT /rooms/<slug> page routes (the SPA handles those)
-  //   - /webhook/*         (inbound webhooks)
+  // The fix: the rewrite now ONLY catches multi-segment paths (containing
+  // a /). Single-segment paths fall through to the dynamic route, which
+  // generates unique metadata per SEO landing page slug.
   async rewrites() {
     return [
       {
+        // Only rewrite multi-segment paths (paths containing at least one /
+        // after the leading slash). This lets single-segment paths like
+        // /janmashtami, /holi-in-mathura fall through to the dynamic route
+        // src/app/[slug]/page.tsx which generates unique SEO metadata.
+        //
+        // Multi-segment paths like /rooms/deluxe-ac-room, /blog/my-post,
+        // /admin/bookings still need the rewrite because they don't have
+        // matching route files — the SPA shell handles them client-side.
+        //
+        // Excluded prefixes (negative lookahead):
+        //   - api/  _next/  _vercel/  — infrastructure
+        //   - favicon.ico, robots.txt, sitemap.xml, sitemap.xsl, manifest.*,
+        //     sw.js, workbox-*.js, google*.html — static files
+        //   - logo-*.png, guruyavur*.png, icon-*.png, apple-touch-icon.png,
+        //     favicon-*.png — root image files
+        //   - rooms/*.{jpg,jpeg,png,webp,gif,svg,avif} — room image files
+        //   - temples/*, about/* — static image directories
+        //   - webhook/ — inbound webhooks
+        //   - uploads/ — uploaded files (if any)
+        //
+        // The key difference from the old rewrite: the path MUST contain
+        // a / after the first character (i.e., be multi-segment). The
+        // pattern `[^/]+/.+` ensures this.
         source:
-          "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|sitemap.xsl|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/).*)",
+          "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|sitemap.xsl|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/|uploads/)[^/]+/.+)",
         destination: "/",
       },
     ];
