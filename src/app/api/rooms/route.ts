@@ -3,6 +3,13 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/api-safe";
+
+// CRITICAL: opt out of Next.js static caching — see /api/poojas-admin for rationale.
+// Without this, GET /api/rooms could be frozen at build time and admin edits to
+// room prices / images would never reach the live RoomsPage on the homepage.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 import { ROOMS } from "@/lib/site-data";
 
 // Current valid room slugs - any room in the DB with a slug not in this list

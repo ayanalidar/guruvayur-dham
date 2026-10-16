@@ -3,6 +3,14 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
+// CRITICAL: opt out of Next.js's static route caching.
+// Without this, GET /api/poojas-admin could be frozen at build time
+// and admin edits to poojas would never reach the live PoojaSection
+// on the homepage.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const CreatePoojaSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().optional(),

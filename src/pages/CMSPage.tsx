@@ -479,9 +479,21 @@ function PoojaCMS() {
   };
 
   const updateField = async (id: string, field: string, value: any) => {
-    await fetch("/api/poojas-admin", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, data: { [field]: value } }) });
-    toast.success(`${field} updated`);
-    load();
+    try {
+      const r = await fetch("/api/poojas-admin", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, data: { [field]: value } }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      toast.success(`${field} updated`);
+      load(); // load() calls broadcastCMSUpdate — homepage refetches via emitter
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || "unknown error"}`);
+    }
   };
 
   return (
@@ -652,8 +664,21 @@ function CarouselCMS() {
   };
 
   const updateField = async (id: string, field: string, value: any) => {
-    await fetch("/api/carousel", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, data: { [field]: value } }) });
-    load();
+    try {
+      const r = await fetch("/api/carousel", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, data: { [field]: value } }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      broadcastCMSUpdate("carousel-update"); // explicit broadcast for instant refetch
+      load();
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || "unknown error"}`);
+    }
   };
 
   return (
@@ -767,14 +792,23 @@ function GenericCMS({ type, title, fields }: { type: string; title: string; fiel
   };
 
   const updateField = async (id: string, field: string, value: any) => {
-    const data: any = { [field]: field === "rating" ? parseInt(value) : value };
-    await fetch("/api/cms", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, id, data }),
-    });
-    toast.success(`${field} updated`);
-    load();
+    try {
+      const data: any = { [field]: field === "rating" ? parseInt(value) : value };
+      const r = await fetch("/api/cms", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, id, data }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      toast.success(`${field} updated`);
+      broadcastCMSUpdate("cms-list-update"); // explicit broadcast for instant refetch
+      load();
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || "unknown error"}`);
+    }
   };
 
   return (
@@ -950,18 +984,27 @@ function BlogCMS() {
   };
 
   const updateField = async (id: string, field: string, value: any) => {
-    let v: any = value;
-    if (field === "content") {
-      const paragraphs = value.split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean);
-      v = JSON.stringify(paragraphs);
+    try {
+      let v: any = value;
+      if (field === "content") {
+        const paragraphs = value.split(/\n\n+/).map((p: string) => p.trim()).filter(Boolean);
+        v = JSON.stringify(paragraphs);
+      }
+      const r = await fetch("/api/cms", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "blogPosts", id, data: { [field]: v } }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      toast.success(`${field} updated`);
+      broadcastCMSUpdate("blog-update"); // explicit broadcast for instant refetch
+      load();
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || "unknown error"}`);
     }
-    await fetch("/api/cms", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "blogPosts", id, data: { [field]: v } }),
-    });
-    toast.success(`${field} updated`);
-    load();
   };
 
   const contentToText = (c: string): string => {
@@ -1426,13 +1469,21 @@ function PricingRulesCMS() {
   };
 
   const updateField = async (id: string, field: string, value: any) => {
-    await fetch("/api/pricing-rules", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, data: { [field]: value } }),
-    });
-    toast.success(`${field} updated`);
-    load();
+    try {
+      const r = await fetch("/api/pricing-rules", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, data: { [field]: value } }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      toast.success(`${field} updated`);
+      load();
+    } catch (err: any) {
+      toast.error(`Save failed: ${err?.message || "unknown error"}`);
+    }
   };
 
   const ruleTypes = ["WEEKEND", "FESTIVAL", "LAST_MINUTE", "EARLY_BIRD", "SEASONAL"];

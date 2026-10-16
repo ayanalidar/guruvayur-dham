@@ -3,6 +3,11 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireStaff } from "@/lib/auth";
 
+// CRITICAL: opt out of Next.js static caching — see /api/poojas-admin for rationale.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const CreateBlogPostSchema = z.object({
   title: z.string().min(1).max(300),
   slug: z.string().max(200).optional(),
