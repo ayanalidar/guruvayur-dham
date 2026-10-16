@@ -91,7 +91,7 @@ export default function PoojaSection() {
             return (
               <motion.article
                 key={pooja.id || i}
-                initial={{ opacity: 0, y: 30 }}
+                initial={false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}

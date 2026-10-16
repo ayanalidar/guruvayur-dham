@@ -143,6 +143,30 @@ async function fetchCMSList<T>(type: string, force = false): Promise<T[]> {
       if (!r.ok) return cmsListCache[type] || [];
       const j = await r.json();
       const data = j.data || [];
+      // CRITICAL: if the new data is structurally identical to the cached
+      // data (same items in same order with same updatedAt), return the
+      // cached array reference instead of a new array. This lets React's
+      // useState bail out of re-rendering when setList(sameReference) is
+      // called — which prevents framer-motion's `motion.div` with
+      // `whileInView` from re-evaluating the animation state on every
+      // 60s polling cycle. Without this, polling re-renders cause cards
+      // on /pooja to reset to opacity:0 (invisible).
+      const cached = cmsListCache[type];
+      if (cached && cached.length === data.length) {
+        const same = cached.every((item: any, i: number) => {
+          const newItem: any = (data as any[])[i];
+          if (!newItem) return false;
+          // Compare id (string) + updatedAt (string or Date) — if both
+          // match, the visible state hasn't changed (image, name, price,
+          // description all derived from these being stable).
+          return item.id === newItem.id && String(item.updatedAt) === String(newItem.updatedAt);
+        });
+        if (same) {
+          // Update cache timestamp so we don't immediately re-fetch
+          cmsListCacheAt[type] = Date.now();
+          return cached as T[]; // same reference → React bails out of re-render
+        }
+      }
       cmsListCache[type] = data;
       cmsListCacheAt[type] = Date.now();
       return data;

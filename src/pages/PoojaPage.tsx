@@ -65,7 +65,7 @@ export default function PoojaPage() {
               return (
                 <TiltCard key={pooja.id} maxTilt={5} className="h-full">
                   <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={false}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
