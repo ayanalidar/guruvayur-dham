@@ -12,6 +12,7 @@ import WhatsAppChat from "@/components/site/WhatsAppChat";
 import AdminGuard from "@/components/site/AdminGuard";
 import PWAEnhancements from "@/components/site/PWAEnhancements";
 import CookieConsent from "@/components/site/CookieConsent";
+import CanonicalUpdater from "@/components/site/CanonicalUpdater";
 import { PageLoader } from "@/components/site/visuals";
 import FestivalBanner from "@/components/site/FestivalBanner";
 import PopupCoordinator from "@/components/site/popups/PopupCoordinator";
@@ -160,6 +161,7 @@ export default function Home() {
   return (
     <>
       <Suspense fallback={<PageLoader onDone={() => setLoading(false)} />}>
+        <CanonicalUpdater />
         {!isLoginPage && !isResetPage && <FestivalBanner />}
         {!isLoginPage && <Navbar />}
         <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>

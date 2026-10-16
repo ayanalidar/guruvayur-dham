@@ -49,7 +49,18 @@ export const metadata: Metadata = {
   authors: [{ name: "Guruvayur Dham" }],
   creator: "Guruvayur Dham",
   publisher: "Guruvayur Dham",
-  alternates: { canonical: "/" },
+  // NOTE: do NOT set `alternates: { canonical: "/" }` here — that would
+  // tell Google "every page on this site is a duplicate of the homepage,
+  // consolidate everything into /". This is the OPPOSITE of what we want
+  // for SEO — we want each URL (/book, /rooms, /pooja, etc.) indexed as
+  // its own page. Without a static canonical, Google uses the page's own
+  // URL as the canonical (correct default behavior).
+  //
+  // The dynamic canonical per route is set client-side by the
+  // <CanonicalUpdater /> component in src/app/page.tsx — it reads
+  // window.location.pathname and updates the <link rel="canonical"> tag
+  // on every route change so Google's JS renderer sees the correct
+  // self-referencing canonical for each URL.
   openGraph: {
     type: "website",
     locale: "en_IN",
