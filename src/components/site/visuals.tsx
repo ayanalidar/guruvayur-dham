@@ -571,11 +571,11 @@ export function PageLoader({ onDone }: { onDone?: () => void }) {
           </g>
         </svg>
         <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="mt-6 font-serif text-2xl tracking-[0.15em] text-champagne"
-          style={{ textShadow: "0 0 20px rgba(212,196,168,0.3)" }}
+          initial={{ opacity: 0, y: 12, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+          className="mt-8 font-serif text-5xl tracking-[0.2em] text-champagne sm:text-6xl"
+          style={{ textShadow: "0 0 30px rgba(212,196,168,0.5), 0 0 60px rgba(212,196,168,0.2)" }}
         >
           राधे राधे
         </motion.p>
