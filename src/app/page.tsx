@@ -13,8 +13,8 @@ import AdminGuard from "@/components/site/AdminGuard";
 import PWAEnhancements from "@/components/site/PWAEnhancements";
 import CookieConsent from "@/components/site/CookieConsent";
 import CanonicalUpdater from "@/components/site/CanonicalUpdater";
+import FestivalPill from "@/components/site/FestivalPill";
 import { PageLoader } from "@/components/site/visuals";
-import FestivalBanner from "@/components/site/FestivalBanner";
 import PopupCoordinator from "@/components/site/popups/PopupCoordinator";
 import { SEO_PAGE_SLUGS } from "@/lib/seo-pages";
 
@@ -162,13 +162,13 @@ export default function Home() {
     <>
       <Suspense fallback={<PageLoader onDone={() => setLoading(false)} />}>
         <CanonicalUpdater />
-        {!isLoginPage && !isResetPage && <FestivalBanner />}
-        {!isLoginPage && <Navbar />}
+        {!isLoginPage && !isResetPage && <Navbar />}
         <main className={cn("min-h-screen", !isLoginPage && "pb-16 sm:pb-0")}>
           {renderPage()}
         </main>
         {!isLoginPage && <Footer />}
         {!isLoginPage && <FloatingActions />}
+        {!isLoginPage && !isResetPage && <FestivalPill />}
         {!isLoginPage && <WhatsAppChat />}
         <PWAEnhancements />
         <CookieConsent />

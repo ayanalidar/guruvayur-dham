@@ -95,6 +95,16 @@ const nextConfig: NextConfig = {
         source: "/uploads/(.*)",
         headers: [{ key: "Cache-Control", value: "public, max-age=604800" }],
       },
+      // HTML pages — short CDN edge cache (5 min) + stale-while-revalidate
+      // (serve stale for up to 10 min while revalidating in background).
+      // This reduces TTFB on repeat visits from ~30ms to ~5ms (edge HIT).
+      // API routes override this with no-store in their own handlers.
+      {
+        source: "/((?!api/|_next/|_vercel|favicon.ico|robots.txt|sitemap.xml|sitemap.xsl|manifest.json|manifest.webmanifest|sw.js|workbox-.*\\.js|google.*\\.html|logo-.*\\.png|guruyavur.*\\.png|icon-.*\\.png|apple-touch-icon.png|favicon-.*\\.png|rooms/.*\\.(?:jpg|jpeg|png|webp|gif|svg|avif)|temples/.*|about/.*|webhook/|uploads/).*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=300, stale-while-revalidate=600" },
+        ],
+      },
     ];
   },
   // SPA routing is now handled by Next.js App Router natively — no rewrite

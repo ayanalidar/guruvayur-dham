@@ -49,18 +49,19 @@ export const metadata: Metadata = {
   authors: [{ name: "Guruvayur Dham" }],
   creator: "Guruvayur Dham",
   publisher: "Guruvayur Dham",
-  // NOTE: do NOT set `alternates: { canonical: "/" }` here — that would
-  // tell Google "every page on this site is a duplicate of the homepage,
-  // consolidate everything into /". This is the OPPOSITE of what we want
-  // for SEO — we want each URL (/book, /rooms, /pooja, etc.) indexed as
-  // its own page. Without a static canonical, Google uses the page's own
-  // URL as the canonical (correct default behavior).
+  // The homepage canonical is "/" — this is correct for the root URL.
+  // Per-route metadata files (src/app/book/page.tsx, src/app/rooms/page.tsx,
+  // etc.) OVERRIDE this with their own self-referencing canonical (e.g.
+  // "/book", "/rooms"). So only the homepage and multi-segment paths served
+  // by the catch-all rewrite (like /rooms/deluxe-ac-room) get canonical="/".
+  // The CanonicalUpdater client component sets the correct self-referencing
+  // canonical for multi-segment paths after hydration.
   //
-  // The dynamic canonical per route is set client-side by the
-  // <CanonicalUpdater /> component in src/app/page.tsx — it reads
-  // window.location.pathname and updates the <link rel="canonical"> tag
-  // on every route change so Google's JS renderer sees the correct
-  // self-referencing canonical for each URL.
+  // CRITICAL: this must be set to "/" — without it, the homepage has NO
+  // canonical tag in server HTML, which causes a React hydration error
+  // (#418) because Next.js's metadata system expects a canonical tag when
+  // metadataBase is set.
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_IN",
