@@ -75,16 +75,21 @@ export async function GET() {
     });
   }
 
-  // ====== LIVE MODE (Google Places Details API - New endpoint) ======
+  // ====== LIVE MODE (Google Places API v1 — the NEW endpoint) ======
   try {
-    // Use the new Place Details (New) API - $17 per 1000 calls, allowed
-    // 30-day cache (we cache 6h, well within TOS).
-    const url =
-      `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}` +
-      `?fields=id,displayName,rating,userRatingCount,googleMapsUri,formattedAddress,internationalPhoneNumber,regularOpeningHours` +
-      `&key=${encodeURIComponent(apiKey)}`;
+    // The new Places API (v1) uses:
+    //   - URL: https://places.googleapis.com/v1/places/{placeId}
+    //   - X-Goog-Api-Key header (NOT ?key= query param)
+    //   - X-Goog-FieldMask header (NOT ?fields= query param)
+    // The reviews field requires billing enabled on the Google Cloud
+    // project ($17/1000 calls). Rating + userRatingCount are free.
+    const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
     const res = await fetch(url, {
-      headers: { "X-Goog-Api-Key": apiKey },
+      headers: {
+        "X-Goog-Api-Key": apiKey,
+        "X-Goog-FieldMask":
+          "displayName,rating,userRatingCount,googleMapsUri,formattedAddress,internationalPhoneNumber,regularOpeningHours.weekdayDescriptions",
+      },
       cache: "no-store",
     });
 
@@ -125,8 +130,6 @@ export async function GET() {
       fetched_at: Date.now(),
       cached: false,
     };
-
-    // Save to cache
     cache.set("live", live);
 
     return NextResponse.json(live, {
