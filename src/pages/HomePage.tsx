@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
 import { ChevronRight, Star, ArrowUpRight, MapPin, Sparkles, Quote, Phone, Route, Clock, CalendarDays, Wand2, CheckCircle2 } from "lucide-react";
 import {
@@ -82,10 +83,13 @@ function Hero() {
       {/* Background image with Ken Burns */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 animate-kenburns">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=1920&h=1280&fit=crop"
             alt="Shri Krishna Janmabhoomi temple at golden hour"
-            className="h-full w-full object-cover photo-cinematic-strong"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover photo-cinematic-strong"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
@@ -191,10 +195,12 @@ function Hero() {
               className="absolute right-0 top-8 h-72 w-64 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(80px)" }}
             >
-              <img
+              <Image
                 src="/rooms/gvd-suite-main.jpg"
                 alt="GVD Suite at Guruvayur Dham"
-                className="h-full w-full object-cover photo-cinematic"
+                fill
+                sizes="256px"
+                className="object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
@@ -208,10 +214,12 @@ function Hero() {
               className="absolute left-0 top-32 h-64 w-56 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(40px)" }}
             >
-              <img
+              <Image
                 src="/rooms/deluxe-room-main.jpg"
                 alt="Deluxe Room at Guruvayur Dham"
-                className="h-full w-full object-cover photo-cinematic"
+                fill
+                sizes="224px"
+                className="object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
@@ -225,10 +233,12 @@ function Hero() {
               className="absolute bottom-0 right-12 h-48 w-48 overflow-hidden rounded-2xl border border-champagne/20 shadow-luxe-lg"
               style={{ transform: "translateZ(120px)" }}
             >
-              <img
+              <Image
                 src="/rooms/superior-room-main.jpg"
                 alt="Superior Room at Guruvayur Dham"
-                className="h-full w-full object-cover photo-cinematic"
+                fill
+                sizes="192px"
+                className="object-cover photo-cinematic"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
@@ -460,10 +470,12 @@ function RoomPreviewCard({ room, onClick }: { room: typeof ROOMS[number]; onClic
         className="card-luxe group block h-full w-full overflow-hidden text-left"
       >
         <div className="relative aspect-[4/5] overflow-hidden">
-          <img
+          <Image
             src={room.image}
             alt={`${room.name} at Guruvayur Dham`}
-            className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
           {room.badge && (
@@ -764,10 +776,12 @@ function PoojaPreview() {
               className="card-luxe group overflow-hidden"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <img
+                <Image
                   src={pooja.image}
                   alt={`${pooja.name} pooja at Shri Krishna Janmabhoomi`}
-                  className="h-full w-full object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover photo-cinematic transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
                 <span className="absolute bottom-3 right-3 rounded-full border border-champagne/30 bg-ink/70 px-3 py-1 text-xs font-bold text-gold-foil backdrop-blur-md">
