@@ -53,7 +53,10 @@ export default function AdminBookings() {
     setDeleting(id);
     try {
       const r = await fetch(`/api/bookings?id=${id}`, { method: "DELETE" });
-      const j = await r.json();
+      // Handle empty response body gracefully (server may return empty
+      // body on certain error states — don't crash on .json() parse)
+      const text = await r.text();
+      const j = text ? JSON.parse(text) : {};
       if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
       toast.success(`Deleted ${ref} — availability restored`);
       await load();

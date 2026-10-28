@@ -247,73 +247,93 @@ export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Booking id required" }, { status: 400 });
 
-  // Find the booking (include room for channel sync)
-  const booking = await db.booking.findUnique({
-    where: { id },
-    select: {
-      id: true, reference: true, roomId: true, room: { select: { slug: true } },
-      checkIn: true, checkOut: true, nights: true, status: true, source: true,
-      guestName: true,
-    },
-  });
-
-  if (!booking) {
-    return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-  }
-
-  // ===== RESTORE AVAILABILITY =====
-  // Increment available count for each night that was blocked.
-  const ci = new Date(booking.checkIn);
-  const co = new Date(booking.checkOut);
-  ci.setHours(0, 0, 0, 0);
-  co.setHours(0, 0, 0, 0);
-  const nights = booking.nights || Math.round((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24));
-
-  for (let i = 0; i < nights; i++) {
-    const d = new Date(ci);
-    d.setDate(d.getDate() + i);
-    await db.availability.update({
-      where: { roomId_date: { roomId: booking.roomId, date: d } },
-      data: { available: { increment: 1 } },
-    }).catch(() => {});
-  }
-
-  // ===== BROADCAST CANCELLATION TO CHANNELS =====
-  if (booking.status !== "CANCELLED") {
-    await broadcastToChannels({
-      bookingId: booking.id,
-      bookingRef: booking.reference,
-      roomSlug: booking.room.slug,
-      roomId: booking.roomId,
-      checkIn: booking.checkIn,
-      checkOut: booking.checkOut,
-      sourceChannel: booking.source,
-      action: "UNBLOCK",
-    }).catch(() => {});
-  }
-
-  // ===== DELETE THE BOOKING =====
-  await db.booking.delete({ where: { id } });
-
-  // Broadcast realtime event
   try {
-    await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        event: "booking:cancelled",
-        data: { reference: booking.reference, guestName: booking.guestName },
-      }),
+    // Find the booking (include room for channel sync)
+    const booking = await db.booking.findUnique({
+      where: { id },
+      select: {
+        id: true, reference: true, roomId: true, room: { select: { slug: true } },
+        checkIn: true, checkOut: true, nights: true, status: true, source: true,
+        guestName: true,
+      },
     });
-  } catch {}
 
-  return NextResponse.json({
-    ok: true,
-    id: booking.id,
-    reference: booking.reference,
-    deletedBy: session?.user?.name || null,
-    availabilityRestored: nights,
-  });
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    // ===== RESTORE AVAILABILITY =====
+    // Increment available count for each night that was blocked.
+    const ci = new Date(booking.checkIn);
+    const co = new Date(booking.checkOut);
+    ci.setHours(0, 0, 0, 0);
+    co.setHours(0, 0, 0, 0);
+    const nights = booking.nights || Math.round((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24));
+
+    for (let i = 0; i < nights; i++) {
+      const d = new Date(ci);
+      d.setDate(d.getDate() + i);
+      await db.availability.update({
+        where: { roomId_date: { roomId: booking.roomId, date: d } },
+        data: { available: { increment: 1 } },
+      }).catch(() => {}); // silently skip if availability row doesn't exist
+    }
+
+    // ===== BROADCAST CANCELLATION TO CHANNELS =====
+    if (booking.status !== "CANCELLED") {
+      await broadcastToChannels({
+        bookingId: booking.id,
+        bookingRef: booking.reference,
+        roomSlug: booking.room.slug,
+        roomId: booking.roomId,
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        sourceChannel: booking.source,
+        action: "UNBLOCK",
+      }).catch(() => {});
+    }
+
+    // ===== DELETE RELATED RECORDS FIRST (foreign key constraints) =====
+    // Booking has relations: SyncLog[], Invoice?, ReviewRequest?
+    // Must delete these BEFORE deleting the booking, otherwise Prisma
+    // throws P2003 (Foreign key constraint failed) → empty response body
+    // → "Unexpected end of JSON input" on the client.
+    await db.syncLog.deleteMany({ where: { bookingId: id } }).catch(() => {});
+    await db.invoice.deleteMany({ where: { bookingId: id } }).catch(() => {});
+    await db.reviewRequest.deleteMany({ where: { bookingRef: booking.reference } }).catch(() => {});
+    await db.reminder.deleteMany({ where: { bookingRef: booking.reference } }).catch(() => {});
+
+    // ===== DELETE THE BOOKING =====
+    await db.booking.delete({ where: { id } });
+
+    // Broadcast realtime event
+    try {
+      await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "booking:cancelled",
+          data: { reference: booking.reference, guestName: booking.guestName },
+        }),
+      });
+    } catch {}
+
+    return NextResponse.json({
+      ok: true,
+      id: booking.id,
+      reference: booking.reference,
+      deletedBy: session?.user?.name || null,
+      availabilityRestored: nights,
+    });
+  } catch (err: any) {
+    // Catch ANY error — return proper JSON so the client can display it
+    // instead of crashing with "Unexpected end of JSON input"
+    console.error("[DELETE /api/bookings] Error:", err?.message || err);
+    return NextResponse.json(
+      { error: `Delete failed: ${err?.message || "unknown error"}` },
+      { status: 500 }
+    );
+  }
 }
 
 /**
