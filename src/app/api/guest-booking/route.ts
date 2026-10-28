@@ -10,8 +10,13 @@ import { sendEmailViaHostinger, isHostingerMailConfigured } from "@/lib/email";
 import { buildInvoiceData } from "@/lib/invoice";
 import { generateInvoicePdf } from "@/lib/invoice-pdf";
 
+// CRITICAL: force-dynamic — guest bookings must never be statically cached.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const DarshanSlotEnum = z.enum(["NIRMALYA", "USHA", "DEEPARADHANA"]);
-const PaymentMethodEnum = z.enum(["RAZORPAY", "UPI", "CARD", "COD"]);
+const PaymentMethodEnum = z.enum(["RAZORPAY_FULL", "RAZORPAY_ADVANCE", "RAZORPAY", "UPI", "CARD", "COD"]);
 
 const CreateGuestBookingSchema = z.object({
   roomSlug: z.string().min(1).max(200),
@@ -28,7 +33,8 @@ const CreateGuestBookingSchema = z.object({
   guests: z.coerce.number().int().min(1).default(2),
   couponCode: z.string().max(50).optional(),
   darshanSlot: DarshanSlotEnum.optional(),
-  paymentMethod: PaymentMethodEnum.default("RAZORPAY"),
+  paymentMethod: PaymentMethodEnum.default("RAZORPAY_ADVANCE"),
+  advanceAmount: z.coerce.number().min(0).optional(),
   paymentId: z.string().max(200).optional(),
   // Multi-room grouping - set by the frontend when a customer books
   // multiple room types in one reservation. All bookings of the same
@@ -78,7 +84,8 @@ export async function POST(req: NextRequest) {
     roomSlug, guestName, guestPhone, guestEmail,
     guestGSTIN, guestAddress, arrivalTime, departureTime,
     checkIn, checkOut, guests = 2, couponCode,
-    darshanSlot, paymentMethod = "RAZORPAY",
+    darshanSlot, paymentMethod = "RAZORPAY_ADVANCE",
+    advanceAmount,
     paymentId: clientPaymentId,
     // Multi-room grouping (optional) - all bookings of the same reservation
     // share this parent reference so the admin can group them in the grid.
@@ -93,6 +100,7 @@ export async function POST(req: NextRequest) {
   let verifiedPaymentId: string | null = null;
 
   if (paymentMethod !== "COD") {
+    // RAZORPAY_FULL, RAZORPAY_ADVANCE, RAZORPAY, UPI, CARD all require payment verification
     if (!clientPaymentId) {
       return NextResponse.json(
         { error: `paymentId required for ${paymentMethod} payments` },
@@ -230,6 +238,8 @@ export async function POST(req: NextRequest) {
       arrivalTime: arrivalTime || null,
       departureTime: departureTime || null,
       paymentMethod,
+      advanceAmount: advanceAmount || null,
+      advancePaid: paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE",
       checkIn: ci, checkOut: co,
       nights, guests,
       amount: finalAmount,
