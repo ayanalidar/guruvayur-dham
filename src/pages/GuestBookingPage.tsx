@@ -31,10 +31,9 @@ const DARSHAN_SLOTS = [
 ];
 
 const PAYMENT_METHODS = [
-  { value: "RAZORPAY", label: "Razorpay (UPI/Card/Netbanking)", icon: "💳" },
-  { value: "UPI", label: "Direct UPI", icon: "📱" },
-  { value: "CARD", label: "Credit/Debit Card", icon: "💳" },
-  { value: "COD", label: "Pay at Hotel", icon: "🏨" },
+  { value: "RAZORPAY_FULL", label: "Full Payment", subLabel: "Pay 100% now via Razorpay", icon: "💳" },
+  { value: "RAZORPAY_ADVANCE", label: "20% Advance", subLabel: "Pay 20% now, rest at hotel", icon: "💵" },
+  { value: "COD", label: "Pay at Hotel", subLabel: "Pay 100% on arrival", icon: "🏨" },
 ];
 
 // Max guests per booking - increased from 6 to 8 per business rule
@@ -65,7 +64,7 @@ export default function GuestBookingPage() {
   const [showInvoiceFields, setShowInvoiceFields] = useState(false);
   const [darshanSlot, setDarshanSlot] = useState("");
   const [couponCode, setCouponCode] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("RAZORPAY");
+  const [paymentMethod, setPaymentMethod] = useState("RAZORPAY_ADVANCE");
   const [availability, setAvailability] = useState<Record<string, number>>({});
   const [bookings, setBookings] = useState<any[]>([]); // multiple room bookings
   const [creating, setCreating] = useState(false);
@@ -236,19 +235,28 @@ export default function GuestBookingPage() {
     const couponDiscount = couponResult?.valid ? couponResult.discount : 0;
     const finalAmount = (aggregatePricing?.finalTotal || 0) - couponDiscount;
 
-    // If Razorpay selected, open the checkout modal
-    if (paymentMethod === "RAZORPAY" && razorpayLoaded && aggregatePricing) {
+    // If Razorpay (full or 20% advance) selected, open the checkout modal
+    if ((paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE") && razorpayLoaded && aggregatePricing) {
+      // Calculate the amount to charge via Razorpay:
+      // - RAZORPAY_FULL: 100% of total
+      // - RAZORPAY_ADVANCE: 20% of total (rest payable at hotel)
+      const razorpayAmount = paymentMethod === "RAZORPAY_ADVANCE"
+        ? Math.round(finalAmount * 0.20)  // 20% advance
+        : finalAmount;                     // full payment
+      const advanceAmount = paymentMethod === "RAZORPAY_ADVANCE" ? razorpayAmount : null;
+
       try {
         // 1. Create order on server
         const orderRes = await fetch("/api/razorpay/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: finalAmount * 100, // convert to paise
+            amount: razorpayAmount * 100, // convert to paise
             receipt: `GD-${Date.now()}`,
             notes: {
               rooms: selectedRooms.map(s => `${s.slug}x${s.quantity}`).join(","),
               guestName, checkIn, checkOut,
+              paymentType: paymentMethod === "RAZORPAY_ADVANCE" ? "20% ADVANCE" : "FULL",
             },
           }),
         });
@@ -261,8 +269,10 @@ export default function GuestBookingPage() {
 
         // Check if demo mode - skip Razorpay modal, go straight to booking
         if (order.demo) {
-          toast.info("Demo mode: Payment simulated. Add Razorpay keys for real payments.");
-          await createBookings("pay_demo_" + Math.random().toString(36).slice(2, 14));
+          toast.info(paymentMethod === "RAZORPAY_ADVANCE"
+            ? "Demo mode: 20% advance simulated."
+            : "Demo mode: Payment simulated. Add Razorpay keys for real payments.");
+          await createBookings("pay_demo_" + Math.random().toString(36).slice(2, 14), advanceAmount);
           return;
         }
 
@@ -272,7 +282,9 @@ export default function GuestBookingPage() {
           amount: order.amount,
           currency: order.currency || "INR",
           name: "Guruvayur Dham",
-          description: `${totalSelectedRooms} room(s) · ${aggregatePricing.nights} night(s)`,
+          description: paymentMethod === "RAZORPAY_ADVANCE"
+            ? `20% advance (₹${razorpayAmount}) · Balance ₹${finalAmount - razorpayAmount} at hotel`
+            : `Full payment · ${totalSelectedRooms} room(s) · ${aggregatePricing.nights} night(s)`,
           image: "/icon-192.png",
           order_id: order.orderId,
           prefill: {
@@ -298,8 +310,8 @@ export default function GuestBookingPage() {
               setCreating(false);
               return;
             }
-            // 4. Create all the bookings with the verified payment
-            await createBookings(verify.paymentId);
+            // 4. Create all the bookings with the verified payment + advance info
+            await createBookings(verify.paymentId, advanceAmount);
           },
           modal: {
             ondismiss: () => {
@@ -327,7 +339,7 @@ export default function GuestBookingPage() {
   // ===== MULTI-ROOM BOOKING CREATION =====
   // Loops through selectedRooms, creating one Booking per (room × quantity)
   // under the same guest + parentReference for grouping in the admin.
-  const createBookings = async (paymentId?: string) => {
+  const createBookings = async (paymentId?: string, advanceAmount?: number | null) => {
     if (!aggregatePricing) {
       toast.error("Pricing not yet calculated. Please wait a moment and try again.");
       setCreating(false);
@@ -382,6 +394,7 @@ export default function GuestBookingPage() {
               couponCode: couponCodeFinal,
               darshanSlot: darshanSlot || undefined,
               paymentMethod,
+              advanceAmount: advanceAmount || undefined,
               paymentId,
               parentReference: parentRef, // groups all bookings of same reservation
               isMultiRoom: totalSelectedRooms > 1,
@@ -775,7 +788,10 @@ export default function GuestBookingPage() {
                     {PAYMENT_METHODS.map(p => (
                       <button key={p.value} onClick={() => setPaymentMethod(p.value)} className={cn("flex items-center gap-3 rounded-xl border p-3 text-left transition-all", paymentMethod === p.value ? "border-champagne bg-champagne/10" : "border-champagne/10 hover:border-champagne/30")}>
                         <span className="text-2xl">{p.icon}</span>
-                        <span className="text-sm text-ivory">{p.label}</span>
+                        <div>
+                          <span className="text-sm text-ivory">{p.label}</span>
+                          <span className="block text-[10px] text-ivory/50">{p.subLabel}</span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -790,19 +806,28 @@ export default function GuestBookingPage() {
                       {aggregatePricing.earlyBird.active && <p className="flex justify-between text-green-300"><span>Early Bird (-{aggregatePricing.earlyBird.discountPercent}%)</span><span>-₹{aggregatePricing.earlyBird.discount.toLocaleString("en-IN")}</span></p>}
                       {couponResult?.valid && <p className="flex justify-between text-green-300"><span>Coupon ({couponCode})</span><span>-₹{couponResult.discount.toLocaleString("en-IN")}</span></p>}
                       <p className="flex justify-between border-t border-champagne/10 pt-2 font-serif text-2xl text-gold-foil">
-                        <span>Pay Now</span>
-                        <span>₹{(aggregatePricing.finalTotal - (couponResult?.discount || 0)).toLocaleString("en-IN")}</span>
+                        <span>{paymentMethod === "RAZORPAY_ADVANCE" ? "20% Advance" : "Total"}</span>
+                        <span>₹{(paymentMethod === "RAZORPAY_ADVANCE"
+                          ? Math.round((aggregatePricing.finalTotal - (couponResult?.discount || 0)) * 0.20)
+                          : aggregatePricing.finalTotal - (couponResult?.discount || 0)
+                        ).toLocaleString("en-IN")}</span>
                       </p>
+                      {paymentMethod === "RAZORPAY_ADVANCE" && (
+                        <p className="flex justify-between text-sm text-ivory/50">
+                          <span>Balance at hotel</span>
+                          <span>₹{(aggregatePricing.finalTotal - (couponResult?.discount || 0) - Math.round((aggregatePricing.finalTotal - (couponResult?.discount || 0)) * 0.20)).toLocaleString("en-IN")}</span>
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
 
                 <div className="mt-4 flex items-center gap-2 text-xs text-ivory/50">
                   <Lock className="h-3 w-3" /> Secure payment via Razorpay. Your card details never touch our server.
-                  {paymentMethod === "RAZORPAY" && !razorpayLoaded && (
+                  {(paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE") && !razorpayLoaded && (
                     <span className="ml-2 inline-flex items-center gap-1 text-champagne"><Loader2 className="h-3 w-3 animate-spin" /> Loading checkout…</span>
                   )}
-                  {paymentMethod === "RAZORPAY" && razorpayLoaded && (
+                  {(paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE") && razorpayLoaded && (
                     <span className="ml-2 inline-flex items-center gap-1 text-green-300"><ShieldCheck className="h-3 w-3" /> Ready</span>
                   )}
                 </div>
@@ -813,8 +838,8 @@ export default function GuestBookingPage() {
 
                 <div className="mt-6 flex justify-between">
                   <button onClick={() => setStep(1)} className="btn-ghost-luxe"><ChevronLeft className="h-4 w-4" /> Back</button>
-                  <button onClick={submit} disabled={creating || (paymentMethod === "RAZORPAY" && !razorpayLoaded)} className="btn-luxe disabled:opacity-40">
-                    {creating ? <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</> : <><CreditCard className="h-4 w-4" /> {paymentMethod === "COD" ? "Confirm Booking" : "Pay & Confirm"}</>}
+                  <button onClick={submit} disabled={creating || ((paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE") && !razorpayLoaded)} className="btn-luxe disabled:opacity-40">
+                    {creating ? <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</> : <><CreditCard className="h-4 w-4" /> {paymentMethod === "COD" ? "Confirm Booking" : paymentMethod === "RAZORPAY_ADVANCE" ? "Pay 20% & Confirm" : "Pay & Confirm"}</>}
                   </button>
                 </div>
               </motion.div>

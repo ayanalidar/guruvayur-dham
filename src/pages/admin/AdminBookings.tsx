@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   CalendarDays, Plus, RefreshCw, Phone, Users, IndianRupee,
   Radio, ArrowLeft, X, Check, AlertCircle, Building2,
+  Trash2, MoreVertical,
 } from "lucide-react";
 import { useHashRoute } from "@/lib/router";
 import {
@@ -45,6 +46,41 @@ export default function AdminBookings() {
   const [filter, setFilter] = useState<string>("ALL");
   const [walkinOpen, setWalkinOpen] = useState(false);
   const [simOpen, setSimOpen] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const handleDelete = async (id: string, ref: string, guestName: string) => {
+    if (!confirm(`Delete booking ${ref} for ${guestName}?\n\nThis will:\n• Permanently delete the booking\n• Restore room availability\n• Cancel channel sync\n\nThis cannot be undone.`)) return;
+    setDeleting(id);
+    try {
+      const r = await fetch(`/api/bookings?id=${id}`, { method: "DELETE" });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+      toast.success(`Deleted ${ref} — availability restored`);
+      await load();
+    } catch (e: any) {
+      toast.error(`Delete failed: ${e?.message || "unknown error"}`);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const r = await fetch("/api/bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        throw new Error(e.error || `HTTP ${r.status}`);
+      }
+      toast.success(`Status → ${newStatus.replace("_", " ")}`);
+      await load();
+    } catch (e: any) {
+      toast.error(`Update failed: ${e?.message}`);
+    }
+  };
 
   const load = async () => {
     const [b, r] = await Promise.all([
@@ -127,6 +163,7 @@ export default function AdminBookings() {
                     <th className="px-5 py-3">Amount</th>
                     <th className="px-5 py-3">Source</th>
                     <th className="px-5 py-3">Status</th>
+                    <th className="px-5 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,6 +191,7 @@ export default function AdminBookings() {
                       <td className="px-5 py-3">
                         <span className={cn(
                           "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                          b.status === "PENDING" && "bg-amber-500/15 text-amber-300",
                           b.status === "CONFIRMED" && "bg-green-500/15 text-green-300",
                           b.status === "CHECKED_IN" && "bg-blue-500/15 text-blue-300",
                           b.status === "CHECKED_OUT" && "bg-ivory/10 text-ivory/70",
@@ -161,12 +199,44 @@ export default function AdminBookings() {
                         )}>
                           {b.status.replace("_", " ")}
                         </span>
+                        {b.advancePaid && (
+                          <span className="ml-1 inline-flex rounded-full bg-champagne/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-champagne">
+                            {b.paymentMethod === "RAZORPAY_ADVANCE" ? "20% paid" : "Full paid"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-1.5">
+                          <select
+                            onChange={(e) => handleStatusChange(b.id, e.target.value)}
+                            value={b.status}
+                            className="rounded-md border border-champagne/15 bg-ink px-2 py-1 text-[10px] text-ivory focus:outline-none focus:border-champagne/30"
+                          >
+                            <option value="PENDING">Pending</option>
+                            <option value="CONFIRMED">Confirmed</option>
+                            <option value="CHECKED_IN">Checked In</option>
+                            <option value="CHECKED_OUT">Checked Out</option>
+                            <option value="CANCELLED">Cancelled</option>
+                          </select>
+                          <button
+                            onClick={() => handleDelete(b.id, b.reference, b.guestName)}
+                            disabled={deleting === b.id}
+                            title="Delete booking + restore availability"
+                            className="grid h-7 w-7 place-items-center rounded-md border border-red-400/20 text-red-400/70 transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:opacity-30"
+                          >
+                            {deleting === b.id ? (
+                              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                   {bookings.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="px-5 py-12 text-center text-ivory/50">
+                      <td colSpan={9} className="px-5 py-12 text-center text-ivory/50">
                         {loading ? "Loading…" : "No bookings found."}
                       </td>
                     </tr>

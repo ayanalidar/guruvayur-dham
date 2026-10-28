@@ -52,7 +52,9 @@ model Booking {
   guestAddress    String?         // customer's billing address
   arrivalTime     String?         // e.g. "08:32 pm" - check-in time (separate from check-in date)
   departureTime   String?         // e.g. "09:30 am" - check-out time
-  paymentMethod   String?         // UPI | CASH | CARD | RAZORPAY - used on invoice
+  paymentMethod   String?         // UPI | CASH | CARD | RAZORPAY_FULL | RAZORPAY_ADVANCE | COD
+  advanceAmount   Int?            // 20% advance paid (in INR) — null if full payment or COD
+  advancePaid      Boolean @default(false) // true if 20% advance was charged via Razorpay
   roomNumber      String?         // specific room number (101-107, 201-208) for reservation grid
   checkIn         DateTime
   checkOut        DateTime

@@ -6,6 +6,11 @@ import { requireStaff, generateRef } from "@/lib/auth";
 import { broadcastToChannels } from "@/lib/channel-sync";
 import { calculateRoomPrice } from "@/lib/pricing";
 
+// CRITICAL: force-dynamic — bookings must never be statically cached.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
 const CreateBookingSchema = z.object({
   roomSlug: z.string().min(1).max(200),
   guestName: z.string().min(1).max(200),
@@ -17,6 +22,8 @@ const CreateBookingSchema = z.object({
   source: z.string().max(50).default("DIRECT"),
   channelBookingId: z.string().max(200).optional(),
   notes: z.string().optional(),
+  paymentMethod: z.enum(["RAZORPAY_FULL", "RAZORPAY_ADVANCE", "COD"]).optional(),
+  advanceAmount: z.coerce.number().min(0).optional(),
 });
 
 // GET /api/bookings · list all bookings (optional filters: ?status, ?source, ?from, ?to, ?search)
@@ -77,6 +84,7 @@ export async function POST(req: NextRequest) {
   const {
     roomSlug, guestName, guestPhone, guestEmail,
     checkIn, checkOut, guests, source = "DIRECT", channelBookingId, notes,
+    paymentMethod, advanceAmount,
   } = parsed.data;
 
   const room = await db.room.findUnique({ where: { slug: roomSlug } });
@@ -136,7 +144,11 @@ export async function POST(req: NextRequest) {
         channelModifier: modifier,
         pricingBreakdown: pricing.breakdown.map(b => ({ date: "", base: b.basePrice, final: b.finalPrice, rules: b.appliedRules })),
       }),
-      status: "CONFIRMED",
+      paymentMethod: paymentMethod || null,
+      advanceAmount: advanceAmount || null,
+      advancePaid: paymentMethod === "RAZORPAY_FULL" || paymentMethod === "RAZORPAY_ADVANCE",
+      // Status: CONFIRMED if advance/full payment made, PENDING if COD
+      status: paymentMethod === "COD" ? "PENDING" : "CONFIRMED",
     },
   });
 
@@ -218,4 +230,137 @@ export async function POST(req: NextRequest) {
       channels: syncResults.map(r => r.channel),
     },
   });
+}
+
+/**
+ * DELETE /api/bookings?id=xxx
+ *
+ * Deletes a booking AND restores room availability (increments available
+ * count back for each night that was blocked).
+ *
+ * AUTH: requires staff session.
+ */
+export async function DELETE(req: NextRequest) {
+  const { session, error } = await requireStaff(req);
+  if (error) return error;
+
+  const id = req.nextUrl.searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "Booking id required" }, { status: 400 });
+
+  // Find the booking (include room for channel sync)
+  const booking = await db.booking.findUnique({
+    where: { id },
+    select: {
+      id: true, reference: true, roomId: true, room: { select: { slug: true } },
+      checkIn: true, checkOut: true, nights: true, status: true, source: true,
+      guestName: true,
+    },
+  });
+
+  if (!booking) {
+    return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+  }
+
+  // ===== RESTORE AVAILABILITY =====
+  // Increment available count for each night that was blocked.
+  const ci = new Date(booking.checkIn);
+  const co = new Date(booking.checkOut);
+  ci.setHours(0, 0, 0, 0);
+  co.setHours(0, 0, 0, 0);
+  const nights = booking.nights || Math.round((co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24));
+
+  for (let i = 0; i < nights; i++) {
+    const d = new Date(ci);
+    d.setDate(d.getDate() + i);
+    await db.availability.update({
+      where: { roomId_date: { roomId: booking.roomId, date: d } },
+      data: { available: { increment: 1 } },
+    }).catch(() => {});
+  }
+
+  // ===== BROADCAST CANCELLATION TO CHANNELS =====
+  if (booking.status !== "CANCELLED") {
+    await broadcastToChannels({
+      bookingId: booking.id,
+      bookingRef: booking.reference,
+      roomSlug: booking.room.slug,
+      roomId: booking.roomId,
+      checkIn: booking.checkIn,
+      checkOut: booking.checkOut,
+      sourceChannel: booking.source,
+      action: "UNBLOCK",
+    }).catch(() => {});
+  }
+
+  // ===== DELETE THE BOOKING =====
+  await db.booking.delete({ where: { id } });
+
+  // Broadcast realtime event
+  try {
+    await fetch(`${process.env.REALTIME_URL || "http://localhost:3003"}/broadcast`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "booking:cancelled",
+        data: { reference: booking.reference, guestName: booking.guestName },
+      }),
+    });
+  } catch {}
+
+  return NextResponse.json({
+    ok: true,
+    id: booking.id,
+    reference: booking.reference,
+    deletedBy: session?.user?.name || null,
+    availabilityRestored: nights,
+  });
+}
+
+/**
+ * PATCH /api/bookings
+ *
+ * Updates a booking's status or other fields.
+ * body: { id, status?, paymentMethod?, roomNumber?, arrivalTime?, departureTime?, notes? }
+ *
+ * AUTH: requires staff session.
+ */
+const UpdateBookingSchema = z.object({
+  id: z.string().min(1),
+  status: z.enum(["PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED"]).optional(),
+  paymentMethod: z.string().max(50).optional(),
+  roomNumber: z.string().max(50).optional(),
+  arrivalTime: z.string().max(50).optional(),
+  departureTime: z.string().max(50).optional(),
+  guestName: z.string().max(200).optional(),
+  guestPhone: z.string().max(30).optional(),
+  guestEmail: z.string().max(200).optional(),
+  notes: z.string().optional(),
+});
+
+export async function PATCH(req: NextRequest) {
+  const { error } = await requireStaff(req);
+  if (error) return error;
+
+  const parsed = UpdateBookingSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const { id, ...updates } = parsed.data;
+  const updateData: any = {};
+  for (const [key, value] of Object.entries(updates)) {
+    if (value !== undefined) updateData[key] = value;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+  }
+
+  const updated = await db.booking.update({
+    where: { id },
+    data: updateData,
+    include: { room: true },
+  });
+
+  return NextResponse.json({ booking: updated });
 }
